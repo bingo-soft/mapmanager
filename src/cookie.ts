@@ -6,8 +6,7 @@ class Cookie {
             date.setTime(date.getTime() + exp);
             expires = "; expires=" + date.toUTCString();
         }
-        document.cookie =
-        name + "=" + encodeURIComponent(value) + expires + "; path=/";
+        document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
     }
 
     public static get(name: string): string {
@@ -24,8 +23,7 @@ class Cookie {
     }
 
     public static delete(name: string): void {
-        document.cookie =
-        name + "='' ; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
+        document.cookie = name + "='' ; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
     }
 }
 

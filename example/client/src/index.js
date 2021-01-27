@@ -118,4 +118,9 @@ const geojsonObject = {
 
 MapManager.create("map");
 MapManager.setZoom(2);
-MapManager.addLayer(geojsonObject);
+const res = MapManager.addLayer(geojsonObject);
+if (res) {
+    console.log("Layer added to map.");
+} else {
+    console.log("Failure.");
+}

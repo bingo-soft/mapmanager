@@ -47,28 +47,40 @@ class MapManager {
     }
 
 
-    public setCenter(x: number, y: number): void {
-        this.map.getView().setCenter([x, y]);
-        this.mapState.center = [x, y];
+    public setCenter(x: number, y: number): boolean {
+        if (this.map) {
+            this.map.getView().setCenter([x, y]);
+            this.mapState.center = [x, y];
+            return true;
+        }
+        return false;
     }
 
 
-    public setZoom(zoom: number): void {
-        this.map.getView().setZoom(zoom);
-        this.mapState.zoom = zoom;
+    public setZoom(zoom: number): boolean {
+        if (this.map) {
+            this.map.getView().setZoom(zoom);
+            this.mapState.zoom = zoom;
+            return true;
+        }
+        return false;
     }
 
 
-    public addLayer(geoJSON: object): void {
-        const vectorLayer: VectorLayer = new VectorLayer({
-            source: new VectorSource({
-                features: new GeoJSON().readFeatures(geoJSON),
-            }),
-            style: (feature) => {
-                return this.geomStyles[feature.getGeometry().getType()];
-            }
-        });
-        this.map.addLayer(vectorLayer);
+    public addLayer(geoJSON: object): boolean {
+        if (this.map) {
+            const vectorLayer: VectorLayer = new VectorLayer({
+                source: new VectorSource({
+                    features: new GeoJSON().readFeatures(geoJSON),
+                }),
+                style: (feature) => {
+                    return this.geomStyles[feature.getGeometry().getType()];
+                }
+            });
+            this.map.addLayer(vectorLayer);
+            return true;
+        }
+        return false;
     }
 }
 
