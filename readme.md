@@ -15,3 +15,6 @@ npm run serve
 ```
 npm run build
 ```
+
+### Customize dev environment
+The project uses Parcel Bundler. Refer to https://en.parceljs.org/cli.html#host to setup your dev host and port
