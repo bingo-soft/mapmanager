@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel serve src/index.html --host 192.168.0.204 --port 8081",
+    "serve": "parcel serve src/index.html",
     "build": "parcel build --public-url . src/index.html"
   },
-  "author": "",
+  "author": "BingoSoft",
   "license": "ISC",
   "dependencies": {
     "map-component": "file:../../"
