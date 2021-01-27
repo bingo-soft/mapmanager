@@ -1,0 +1,20 @@
+{
+  "name": "map-component",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/map-manager.ts",
+  "scripts": {
+    "start": "parcel serve src/map-manager.ts --host 192.168.0.204 --port 8081",
+    "build": "parcel build --public-url . src/map-manager.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/ol": "^6.4.2",
+    "ol": "^6.5.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^4.1.3"
+  }
+}

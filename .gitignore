@@ -1,0 +1,48 @@
+node_modules
+dist
+.cache
+.env
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# example
+example/client/node_modules
+example/client/dist
+example/client/.cache
+example/client/.env
+
+# local env files
+example/client/.env.local
+example/client/.env.*.local
+
+# Log files
+example/client/npm-debug.log*
+example/client/yarn-debug.log*
+example/client/yarn-error.log*
+example/client/pnpm-debug.log*
+
+# Editor directories and files
+example/client/.idea
+example/client/.vscode
+example/client/*.suo
+example/client/*.ntvs*
+example/client/*.njsproj
+example/client/*.sln
+example/client/*.sw?
