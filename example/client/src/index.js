@@ -1,4 +1,4 @@
-import MapManager from "map-component";
+import MapManager from "map-component-accent2";
 
 const geojsonObject = {
     'type': 'FeatureCollection',
