@@ -6,6 +6,7 @@ import { OverviewMap, defaults as defaultControls } from 'ol/control';
 import { OSM, Vector as VectorSource } from "ol/source";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import View from "ol/View";
+import Feature from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import * as Proj from "ol/proj";
 import * as Coordinate from "ol/coordinate";
@@ -14,7 +15,7 @@ import * as Coordinate from "ol/coordinate";
 export default class MapManager { 
     private map: OlMap;
     private mapState: MapState;
-    private geomStyles: object;
+    private geomStyles: unknown;
 
     
     constructor() {
@@ -59,7 +60,7 @@ export default class MapManager {
 
 
     /**
-    * Sets center of the map. Notice: in case of degree-based crs x is longitude, y is latitude.
+    * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
     *
     * @function setCenter
     * @memberof MapManager
@@ -67,7 +68,7 @@ export default class MapManager {
     * @param {Number} y - y coordinate
     * @return {Boolean} true on success, false otherwise
     */
-    public setCenter(x: number, y: number, crs: string = "EPSG:3857"): boolean {
+    public setCenter(x: number, y: number, crs = "EPSG:3857"): boolean {
         if (this.map) {
             let coordinate: Coordinate.Coordinate = [x, y];
             if (crs.toUpperCase() != "EPSG:3857") {
@@ -104,16 +105,16 @@ export default class MapManager {
     *
     * @function addLayer
     * @memberof MapManager
-    * @param {Object} geoJSON - GeoJSON object representing layer's features
+    * @param {Unknown} geoJSON - GeoJSON object representing layer's features
     * @return {Boolean} true on success, false otherwise
     */
-    public addLayer(geoJSON: object): boolean {
+    public addLayer(geoJSON: unknown): boolean {
         if (this.map) {
             const vectorLayer: VectorLayer = new VectorLayer({
                 source: new VectorSource({
-                    features: new GeoJSON().readFeatures(geoJSON),
+                    features: new GeoJSON().readFeatures(<string>geoJSON),
                 }),
-                style: (feature) => {
+                style: (feature: Feature) => {
                     return this.geomStyles[feature.getGeometry().getType()];
                 }
             });

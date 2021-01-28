@@ -1,7 +1,7 @@
 {
   "name": "map-component-accent2",
   "version": "1.0.0",
-  "description": "Map component for Accent 2.0.",
+  "description": "Map component for Accent 2.0",
   "main": "src/map-manager.ts",
   "scripts": {
     "serve": "parcel serve src/map-manager.ts",
@@ -14,6 +14,9 @@
     "ol": "^6.5.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.18.0",
     "parcel-bundler": "^1.12.4",
     "typescript": "^4.1.3"
   }
