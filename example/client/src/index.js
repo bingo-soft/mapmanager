@@ -116,11 +116,17 @@ const geojsonObject = {
       } ],
   };
 
-MapManager.create("map");
-MapManager.setZoom(2);
-const res = MapManager.addLayer(geojsonObject);
+let res = false;
+const mm = new MapManager();
+res = mm.createMap("map");
 if (res) {
-    console.log("Layer added to map.");
-} else {
-    console.log("Failure.");
+    mm.setZoom(14);
+    mm.setCenter(44.008741, 56.319241, "EPSG:4326");
+    res = mm.addLayer(geojsonObject);
+    if (res) {
+        console.log("Layer has been added to map.");
+    } else {
+        console.log("Failure adding layer.");
+    }
 }
+

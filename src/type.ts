@@ -1,4 +1,6 @@
+import * as Coordinate from "ol/coordinate";
+
 export type MapState = {
-    center: number[];
+    center: Coordinate.Coordinate;
     zoom: number;
 };

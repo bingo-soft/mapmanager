@@ -7,9 +7,11 @@ import { OSM, Vector as VectorSource } from "ol/source";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import View from "ol/View";
 import GeoJSON from "ol/format/GeoJSON";
+import * as Proj from "ol/proj";
+import * as Coordinate from "ol/coordinate";
 
-
-class MapManager { 
+/** @class MapManager */
+export default class MapManager { 
     private map: OlMap;
     private mapState: MapState;
     private geomStyles: object;
@@ -19,10 +21,18 @@ class MapManager {
         this.map = null;
         this.mapState = { center: [mapCenterX, mapCenterY], zoom: mapZoom };
         this.geomStyles = geomStyles;
-    }    
+    }   
 
 
-    public create(targetHtml: string): void {
+    /**
+    * Creates OpenLayers map object and controls.
+    *
+    * @function createMap
+    * @memberof MapManager
+    * @param {String} targetHtml - id of target html element 
+    * @return {Boolean} true on success, false otherwise
+    */
+    public createMap(targetHtml: string): boolean {
         const source: OSM = new OSM();
         const overviewMapControl: OverviewMap = new OverviewMap({
             layers: [
@@ -44,19 +54,41 @@ class MapManager {
                 zoom: this.mapState.zoom
             })
         });
+        return !!this.map;
     }
 
 
-    public setCenter(x: number, y: number): boolean {
+    /**
+    * Sets center of the map. Notice: in case of degree-based crs x is longitude, y is latitude.
+    *
+    * @function setCenter
+    * @memberof MapManager
+    * @param {Number} x - x coordinate
+    * @param {Number} y - y coordinate
+    * @return {Boolean} true on success, false otherwise
+    */
+    public setCenter(x: number, y: number, crs: string = "EPSG:3857"): boolean {
         if (this.map) {
-            this.map.getView().setCenter([x, y]);
-            this.mapState.center = [x, y];
+            let coordinate: Coordinate.Coordinate = [x, y];
+            if (crs.toUpperCase() != "EPSG:3857") {
+                coordinate = Proj.transform(coordinate, crs, "EPSG:3857");
+            }
+            this.map.getView().setCenter(coordinate);
+            this.mapState.center = coordinate;
             return true;
         }
         return false;
     }
 
 
+    /**
+    * Sets zoom of the map.
+    *
+    * @function setZoom
+    * @memberof MapManager
+    * @param {Number} zoom - zoom value
+    * @return {Boolean} true on success, false otherwise
+    */
     public setZoom(zoom: number): boolean {
         if (this.map) {
             this.map.getView().setZoom(zoom);
@@ -67,6 +99,14 @@ class MapManager {
     }
 
 
+    /**
+    * Adds layer to the map.
+    *
+    * @function addLayer
+    * @memberof MapManager
+    * @param {Object} geoJSON - GeoJSON object representing layer's features
+    * @return {Boolean} true on success, false otherwise
+    */
     public addLayer(geoJSON: object): boolean {
         if (this.map) {
             const vectorLayer: VectorLayer = new VectorLayer({
@@ -83,5 +123,3 @@ class MapManager {
         return false;
     }
 }
-
-export default new MapManager();
