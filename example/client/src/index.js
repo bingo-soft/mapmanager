@@ -1,4 +1,5 @@
 import MapManager from "map-component-accent2";
+import { GeomType } from "map-component-accent2";
 
 const geojsonObject = {
     'type': 'FeatureCollection',
@@ -128,5 +129,10 @@ if (res) {
     } else {
         console.log("Failure adding layer.");
     }
+    //mm.drawFeature("Point");
+    //mm.drawFeature("LineString");
+    mm.drawFeature("Polygon");
+    mm.drawFeature("Circle");
+    
 }
 

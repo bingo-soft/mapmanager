@@ -10,9 +10,14 @@ import Feature from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import * as Proj from "ol/proj";
 import * as Coordinate from "ol/coordinate";
+import Draw from "ol/interaction/Draw";
+import GeometryType from "ol/geom/GeometryType";
+
+
 
 /** @class MapManager */
 export default class MapManager { 
+
     private map: OlMap;
     private mapState: MapState;
     private geomStyles: unknown;
@@ -30,10 +35,10 @@ export default class MapManager {
     *
     * @function createMap
     * @memberof MapManager
-    * @param {String} targetHtml - id of target html element 
+    * @param {String} targetDOMId - id of target DOM element 
     * @return {Boolean} true on success, false otherwise
     */
-    public createMap(targetHtml: string): boolean {
+    public createMap(targetDOMId: string): boolean {
         const source: OSM = new OSM();
         const overviewMapControl: OverviewMap = new OverviewMap({
             layers: [
@@ -49,12 +54,13 @@ export default class MapManager {
                     source: source
                 })
             ],
-            target: targetHtml,
+            target: targetDOMId,
             view: new View({
                 center: this.mapState.center,
                 zoom: this.mapState.zoom
             })
         });
+        this.map
         return !!this.map;
     }
 
@@ -115,7 +121,7 @@ export default class MapManager {
                     features: new GeoJSON().readFeatures(<string>geoJSON),
                 }),
                 style: (feature: Feature) => {
-                    return this.geomStyles[feature.getGeometry().getType()];
+                    return this.geomStyles[feature.getGeometry().getType().toUpperCase()];
                 }
             });
             this.map.addLayer(vectorLayer);
@@ -123,4 +129,39 @@ export default class MapManager {
         }
         return false;
     }
+
+
+    /**
+    * Draws feature on the map.
+    *
+    * @function drawFeature
+    * @memberof MapManager
+    * @param {string} featureType - type of feature to draw. Can be "Point", "LineString", "Polygon", "Circle". Case insensitive.
+    * @return {Boolean} true on success, false otherwise
+    */
+    public drawFeature(featureType: string): boolean {
+        if (this.map) {
+            const vectorSource: VectorSource = new VectorSource({ wrapX: false });
+            const vectorLayer: VectorLayer = new VectorLayer({ 
+                source: vectorSource,
+                style: () => {
+                    return this.geomStyles[featureType.toUpperCase()];
+                }
+            });
+            this.map.addLayer(vectorLayer);
+            const draw: Draw = new Draw({
+                source: vectorSource,
+                type: <GeometryType>featureType,
+            });
+            draw.on("drawend", () => {
+                this.map.removeInteraction(draw);
+            });
+            this.map.addInteraction(draw);
+            return true;
+        }
+        return false;
+    }
+        
 }
+
+
