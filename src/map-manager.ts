@@ -140,7 +140,7 @@ export default class MapManager {
     *
     * @function drawFeature
     * @memberof MapManager
-    * @param {String} featureType - type of feature to draw. Can be "Point", "LineString", "Polygon", "Circle". Case insensitive.
+    * @param {String} featureType - type of feature to draw. Can be "Point", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "Circle". Case insensitive.
     * @return {Boolean} true on success, false otherwise
     */
     public drawFeature(featureType: string): boolean {
@@ -169,12 +169,12 @@ export default class MapManager {
 
     /**
     * Returns default fill patterns.
-    *
+    * @static
     * @function getDefaultFillPatterns
     * @memberof MapManager
     * @return {Array} array of default fill patterns
     */
-    public getDefaultFillPatterns(): string[] {
+    public static getDefaultFillPatterns(): string[] {
         const ret: string[] = [];
         for (const i in FillPattern.prototype.patterns) {
             const p = new FillPattern({ pattern: i });

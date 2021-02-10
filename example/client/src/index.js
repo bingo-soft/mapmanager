@@ -129,12 +129,12 @@ if (res) {
         console.log("Failure adding layer.");
     }
     //mm.drawFeature("Point");
-    //mm.drawFeature("LineString");
-    mm.drawFeature("Polygon");
-    mm.drawFeature("Circle");
+    mm.drawFeature("MultiLineString");
+    //mm.drawFeature("MultiPolygon");
+    //mm.drawFeature("Circle");
 
-    const fp = mm.getDefaultFillPatterns();
-    console.log(fp);
+    const dfp = MapManager.getDefaultFillPatterns();
+    console.log(dfp);
     
 }
 
