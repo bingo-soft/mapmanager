@@ -132,6 +132,9 @@ if (res) {
     //mm.drawFeature("LineString");
     mm.drawFeature("Polygon");
     mm.drawFeature("Circle");
+
+    const fp = mm.getDefaultFillPatterns();
+    console.log(fp);
     
 }
 

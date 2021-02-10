@@ -13,6 +13,9 @@ import * as Coordinate from "ol/coordinate";
 import Draw from "ol/interaction/Draw";
 import GeometryType from "ol/geom/GeometryType";
 
+import "ol-ext/dist/ol-ext.css";
+import FillPattern from "ol-ext/style/FillPattern";
+
 
 
 /** @class MapManager */
@@ -72,6 +75,7 @@ export default class MapManager {
     * @memberof MapManager
     * @param {Number} x - x coordinate
     * @param {Number} y - y coordinate
+    * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
     * @return {Boolean} true on success, false otherwise
     */
     public setCenter(x: number, y: number, crs = "EPSG:3857"): boolean {
@@ -136,7 +140,7 @@ export default class MapManager {
     *
     * @function drawFeature
     * @memberof MapManager
-    * @param {string} featureType - type of feature to draw. Can be "Point", "LineString", "Polygon", "Circle". Case insensitive.
+    * @param {String} featureType - type of feature to draw. Can be "Point", "LineString", "Polygon", "Circle". Case insensitive.
     * @return {Boolean} true on success, false otherwise
     */
     public drawFeature(featureType: string): boolean {
@@ -160,6 +164,23 @@ export default class MapManager {
             return true;
         }
         return false;
+    }
+    
+
+    /**
+    * Returns default fill patterns.
+    *
+    * @function getDefaultFillPatterns
+    * @memberof MapManager
+    * @return {Array} array of default fill patterns
+    */
+    public getDefaultFillPatterns(): string[] {
+        const ret: string[] = [];
+        for (const i in FillPattern.prototype.patterns) {
+            const p = new FillPattern({ pattern: i });
+            ret.push(p.getImage().toDataURL());
+        }
+        return ret;
     }
         
 }
