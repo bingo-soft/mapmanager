@@ -12,7 +12,7 @@ import * as Proj from "ol/proj";
 import * as Coordinate from "ol/coordinate";
 import Draw from "ol/interaction/Draw";
 import GeometryType from "ol/geom/GeometryType";
-
+import {Image, Icon} from "ol/style";
 import "ol-ext/dist/ol-ext.css";
 import FillPattern from "ol-ext/style/FillPattern";
 
@@ -168,21 +168,46 @@ export default class MapManager {
     
 
     /**
-    * Returns default fill patterns.
-    * @static
+    * Returns data URIs containing a representation of the images of default fill patterns.
+    * 
     * @function getDefaultFillPatterns
+    * @static
     * @memberof MapManager
-    * @return {Array} array of default fill patterns
+    * @return {Map} map of data URIs of default fill patterns
     */
-    public static getDefaultFillPatterns(): string[] {
-        const ret: string[] = [];
+    public static getDefaultFillPatterns(): Map<string, string> {
+        const ret: Map<string, string> = new Map<string, string>();
         for (const i in FillPattern.prototype.patterns) {
             const p = new FillPattern({ pattern: i });
-            ret.push(p.getImage().toDataURL());
+            ret.set(i, p.getImage().toDataURL());
         }
         return ret;
     }
-        
+
+
+    /**
+    * Returns a data URI containing a representation of the image of pattern with specified parameters.
+    * 
+    * @function getPatternDataURL
+    * @static
+    * @memberof MapManager
+    * @param {String} patternName - pattern name.
+    * @param {String} imageSrc - path to image file.
+    * @param {Number} size - line size for hash/dot/circle/cross pattern.
+    * @param {Number} spacing - spacing for hash/dot/circle/cross pattern.
+    * @param {Number} angle - angle for hash pattern / true for 45deg dot/circle/cross.
+    * @return {String} data URI containing a representation of the image
+    */
+    public static getPatternDataURL(patternName: string, imageSrc: string, size: number, spacing: number, angle: number | boolean): string {
+        const p: FillPattern = new FillPattern({
+            pattern: patternName,
+            image: new Icon({ src: imageSrc }),
+            size: size,
+            spacing: spacing,
+            angle: angle
+        });
+        return p.getImage().toDataURL();
+    }
 }
 
 
