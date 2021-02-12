@@ -12,7 +12,7 @@ import * as Proj from "ol/proj";
 import * as Coordinate from "ol/coordinate";
 import Draw from "ol/interaction/Draw";
 import GeometryType from "ol/geom/GeometryType";
-import {Image, Icon} from "ol/style";
+import { Icon } from "ol/style";
 import "ol-ext/dist/ol-ext.css";
 import FillPattern from "ol-ext/style/FillPattern";
 
@@ -39,9 +39,8 @@ export default class MapManager {
     * @function createMap
     * @memberof MapManager
     * @param {String} targetDOMId - id of target DOM element 
-    * @return {Boolean} true on success, false otherwise
     */
-    public createMap(targetDOMId: string): boolean {
+    public createMap(targetDOMId: string): void {
         const source: OSM = new OSM();
         const overviewMapControl: OverviewMap = new OverviewMap({
             layers: [
@@ -63,8 +62,6 @@ export default class MapManager {
                 zoom: this.mapState.zoom
             })
         });
-        this.map
-        return !!this.map;
     }
 
 
@@ -195,7 +192,7 @@ export default class MapManager {
     * @param {String} imageSrc - path to image file.
     * @param {Number} size - line size for hash/dot/circle/cross pattern.
     * @param {Number} spacing - spacing for hash/dot/circle/cross pattern.
-    * @param {Number} angle - angle for hash pattern / true for 45deg dot/circle/cross.
+    * @param {Number | Boolean} angle - angle for hash pattern, true for 45deg dot/circle/cross.
     * @return {String} data URI containing a representation of the image
     */
     public static getPatternDataURL(patternName: string, imageSrc: string, size: number, spacing: number, angle: number | boolean): string {
