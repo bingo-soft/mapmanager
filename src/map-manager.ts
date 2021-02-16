@@ -172,12 +172,12 @@ export default class MapManager {
     * @memberof MapManager
     * @return {Array} array of objects representing URIs of default fill patterns
     */
-    public static getDefaultFillPatterns(): unknown[] {
-        const ret: unknown[] = [];
-        ret.push({"name": "empty", "value": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg=="});
+    public static getDefaultFillPatterns(): Map<string, string> {
+        const ret: Map<string, string> = new Map<string, string>();
+        ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
         for (const i in FillPattern.prototype.patterns) {
             const p = new FillPattern({ pattern: i });
-            ret.push({"name": i, "value": p.getImage().toDataURL()});
+            ret.set(i, p.getImage().toDataURL());
         }
         return ret;
     }
@@ -199,12 +199,11 @@ export default class MapManager {
     */
     public static getPatternDataURI(patternName: string, fillColor?: string, imageSrc?: string, size?: number, spacing?: number, angle?: number | boolean): string {
         let p: FillPattern = null;
-        if (patternName.toLowerCase() == "empty") {
+        if (patternName == "empty") {
             p = new FillPattern({
                 pattern: patternName,
                 fill: new Fill({ color: fillColor })
             });
-            console.log(p);
         } else {
             p = new FillPattern({
                 pattern: patternName,
