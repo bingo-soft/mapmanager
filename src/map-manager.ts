@@ -12,7 +12,7 @@ import * as Proj from "ol/proj";
 import * as Coordinate from "ol/coordinate";
 import Draw from "ol/interaction/Draw";
 import GeometryType from "ol/geom/GeometryType";
-import { Icon } from "ol/style";
+import { Fill, Icon } from "ol/style";
 import "ol-ext/dist/ol-ext.css";
 import FillPattern from "ol-ext/style/FillPattern";
 
@@ -170,14 +170,14 @@ export default class MapManager {
     * @function getDefaultFillPatterns
     * @static
     * @memberof MapManager
-    * @return {Map} map of data URIs of default fill patterns
+    * @return {Array} array of objects representing URIs of default fill patterns
     */
-    public static getDefaultFillPatterns(): Map<string, string> {
-        const ret: Map<string, string> = new Map<string, string>();
-        ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
+    public static getDefaultFillPatterns(): unknown[] {
+        const ret: unknown[] = [];
+        ret.push({"name": "empty", "value": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg=="});
         for (const i in FillPattern.prototype.patterns) {
             const p = new FillPattern({ pattern: i });
-            ret.set(i, p.getImage().toDataURL());
+            ret.push({"name": i, "value": p.getImage().toDataURL()});
         }
         return ret;
     }
@@ -190,20 +190,30 @@ export default class MapManager {
     * @static
     * @memberof MapManager
     * @param {String} patternName - pattern name.
+    * @param {String} fillColor - fill color.
     * @param {String} imageSrc - path to image file.
     * @param {Number} size - line size for hash/dot/circle/cross pattern.
     * @param {Number} spacing - spacing for hash/dot/circle/cross pattern.
     * @param {Number | Boolean} angle - angle for hash pattern, true for 45deg dot/circle/cross.
     * @return {String} data URI containing a representation of the image
     */
-    public static getPatternDataURL(patternName: string, imageSrc: string, size: number, spacing: number, angle: number | boolean): string {
-        const p: FillPattern = new FillPattern({
-            pattern: patternName,
-            image: new Icon({ src: imageSrc }),
-            size: size,
-            spacing: spacing,
-            angle: angle
-        });
+    public static getPatternDataURI(patternName: string, fillColor?: string, imageSrc?: string, size?: number, spacing?: number, angle?: number | boolean): string {
+        let p: FillPattern = null;
+        if (patternName.toLowerCase() == "empty") {
+            p = new FillPattern({
+                pattern: patternName,
+                fill: new Fill({ color: fillColor })
+            });
+            console.log(p);
+        } else {
+            p = new FillPattern({
+                pattern: patternName,
+                image: new Icon({ src: imageSrc }),
+                size: size,
+                spacing: spacing,
+                angle: angle
+            });
+        }
         return p.getImage().toDataURL();
     }
 }

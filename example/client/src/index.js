@@ -118,23 +118,23 @@ const geojsonObject = {
 
 let res = false;
 const mm = new MapManager();
-res = mm.createMap("map");
+mm.createMap("map");
+mm.setZoom(14);
+mm.setCenter(44.008741, 56.319241, "EPSG:4326");
+res = mm.addLayer(geojsonObject);
 if (res) {
-    mm.setZoom(14);
-    mm.setCenter(44.008741, 56.319241, "EPSG:4326");
-    res = mm.addLayer(geojsonObject);
-    if (res) {
-        console.log("Layer has been added to map.");
-    } else {
-        console.log("Failure adding layer.");
-    }
-    //mm.drawFeature("Point");
-    mm.drawFeature("MultiLineString");
-    //mm.drawFeature("MultiPolygon");
-    //mm.drawFeature("Circle");
-
-    const dfp = MapManager.getDefaultFillPatterns();
-    console.log(dfp);
-    
+    console.log("Layer has been added to map.");
+} else {
+    console.log("Failure adding layer.");
 }
+//mm.drawFeature("Point");
+//mm.drawFeature("MultiLineString");
+//mm.drawFeature("MultiPolygon");
+//mm.drawFeature("Circle");
+
+const dfp = MapManager.getDefaultFillPatterns();
+console.log(dfp);
+const ep = MapManager.getPatternDataURI("empty", "#ff0000");
+console.log(ep);
+    
 
