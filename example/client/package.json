@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "parcel serve src/index.html --host 192.168.0.204 --port 8081",
+    "serve": "parcel serve src/index.html --host 172.24.64.93 --port 8085",
     "build": "parcel build --public-url . src/index.html"
   },
   "author": "BingoSoft",
