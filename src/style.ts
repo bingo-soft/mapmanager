@@ -1,6 +1,7 @@
 import FillPattern from "ol-ext/style/FillPattern";
 import { Fill, Icon } from "ol/style";
 
+/** @class Layer */
 export default class Style { 
 
     /**

@@ -1,3 +1,4 @@
+import BaseLayer from "ol/layer/Base";
 import { Vector as VectorLayer } from "ol/layer"
 import { Vector as VectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
@@ -5,22 +6,30 @@ import Feature from "ol/Feature"
 import LayerType from "./layer-type"
 import { geomStyles } from "./config"
 
+/** @class Layer */
 export default class Layer {
-    private layer: any;
+    private layer: BaseLayer;
+    private type: string;
 
+    /**
+     * @constructor
+     * @memberof Layer
+     * @param {String} type - layer type 
+     */
     constructor(type: string) {
         switch(type) {
             case LayerType.Vector:
                 this.layer = new VectorLayer({
                     source: new VectorSource(),
                     style: (feature: Feature) => {
-                        return geomStyles[feature.getGeometry().getType()];
+                        return geomStyles[feature.getGeometry().getType().toLowerCase()];
                     }
                 });
                 break;
             default:
                 break;
         }
+        this.type = type;
     }
 
     /**
@@ -28,10 +37,21 @@ export default class Layer {
      *
      * @function getLayer
      * @memberof Layer
-     * @return {any} - OpenLayers layer
+     * @return {BaseLayer} - OpenLayers layer
      */
-    public getLayer(): any {
+    public getLayer(): BaseLayer {
         return this.layer;
+    }
+
+    /**
+     * Returns layer type
+     *
+     * @function getType
+     * @memberof Layer
+     * @return {String} - layer type
+     */
+    public getType(): string {
+        return this.type;
     }
 
     /**
@@ -39,9 +59,26 @@ export default class Layer {
      *
      * @function addFeatures
      * @memberof Layer
-     * @param {ArrayBuffer|Document|Element|Object|string} features - features
+     * @param {ArrayBuffer|Document|Element|Object|String} features - features
      */
     public addFeatures(features: ArrayBuffer|Document|Element|Object|string): void {
-        this.layer.getSource().addFeatures(new GeoJSON().readFeatures(<string>features));
+        if (this.type == "vector") {
+            (<VectorLayer>this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features));
+        }
     }
+
+    /**
+     * Gets features of layer
+     *
+     * @function getFeatures
+     * @memberof Layer
+     * @return {Array} - features of the layer
+     */
+    public getFeatures(): Feature[] {
+        if (this.type == "vector") {
+            return (<VectorLayer>this.layer).getSource().getFeatures();
+        }
+        return null;
+    }
+
 }

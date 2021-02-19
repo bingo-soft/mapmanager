@@ -6,21 +6,29 @@ import { Tile as TileLayer } from "ol/layer"
 import * as Coordinate from "ol/coordinate"
 import * as Proj from "ol/proj"
 import Interaction from "ol/interaction/Interaction"
-import { mapCenterX, mapCenterY, mapZoom, geomStyles } from "./config"
+import { mapCenterX, mapCenterY, mapZoom/* , geomStyles */ } from "./config"
 import AccentLayer from "./layer"
 import LayerType from "./layer-type"
 import Regime from "./regime"
-import Draw from "ol/interaction/Draw"
+import Draw/* , { DrawEvent }  */ from "ol/interaction/Draw"
 import GeometryType from "ol/geom/GeometryType";
+import VectorLayer from "ol/layer/Vector"
+//import GeoJSON from "ol/format/GeoJSON"
 import "ol-ext/dist/ol-ext.css"
 import "ol/ol.css"
 
+/** @class Map */
 export default class Map { 
     private map: OlMap;
     private regime: Regime = Regime.None;
-    private interactions: Interaction[];
+    private interactions: Interaction[] = [];
     private lastInteraction: Interaction;    
 
+    /**
+     * @constructor
+     * @memberof Map
+     * @param {String} targetDOMId - id of target DOM element 
+     */
     constructor(targetDOMId: string) {
         const source: OSM = new OSM();
         const overviewMapControl: OverviewMap = new OverviewMap({
@@ -43,6 +51,17 @@ export default class Map {
                 zoom: mapZoom
             })
         });
+    }
+
+    /**
+     * Gets current regime.
+     *
+     * @function getRegime
+     * @memberof Map
+     * @return {Regime} current regime
+     */
+    public getRegime(): Regime {
+        return this.regime;
     }
 
     /**
@@ -100,36 +119,51 @@ export default class Map {
      * @function createLayerFromFeatures
      * @memberof Map
      * @param {ArrayBuffer|Document|Element|Object|string} features - features
+     * @return {AccentLayer} layer instance
      */
     public createLayerFromFeatures(features: ArrayBuffer|Document|Element|Object|string): AccentLayer {
-        let layer: AccentLayer = this.createLayer(LayerType.Vector);
+        const layer: AccentLayer = this.createLayer(LayerType.Vector);
         layer.addFeatures(features);
-        this.addLayer(layer);        
+        this.addLayer(layer);
         return layer;
     }
 
     /**
-     * Sets map interaction regime
+     * Sets map draw regime
      *
      * @function setRegime
      * @memberof Map
      * @param {AccentLayer} layer - layer instance
-     * @param {string} featureType - feature type
+     * @param {string} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public setDrawRegime(layer: AccentLayer, featureType: string, callback: Function): void {
+    public setDrawRegime(layer: AccentLayer, geometryType: string/* , callback: (geoJSON: string) => void */): void {
+        if (layer.getType() != "vector") {
+            return;
+        }
         this.clearInteractions();
         this.regime = Regime.Draw;
         const draw: Draw = new Draw({
-            source: layer.getLayer().getSource(),
-            type: <GeometryType>featureType,
+            source: (<VectorLayer>layer.getLayer()).getSource(),
+            type: <GeometryType>geometryType,
         });
-        draw.on("drawend", (e) => {
-            callback(e.feature);
-        });
+        /* draw.on("drawend", (e: DrawEvent) => {
+            callback(new GeoJSON().writeFeature(e.feature));
+        }); */
         this.map.addInteraction(draw);
         this.interactions.push(draw);
         this.lastInteraction = draw;
+    }
+
+    /**
+     * Sets map normal regime
+     *
+     * @function setNormalRegime
+     * @memberof Map
+     */
+    public setNormalRegime(): void {
+        this.clearInteractions();
+        this.regime = Regime.None;
     }
 
     /**
@@ -139,7 +173,7 @@ export default class Map {
      * @memberof Map
      */
     private clearInteractions(): void {
-        for (let i in this.interactions) {
+        for (const i in this.interactions) {
             this.map.removeInteraction(this.interactions[i]);
         }
     }
