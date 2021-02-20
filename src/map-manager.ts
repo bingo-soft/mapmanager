@@ -2,7 +2,6 @@ import AccentMap from "./map"
 import AccentLayer from "./layer"
 import LayerType from "./layer-type"
 import Regime from "./regime"
-import GeoJSON from "ol/format/GeoJSON"
 
 
 /** @class MapManager */
@@ -100,7 +99,7 @@ export default class MapManager {
      * @return {String} GeoJSON
      */
     public static getFeaturesAsGeoJSON(layer: AccentLayer): string {
-        return new GeoJSON().writeFeatures(layer.getFeatures());
+        return layer.getFeaturesAsGeoJSON();
     }
     
     /**

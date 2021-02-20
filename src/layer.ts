@@ -62,7 +62,7 @@ export default class Layer {
      * @param {ArrayBuffer|Document|Element|Object|String} features - features
      */
     public addFeatures(features: ArrayBuffer|Document|Element|Object|string): void {
-        if (this.type == "vector") {
+        if (this.type == LayerType.Vector) {
             (<VectorLayer>this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features));
         }
     }
@@ -75,10 +75,21 @@ export default class Layer {
      * @return {Array} - features of the layer
      */
     public getFeatures(): Feature[] {
-        if (this.type == "vector") {
+        if (this.type == LayerType.Vector) {
             return (<VectorLayer>this.layer).getSource().getFeatures();
         }
         return null;
+    }
+
+    /**
+     * Gets features of layer as GeoJSON
+     *
+     * @function getFeaturesAsGeoJSON
+     * @memberof Layer
+     * @return {String} GeoJSON
+     */
+    public getFeaturesAsGeoJSON(): string {
+        return new GeoJSON().writeFeatures(this.getFeatures());
     }
 
 }

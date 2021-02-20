@@ -20,7 +20,7 @@ import "ol/ol.css"
 /** @class Map */
 export default class Map { 
     private map: OlMap;
-    private regime: Regime = Regime.None;
+    private regime: Regime = Regime.Normal;
     private interactions: Interaction[] = [];
     private lastInteraction: Interaction;    
 
@@ -163,7 +163,7 @@ export default class Map {
      */
     public setNormalRegime(): void {
         this.clearInteractions();
-        this.regime = Regime.None;
+        this.regime = Regime.Normal;
     }
 
     /**

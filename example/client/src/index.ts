@@ -19,9 +19,10 @@ MapManager.addLayer(accentMap, accentLayer);
 
 const btDraw: HTMLElement = document.getElementById("draw-btn");
 btDraw.onclick = function() {
-    btDraw.style.backgroundColor = "#bbb";
+    btDraw.style.backgroundColor = "#777";
+    btDraw.style.color = "#fff";
     const regime: Regime = MapManager.getRegime(accentMap);
-    if (regime == Regime.None) {
+    if (regime == Regime.Normal) {
         MapManager.setDrawRegime(
             accentMap,
             accentLayer,
@@ -30,7 +31,8 @@ btDraw.onclick = function() {
             } */
         );
     } else {
-        btDraw.style.backgroundColor = "#eee";
+        btDraw.style.backgroundColor = "initial";
+        btDraw.style.color = "initial";
         MapManager.setNormalRegime(accentMap);
         const json: string = MapManager.getFeaturesAsGeoJSON(accentLayer);
         console.log(json);
@@ -42,24 +44,5 @@ console.log(dfp);
 const ep = AccentStyle.getPatternDataURI("empty", "#ff0000");
 console.log(ep);
 
-
-
-/* mm.setZoom(14);
-mm.setCenter(44.008741, 56.319241, "EPSG:4326");
-res = mm.addLayer(geojsonObject);
-if (res) {
-    console.log("Layer has been added to map.");
-} else {
-    console.log("Failure adding layer.");
-}
-//mm.drawFeature("Point");
-//mm.drawFeature("MultiLineString");
-//mm.drawFeature("MultiPolygon");
-//mm.drawFeature("Circle");
-
-const dfp = AccentStyle.getDefaultFillPatterns();
-console.log(dfp);
-const ep = MapManager.getPatternDataURI("empty", "#ff0000");
-console.log(ep); */
     
 

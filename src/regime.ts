@@ -1,5 +1,5 @@
 enum Regime {
-    None = "none",
+    Normal = "normal",
     Draw = "draw"
 }
 

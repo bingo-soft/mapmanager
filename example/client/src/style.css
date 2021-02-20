@@ -28,5 +28,6 @@ body, html {
 }
 
 #draw-btn {
-    background-color: #eee;
+    background-color: #ddd;
+    color: #000;
 }
