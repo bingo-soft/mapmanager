@@ -21,29 +21,41 @@ export default class MapManager {
     }
 
     /**
-    * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
-    *
-    * @function setCenter
-    * @memberof MapManager
-    * @static
-    * @param {AccentMap} map - map instance
-    * @param {Number} x - x coordinate
-    * @param {Number} y - y coordinate
-    * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
-    */
+     * Updates map size
+     *
+     * @function updateSize
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     */
+    public static updateSize(map: AccentMap): void {
+        map.updateSize();
+    }
+
+    /**
+     * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
+     *
+     * @function setCenter
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {Number} x - x coordinate
+     * @param {Number} y - y coordinate
+     * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
+     */
     public static setCenter(map: AccentMap, x: number, y: number, crs = "EPSG:3857"): void {
         map.setCenter(x, y, crs);
     }
 
     /**
-    * Sets zoom of the map.
-    *
-    * @function setZoom
-    * @memberof MapManager
-    * @static
-    * @param {AccentMap} map - map instance
-    * @param {Number} zoom - zoom value
-    */
+     * Sets zoom of the map.
+     *
+     * @function setZoom
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {Number} zoom - zoom value
+     */
     public static setZoom(map: AccentMap, zoom: number): void {
         map.setZoom(zoom);
     }
