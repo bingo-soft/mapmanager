@@ -2,7 +2,7 @@
   "name": "client",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "serve": "parcel serve src/index.html --host 192.168.0.204 --port 8081",
     "build": "parcel build --public-url . src/index.html"

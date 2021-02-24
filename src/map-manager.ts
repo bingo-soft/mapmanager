@@ -1,220 +1,144 @@
-import { MapState } from "./type";
-import { mapCenterX, mapCenterY, mapZoom, geomStyles } from "./config";
-import "ol/ol.css";
-import OlMap from "ol/Map";
-import { OverviewMap, defaults as defaultControls } from 'ol/control';
-import { OSM, Vector as VectorSource } from "ol/source";
-import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
-import View from "ol/View";
-import Feature from "ol/Feature";
-import GeoJSON from "ol/format/GeoJSON";
-import * as Proj from "ol/proj";
-import * as Coordinate from "ol/coordinate";
-import Draw from "ol/interaction/Draw";
-import GeometryType from "ol/geom/GeometryType";
-import { Fill, Icon } from "ol/style";
-import "ol-ext/dist/ol-ext.css";
-import FillPattern from "ol-ext/style/FillPattern";
-
+import AccentMap from "./map"
+import AccentLayer from "./layer"
+import LayerType from "./layer-type"
+import Regime from "./regime"
 
 
 /** @class MapManager */
 export default class MapManager { 
 
-    private map: OlMap;
-    private mapState: MapState;
-    private geomStyles: unknown;
-
-    
-    constructor() {
-        this.map = null;
-        this.mapState = { center: [mapCenterX, mapCenterY], zoom: mapZoom };
-        this.geomStyles = geomStyles;
-    }   
-
-
     /**
-    * Creates OpenLayers map object and controls.
-    *
-    * @function createMap
-    * @memberof MapManager
-    * @param {String} targetDOMId - id of target DOM element 
-    */
-    public createMap(targetDOMId: string): void {
-        const source: OSM = new OSM();
-        const overviewMapControl: OverviewMap = new OverviewMap({
-            layers: [
-                new TileLayer({
-                    source: source,
-                })
-            ],
-        });
-        this.map = new OlMap({
-            controls: defaultControls().extend([overviewMapControl]),
-            layers: [
-                new TileLayer({
-                    source: source
-                })
-            ],
-            target: targetDOMId,
-            view: new View({
-                center: this.mapState.center,
-                zoom: this.mapState.zoom
-            })
-        });
+     * Creates OpenLayers map object and controls.
+     *
+     * @function createMap
+     * @memberof MapManager
+     * @static
+     * @param {String} targetDOMId - id of target DOM element
+     * @return {AccentMap} - map instance
+     */
+    public static createMap(targetDOMId: string): AccentMap {
+        return new AccentMap(targetDOMId);
     }
-
 
     /**
     * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
     *
     * @function setCenter
     * @memberof MapManager
+    * @static
+    * @param {AccentMap} map - map instance
     * @param {Number} x - x coordinate
     * @param {Number} y - y coordinate
     * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
-    * @return {Boolean} true on success, false otherwise
     */
-    public setCenter(x: number, y: number, crs = "EPSG:3857"): boolean {
-        if (this.map) {
-            let coordinate: Coordinate.Coordinate = [x, y];
-            if (crs.toUpperCase() != "EPSG:3857") {
-                coordinate = Proj.transform(coordinate, crs, "EPSG:3857");
-            }
-            this.map.getView().setCenter(coordinate);
-            this.mapState.center = coordinate;
-            return true;
-        }
-        return false;
+    public static setCenter(map: AccentMap, x: number, y: number, crs = "EPSG:3857"): void {
+        map.setCenter(x, y, crs);
     }
-
 
     /**
     * Sets zoom of the map.
     *
     * @function setZoom
     * @memberof MapManager
+    * @static
+    * @param {AccentMap} map - map instance
     * @param {Number} zoom - zoom value
-    * @return {Boolean} true on success, false otherwise
     */
-    public setZoom(zoom: number): boolean {
-        if (this.map) {
-            this.map.getView().setZoom(zoom);
-            this.mapState.zoom = zoom;
-            return true;
-        }
-        return false;
+    public static setZoom(map: AccentMap, zoom: number): void {
+        map.setZoom(zoom);
     }
 
-
     /**
-    * Adds layer to the map.
-    *
-    * @function addLayer
-    * @memberof MapManager
-    * @param {Unknown} geoJSON - GeoJSON object representing layer's features
-    * @return {Boolean} true on success, false otherwise
-    */
-    public addLayer(geoJSON: unknown): boolean {
-        if (this.map) {
-            const vectorLayer: VectorLayer = new VectorLayer({
-                source: new VectorSource({
-                    features: new GeoJSON().readFeatures(<string>geoJSON),
-                }),
-                style: (feature: Feature) => {
-                    return this.geomStyles[feature.getGeometry().getType().toUpperCase()];
-                }
-            });
-            this.map.addLayer(vectorLayer);
-            return true;
-        }
-        return false;
+     * Creates new layer
+     *
+     * @function createLayer
+     * @memberof MapManager
+       @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerType} type - layer type
+     * @return {AccentLayer} - layer
+     */
+    public static createLayer(map: AccentMap, type: LayerType): AccentLayer {
+        return map.createLayer(type);
     }
 
+    /**
+     * Adds layer to the map.
+     *
+     * @function addLayer
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {AccentLayer} layer - layer instance
+     */
+    public static addLayer(map: AccentMap, layer: AccentLayer): void {
+        map.addLayer(layer);
+    }
 
     /**
-    * Draws feature on the map.
-    *
-    * @function drawFeature
-    * @memberof MapManager
-    * @param {String} featureType - type of feature to draw. Can be "Point", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "Circle". Case insensitive.
-    * @return {Boolean} true on success, false otherwise
-    */
-    public drawFeature(featureType: string): boolean {
-        if (this.map) {
-            const vectorSource: VectorSource = new VectorSource({ wrapX: false });
-            const vectorLayer: VectorLayer = new VectorLayer({ 
-                source: vectorSource,
-                style: () => {
-                    return this.geomStyles[featureType.toUpperCase()];
-                }
-            });
-            this.map.addLayer(vectorLayer);
-            const draw: Draw = new Draw({
-                source: vectorSource,
-                type: <GeometryType>featureType,
-            });
-            draw.on("drawend", () => {
-                this.map.removeInteraction(draw);
-            });
-            this.map.addInteraction(draw);
-            return true;
-        }
-        return false;
+     * Creates layer from features
+     *
+     * @function createLayerFromFeatures
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {ArrayBuffer|Document|Element|Object|string} features - features
+     * @return {AccentLayer} layer instance
+     */
+    public static createLayerFromFeatures(map: AccentMap, features: ArrayBuffer|Document|Element|Object|string): AccentLayer {
+        return map.createLayerFromFeatures(features);
+    }
+
+    /**
+     * Gets features of the layer as GeoJSON
+     *
+     * @function getFeaturesAsGeoJSON
+     * @memberof MapManager
+     * @static
+     * @param {AccentLayer} layer - layer instance
+     * @return {String} GeoJSON
+     */
+    public static getFeaturesAsGeoJSON(layer: AccentLayer): string {
+        return layer.getFeaturesAsGeoJSON();
     }
     
-
     /**
-    * Returns data URIs containing a representation of the images of default fill patterns.
-    * 
-    * @function getDefaultFillPatterns
-    * @static
-    * @memberof MapManager
-    * @return {Array} array of objects representing URIs of default fill patterns
-    */
-    public static getDefaultFillPatterns(): Map<string, string> {
-        const ret: Map<string, string> = new Map<string, string>();
-        ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
-        for (const i in FillPattern.prototype.patterns) {
-            const p = new FillPattern({ pattern: i });
-            ret.set(i, p.getImage().toDataURL());
-        }
-        return ret;
+     * Gets map regime
+     *
+     * @function getMapRegime
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @return {Regime} map regme
+     */
+    public static getRegime(map: AccentMap): Regime {
+        return map.getRegime();
     }
 
+    /**
+     * Sets map normal regime
+     *
+     * @function setDrawRegime
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     */
+    public static setNormalRegime(map: AccentMap): void {
+        map.setNormalRegime();
+    }
 
     /**
-    * Returns a data URI containing a representation of the image of pattern with specified parameters.
-    * 
-    * @function getPatternDataURL
-    * @static
-    * @memberof MapManager
-    * @param {String} patternName - pattern name.
-    * @param {String} fillColor - fill color.
-    * @param {String} imageSrc - path to image file.
-    * @param {Number} size - line size for hash/dot/circle/cross pattern.
-    * @param {Number} spacing - spacing for hash/dot/circle/cross pattern.
-    * @param {Number | Boolean} angle - angle for hash pattern, true for 45deg dot/circle/cross.
-    * @return {String} data URI containing a representation of the image
-    */
-    public static getPatternDataURI(patternName: string, fillColor?: string, imageSrc?: string, size?: number, spacing?: number, angle?: number | boolean): string {
-        let p: FillPattern = null;
-        if (patternName == "empty") {
-            p = new FillPattern({
-                pattern: patternName,
-                fill: new Fill({ color: fillColor })
-            });
-        } else {
-            p = new FillPattern({
-                pattern: patternName,
-                image: new Icon({ src: imageSrc }),
-                size: size,
-                spacing: spacing,
-                angle: angle
-            });
-        }
-        return p.getImage().toDataURL();
+     * Sets map draw regime
+     *
+     * @function setDrawRegime
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {AccentLayer} layer - layer instance
+     * @param {String} geometryType - feature type
+     * @param {Function} callback - callback
+     */
+    public static setDrawRegime(map: AccentMap, layer: AccentLayer, geometryType: string/* , callback: (geoJSON: string) => void */): void {
+        map.setDrawRegime(layer, geometryType/* , callback */);
     }
 }
-
-
