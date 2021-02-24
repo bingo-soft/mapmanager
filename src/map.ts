@@ -54,6 +54,16 @@ export default class Map {
     }
 
     /**
+     * Updates map size
+     *
+     * @function updateSize
+     * @memberof Map
+     */
+    public updateSize(): void {
+        this.map.updateSize();
+    }
+
+    /**
      * Gets current regime.
      *
      * @function getRegime
@@ -89,6 +99,7 @@ export default class Map {
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
     }
+    
 
     /**
      * Creates new layer
