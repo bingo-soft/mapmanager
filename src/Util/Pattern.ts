@@ -1,15 +1,15 @@
 import FillPattern from "ol-ext/style/FillPattern";
 import { Fill, Icon } from "ol/style";
 
-/** @class Layer */
-export default class Style { 
+/** @class Pattern */
+export default class Pattern { 
 
     /**
      * Returns data URIs containing a representation of the images of default fill patterns.
      * 
      * @function getDefaultFillPatterns
      * @static
-     * @memberof Style
+     * @memberof Pattern
      * @return {Map} objects representing URIs of default fill patterns
      */
     public static getDefaultFillPatterns(): Map<string, string> {
