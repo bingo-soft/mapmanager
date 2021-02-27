@@ -18,10 +18,10 @@ export default class MapManager {
      * @param {String} targetDOMId - id of target DOM element
      * @return {AccentMap} - map instance
      */
-    public static createMap(targetDOMId: string, centerX: number, centerY: number, zoom: number): AccentMap {
-        let map : AccentMap = new AccentMap(targetDOMId);
-        map.setCenter(centerX, centerY);
-        map.setZoom(zoom);
+    public static createMap(targetDOMId: string/* , centerX: number, centerY: number, zoom: number */): AccentMap {
+        const map : AccentMap = new AccentMap(targetDOMId);
+        //map.setCenter(centerX, centerY);
+        //map.setZoom(zoom);
         return map;
     }
 
@@ -110,14 +110,15 @@ export default class MapManager {
             default:
                 break;
         }
-        if (typeof builder !== "undefined" && typeof opts !== "undefined") {
-            if (opts.hasOwnProperty("url")) {
+        if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
+            if (opts.hasOwnProperty("url")) { 
                 builder.setUrl(opts["url"]["baseUrl"], opts["url"]["params"]);
             }
 
             if (opts.hasOwnProperty("style")) {
                 builder.setStyle(opts["style"]);
             }
+            
         }
         return builder.build();
     }
@@ -133,11 +134,24 @@ export default class MapManager {
      * @return {LayerInterface} - layer instance
      */
     public static createLayerFromFeatures(features: ArrayBuffer|Document|Element|Object|string, opts?: object): LayerInterface {
-        let layer : LayerInterface = this.createLayer(LayerType.Vector, opts);
+        const layer: VectorLayer = <VectorLayer>this.createLayer(LayerType.Vector, opts);
         layer.addFeatures(features);
         return layer;
     }
 
+    /**
+     * Gets features of the layer as GeoJSON
+     *
+     * @function getFeaturesAsGeoJSON
+     * @memberof MapManager
+     * @static
+     * @param {LayerInterface} layer - layer instance
+     * @return {String} GeoJSON
+     */
+    public static getFeaturesAsGeoJSON(layer: VectorLayer): string {
+        return layer.getFeaturesAsGeoJSON();
+    }
+    
     /**
      * Adds layer to the map.
      *
@@ -149,5 +163,20 @@ export default class MapManager {
      */
     public static addLayer(map: AccentMap, layer: LayerInterface): void {
         map.addLayer(layer);
+    }
+
+    /**
+     * Sets map draw regime
+     *
+     * @function setDrawRegime
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     * @param {String} geometryType - feature type
+     * @param {Function} callback - callback
+     */
+    public static setDrawRegime(map: AccentMap, layer: LayerInterface, geometryType: string/* , callback: (geoJSON: string) => void */): void {
+        map.setDrawRegime(layer, geometryType/* , callback */);
     }
 }

@@ -17,5 +17,6 @@ export default interface LayerInterface
      */
     setStyle(style): void;
 
-    addFeatures(features: ArrayBuffer|Document|Element|Object|string): void;
+    //addFeatures(features: ArrayBuffer|Document|Element|Object|string): void;
+
 }

@@ -33,7 +33,7 @@ export default class LayerBuilder {
     }
 
     public setStyle(opts: object): LayerBuilder {
-        let style = (new StyleBuilder(opts)).build();
+        const style = (new StyleBuilder(opts)).build();
         this.layer.setStyle(style);
         return this;
     }

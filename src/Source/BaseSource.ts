@@ -6,8 +6,7 @@ export default abstract class BaseSource implements SourceInterface
 {
     protected source: OlSource;
 
-    getSource(): OlSource
-    {
+    getSource(): OlSource  {
         return this.source;
     }
 

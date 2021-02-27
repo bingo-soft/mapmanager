@@ -27,14 +27,14 @@ export default class VectorLayer extends BaseLayer {
         this.layer.setSource(<OlVectorSource> source.getSource());
     }
 
-    public setUrl(baseUrl: string, params?: string[][]): void {
+    public setUrl(baseUrl: string, params?: string[][]): void { 
         (<OlVectorSource> this.layer.getSource()).setUrl(baseUrl + '?' + (new URLSearchParams(params).toString()));
     }
 
     /**
      * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - Style
      */
-    public setStyle(style): void {
+    public setStyle(style): void { 
         (<BaseVector> this.layer).setStyle(style);
     }
 
@@ -52,7 +52,7 @@ export default class VectorLayer extends BaseLayer {
     public getFeatures(): Feature[] {
         return (<OlVectorLayer> this.layer).getSource().getFeatures();
     }
-
+    
     /**
      * Gets features of layer as GeoJSON
      *

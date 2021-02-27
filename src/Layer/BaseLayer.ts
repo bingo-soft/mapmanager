@@ -8,8 +8,7 @@ export default abstract class BaseLayer implements LayerInterface
 {
     protected layer: OlLayer;
 
-    getLayer(): OlLayer
-    {
+    getLayer(): OlLayer {
         return this.layer;
     }
 
@@ -28,7 +27,4 @@ export default abstract class BaseLayer implements LayerInterface
         throw new MethodNotImplemented();
     }
 
-    public addFeatures(features: ArrayBuffer|Document|Element|Object|string): void {
-        throw new MethodNotImplemented();
-    }
 }

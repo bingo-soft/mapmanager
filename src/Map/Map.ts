@@ -97,6 +97,33 @@ export default class Map {
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
     }
+
+    /**
+     * Sets map draw regime
+     *
+     * @function setRegime
+     * @memberof Map
+     * @param {LayerInterface} layer - layer instance
+     * @param {string} geometryType - feature type
+     * @param {Function} callback - callback
+     */
+    public setDrawRegime(layer: LayerInterface, geometryType: string/* , callback: (geoJSON: string) => void */): void {
+        if (layer.getType() != "vector") {
+            return;
+        }
+        this.clearInteractions();
+        this.regime = Regime.Draw;
+        const draw: Draw = new Draw({
+            source: (<VectorLayer>layer.getLayer()).getSource(),
+            type: <GeometryType>geometryType,
+        });
+        /* draw.on("drawend", (e: DrawEvent) => {
+            callback(new GeoJSON().writeFeature(e.feature));
+        }); */
+        this.map.addInteraction(draw);
+        this.interactions.push(draw);
+        this.lastInteraction = draw;
+    }
     
     /**
      * Sets map normal regime
