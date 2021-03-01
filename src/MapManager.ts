@@ -20,7 +20,7 @@ export default class MapManager {
      * @return {AccentMap} - map instance
      */
     public static createMap(targetDOMId: string/* , centerX: number, centerY: number, zoom: number */): AccentMap {
-        const map : AccentMap = new AccentMap(targetDOMId);
+        const map : AccentMap = new AccentMap(targetDOMId); 
         return map;
     }
 
@@ -114,22 +114,22 @@ export default class MapManager {
      * @param {object} opts - options
      * @return {LayerInterface} - layer
      */
-    public static createLayer(type: LayerType, opts?: object): LayerInterface {
-        let builder : LayerBuilder;
+    public static createLayer(type: LayerType, opts?: unknown): LayerInterface { 
+        let builder: LayerBuilder;
         switch (type) {
             case LayerType.Vector:
                 builder = new LayerBuilder(new VectorLayer());
-                builder.setSource(SourceType.Vector);                
+                builder.setSource(SourceType.Vector);       
                 break;
             default:
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
-            if (opts.hasOwnProperty("request")) { 
+            if (Object.prototype.hasOwnProperty.call(opts, "request")) { 
                 builder.setRequest(<ApiRequest> opts["request"]);
             }
 
-            if (opts.hasOwnProperty("style")) {
+            if (Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }
             
@@ -147,7 +147,7 @@ export default class MapManager {
      * @param {ArrayBuffer|Document|Element|Object|string} features - features
      * @return {LayerInterface} - layer instance
      */
-    public static createLayerFromFeatures(features: ArrayBuffer|Document|Element|Object|string, opts?: object): LayerInterface {
+    public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
         const layer: VectorLayer = <VectorLayer>this.createLayer(LayerType.Vector, opts);
         layer.addFeatures(features);
         return layer;

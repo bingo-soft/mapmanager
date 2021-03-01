@@ -1,1 +1,1 @@
-export var DynamicStyle = {}
+export const DynamicStyle: unknown = {};

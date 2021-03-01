@@ -3,12 +3,12 @@ import BaseVector from "ol/layer/BaseVector"
 import { Vector as OlVectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
 import Feature from "ol/Feature"
+import Style from "ol/style/Style"
 import BaseLayer from "../BaseLayer"
 import LayerType from "../LayerType"
 import SourceInterface from "../../Source/SourceInterface"
 import { ApiClient } from '../../Util/Http/ApiClient'
 import { ApiRequest } from '../../Util/Http/ApiRequest'
-import { VectorLayerApi } from './VectorLayerApi'
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
@@ -30,14 +30,10 @@ export default class VectorLayer extends BaseLayer {
         this.layer.setSource(<OlVectorSource> source.getSource());
     }
 
-    public setRequest(request: ApiRequest): void { 
-        let source : OlVectorSource = <OlVectorSource> this.layer.getSource();
-        source.setLoader(async (extent, resolution, projection) => {
-            let data = await ApiClient.shared.request(new VectorLayerApi.LoadLayer(
-                request.baseURL,
-                request.params,
-                request.headers
-            ));
+    public setRequest(request: ApiRequest): void {  
+        const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
+        source.setLoader(async () => {
+            const data: ArrayBuffer|Document|Element|string = await ApiClient.request(request);
             source.addFeatures(new GeoJSON().readFeatures(data));
         });
     }
@@ -45,11 +41,11 @@ export default class VectorLayer extends BaseLayer {
     /**
      * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - Style
      */
-    public setStyle(style): void { 
-        (<BaseVector> this.layer).setStyle(style);
+    public setStyle(style: unknown): void { 
+        (<BaseVector> this.layer).setStyle(<Style> style);
     }
 
-    public addFeatures(features: ArrayBuffer|Document|Element|Object|string): void {
+    public addFeatures(features: string): void {
         (<OlVectorLayer> this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features));
     }
 

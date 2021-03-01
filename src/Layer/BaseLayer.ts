@@ -18,13 +18,15 @@ export default abstract class BaseLayer implements LayerInterface
     public abstract setSource(source: SourceInterface): void;    
 
     public setRequest(request: ApiRequest): void {
+        console.log(request);
         throw new MethodNotImplemented();
     }
 
     /**
      * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - style
      */
-    public setStyle(style): void {
+    public setStyle(style: unknown): void { 
+        console.log(style);
         throw new MethodNotImplemented();
     }
 

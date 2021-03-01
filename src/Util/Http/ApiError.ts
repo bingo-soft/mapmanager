@@ -3,5 +3,5 @@ export interface ApiError {
     code: string;
     status: number;
     raw: Error;
-    params: any;
+    params: unknown;
 }

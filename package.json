@@ -4,7 +4,7 @@
   "description": "Map component for Accent 2.0",
   "main": "src/MapManager.ts",
   "scripts": {
-    "serve": "parcel serve src/MapManager.ts",
+    "serve": "parcel serve src/MapManager.ts --host 192.168.0.204 --port 8081",
     "build": "parcel build --public-url . src/MapManager.ts"
   },
   "author": "BingoSoft",
