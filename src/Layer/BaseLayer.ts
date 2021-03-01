@@ -3,6 +3,7 @@ import LayerInterface from "./LayerInterface"
 import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
 import MethodNotImplemented from "../Exception/MethodNotImplemented"
+import { ApiRequest } from '../Util/Http/ApiRequest'
 
 export default abstract class BaseLayer implements LayerInterface
 {
@@ -16,7 +17,7 @@ export default abstract class BaseLayer implements LayerInterface
 
     public abstract setSource(source: SourceInterface): void;    
 
-    public setUrl(baseUrl: string, params?: string[][]): void {
+    public setRequest(request: ApiRequest): void {
         throw new MethodNotImplemented();
     }
 

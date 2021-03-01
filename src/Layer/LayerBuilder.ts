@@ -2,6 +2,7 @@ import LayerInterface from "./LayerInterface"
 import SourceType from "../Source/SourceType"
 import VectorSource from "../Source/Impl/VectorSource"
 import StyleBuilder from "../Style/StyleBuilder"
+import { ApiRequest } from '../Util/Http/ApiRequest';
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
@@ -27,8 +28,8 @@ export default class LayerBuilder {
         return this;
     }
 
-    public setUrl(baseUrl: string, params?: string[][]): LayerBuilder {
-        this.layer.setUrl(baseUrl, params);
+    public setRequest(request: ApiRequest): LayerBuilder {
+        this.layer.setRequest(request);
         return this;
     }
 

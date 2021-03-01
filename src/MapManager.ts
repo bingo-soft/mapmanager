@@ -5,6 +5,7 @@ import VectorLayer from "./Layer/Impl/VectorLayer"
 import LayerType from "./Layer/LayerType"
 import LayerBuilder from "./Layer/LayerBuilder"
 import SourceType from "./Source/SourceType"
+import { ApiRequest } from './Util/Http/ApiRequest';
 
 /** @class MapManager */
 export default class MapManager { 
@@ -20,8 +21,6 @@ export default class MapManager {
      */
     public static createMap(targetDOMId: string/* , centerX: number, centerY: number, zoom: number */): AccentMap {
         const map : AccentMap = new AccentMap(targetDOMId);
-        //map.setCenter(centerX, centerY);
-        //map.setZoom(zoom);
         return map;
     }
 
@@ -91,6 +90,21 @@ export default class MapManager {
     }
 
     /**
+     * Sets map draw regime
+     *
+     * @function setDrawRegime
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     * @param {String} geometryType - feature type
+     * @param {Function} callback - callback
+     */
+    public static setDrawRegime(map: AccentMap, layer: LayerInterface, geometryType: string): void {
+        map.setDrawRegime(layer, geometryType);
+    }
+
+    /**
      * Creates new layer
      *
      * @function createLayer
@@ -111,8 +125,8 @@ export default class MapManager {
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
-            if (opts.hasOwnProperty("url")) { 
-                builder.setUrl(opts["url"]["baseUrl"], opts["url"]["params"]);
+            if (opts.hasOwnProperty("request")) { 
+                builder.setRequest(<ApiRequest> opts["request"]);
             }
 
             if (opts.hasOwnProperty("style")) {
@@ -163,20 +177,5 @@ export default class MapManager {
      */
     public static addLayer(map: AccentMap, layer: LayerInterface): void {
         map.addLayer(layer);
-    }
-
-    /**
-     * Sets map draw regime
-     *
-     * @function setDrawRegime
-     * @memberof MapManager
-     * @static
-     * @param {AccentMap} map - map instance
-     * @param {LayerInterface} layer - layer instance
-     * @param {String} geometryType - feature type
-     * @param {Function} callback - callback
-     */
-    public static setDrawRegime(map: AccentMap, layer: LayerInterface, geometryType: string/* , callback: (geoJSON: string) => void */): void {
-        map.setDrawRegime(layer, geometryType/* , callback */);
     }
 }

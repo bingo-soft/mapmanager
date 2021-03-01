@@ -1,4 +1,5 @@
 import { Vector as OlVectorSource } from "ol/source"
+import GeoJSON from "ol/format/GeoJSON"
 import BaseSource from "../BaseSource"
 import SourceType from "../SourceType"
 
@@ -11,7 +12,9 @@ export default class VectorSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new OlVectorSource();
+        this.source = new OlVectorSource({
+            format: new GeoJSON()
+        });
     }
 
     public getType(): SourceType {

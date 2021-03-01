@@ -6,6 +6,9 @@ import Feature from "ol/Feature"
 import BaseLayer from "../BaseLayer"
 import LayerType from "../LayerType"
 import SourceInterface from "../../Source/SourceInterface"
+import { ApiClient } from '../../Util/Http/ApiClient'
+import { ApiRequest } from '../../Util/Http/ApiRequest'
+import { VectorLayerApi } from './VectorLayerApi'
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
@@ -20,15 +23,23 @@ export default class VectorLayer extends BaseLayer {
     }
 
     public getType(): LayerType {
-         return LayerType.Vector;
+        return LayerType.Vector;
     }
 
     public setSource(source: SourceInterface): void {
         this.layer.setSource(<OlVectorSource> source.getSource());
     }
 
-    public setUrl(baseUrl: string, params?: string[][]): void { 
-        (<OlVectorSource> this.layer.getSource()).setUrl(baseUrl + '?' + (new URLSearchParams(params).toString()));
+    public setRequest(request: ApiRequest): void { 
+        let source : OlVectorSource = <OlVectorSource> this.layer.getSource();
+        source.setLoader(async (extent, resolution, projection) => {
+            let data = await ApiClient.shared.request(new VectorLayerApi.LoadLayer(
+                request.baseURL,
+                request.params,
+                request.headers
+            ));
+            source.addFeatures(new GeoJSON().readFeatures(data));
+        });
     }
 
     /**
