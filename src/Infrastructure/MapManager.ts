@@ -1,11 +1,13 @@
-import AccentMap from "./Map/Map"
-import Regime from "./Map/Regime"
-import LayerInterface from "./Layer/LayerInterface"
-import VectorLayer from "./Layer/Impl/VectorLayer"
-import LayerType from "./Layer/LayerType"
-import LayerBuilder from "./Layer/LayerBuilder"
-import SourceType from "./Source/SourceType"
-import { ApiRequest } from './Util/Http/ApiRequest';
+import AccentMap from "../Domain/Model/Map/Map"
+import Regime from "../Domain/Model/Map/Regime"
+import LayerInterface from "../Domain/Model/Layer/LayerInterface"
+import VectorLayer from "../Domain/Model/Layer/Impl/VectorLayer"
+import LayerType from "../Domain/Model/Layer/LayerType"
+import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
+import SourceType from "../Domain/Model/Source/SourceType"
+import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
+import VectorLayerRepository from "./Repository/VectorLayerRepository"
+import { ApiRequest } from './Http/ApiRequest';
 
 /** @class MapManager */
 export default class MapManager { 
@@ -109,7 +111,7 @@ export default class MapManager {
      *
      * @function createLayer
      * @memberof MapManager
-       @static
+     * @static
      * @param {LayerType} type - layer type
      * @param {object} opts - options
      * @return {LayerInterface} - layer
@@ -126,13 +128,15 @@ export default class MapManager {
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
             if (Object.prototype.hasOwnProperty.call(opts, "request")) { 
-                builder.setRequest(<ApiRequest> opts["request"]);
+                builder.setLoader(async () => {
+                    let query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                    return await query.execute(opts["request"]);
+                });
             }
 
             if (Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
-            }
-            
+            }            
         }
         return builder.build();
     }

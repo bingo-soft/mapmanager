@@ -7,8 +7,8 @@ import Style from "ol/style/Style"
 import BaseLayer from "../BaseLayer"
 import LayerType from "../LayerType"
 import SourceInterface from "../../Source/SourceInterface"
-import { ApiClient } from '../../Util/Http/ApiClient'
-import { ApiRequest } from '../../Util/Http/ApiRequest'
+import { ApiClient } from '../../../../Infrastructure/Http/ApiClient'
+import { ApiRequest } from '../../../../Infrastructure/Http/ApiRequest'
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
@@ -30,10 +30,10 @@ export default class VectorLayer extends BaseLayer {
         this.layer.setSource(<OlVectorSource> source.getSource());
     }
 
-    public setRequest(request: ApiRequest): void {  
+    public setLoader(loader: Function): void {  
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
         source.setLoader(async () => {
-            const data: ArrayBuffer|Document|Element|string = await ApiClient.request(request);
+            const data = await loader();
             source.addFeatures(new GeoJSON().readFeatures(data));
         });
     }
