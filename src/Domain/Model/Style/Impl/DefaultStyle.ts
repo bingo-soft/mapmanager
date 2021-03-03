@@ -1,37 +1,34 @@
 import {Circle as CircleStyle, Fill, Stroke, Style} from "ol/style";
+import GeometryType from 'ol/geom/GeometryType'
 
-export const mapCenterX = 4896686.91;
-export const mapCenterY = 7621767.9;
-export const mapZoom = 13;
-
-export const geomStyles = {
-    "point": new Style({
+export const DefaultStyle = {
+    [GeometryType.POINT]: new Style({
         image: new CircleStyle({
             radius: 5,
             fill: new Fill({color: "red"}),
             stroke: new Stroke({color: "red", width: 1}),
         }),
     }),
-    "linestring": new Style({
+    [GeometryType.LINE_STRING]: new Style({
         stroke: new Stroke({
             color: "green",
             width: 2,
         }),
     }),
-    "multilinestring": new Style({
+    [GeometryType.MULTI_LINE_STRING]: new Style({
         stroke: new Stroke({
             color: "green",
             width: 1,
         }),
     }),
-    "multipoint": new Style({
+    [GeometryType.MULTI_POINT]: new Style({
         image: new CircleStyle({
             radius: 5,
             fill: null,
             stroke: new Stroke({color: "red", width: 1}),
         }),
     }),
-    "multipolygon": new Style({
+    [GeometryType.MULTI_POLYGON]: new Style({
         stroke: new Stroke({
             color: "yellow",
             width: 1,
@@ -40,7 +37,7 @@ export const geomStyles = {
             color: "rgba(0, 0, 255, 0.3)",
         }),
     }),
-    "polygon": new Style({
+    [GeometryType.POLYGON]: new Style({
         stroke: new Stroke({
             color: "blue",
             lineDash: [4],
@@ -50,7 +47,7 @@ export const geomStyles = {
             color: "rgba(255, 255, 0, 0.3)",
         }),
     }),
-    "geometrycollection": new Style({
+    [GeometryType.GEOMETRY_COLLECTION]: new Style({
         stroke: new Stroke({
             color: "magenta",
             width: 2,
@@ -66,7 +63,7 @@ export const geomStyles = {
             }),
         }),
     }),
-    "circle": new Style({
+    [GeometryType.CIRCLE]: new Style({
         stroke: new Stroke({
             color: "red",
             width: 2,
@@ -74,9 +71,5 @@ export const geomStyles = {
         fill: new Fill({
             color: "rgba(255,0,0,0.2)",
         }),
-    }),
-  };
-
-
-
-
+    })
+}

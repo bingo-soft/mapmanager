@@ -2,15 +2,16 @@
   "name": "map-component-accent2",
   "version": "1.0.0",
   "description": "Map component for Accent 2.0",
-  "main": "src/map-manager.ts",
+  "main": "src/Infrastructure/MapManager.ts",
   "scripts": {
-    "serve": "parcel serve src/map-manager.ts",
-    "build": "parcel build --public-url . src/map-manager.ts"
+    "serve": "parcel serve src/Infrastructure/MapManager.ts --host 192.168.0.204 --port 8081",
+    "build": "parcel build --public-url . src/Infrastructure/MapManager.ts"
   },
   "author": "BingoSoft",
   "license": "ISC",
   "dependencies": {
     "@types/ol": "^6.4.2",
+    "axios": "^0.18.1",
     "ol": "^6.5.0",
     "ol-ext": "^3.1.17"
   },
@@ -19,6 +20,6 @@
     "@typescript-eslint/parser": "^4.14.1",
     "eslint": "^7.18.0",
     "parcel-bundler": "^1.12.4",
-    "typescript": "^4.1.3"
+    "typescript": "^4.2.2"
   }
 }
