@@ -13,7 +13,7 @@ export default class VectorLayerFeaturesLoadQuery {
         this.repository = repository;
     }
 
-    public execute(request: object): Promise<string> {
+    public execute(request: unknown): Promise<string> {
         return this.repository.get(request);
     }
 }

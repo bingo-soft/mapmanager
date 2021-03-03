@@ -7,7 +7,6 @@ import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
-import { ApiRequest } from './Http/ApiRequest';
 
 /** @class MapManager */
 export default class MapManager { 
@@ -129,7 +128,7 @@ export default class MapManager {
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
             if (Object.prototype.hasOwnProperty.call(opts, "request")) { 
                 builder.setLoader(async () => {
-                    let query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                     return await query.execute(opts["request"]);
                 });
             }

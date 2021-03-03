@@ -1,4 +1,4 @@
 export default interface VectorLayerRepositoryInterface
 {
-    get(request: object): Promise<string>;
+    get(request: unknown): Promise<string>;
 }
