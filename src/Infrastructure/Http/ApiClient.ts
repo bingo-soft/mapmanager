@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { AxiosError } from 'axios'
 import { ApiRequest } from './ApiRequest'
 import { ApiError } from './ApiError'
 
@@ -24,7 +25,7 @@ export class ApiClient {
         }); 
     }
 
-    private static normalizeError(error: any): ApiError {
+    private static normalizeError(error: AxiosError): ApiError {
         const data = error.response && error.response.data;
         return {
             status: (data && data.status) || (error.response && error.response.status),
