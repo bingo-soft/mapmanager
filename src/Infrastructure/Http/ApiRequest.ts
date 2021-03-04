@@ -5,4 +5,5 @@ export type ApiRequest = {
     baseURL?: string;
     params?: unknown;
     headers?: unknown;
+    data?: unknown;
 }

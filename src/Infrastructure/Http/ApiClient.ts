@@ -10,7 +10,8 @@ export class ApiClient {
             method: request.method,
             params: request.params,
             baseURL: request.baseURL,
-            headers: request.headers
+            headers: request.headers,
+            data: request.data
         };
         return new Promise((resolve, reject) => {
           axios
