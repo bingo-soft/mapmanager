@@ -181,4 +181,17 @@ export default class MapManager {
     public static addLayer(map: AccentMap, layer: LayerInterface): void {
         map.addLayer(layer);
     }
+
+    /**
+     * Removes layer from the map.
+     *
+     * @function removeLayer
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     */
+    public static removeLayer(map: AccentMap, layer: LayerInterface): void {
+        map.removeLayer(layer);
+    }
 }

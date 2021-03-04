@@ -159,4 +159,15 @@ export default class Map {
     public addLayer(layer: LayerInterface): void {
         this.map.addLayer(layer.getLayer());
     }
+
+    /**
+     * Removes layer from the map.
+     *
+     * @function removeLayer
+     * @memberof Map
+     * @param {LayerInterface} layer - layer instance
+     */
+    public removeLayer(layer: LayerInterface): void {
+        this.map.removeLayer(layer.getLayer());
+    }
 }
