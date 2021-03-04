@@ -5,6 +5,7 @@ import VectorLayer from "../Domain/Model/Layer/Impl/VectorLayer"
 import LayerType from "../Domain/Model/Layer/LayerType"
 import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
+//import { ProjectionOptions } from "../Domain/Model/Source/ProjectionOptions"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
 
@@ -127,10 +128,10 @@ export default class MapManager {
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
             if (Object.prototype.hasOwnProperty.call(opts, "request")) { 
-                builder.setLoader(async () => {
+                builder.setLoader(async (): Promise<string> => {
                     const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                     return await query.execute(opts["request"]);
-                });
+                }, opts);
             }
 
             if (Object.prototype.hasOwnProperty.call(opts, "style")) {
@@ -152,7 +153,7 @@ export default class MapManager {
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
         const layer: VectorLayer = <VectorLayer>this.createLayer(LayerType.Vector, opts);
-        layer.addFeatures(features);
+        layer.addFeatures(features, opts);
         return layer;
     }
 

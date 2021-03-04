@@ -27,8 +27,8 @@ export default class LayerBuilder {
         return this;
     }
 
-    public setLoader(loader: Function): LayerBuilder {
-        this.layer.setLoader(loader);
+    public setLoader(loader: () => Promise<string>, opts?: unknown): LayerBuilder {
+        this.layer.setLoader(loader, opts);
         return this;
     }
 

@@ -7,8 +7,9 @@ import Style from "ol/style/Style"
 import BaseLayer from "../BaseLayer"
 import LayerType from "../LayerType"
 import SourceInterface from "../../Source/SourceInterface"
-import { ApiClient } from '../../../../Infrastructure/Http/ApiClient'
-import { ApiRequest } from '../../../../Infrastructure/Http/ApiRequest'
+//import { ProjectionOptions } from "../../Source/ProjectionOptions"
+//import { ApiClient } from '../../../../Infrastructure/Http/ApiClient'
+//import { ApiRequest } from '../../../../Infrastructure/Http/ApiRequest'
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
@@ -30,11 +31,15 @@ export default class VectorLayer extends BaseLayer {
         this.layer.setSource(<OlVectorSource> source.getSource());
     }
 
-    public setLoader(loader: Function): void {  
+    public setLoader(loader: () => Promise<string>, opts?: unknown): void {  
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
+        const crs: string = this.getCRS(opts);
         source.setLoader(async () => {
             const data = await loader();
-            source.addFeatures(new GeoJSON().readFeatures(data));
+            source.addFeatures(new GeoJSON().readFeatures(data, {
+                dataProjection: crs,
+                featureProjection: "EPSG:3857"
+            }));
         });
     }
 
@@ -45,8 +50,12 @@ export default class VectorLayer extends BaseLayer {
         (<BaseVector> this.layer).setStyle(<Style> style);
     }
 
-    public addFeatures(features: string): void {
-        (<OlVectorLayer> this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features));
+    public addFeatures(features: string, opts?: unknown): void {
+        const crs: string = this.getCRS(opts);
+        (<OlVectorLayer> this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features, {
+            dataProjection: crs,
+            featureProjection: "EPSG:3857"
+        }));
     }
 
     /**
@@ -69,6 +78,18 @@ export default class VectorLayer extends BaseLayer {
      */
     public getFeaturesAsGeoJSON(): string {
         return new GeoJSON().writeFeatures(this.getFeatures());
+    }
+
+    private getCRS(opts?: unknown): string {
+        let crs = "EPSG:3857";
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
+            if (opts["srs_handling"]["srs_handling_type"] == "keep_native") {
+                crs = opts["srs_handling"]["native_coordinate_system_id"];
+            } else {
+                crs = opts["srs_handling"]["declared_coordinate_system_id"];
+            }
+        }
+        return crs;
     }
 
 }

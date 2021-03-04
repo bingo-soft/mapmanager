@@ -1,6 +1,7 @@
 import OlLayer from "ol/layer/Layer"
 import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
+//import { ProjectionOptions } from "../Source/ProjectionOptions"
 
 export default interface LayerInterface
 {
@@ -10,7 +11,7 @@ export default interface LayerInterface
 
     setSource(source: SourceInterface): void;
 
-    setLoader(loader: Function): void;
+    setLoader(loader: () => Promise<string>, opts?: unknown): void;
 
     /**
      * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - Style
