@@ -2,7 +2,6 @@ import OlLayer from "ol/layer/Layer";
 import LayerInterface from "./LayerInterface"
 import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
-//import { ProjectionOptions } from "../Source/ProjectionOptions"
 import MethodNotImplemented from "../../Exception/MethodNotImplemented"
 
 export default abstract class BaseLayer implements LayerInterface

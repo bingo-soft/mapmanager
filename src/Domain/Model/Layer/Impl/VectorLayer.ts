@@ -7,9 +7,6 @@ import Style from "ol/style/Style"
 import BaseLayer from "../BaseLayer"
 import LayerType from "../LayerType"
 import SourceInterface from "../../Source/SourceInterface"
-//import { ProjectionOptions } from "../../Source/ProjectionOptions"
-//import { ApiClient } from '../../../../Infrastructure/Http/ApiClient'
-//import { ApiRequest } from '../../../../Infrastructure/Http/ApiRequest'
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
@@ -83,11 +80,8 @@ export default class VectorLayer extends BaseLayer {
     private getCRS(opts?: unknown): string {
         let crs = "EPSG:3857";
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
-            if (opts["srs_handling"]["srs_handling_type"] == "keep_native") {
-                crs = opts["srs_handling"]["native_coordinate_system_id"];
-            } else {
-                crs = opts["srs_handling"]["declared_coordinate_system_id"];
-            }
+            const srsH: unknown = opts["srs_handling"];
+            crs = srsH["srs_handling_type"] == "keep_native" ? srsH["native_coordinate_system_id"] : srsH["declared_coordinate_system_id"];
         }
         return crs;
     }

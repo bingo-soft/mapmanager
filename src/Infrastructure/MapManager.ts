@@ -5,7 +5,6 @@ import VectorLayer from "../Domain/Model/Layer/Impl/VectorLayer"
 import LayerType from "../Domain/Model/Layer/LayerType"
 import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
-//import { ProjectionOptions } from "../Domain/Model/Source/ProjectionOptions"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
 

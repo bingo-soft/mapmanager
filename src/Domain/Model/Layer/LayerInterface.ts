@@ -1,7 +1,6 @@
 import OlLayer from "ol/layer/Layer"
 import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
-//import { ProjectionOptions } from "../Source/ProjectionOptions"
 
 export default interface LayerInterface
 {
