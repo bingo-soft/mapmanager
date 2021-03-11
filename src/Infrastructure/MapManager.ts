@@ -101,8 +101,8 @@ export default class MapManager {
      * @param {String} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public static setDrawRegime(map: AccentMap, layer: LayerInterface, geometryType: string): void {
-        map.setDrawRegime(layer, geometryType);
+    public static setDrawRegime(map: AccentMap, layer: LayerInterface, geometryType: string, callback: (geoJSON: string) => void): void {
+        map.setDrawRegime(layer, geometryType, callback);
     }
 
     /**

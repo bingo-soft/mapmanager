@@ -30,11 +30,11 @@ export default class VectorLayer extends BaseLayer {
 
     public setLoader(loader: () => Promise<string>, opts?: unknown): void {  
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
-        const crs: string = this.getCRS(opts);
+        const srs: string = this.getSRSId(opts);
         source.setLoader(async () => {
             const data = await loader();
             source.addFeatures(new GeoJSON().readFeatures(data, {
-                dataProjection: crs,
+                dataProjection: "EPSG:" + srs,
                 featureProjection: "EPSG:3857"
             }));
         });
@@ -48,9 +48,9 @@ export default class VectorLayer extends BaseLayer {
     }
 
     public addFeatures(features: string, opts?: unknown): void {
-        const crs: string = this.getCRS(opts);
+        const srs: string = this.getSRSId(opts);
         (<OlVectorLayer> this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features, {
-            dataProjection: crs,
+            dataProjection: "EPSG:" + srs,
             featureProjection: "EPSG:3857"
         }));
     }
@@ -77,13 +77,13 @@ export default class VectorLayer extends BaseLayer {
         return new GeoJSON().writeFeatures(this.getFeatures());
     }
 
-    private getCRS(opts?: unknown): string {
-        let crs = "EPSG:3857";
+    private getSRSId(opts?: unknown): string {
+        let srs = "3857";
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
-            crs = srsH["srs_handling_type"] == "keep_native" ? srsH["native_coordinate_system_id"] : srsH["declared_coordinate_system_id"];
+            srs = srsH["srs_handling_type"] == "keep_native" ? srsH["native_coordinate_system_id"] : srsH["declared_coordinate_system_id"];
         }
-        return crs;
+        return srs;
     }
 
 }

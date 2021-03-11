@@ -8,10 +8,10 @@ import * as Proj from "ol/proj"
 import Interaction from "ol/interaction/Interaction"
 import LayerInterface from "../Layer/LayerInterface"
 import Regime from "./Regime"
-import Draw/* , { DrawEvent }  */ from "ol/interaction/Draw"
+import Draw, { DrawEvent } from "ol/interaction/Draw"
 import GeometryType from "ol/geom/GeometryType";
 import VectorLayer from "ol/layer/Vector"
-//import GeoJSON from "ol/format/GeoJSON"
+import GeoJSON from "ol/format/GeoJSON"
 import "ol-ext/dist/ol-ext.css"
 import "ol/ol.css"
 
@@ -108,7 +108,7 @@ export default class Map {
      * @param {string} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public setDrawRegime(layer: LayerInterface, geometryType: string/* , callback: (geoJSON: string) => void */): void {
+    public setDrawRegime(layer: LayerInterface, geometryType: string, callback: (geoJSON: string) => void): void {
         if (layer.getType() != "vector") {
             return;
         }
@@ -118,9 +118,9 @@ export default class Map {
             source: (<VectorLayer>layer.getLayer()).getSource(),
             type: <GeometryType>geometryType,
         });
-        /* draw.on("drawend", (e: DrawEvent) => {
+        draw.on("drawend", (e: DrawEvent) => {
             callback(new GeoJSON().writeFeature(e.feature));
-        }); */
+        });
         this.map.addInteraction(draw);
         this.interactions.push(draw);
         this.lastInteraction = draw;

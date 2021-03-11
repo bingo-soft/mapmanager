@@ -18,8 +18,8 @@ MapManager.setCenter(accentMap, 44.008741, 56.319241, "EPSG:4326");
 /* Put a layer consisting of simple features to the map */
 const opts1 = {
     "srs_handling": {
-        native_coordinate_system_id: "EPSG:1234",
-        declared_coordinate_system_id: "EPSG:4326",
+        native_coordinate_system_id: "1234",
+        declared_coordinate_system_id: "4326",
         srs_handling_type: "reproject"
     }
 }
@@ -33,8 +33,8 @@ const opts2 = {
         baseURL: "http://89.109.52.230:18181/geojson/layer/63"
     },
     "srs_handling": {
-        native_coordinate_system_id: "EPSG:3857",
-        declared_coordinate_system_id: "EPSG:3857",
+        native_coordinate_system_id: "3857",
+        declared_coordinate_system_id: "3857",
         srs_handling_type: "keep_native"
     }
 }
@@ -54,7 +54,10 @@ btDraw.onclick = function() {
         MapManager.setDrawRegime(
             accentMap, // map to draw on
             accentLayer3, // layer to draw on
-            "LineString" // feature type to be drawn
+            "LineString", // feature type to be drawn
+            function(geoJSON: string): void {
+                console.log(geoJSON);
+            }
         );
     } else {
         btDraw.style.backgroundColor = "initial";
