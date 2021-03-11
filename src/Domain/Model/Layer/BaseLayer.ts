@@ -14,6 +14,8 @@ export default abstract class BaseLayer implements LayerInterface
 
     public abstract getType(): LayerType;
 
+    public abstract getSource(): SourceInterface;    
+
     public abstract setSource(source: SourceInterface): void;    
 
     public setLoader(loader: () => Promise<string>, opts?: unknown): void {

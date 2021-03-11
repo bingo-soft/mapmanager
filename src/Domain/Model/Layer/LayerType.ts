@@ -1,5 +1,7 @@
 enum LayerType {
-    Vector = "vector"
+    Vector = "vector",
+    Tile = "tile",
+    ArcGIS = "arcgis"
 }
 
 export default LayerType;

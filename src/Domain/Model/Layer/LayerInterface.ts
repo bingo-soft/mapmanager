@@ -8,6 +8,8 @@ export default interface LayerInterface
 
     getType(): LayerType;
 
+    getSource(): SourceInterface;
+
     setSource(source: SourceInterface): void;
 
     setLoader(loader: () => Promise<string>, opts?: unknown): void;

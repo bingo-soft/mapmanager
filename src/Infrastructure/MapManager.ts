@@ -111,17 +111,29 @@ export default class MapManager {
      * @function createLayer
      * @memberof MapManager
      * @static
-     * @param {LayerType} type - layer type
+     * @param {LayerType} type - layer's source type
      * @param {object} opts - options
      * @return {LayerInterface} - layer
      */
-    public static createLayer(type: LayerType, opts?: unknown): LayerInterface { 
+    public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
         let builder: LayerBuilder;
         switch (type) {
-            case LayerType.Vector:
+            case SourceType.Vector:
                 builder = new LayerBuilder(new VectorLayer());
                 builder.setSource(SourceType.Vector);       
                 break;
+            /* case SourceType.Tile:
+                builder = new LayerBuilder(new TileLayer());
+                builder.setSource(SourceType.Tile); 
+                break;
+            case SourceType.XYZ:
+                builder = new LayerBuilder(new TileLayer());
+                builder.setSource(SourceType.XYZ); 
+                break;
+            case SourceType.TileArcGISRest:
+                builder = new LayerBuilder(new TileLayer());
+                builder.setSource(SourceType.TileArcGISRest);  
+                break; */
             default:
                 break;
         }
@@ -151,7 +163,7 @@ export default class MapManager {
      * @return {LayerInterface} - layer instance
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
-        const layer: VectorLayer = <VectorLayer>this.createLayer(LayerType.Vector, opts);
+        const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
         layer.addFeatures(features, opts);
         return layer;
     }
@@ -193,5 +205,13 @@ export default class MapManager {
      */
     public static removeLayer(map: AccentMap, layer: LayerInterface): void {
         map.removeLayer(layer);
+    }
+
+
+    public static fitFeatures(map: AccentMap, layer: LayerInterface): void { 
+        const extent = layer.getSource().getExtent();
+        if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
+            map.fitExtent(extent);
+        }
     }
 }

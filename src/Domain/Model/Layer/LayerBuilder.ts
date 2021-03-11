@@ -21,6 +21,11 @@ export default class LayerBuilder {
             case SourceType.Vector:
                 this.layer.setSource(new VectorSource());
                 break;
+           /*  case SourceType.Tile:
+                break;
+            case SourceType.ArcGIS:
+                this.layer.setSource(new VectorSource());
+                break; */
             default:
                 break;
         }

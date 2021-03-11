@@ -6,6 +6,7 @@ import Feature from "ol/Feature"
 import Style from "ol/style/Style"
 import BaseLayer from "../BaseLayer"
 import LayerType from "../LayerType"
+import LayerInterface from "../../Layer/LayerInterface"
 import SourceInterface from "../../Source/SourceInterface"
 
 /** @class VectorLayer */
@@ -22,6 +23,10 @@ export default class VectorLayer extends BaseLayer {
 
     public getType(): LayerType {
         return LayerType.Vector;
+    }
+
+    public getSource(): SourceInterface {
+        return this.layer.getSource();
     }
 
     public setSource(source: SourceInterface): void {

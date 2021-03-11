@@ -1,7 +1,7 @@
 import MapManager from "map-component-accent2";
 import AccentMap from "../../../src/Domain/Model/Map/Map";
 import Regime from "../../../src/Domain/Model/Map/Regime"
-import LayerType from "../../../src/Domain/Model/Layer/LayerType"
+import SourceType from "../../../src/Domain/Model/Source/SourceType"
 import VectorLayer from "../../../src/Domain/Model/Layer/Impl/VectorLayer";
 import LayerInterface from "../../../src/Domain/Model/Layer/LayerInterface";
 import Pattern from "../../../src/Infrastructure/Util/Pattern";
@@ -18,13 +18,14 @@ MapManager.setCenter(accentMap, 44.008741, 56.319241, "EPSG:4326");
 /* Put a layer consisting of simple features to the map */
 const opts1 = {
     "srs_handling": {
-        native_coordinate_system_id: "1234",
-        declared_coordinate_system_id: "4326",
+        native_coordinate_system_id: 1234,
+        declared_coordinate_system_id: 4326,
         srs_handling_type: "reproject"
     }
 }
 const accentLayer1: LayerInterface = MapManager.createLayerFromFeatures(geojsonObject, opts1);
 MapManager.addLayer(accentMap, accentLayer1);
+MapManager.fitFeatures(accentMap, accentLayer1);
 
 /* Put a layer consisting of remotely received features to the map */
 const opts2 = {
@@ -33,16 +34,16 @@ const opts2 = {
         baseURL: "http://89.109.52.230:18181/geojson/layer/63"
     },
     "srs_handling": {
-        native_coordinate_system_id: "3857",
-        declared_coordinate_system_id: "3857",
+        native_coordinate_system_id: 3857,
+        declared_coordinate_system_id: 3857,
         srs_handling_type: "keep_native"
     }
 }
-const accentLayer2: LayerInterface = MapManager.createLayer(LayerType.Vector, opts2);
+const accentLayer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
 MapManager.addLayer(accentMap, accentLayer2);
 
 /* Create an empty layer to draw on */
-const accentLayer3: LayerInterface = MapManager.createLayer(LayerType.Vector);
+const accentLayer3: LayerInterface = MapManager.createLayer(SourceType.Vector);
 MapManager.addLayer(accentMap, accentLayer3);
 
 const btDraw: HTMLElement = document.getElementById("draw-btn");

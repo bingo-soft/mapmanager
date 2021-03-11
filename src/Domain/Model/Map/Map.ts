@@ -1,5 +1,6 @@
 import OlMap from "ol/Map"
 import View from "ol/View"
+import { Extent as olExtent } from "ol/extent"
 import { OverviewMap, defaults as defaultControls } from 'ol/control'
 import { OSM } from "ol/source"
 import { Tile as TileLayer } from "ol/layer"
@@ -169,5 +170,16 @@ export default class Map {
      */
     public removeLayer(layer: LayerInterface): void {
         this.map.removeLayer(layer.getLayer());
+    }
+
+    /**
+     * Removes layer from the map.
+     *
+     * @function fitExtent
+     * @memberof Map
+     * @param {Extent} extent - extent to fit to
+     */
+    public fitExtent(extent: olExtent): void {
+        this.map.getView().fit(extent);
     }
 }

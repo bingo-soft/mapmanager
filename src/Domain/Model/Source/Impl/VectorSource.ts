@@ -1,4 +1,5 @@
 import { Vector as OlVectorSource } from "ol/source"
+import { Extent as olExtent } from "ol/extent"
 import GeoJSON from "ol/format/GeoJSON"
 import BaseSource from "../BaseSource"
 import SourceType from "../SourceType"
@@ -19,6 +20,11 @@ export default class VectorSource extends BaseSource {
 
     public getType(): SourceType {
         return SourceType.Vector;
+    }
+
+    public getExtent(): olExtent {
+        const source = <OlVectorSource> this.source;
+        return source.getExtent();
     }
 
 }
