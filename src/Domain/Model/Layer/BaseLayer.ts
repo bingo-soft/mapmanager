@@ -1,5 +1,6 @@
 import OlLayer from "ol/layer/Layer";
 import LayerInterface from "./LayerInterface"
+import SourceType from "../Source/SourceType"
 import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
 import MethodNotImplemented from "../../Exception/MethodNotImplemented"
@@ -12,9 +13,9 @@ export default abstract class BaseLayer implements LayerInterface
         return this.layer;
     }
 
-    public abstract getType(): LayerType;
+    public abstract getType(): SourceType;
 
-    public abstract getSource(): SourceInterface;    
+    public abstract getSource(): SourceInterface;
 
     public abstract setSource(source: SourceInterface): void;    
 
@@ -22,6 +23,19 @@ export default abstract class BaseLayer implements LayerInterface
         console.log(loader);
         console.log(opts);
         throw new MethodNotImplemented();
+    }
+
+    public setUrl(url: string): void {
+        console.log(url);
+        throw new MethodNotImplemented();
+    }
+
+    public setZIndex(index: number): void {
+        this.layer.setZIndex(index);
+    }
+
+    public setOpacity(opacity: number): void { 
+        this.layer.setOpacity(opacity);
     }
 
     /**

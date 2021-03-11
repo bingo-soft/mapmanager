@@ -2,6 +2,7 @@ import AccentMap from "../Domain/Model/Map/Map"
 import Regime from "../Domain/Model/Map/Regime"
 import LayerInterface from "../Domain/Model/Layer/LayerInterface"
 import VectorLayer from "../Domain/Model/Layer/Impl/VectorLayer"
+import TileLayer from "../Domain/Model/Layer/Impl/TileLayer"
 import LayerType from "../Domain/Model/Layer/LayerType"
 import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
@@ -125,7 +126,7 @@ export default class MapManager {
             /* case SourceType.Tile:
                 builder = new LayerBuilder(new TileLayer());
                 builder.setSource(SourceType.Tile); 
-                break;
+                break;   */
             case SourceType.XYZ:
                 builder = new LayerBuilder(new TileLayer());
                 builder.setSource(SourceType.XYZ); 
@@ -133,18 +134,20 @@ export default class MapManager {
             case SourceType.TileArcGISRest:
                 builder = new LayerBuilder(new TileLayer());
                 builder.setSource(SourceType.TileArcGISRest);  
-                break; */
+                break;
             default:
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
             if (Object.prototype.hasOwnProperty.call(opts, "request")) { 
-                builder.setLoader(async (): Promise<string> => {
-                    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                    return await query.execute(opts["request"]);
-                }, opts);
+                    builder.setLoader(async (): Promise<string> => {
+                        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                        return await query.execute(opts["request"]);
+                    }, opts);
             }
-
+            if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
+                builder.setUrl(opts["url"]);
+            }
             if (Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }            
@@ -207,11 +210,36 @@ export default class MapManager {
         map.removeLayer(layer);
     }
 
-
     public static fitFeatures(map: AccentMap, layer: LayerInterface): void { 
         const extent = layer.getSource().getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
             map.fitExtent(extent);
         }
+    }
+
+    /**
+     * Sets zIndex of layer
+     *
+     * @function setZIndex
+     * @memberof MapManager
+     * @static
+     * @param {LayerInterface} layer - layer instance
+     * @param {Number} index - zIndex to set
+     */
+    public static setZIndex(layer: LayerInterface, index: number): void {
+        layer.setZIndex(index);
+    }
+
+    /**
+     * Sets opacity of layer
+     *
+     * @function setOpacity
+     * @memberof MapManager
+     * @static
+     * @param {LayerInterface} layer - layer instance
+     * @param {Number} opacity - zIndex to set
+     */
+    public static setOpacity(layer: LayerInterface, opacity: number): void { 
+        layer.setOpacity(opacity);
     }
 }

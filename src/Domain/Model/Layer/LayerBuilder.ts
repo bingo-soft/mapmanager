@@ -1,6 +1,8 @@
 import LayerInterface from "./LayerInterface"
 import SourceType from "../Source/SourceType"
 import VectorSource from "../Source/Impl/VectorSource"
+import XYZSource from "../Source/Impl/XYZSource"
+import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource"
 import StyleBuilder from "../Style/StyleBuilder"
 
 /** @class LayerBuilder */
@@ -22,10 +24,13 @@ export default class LayerBuilder {
                 this.layer.setSource(new VectorSource());
                 break;
            /*  case SourceType.Tile:
+                break;  */
+            case SourceType.XYZ:
+                this.layer.setSource(new XYZSource());
                 break;
-            case SourceType.ArcGIS:
-                this.layer.setSource(new VectorSource());
-                break; */
+            case SourceType.TileArcGISRest:
+                this.layer.setSource(new TileArcGISRestSource());
+                break;
             default:
                 break;
         }
@@ -34,6 +39,11 @@ export default class LayerBuilder {
 
     public setLoader(loader: () => Promise<string>, opts?: unknown): LayerBuilder {
         this.layer.setLoader(loader, opts);
+        return this;
+    }
+
+    public setUrl(url: string): LayerBuilder {
+        this.layer.setUrl(url);
         return this;
     }
 

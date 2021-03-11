@@ -13,8 +13,10 @@ import Draw, { DrawEvent } from "ol/interaction/Draw"
 import GeometryType from "ol/geom/GeometryType";
 import VectorLayer from "ol/layer/Vector"
 import GeoJSON from "ol/format/GeoJSON"
+/* import Projection from "ol/proj/Projection"  */
 import "ol-ext/dist/ol-ext.css"
 import "ol/ol.css"
+import SourceType from "../Source/SourceType"
 
 /** @class Map */
 export default class Map { 
@@ -110,9 +112,11 @@ export default class Map {
      * @param {Function} callback - callback
      */
     public setDrawRegime(layer: LayerInterface, geometryType: string, callback: (geoJSON: string) => void): void {
-        if (layer.getType() != "vector") {
+        if (layer.getType() != SourceType.Vector) {
             return;
         }
+        /* const proj: Projection = layer.getSource().getProjection();
+        console.log(proj); */
         this.clearInteractions();
         this.regime = Regime.Draw;
         const draw: Draw = new Draw({
@@ -173,7 +177,7 @@ export default class Map {
     }
 
     /**
-     * Removes layer from the map.
+     * Fits map to extent
      *
      * @function fitExtent
      * @memberof Map
