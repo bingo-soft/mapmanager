@@ -20,8 +20,8 @@ export default class MapManager {
      * @param {String} targetDOMId - id of target DOM element
      * @return {AccentMap} - map instance
      */
-    public static createMap(targetDOMId: string/* , centerX: number, centerY: number, zoom: number */): AccentMap {
-        const map : AccentMap = new AccentMap(targetDOMId); 
+    public static createMap(targetDOMId: string, opts?: unknown): AccentMap {
+        const map : AccentMap = new AccentMap(targetDOMId, opts); 
         return map;
     }
 
@@ -48,8 +48,8 @@ export default class MapManager {
      * @param {Number} y - y coordinate
      * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
      */
-    public static setCenter(map: AccentMap, x: number, y: number, crs = "EPSG:3857"): void {
-        map.setCenter(x, y, crs);
+    public static setCenter(map: AccentMap, opts?: unknown): void {
+        map.setCenter(opts);
     }
 
     /**

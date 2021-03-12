@@ -1,7 +1,8 @@
 import OlMap from "ol/Map"
 import View from "ol/View"
 import { Extent as olExtent } from "ol/extent"
-import { OverviewMap, defaults as defaultControls } from 'ol/control'
+import { OverviewMap, defaults as defaultControls } from "ol/control"
+import TileSource from "ol/source/Tile";
 import { OSM } from "ol/source"
 import { Tile as TileLayer } from "ol/layer"
 import * as Coordinate from "ol/coordinate"
@@ -31,8 +32,39 @@ export default class Map {
      * @memberof Map
      * @param {String} targetDOMId - id of target DOM element 
      */
-    constructor(targetDOMId: string) {
-        const source: OSM = new OSM();
+    constructor(targetDOMId: string, opts?: unknown) {
+        let baseLayer = "osm", 
+            srsId = 3857,
+            centerX = 0,
+            centerY = 0,
+            centerSRSId = 3857,
+            zoom = 14;
+        if (typeof opts != "undefined") {
+            if (Object.prototype.hasOwnProperty.call(opts, "base_layer")) {
+                baseLayer = opts["base_layer"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "declared_coordinate_system_id")) {
+                srsId = opts["declared_coordinate_system_id"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "center")) {
+                centerX = opts["center"]["x"];
+                centerY = opts["center"]["y"];
+                centerSRSId = opts["center"]["declared_coordinate_system_id"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "zoom")) {
+                zoom = opts["zoom"];
+            }
+        }
+        let center: Coordinate.Coordinate = [centerX, centerY];
+        if (centerSRSId != srsId) {
+            center = Proj.transform(center, "EPSG:" + centerSRSId, "EPSG:" + srsId);
+        }
+        let source: TileSource = null;
+        if (baseLayer == "osm") {
+             source = new OSM();
+        } /* else if (...) {
+            TODO
+        } */
         const overviewMapControl: OverviewMap = new OverviewMap({
             layers: [
                 new TileLayer({
@@ -49,8 +81,9 @@ export default class Map {
             ],
             target: targetDOMId,
             view: new View({
-                center: [0, 0],
-                zoom: 13
+                projection: "EPSG:" + srsId,
+                center: center,
+                zoom: zoom
             })
         });
     }
@@ -81,13 +114,28 @@ export default class Map {
      *
      * @function setCenter
      * @memberof Map
-     * @param {Number} x - x coordinate
-     * @param {Number} y - y coordinate
-     * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
+     * @param {Object} opts - options
      */
-    public setCenter(x: number, y: number, crs = "EPSG:3857"): void {
-        let coordinate: Coordinate.Coordinate = [x, y];
-        coordinate = Proj.transform(coordinate, crs, "EPSG:3857");
+    public setCenter(opts?: unknown): void {
+        let centerX = 0,
+            centerY = 0,
+            centerSRSId = 3857;
+        if (typeof opts != "undefined") {
+            if (Object.prototype.hasOwnProperty.call(opts, "x")) {
+                centerX = opts["x"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "y")) {
+                centerY = opts["y"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "declared_coordinate_system_id")) {
+                centerSRSId = opts["declared_coordinate_system_id"];
+            }
+        }
+        const mapProj: string = this.map.getView().getProjection().getCode();
+        let coordinate: Coordinate.Coordinate = [centerX, centerY];
+        if (mapProj != "EPSG:" + centerSRSId) {
+            coordinate = Proj.transform(coordinate, "EPSG:" + centerSRSId, mapProj);
+        }
         this.map.getView().setCenter(coordinate);
     }
 
