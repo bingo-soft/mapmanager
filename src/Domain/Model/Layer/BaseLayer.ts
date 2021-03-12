@@ -1,7 +1,6 @@
 import OlLayer from "ol/layer/Layer";
 import LayerInterface from "./LayerInterface"
 import SourceType from "../Source/SourceType"
-import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
 import MethodNotImplemented from "../../Exception/MethodNotImplemented"
 

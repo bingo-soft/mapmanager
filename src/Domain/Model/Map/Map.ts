@@ -21,6 +21,7 @@ import SourceType from "../Source/SourceType"
 /** @class Map */
 export default class Map { 
     private map: OlMap;
+    private activeLayer: LayerInterface;
     private regime: Regime = Regime.Normal;
     private interactions: Interaction[] = [];
     private lastInteraction: Interaction;    
@@ -155,6 +156,28 @@ export default class Map {
     }
 
     /**
+     * Gets active layer
+     *
+     * @function getActiveLayer
+     * @memberof Map
+     * @return {LayerInterface} active layer instance
+     */
+    public getActiveLayer(): LayerInterface {
+        return this.activeLayer;
+    }
+
+    /**
+     * Sets active layer
+     *
+     * @function setActiveLayer
+     * @memberof Map
+     * @param {LayerInterface} layer layer instance
+     */
+    public setActiveLayer(layer: LayerInterface): void {
+        this.activeLayer = layer;
+    }
+
+    /**
      * Adds layer to the map.
      *
      * @function addLayer
@@ -185,5 +208,19 @@ export default class Map {
      */
     public fitExtent(extent: olExtent): void {
         this.map.getView().fit(extent);
+    }
+
+    /**
+     * Fits map to all layer's features extent
+     *
+     * @function fitLayer
+     * @memberof Map
+     * @param {LayerInterface} layer - layer instance
+     */
+    public fitLayer(layer: LayerInterface): void {
+        const extent = layer.getSource().getExtent();
+        if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
+            this.map.getView().fit(extent);
+        }
     }
 }

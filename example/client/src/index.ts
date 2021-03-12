@@ -31,7 +31,7 @@ const opts1 = {
 const accentLayer1: LayerInterface = MapManager.createLayerFromFeatures(geojsonObject, opts1);
 MapManager.setZIndex(accentLayer1, 10);
 MapManager.addLayer(accentMap, accentLayer1);
-MapManager.fitFeatures(accentMap, accentLayer1);
+MapManager.fitLayer(accentMap, accentLayer1);
 
 /* Put a layer consisting of remotely received features to the map */
 const opts2 = {
@@ -83,9 +83,12 @@ const opts4 = {
     url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
 }
 const accentLayer4: LayerInterface = MapManager.createLayer(SourceType.XYZ, opts4);
-MapManager.setZIndex(accentLayer4, 5);
-MapManager.setOpacity(accentLayer4, 0.7);
 MapManager.addLayer(accentMap, accentLayer4);
+MapManager.setActiveLayer(accentMap, accentLayer4);
+const activeLayer = MapManager.getActiveLayer(accentMap);
+MapManager.setZIndex(activeLayer, 5);
+MapManager.setOpacity(activeLayer, 0.7);
+
 
 
 /* TileArcGISRest layer */

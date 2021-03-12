@@ -3,7 +3,6 @@ import Regime from "../Domain/Model/Map/Regime"
 import LayerInterface from "../Domain/Model/Layer/LayerInterface"
 import VectorLayer from "../Domain/Model/Layer/Impl/VectorLayer"
 import TileLayer from "../Domain/Model/Layer/Impl/TileLayer"
-import LayerType from "../Domain/Model/Layer/LayerType"
 import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
@@ -210,11 +209,43 @@ export default class MapManager {
         map.removeLayer(layer);
     }
 
-    public static fitFeatures(map: AccentMap, layer: LayerInterface): void { 
-        const extent = layer.getSource().getExtent();
-        if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
-            map.fitExtent(extent);
-        }
+    /**
+     * Gets active layer of the map.
+     *
+     * @function getActiveLayer
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     * @return {LayerInterface} active layer instance
+     */
+    public static getActiveLayer(map: AccentMap): LayerInterface {
+        return map.getActiveLayer();
+    }
+
+    /**
+     * Sets active layer for the map.
+     *
+     * @function setActiveLayer
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     */
+    public static setActiveLayer(map: AccentMap, layer: LayerInterface): void {
+        map.setActiveLayer(layer);
+    }
+
+    /**
+     * Fits map to all layer's features extent
+     *
+     * @function fitLayer
+     * @memberof Map
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     */
+    public static fitLayer(map: AccentMap, layer: LayerInterface): void { 
+        map.fitLayer(layer);
     }
 
     /**
@@ -237,7 +268,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {LayerInterface} layer - layer instance
-     * @param {Number} opacity - zIndex to set
+     * @param {Number} opacity - opacity to set (from 0 to 1)
      */
     public static setOpacity(layer: LayerInterface, opacity: number): void { 
         layer.setOpacity(opacity);

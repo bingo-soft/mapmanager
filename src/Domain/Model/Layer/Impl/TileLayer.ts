@@ -20,7 +20,7 @@ export default class TileLayer extends BaseLayer {
         return this.layer.getSource().getType();
     }
 
-    public getSource(): SourceInterface { console.log(this.layer.getSource());
+    public getSource(): SourceInterface {
         return this.layer.getSource();
     }
 

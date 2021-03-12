@@ -1,6 +1,5 @@
 import OlLayer from "ol/layer/Layer"
 import SourceType from "../Source/SourceType"
-import LayerType from "./LayerType"
 import SourceInterface from "../Source/SourceInterface"
 
 export default interface LayerInterface
