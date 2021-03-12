@@ -1,5 +1,6 @@
 import MapManager from "map-component-accent2";
 import AccentMap from "../../../src/Domain/Model/Map/Map";
+import BaseLayer from "../../../src/Domain/Model/Map/BaseLayer"
 import Regime from "../../../src/Domain/Model/Map/Regime"
 import SourceType from "../../../src/Domain/Model/Source/SourceType"
 import VectorLayer from "../../../src/Domain/Model/Layer/Impl/VectorLayer";
@@ -18,7 +19,7 @@ const geojsonObject = "{\"type\":\"Point\",\"coordinates\":[43.9930658,56.325005
 
 /* Create and initialize map */
 const optsMap = { 
-    base_layer: "osm",
+    base_layer: BaseLayer.OSM,
     declared_coordinate_system_id: 3857,
     center: {
         x: 44.008741, // 4883416.36233908,
@@ -51,13 +52,8 @@ MapManager.addLayer(accentMap, accentLayer1);
 const opts2 = {
     request: {
         method: HttpMethod.POST,
-        baseURL: "http://89.109.52.230:18181/geojson/layer/63"
-    }/* ,
-    srs_handling: {
-        native_coordinate_system_id: 3857,
-        declared_coordinate_system_id: 3857,
-        srs_handling_type: "keep_native"
-    } */
+        base_url: "http://89.109.52.230:18181/geojson/layer/63"
+    }
 }
 const accentLayer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
 MapManager.setZIndex(accentLayer2, 10);

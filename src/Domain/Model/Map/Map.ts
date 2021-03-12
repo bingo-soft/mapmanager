@@ -9,6 +9,7 @@ import * as Coordinate from "ol/coordinate"
 import * as Proj from "ol/proj"
 import Interaction from "ol/interaction/Interaction"
 import LayerInterface from "../Layer/LayerInterface"
+import BaseLayer from "./BaseLayer"
 import Regime from "./Regime"
 import Draw, { DrawEvent } from "ol/interaction/Draw"
 import GeometryType from "ol/geom/GeometryType";
@@ -27,19 +28,25 @@ export default class Map {
     private interactions: Interaction[] = [];
     private lastInteraction: Interaction;    
 
+    private static readonly BASE_LAYER = BaseLayer.OSM;
+    private static readonly SRS_ID = 3857;
+    private static readonly CENTER_X = 0;
+    private static readonly CENTER_Y = 0;
+    private static readonly ZOOM = 14;
+
     /**
      * @constructor
      * @memberof Map
      * @param {String} targetDOMId - id of target DOM element 
      */
     constructor(targetDOMId: string, opts?: unknown) {
-        let baseLayer = "osm", 
-            srsId = 3857,
-            centerX = 0,
-            centerY = 0,
-            centerSRSId = 3857,
-            zoom = 14;
-        if (typeof opts != "undefined") {
+        let baseLayer = Map.BASE_LAYER, 
+            srsId = Map.SRS_ID,
+            centerX = Map.CENTER_X,
+            centerY = Map.CENTER_Y,
+            centerSRSId = Map.SRS_ID,
+            zoom = Map.ZOOM;
+        if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "base_layer")) {
                 baseLayer = opts["base_layer"];
             }
@@ -60,7 +67,7 @@ export default class Map {
             center = Proj.transform(center, "EPSG:" + centerSRSId, "EPSG:" + srsId);
         }
         let source: TileSource = null;
-        if (baseLayer == "osm") {
+        if (baseLayer == BaseLayer.OSM) {
              source = new OSM();
         } /* else if (...) {
             TODO
@@ -117,10 +124,10 @@ export default class Map {
      * @param {Object} opts - options
      */
     public setCenter(opts?: unknown): void {
-        let centerX = 0,
-            centerY = 0,
-            centerSRSId = 3857;
-        if (typeof opts != "undefined") {
+        let centerX = Map.CENTER_X,
+            centerY = Map.CENTER_Y,
+            centerSRSId = Map.SRS_ID;
+        if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "x")) {
                 centerX = opts["x"];
             }
@@ -164,7 +171,7 @@ export default class Map {
         if (layer.getType() != SourceType.Vector) {
             return;
         }
-        /* const proj: Projection = layer.getSource().getProjection();
+        /* const proj: Projection = layer.getSource().getProjection().getCode();
         console.log(proj); */
         this.clearInteractions();
         this.regime = Regime.Draw;

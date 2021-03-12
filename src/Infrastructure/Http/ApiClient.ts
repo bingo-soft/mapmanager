@@ -9,7 +9,7 @@ export class ApiClient {
         const payload = {
             method: request.method,
             params: request.params,
-            baseURL: request.baseURL,
+            baseURL: request.base_url,
             headers: request.headers,
             data: request.data
         };
