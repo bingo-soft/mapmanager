@@ -1,5 +1,6 @@
 import { Vector as OlVectorLayer } from "ol/layer"
 import BaseVector from "ol/layer/BaseVector"
+import { Source as OlSource } from "ol/source"
 import { Vector as OlVectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
 import Feature from "ol/Feature"
@@ -24,7 +25,7 @@ export default class VectorLayer extends BaseLayer {
         return SourceType.Vector;
     }
 
-    public getSource(): SourceInterface {
+    public getSource(): OlSource {
         return this.layer.getSource();
     }
 

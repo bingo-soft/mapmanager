@@ -27,9 +27,11 @@ export default class LayerBuilder {
                 break;  */
             case SourceType.XYZ:
                 this.layer.setSource(new XYZSource());
+                this.layer.setType(type);
                 break;
             case SourceType.TileArcGISRest:
                 this.layer.setSource(new TileArcGISRestSource());
+                this.layer.setType(type);
                 break;
             default:
                 break;

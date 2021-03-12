@@ -9,7 +9,7 @@ export default abstract class BaseSource implements SourceInterface
 {
     protected source: OlSource;
 
-    public getSource(): OlSource  {
+    public getSource(): OlSource {
         return this.source;
     }
 

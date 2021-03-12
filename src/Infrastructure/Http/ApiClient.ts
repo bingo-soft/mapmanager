@@ -3,8 +3,19 @@ import { AxiosError } from "axios"
 import { ApiRequest } from "./ApiRequest"
 import { ApiError } from "./ApiError"
 
+/** @class ApiClient */
 export class ApiClient {
 
+    /**
+     * Sets opacity of layer
+     *
+     * @function request
+     * @memberof ApiClient
+     * @static
+     * @param {ApiRequest} request - request params
+     * @param {Number} opacity - opacity to set (from 0 to 1)
+     * @return {Promise<string>} - promise
+     */
     public static request(request: ApiRequest): Promise<string> {
         const payload = {
             method: request.method,

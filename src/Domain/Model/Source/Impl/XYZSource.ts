@@ -3,12 +3,12 @@ import XYZ from "ol/source/XYZ";
 import BaseSource from "../BaseSource"
 import SourceType from "../SourceType"
 
-/** @class VectorSource */
-export default class TileSource extends BaseSource {
+/** @class XYZSource */
+export default class XYZSource extends BaseSource {
     
     /**
      * @constructor
-     * @memberof TileSource
+     * @memberof XYZSource
      */
     constructor() {
         super();

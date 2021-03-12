@@ -18,6 +18,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {String} targetDOMId - id of target DOM element
+     * @param {Object} opts - options
      * @return {AccentMap} - map instance
      */
     public static createMap(targetDOMId: string, opts?: unknown): AccentMap {
@@ -44,9 +45,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
-     * @param {Number} x - x coordinate
-     * @param {Number} y - y coordinate
-     * @param {String} crs - coordinates' CRS. Defaults to "EPSG:3857" (WGS 84 / Pseudo-Mercator)
+     * @param {Object} opts - options
      */
     public static setCenter(map: AccentMap, opts?: unknown): void {
         map.setCenter(opts);
@@ -111,8 +110,8 @@ export default class MapManager {
      * @function createLayer
      * @memberof MapManager
      * @static
-     * @param {LayerType} type - layer's source type
-     * @param {object} opts - options
+     * @param {SourceType} type - layer's source type
+     * @param {Object} opts - options
      * @return {LayerInterface} - layer
      */
     public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
@@ -160,8 +159,8 @@ export default class MapManager {
      * @function createLayerFromFeatures
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
-     * @param {ArrayBuffer|Document|Element|Object|string} features - features
+     * @param {String} features - a string representing features
+     * @param {Object} opts - options
      * @return {LayerInterface} - layer instance
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
@@ -255,10 +254,10 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {LayerInterface} layer - layer instance
-     * @param {Number} index - zIndex to set
+     * @param {Number} zIndex - zIndex to set
      */
-    public static setZIndex(layer: LayerInterface, index: number): void {
-        layer.setZIndex(index);
+    public static setZIndex(layer: LayerInterface, zIndex: number): void {
+        layer.setZIndex(zIndex);
     }
 
     /**

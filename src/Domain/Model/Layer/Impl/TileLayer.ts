@@ -1,11 +1,13 @@
 import { Tile as OlTileLayer } from "ol/layer"
-import { Tile as OlTileSource } from "ol/source"
+import { Source as OlSource } from "ol/source"
+import { TileImage as OlTileImage } from "ol/source"
 import BaseLayer from "../BaseLayer"
 import SourceType from "../../Source/SourceType"
 import SourceInterface from "../../Source/SourceInterface"
 
-/** @class VectorLayer */
+/** @class TileLayer */
 export default class TileLayer extends BaseLayer {
+    private type: SourceType;
     
     /**
      * @constructor
@@ -17,20 +19,23 @@ export default class TileLayer extends BaseLayer {
     }
 
     public getType(): SourceType { 
-        return this.layer.getSource().getType();
+        return this.type;
     }
 
-    public getSource(): SourceInterface {
+    public setType(type: SourceType): void { 
+        this.type = type;
+    } 
+
+    public getSource(): OlSource {
         return this.layer.getSource();
     }
 
     public setSource(source: SourceInterface): void {
-        this.layer.setSource(<OlTileSource> source.getSource());
+        this.layer.setSource(<OlTileImage> source.getSource());
     }
 
     public setUrl(url: string): void {
-        const source = <OlTileSource> this.layer.getSource();
-        source.setUrl(url);
+        (<OlTileImage> this.layer.getSource()).setUrl(url);
     }
 
     

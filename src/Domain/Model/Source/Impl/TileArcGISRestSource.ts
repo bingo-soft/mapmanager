@@ -3,12 +3,12 @@ import TileArcGISRest from 'ol/source/TileArcGISRest';
 import BaseSource from "../BaseSource"
 import SourceType from "../SourceType"
 
-/** @class VectorSource */
-export default class TileSource extends BaseSource {
+/** @class TileArcGISRestSource */
+export default class TileArcGISRestSource extends BaseSource {
     
     /**
      * @constructor
-     * @memberof TileSource
+     * @memberof TileArcGISRestSource
      */
     constructor() {
         super();

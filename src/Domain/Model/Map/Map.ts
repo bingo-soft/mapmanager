@@ -2,6 +2,7 @@ import OlMap from "ol/Map"
 import View from "ol/View"
 import { Extent as olExtent } from "ol/extent"
 import { OverviewMap, defaults as defaultControls } from "ol/control"
+import VectorSource from "ol/source/Vector";
 import TileSource from "ol/source/Tile";
 import { OSM } from "ol/source"
 import { Tile as TileLayer } from "ol/layer"
@@ -38,6 +39,7 @@ export default class Map {
      * @constructor
      * @memberof Map
      * @param {String} targetDOMId - id of target DOM element 
+     * @param {Object} opts - options 
      */
     constructor(targetDOMId: string, opts?: unknown) {
         let baseLayer = Map.BASE_LAYER, 
@@ -273,7 +275,7 @@ export default class Map {
      * @param {LayerInterface} layer - layer instance
      */
     public fitLayer(layer: LayerInterface): void {
-        const extent = layer.getSource().getExtent();
+        const extent = (<VectorSource>layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
             this.map.getView().fit(extent);
         }

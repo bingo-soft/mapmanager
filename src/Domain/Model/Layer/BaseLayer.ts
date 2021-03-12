@@ -1,4 +1,5 @@
 import OlLayer from "ol/layer/Layer";
+import { Source as OlSource } from "ol/source"
 import LayerInterface from "./LayerInterface"
 import SourceType from "../Source/SourceType"
 import SourceInterface from "../Source/SourceInterface"
@@ -14,7 +15,12 @@ export default abstract class BaseLayer implements LayerInterface
 
     public abstract getType(): SourceType;
 
-    public abstract getSource(): SourceInterface;
+    public setType(type: SourceType): void {
+        console.log(type);
+        throw new MethodNotImplemented();
+    }
+
+    public abstract getSource(): OlSource;
 
     public abstract setSource(source: SourceInterface): void;    
 
@@ -29,8 +35,8 @@ export default abstract class BaseLayer implements LayerInterface
         throw new MethodNotImplemented();
     }
 
-    public setZIndex(index: number): void {
-        this.layer.setZIndex(index);
+    public setZIndex(zIndex: number): void {
+        this.layer.setZIndex(zIndex);
     }
 
     public setOpacity(opacity: number): void { 

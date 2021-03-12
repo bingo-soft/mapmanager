@@ -1,4 +1,5 @@
 import OlLayer from "ol/layer/Layer"
+import { Source as OlSource } from "ol/source"
 import SourceType from "../Source/SourceType"
 import SourceInterface from "../Source/SourceInterface"
 
@@ -8,7 +9,9 @@ export default interface LayerInterface
 
     getType(): SourceType;
 
-    getSource(): SourceInterface;
+    setType(type: SourceType): void;
+
+    getSource(): OlSource;
 
     setSource(source: SourceInterface): void;
 
@@ -16,7 +19,7 @@ export default interface LayerInterface
 
     setUrl(url: string): void;
 
-    setZIndex(index: number): void;
+    setZIndex(zIndex: number): void;
 
     setOpacity(opacity: number): void;
 
