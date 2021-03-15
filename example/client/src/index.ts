@@ -56,7 +56,7 @@ const opts2 = {
         headers: null,
         data: null
     },
-    loadCallback: () => {
+    load_callback: () => {
         console.log("Layer loaded");
     }
 }

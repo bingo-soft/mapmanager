@@ -150,8 +150,8 @@ export default class MapManager {
             if (Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "loadCallback")) {
-                builder.setLoadCallback(opts["loadCallback"]);
+            if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
+                builder.setLoadCallback(opts["load_callback"]);
             }
         }
         return builder.build();
