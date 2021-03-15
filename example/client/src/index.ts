@@ -55,15 +55,12 @@ const opts2 = {
         base_url: "http://89.109.52.230:18181/geojson/layer/90",
         headers: null,
         data: null
-    }
-}
-const accentLayer2: LayerInterface = MapManager.createLayer(
-    SourceType.Vector,
-    opts2,
-    () => {
+    },
+    loadCallback: () => {
         console.log("Layer loaded");
     }
-);
+}
+const accentLayer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
 MapManager.setZIndex(accentLayer2, 10);
 MapManager.addLayer(accentMap, accentLayer2);
 MapManager.fitLayer(accentMap, accentLayer2);

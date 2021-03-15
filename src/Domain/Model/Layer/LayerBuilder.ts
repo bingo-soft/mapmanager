@@ -1,3 +1,4 @@
+import { EventsKey } from 'ol/events';
 import LayerInterface from "./LayerInterface"
 import SourceType from "../Source/SourceType"
 import VectorSource from "../Source/Impl/VectorSource"
@@ -53,6 +54,17 @@ export default class LayerBuilder {
         const style = (new StyleBuilder(opts)).build();
         this.layer.setStyle(style);
         return this;
+    }
+
+    public setLoadCallback(callback: () => void): void {
+        const sourceEventListener: EventsKey = this.layer.getSource().on("change", function(e) {
+            if (e.target.getState() == "ready") {
+                if (typeof callback == "function") {
+                    callback();
+                }
+                e.target.un("change", sourceEventListener);
+            }
+        });
     }
 
     /**

@@ -115,7 +115,7 @@ export default class MapManager {
      * @param {Function} callback - callback to run on complete layer load
      * @return {LayerInterface} created layer instance
      */
-    public static createLayer(type: SourceType, opts?: unknown, callback?: () => void): LayerInterface { 
+    public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
         let builder: LayerBuilder;
         switch (type) {
             case SourceType.Vector:
@@ -149,18 +149,12 @@ export default class MapManager {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
-            }            
-        }
-        const layer = builder.build();
-        const sourceEventListener = layer.getSource().on("change", function(e) {
-            if (e.target.getState() == "ready") {
-                if (typeof callback == "function") {
-                    callback();
-                }
-                e.target.un("change", sourceEventListener);
             }
-        });
-        return layer;
+            if (Object.prototype.hasOwnProperty.call(opts, "loadCallback")) {
+                builder.setLoadCallback(opts["loadCallback"]);
+            }
+        }
+        return builder.build();
     }
 
     /**
