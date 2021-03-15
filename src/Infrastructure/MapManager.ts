@@ -112,9 +112,10 @@ export default class MapManager {
      * @static
      * @param {SourceType} type - layer's source type
      * @param {Object} opts - options
+     * @param {Function} callback - callback to run on complete layer load
      * @return {LayerInterface} created layer instance
      */
-    public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
+    public static createLayer(type: SourceType, opts?: unknown, callback?: () => void): LayerInterface { 
         let builder: LayerBuilder;
         switch (type) {
             case SourceType.Vector:
@@ -150,7 +151,16 @@ export default class MapManager {
                 builder.setStyle(opts["style"]);
             }            
         }
-        return builder.build();
+        const layer = builder.build();
+        const sourceEventListener = layer.getSource().on("change", function(e) {
+            if (e.target.getState() == "ready") {
+                if (typeof callback == "function") {
+                    callback();
+                }
+                e.target.un("change", sourceEventListener);
+            }
+        });
+        return layer;
     }
 
     /**

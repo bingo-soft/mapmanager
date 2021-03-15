@@ -57,7 +57,13 @@ const opts2 = {
         data: null
     }
 }
-const accentLayer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
+const accentLayer2: LayerInterface = MapManager.createLayer(
+    SourceType.Vector,
+    opts2,
+    () => {
+        console.log("Layer loaded");
+    }
+);
 MapManager.setZIndex(accentLayer2, 10);
 MapManager.addLayer(accentMap, accentLayer2);
 MapManager.fitLayer(accentMap, accentLayer2);

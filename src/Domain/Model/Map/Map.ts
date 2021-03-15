@@ -182,7 +182,9 @@ export default class Map {
             type: <GeometryType>geometryType,
         });
         draw.on("drawend", (e: DrawEvent) => {
-            callback(new GeoJSON().writeFeature(e.feature));
+            if (typeof callback == "function") {
+                callback(new GeoJSON().writeFeature(e.feature));
+            }
         });
         this.map.addInteraction(draw);
         this.interactions.push(draw);
