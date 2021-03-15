@@ -12,5 +12,5 @@ export default interface SourceInterface
 
     getExtent(): olExtent;
 
-    getProjection(): Projection;
+    getProjectionCode(): string;
 }

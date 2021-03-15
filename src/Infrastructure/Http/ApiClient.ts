@@ -7,14 +7,14 @@ import { ApiError } from "./ApiError"
 export class ApiClient {
 
     /**
-     * Sets opacity of layer
+     * Performs API request
      *
      * @function request
      * @memberof ApiClient
      * @static
      * @param {ApiRequest} request - request params
      * @param {Number} opacity - opacity to set (from 0 to 1)
-     * @return {Promise<string>} - promise
+     * @return {Promise<string>} result of API request
      */
     public static request(request: ApiRequest): Promise<string> {
         const payload = {
@@ -37,6 +37,15 @@ export class ApiClient {
         }); 
     }
 
+    /**
+     * Normalizes error message
+     *
+     * @function normalizeError
+     * @memberof ApiClient
+     * @static
+     * @param {AxiosError} error - request params
+     * @return {ApiError} object representing normalized error
+     */
     private static normalizeError(error: AxiosError): ApiError {
         const data = error.response && error.response.data;
         return {

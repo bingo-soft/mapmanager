@@ -5,6 +5,7 @@ class Cookie {
     *
     * @function set
     * @memberof Cookie
+    * @static
     * @param {String} name - name of cookie.
     * @param {String} value - value of cookie.
     * @param {Number} lifetime - lifetime of cookie in seconds.
@@ -25,6 +26,7 @@ class Cookie {
     *
     * @function get
     * @memberof Cookie
+    * @static
     * @param {String} name - name of cookie to get.
     * @return {String} value of cookie
     */
@@ -47,6 +49,7 @@ class Cookie {
     *
     * @function delete
     * @memberof Cookie
+    * @static
     * @param {String} name - name of cookie to delete.
     */
     public static delete(name: string): void {

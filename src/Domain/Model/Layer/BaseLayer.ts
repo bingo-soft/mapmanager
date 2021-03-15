@@ -40,7 +40,7 @@ export default abstract class BaseLayer implements LayerInterface
     }
 
     public setOpacity(opacity: number): void { 
-        this.layer.setOpacity(opacity);
+        this.layer.setOpacity(opacity / 100);
     }
 
     /**

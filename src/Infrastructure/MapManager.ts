@@ -19,7 +19,7 @@ export default class MapManager {
      * @static
      * @param {String} targetDOMId - id of target DOM element
      * @param {Object} opts - options
-     * @return {AccentMap} - map instance
+     * @return {AccentMap} map instance
      */
     public static createMap(targetDOMId: string, opts?: unknown): AccentMap {
         const map : AccentMap = new AccentMap(targetDOMId, opts); 
@@ -71,7 +71,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
-     * @return {Regime} map regme
+     * @return {Regime} map regime
      */
     public static getRegime(map: AccentMap): Regime {
         return map.getRegime();
@@ -112,7 +112,7 @@ export default class MapManager {
      * @static
      * @param {SourceType} type - layer's source type
      * @param {Object} opts - options
-     * @return {LayerInterface} - layer
+     * @return {LayerInterface} created layer instance
      */
     public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
         let builder: LayerBuilder;
@@ -161,7 +161,7 @@ export default class MapManager {
      * @static
      * @param {String} features - a string representing features
      * @param {Object} opts - options
-     * @return {LayerInterface} - layer instance
+     * @return {LayerInterface} created layer instance
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
         const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
@@ -176,7 +176,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {LayerInterface} layer - layer instance
-     * @return {String} GeoJSON
+     * @return {String} GeoJSON representing features
      */
     public static getFeaturesAsGeoJSON(layer: VectorLayer): string {
         return layer.getFeaturesAsGeoJSON();
@@ -267,7 +267,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {LayerInterface} layer - layer instance
-     * @param {Number} opacity - opacity to set (from 0 to 1)
+     * @param {Number} opacity - opacity to set (from 0 to 100)
      */
     public static setOpacity(layer: LayerInterface, opacity: number): void { 
         layer.setOpacity(opacity);
