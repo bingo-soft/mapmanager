@@ -97,11 +97,10 @@ export default class MapManager {
      * @static
      * @param {AccentMap} map - map instance
      * @param {LayerInterface} layer - layer instance
-     * @param {String} geometryType - feature type
-     * @param {Function} callback - callback
+     * @param {Object} opts - feature type
      */
-    public static setDrawRegime(map: AccentMap, layer: LayerInterface, geometryType: string, callback: (geoJSON: string) => void): void {
-        map.setDrawRegime(layer, geometryType, callback);
+    public static setDrawRegime(map: AccentMap, layer: LayerInterface, opts: unknown): void {
+        map.setDrawRegime(layer, opts["geometry_type"], opts["draw_callback"]);
     }
 
     /**

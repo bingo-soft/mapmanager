@@ -79,11 +79,13 @@ btDraw.onclick = function() {
         MapManager.setDrawRegime(
             accentMap, // map to draw on
             accentLayer3, // layer to draw on
-            "LineString", // feature type to be drawn
-            function(geoJSON: string): void {
-                console.log(geoJSON);
-                const jsonGC: string = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
-                console.log(jsonGC);
+            {
+                geometry_type: "LineString",
+                draw_callback: function(geoJSON: string): void {
+                    console.log(geoJSON);
+                    const jsonGC: string = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
+                    console.log(jsonGC);
+                }
             }
         );
     } else {
