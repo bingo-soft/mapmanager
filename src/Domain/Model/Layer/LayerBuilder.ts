@@ -6,6 +6,7 @@ import VectorSource from "../Source/Impl/VectorSource"
 import XYZSource from "../Source/Impl/XYZSource"
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource"
 import StyleBuilder from "../Style/StyleBuilder"
+import { StyleType } from "../Style/StyleType";
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
@@ -51,8 +52,8 @@ export default class LayerBuilder {
         return this;
     }
 
-    public setStyle(opts: unknown): LayerBuilder {
-        const style = (new StyleBuilder(opts)).build();
+    public setStyle(opts?: unknown): LayerBuilder {
+        const style: StyleType = (new StyleBuilder(opts)).build();
         this.layer.setStyle(style);
         return this;
     }

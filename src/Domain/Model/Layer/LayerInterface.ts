@@ -2,6 +2,7 @@ import OlLayer from "ol/layer/Layer"
 import { Source as OlSource } from "ol/source"
 import SourceType from "../Source/SourceType"
 import SourceInterface from "../Source/SourceInterface"
+import { StyleType } from "../Style/StyleType"
 
 export default interface LayerInterface
 {
@@ -26,5 +27,5 @@ export default interface LayerInterface
     /**
      * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - Style
      */
-    setStyle(style): void;
+    setStyle(style: StyleType): void;
 }

@@ -146,12 +146,10 @@ export default class MapManager {
             if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "style")) {
-                builder.setStyle(opts["style"]);
-            }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
             }
+            builder.setStyle(opts["style"]);
         }
         return builder.build();
     }

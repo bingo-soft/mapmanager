@@ -3,16 +3,22 @@ import BaseVector from "ol/layer/BaseVector"
 import { Source as OlSource } from "ol/source"
 import { Vector as OlVectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
+import Geometry from "ol/geom/Geometry"
 import Feature from "ol/Feature"
 import GeometryCollection from "ol/geom/GeometryCollection"
+import GeometryType from "ol/geom/GeometryType"
 import Style from "ol/style/Style"
+import { StyleType } from "../../Style/StyleType"
 import BaseLayer from "../BaseLayer"
 import SourceType from "../../Source/SourceType"
 import SourceInterface from "../../Source/SourceInterface"
-import Geometry from "ol/geom/Geometry"
+import { DefaultStyle } from "../../Style/Impl/DefaultStyle"
+
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
+
+    style: StyleType;
     
     /**
      * @constructor
@@ -20,7 +26,13 @@ export default class VectorLayer extends BaseLayer {
      */
     constructor() {
         super();
-        this.layer = new OlVectorLayer();
+        this.style = DefaultStyle;
+        this.layer = new OlVectorLayer({
+            style: (feature): Style => {
+                const geomType: GeometryType = feature.getGeometry().getType();
+                return this.style[geomType];
+              }
+        });
     }
 
     public getType(): SourceType {
@@ -43,11 +55,9 @@ export default class VectorLayer extends BaseLayer {
         });
     }
 
-    /**
-     * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - Style
-     */
-    public setStyle(style: unknown): void { 
-        (<BaseVector> this.layer).setStyle(<Style> style);
+    public setStyle(style: StyleType): void { 
+        //(<BaseVector> this.layer).setStyle(style);
+        this.style = style;
     }
 
     public addFeatures(features: string, opts?: unknown): void {

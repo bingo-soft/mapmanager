@@ -37,10 +37,48 @@ MapManager.setCenter(accentMap, {x: 44.008741, y: 56.319241, declared_coordinate
 
 /* Put a layer consisting of simple features to the map */
 const opts1 = {
-    srs_handling: {
-        native_coordinate_system_id: 4326,
-        declared_coordinate_system_id: 3857,
-        srs_handling_type: "reproject"
+    "srs_handling": {
+        "native_coordinate_system_id": 4326,
+        "declared_coordinate_system_id": 3857,
+        "srs_handling_type": "reproject"
+    }, 
+    "style": {
+        "point": {
+            "marker_type":"simple_point",
+            "color":"#FC0515",
+            "opacity":85,
+            "size":23,
+            "rotation":0,
+            "offset":[5,10],
+            "anchor":["top","right"],
+            "icon_file":[]
+        },
+        "linestring": {
+            "color":"#DE0D0D",
+            "opacity":100,
+            "stroke_width":3,
+            "stroke_style": {
+                "guid":"78692f92-7354-4321-b8d3-64bb571e7079",
+                "pattern":["5","10","15","20","25","30"]
+            },
+            "arrow":"end"
+        },
+        "polygon": {
+            "color":"#0E38CF",
+            "opacity":100,
+            "stroke_width":2,
+            "stroke_style":{
+                "guid":"e3065873-891d-4777-9b1e-148e77418f1f",
+                "pattern":["4","6","8","10","12","14","16","18","20","22","24","26","28","30"]
+            },
+            "background_color":"#FFFFFF",
+            "pattern_color":"#000000",
+            "pattern_stroke_width":5,
+            "pattern_stroke_spacing":10,
+            "pattern_stroke_rotation":0,
+            "pattern_offset":0,
+            "pattern_scale":1
+        }
     }
 }
 const accentLayer1: LayerInterface = MapManager.createLayerFromFeatures(geojsonObject, opts1);
@@ -50,13 +88,13 @@ MapManager.addLayer(accentMap, accentLayer1);
 
 /* Put a layer consisting of remotely received features to the map */
 const opts2 = {
-    request: {
-        method: HttpMethod.POST,
-        base_url: "http://89.109.52.230:18181/geojson/layer/90",
-        headers: null,
-        data: null
+    "request": {
+        "method": HttpMethod.POST,
+        "base_url": "http://89.109.52.230:18181/geojson/layer/90",
+        "headers": null,
+        "data": null
     },
-    load_callback: () => {
+    "load_callback": () => {
         console.log("Layer loaded");
     }
 }
@@ -66,7 +104,47 @@ MapManager.addLayer(accentMap, accentLayer2);
 MapManager.fitLayer(accentMap, accentLayer2);
 
 /* Create an empty layer to draw on */
-const accentLayer3: LayerInterface = MapManager.createLayer(SourceType.Vector);
+const opts3 = {
+    "style": {
+        "point": {
+            "marker_type":"simple_point",
+            "color":"#FC0515",
+            "opacity":85,
+            "size":23,
+            "rotation":0,
+            "offset":[5,10],
+            "anchor":["top","right"],
+            "icon_file":[]
+        },
+        "linestring": {
+            "color":"#DE0D0D",
+            "opacity":100,
+            "stroke_width":3,
+            "stroke_style": {
+                "guid":"78692f92-7354-4321-b8d3-64bb571e7079",
+                "pattern":["5","10","15","20","25","30"]
+            },
+            "arrow":"end"
+        },
+        "polygon": {
+            "color":"#0E38CF",
+            "opacity":100,
+            "stroke_width":2,
+            "stroke_style":{
+                "guid":"e3065873-891d-4777-9b1e-148e77418f1f",
+                "pattern":["4","6","8","10","12","14","16","18","20","22","24","26","28","30"]
+            },
+            "background_color":"#FFFFFF",
+            "pattern_color":"#000000",
+            "pattern_stroke_width":5,
+            "pattern_stroke_spacing":10,
+            "pattern_stroke_rotation":0,
+            "pattern_offset":0,
+            "pattern_scale":1
+        }
+    }
+}
+const accentLayer3: LayerInterface = MapManager.createLayer(SourceType.Vector, opts3);
 MapManager.setZIndex(accentLayer3, 10);
 MapManager.addLayer(accentMap, accentLayer3);
 
@@ -100,7 +178,7 @@ btDraw.onclick = function() {
 };
 
 /* XYZ layer */
-const opts4 = {
+/* const opts4 = {
     url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
 }
 const accentLayer4: LayerInterface = MapManager.createLayer(SourceType.XYZ, opts4);
@@ -109,7 +187,7 @@ MapManager.addLayer(accentMap, accentLayer4);
 MapManager.setActiveLayer(accentMap, accentLayer4);
 const activeLayer: LayerInterface = MapManager.getActiveLayer(accentMap);
 MapManager.setZIndex(activeLayer, 5);
-MapManager.setOpacity(activeLayer, 70);
+MapManager.setOpacity(activeLayer, 70); */
 
 
 
