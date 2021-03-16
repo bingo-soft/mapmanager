@@ -78,18 +78,22 @@ btDraw.onclick = function() {
     if (regime == Regime.Normal) {
         MapManager.setDrawRegime(
             accentMap, // map to draw on
-            accentLayer1, // layer to draw on
+            accentLayer3, // layer to draw on
             "LineString", // feature type to be drawn
             function(geoJSON: string): void {
                 console.log(geoJSON);
+                const jsonGC: string = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
+                console.log(jsonGC);
             }
         );
     } else {
         btDraw.style.backgroundColor = "initial";
         btDraw.style.color = "initial";
         MapManager.setNormalRegime(accentMap);
-        const json: string = MapManager.getFeaturesAsGeoJSON(<VectorLayer>accentLayer3);
+        const json: string = MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer3);
+        const jsonGC = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
         console.log(json);
+        console.log(jsonGC);
     }
 };
 
@@ -117,10 +121,10 @@ console.log(accentLayer5.getType()); */
 
 
 /* Patterns example */
-const dfp = Pattern.getDefaultFillPatterns();
+/* const dfp = Pattern.getDefaultFillPatterns();
 console.log(dfp);
 const ep = Pattern.getPatternDataURI("empty", "#ff0000");
-console.log(ep);
+console.log(ep); */
 
     
 

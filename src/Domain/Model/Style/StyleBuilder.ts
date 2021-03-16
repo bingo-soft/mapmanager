@@ -1,4 +1,4 @@
-import GeometryType from 'ol/geom/GeometryType'
+import GeometryType from "ol/geom/GeometryType"
 import { DefaultStyle } from "./Impl/DefaultStyle"
 import { DynamicStyle } from "./Impl/DynamicStyle"
 

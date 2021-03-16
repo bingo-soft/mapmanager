@@ -174,16 +174,29 @@ export default class MapManager {
     }
 
     /**
-     * Gets features of the layer as GeoJSON
+     * Gets features of the layer as FeatureCollection GeoJSON
      *
-     * @function getFeaturesAsGeoJSON
+     * @function getFeaturesAsFeatureCollection
      * @memberof MapManager
      * @static
      * @param {LayerInterface} layer - layer instance
-     * @return {String} GeoJSON representing features
+     * @return {String} GeoJSON representing features as FeatureCollection
      */
-    public static getFeaturesAsGeoJSON(layer: VectorLayer): string {
-        return layer.getFeaturesAsGeoJSON();
+    public static getFeaturesAsFeatureCollection(layer: VectorLayer): string {
+        return layer.getFeaturesAsFeatureCollection();
+    }
+
+    /**
+     * Gets features of the layer as GeometryCollection GeoJSON
+     *
+     * @function getFeaturesAsGeometryCollection
+     * @memberof MapManager
+     * @static
+     * @param {LayerInterface} layer - layer instance
+     * @return {String} GeoJSON representing features as GeometryCollection
+     */
+    public static getFeaturesAsGeometryCollection(layer: VectorLayer): string {
+        return layer.getFeaturesAsGeometryCollection();
     }
     
     /**

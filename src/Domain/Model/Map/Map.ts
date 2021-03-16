@@ -2,7 +2,7 @@ import OlMap from "ol/Map"
 import View from "ol/View"
 import { Extent as olExtent } from "ol/extent"
 import { OverviewMap, defaults as defaultControls } from "ol/control"
-import VectorSource from "ol/source/Vector";
+import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
 import TileSource from "ol/source/Tile";
 import { OSM } from "ol/source"
 import { Tile as TileLayer } from "ol/layer"
@@ -16,10 +16,12 @@ import Draw, { DrawEvent } from "ol/interaction/Draw"
 import GeometryType from "ol/geom/GeometryType";
 import VectorLayer from "ol/layer/Vector"
 import GeoJSON from "ol/format/GeoJSON"
+import Collection from 'ol/Collection';
 /* import Projection from "ol/proj/Projection"  */
 import "ol-ext/dist/ol-ext.css"
 import "ol/ol.css"
 import SourceType from "../Source/SourceType"
+import { EventsKey } from "ol/events";
 
 /** @class Map */
 export default class Map { 
@@ -177,13 +179,21 @@ export default class Map {
         console.log(proj); */
         this.clearInteractions();
         this.regime = Regime.Draw;
+        const source = (<VectorLayer>layer.getLayer()).getSource();
         const draw: Draw = new Draw({
-            source: (<VectorLayer>layer.getLayer()).getSource(),
+            source: source,
+            features: new Collection(),
             type: <GeometryType>geometryType,
         });
-        draw.on("drawend", (e: DrawEvent) => {
-            if (typeof callback == "function") {
+        /* draw.on("drawend", (e: DrawEvent) => { console.log(new GeoJSON().writeFeature(e.feature));
+            if (typeof callback === "function") {
                 callback(new GeoJSON().writeFeature(e.feature));
+            }
+        }); */
+        const listener: EventsKey = source.on("addfeature", (e: VectorSourceEvent) => { 
+            if (typeof callback === "function") {
+                callback(new GeoJSON().writeFeature(e.feature));
+                e.target.un("addfeature", listener);
             }
         });
         this.map.addInteraction(draw);

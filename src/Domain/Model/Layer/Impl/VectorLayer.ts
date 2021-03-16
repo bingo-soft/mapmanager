@@ -4,10 +4,12 @@ import { Source as OlSource } from "ol/source"
 import { Vector as OlVectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
 import Feature from "ol/Feature"
+import GeometryCollection from "ol/geom/GeometryCollection"
 import Style from "ol/style/Style"
 import BaseLayer from "../BaseLayer"
 import SourceType from "../../Source/SourceType"
 import SourceInterface from "../../Source/SourceInterface"
+import Geometry from "ol/geom/Geometry"
 
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
@@ -68,14 +70,29 @@ export default class VectorLayer extends BaseLayer {
     }
     
     /**
-     * Gets features of layer as GeoJSON
+     * Gets features of layer as FeatureCollection GeoJSON
      *
-     * @function getFeaturesAsGeoJSON
+     * @function getFeaturesAsFeatureCollection
      * @memberof Layer
      * @return {String} - GeoJSON
      */
-    public getFeaturesAsGeoJSON(): string {
+    public getFeaturesAsFeatureCollection(): string {
         return new GeoJSON().writeFeatures(this.getFeatures());
+    }
+
+    /**
+     * Gets features of the layer as GeometryCollection GeoJSON
+     *
+     * @function getFeaturesAsGeometryCollection
+     * @memberof Layer
+     * @return {String} - GeoJSON
+     */
+    public getFeaturesAsGeometryCollection(): string {
+        const geoms: Geometry[] = [];
+        this.getFeatures().forEach((el): void => {
+            geoms.push(el.getGeometry());
+        });
+        return new GeoJSON().writeGeometry(new GeometryCollection(geoms));
     }
 
     private getSRSId(opts?: unknown): number {
