@@ -1,5 +1,5 @@
 import { Vector as OlVectorLayer } from "ol/layer"
-import BaseVector from "ol/layer/BaseVector"
+//import BaseVector from "ol/layer/BaseVector"
 import { Source as OlSource } from "ol/source"
 import { Vector as OlVectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
@@ -18,20 +18,25 @@ import { DefaultStyle } from "../../Style/Impl/DefaultStyle"
 /** @class VectorLayer */
 export default class VectorLayer extends BaseLayer {
 
-    style: StyleType;
+    private style: StyleType;
     
     /**
      * @constructor
      * @memberof VectorLayer
      */
-    constructor() {
+    constructor(opts?: unknown) {
         super();
+        this.srs = "EPSG:3857";
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
+            const srsH: unknown = opts["srs_handling"];
+            this.srs = "EPSG:" + (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
+        }
         this.style = DefaultStyle;
         this.layer = new OlVectorLayer({
             style: (feature): Style => {
                 const geomType: GeometryType = feature.getGeometry().getType();
                 return this.style[geomType];
-              }
+            }
         });
     }
 
@@ -51,7 +56,10 @@ export default class VectorLayer extends BaseLayer {
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
         source.setLoader(async () => {
             const data = await loader();
-            source.addFeatures(new GeoJSON().readFeatures(data));
+            source.addFeatures(new GeoJSON().readFeatures(data, {
+                dataProjection: this.srs,
+                featureProjection: "EPSG:3857"
+            }));
         });
     }
 
@@ -60,10 +68,10 @@ export default class VectorLayer extends BaseLayer {
         this.style = style;
     }
 
-    public addFeatures(features: string, opts?: unknown): void {
-        const srs: number = this.getSRSId(opts);
+    public addFeatures(features: string/* , opts?: unknown */): void {
+        //const srs: number = this.getSRSId(opts);
         (<OlVectorLayer> this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features, {
-            dataProjection: "EPSG:" + srs.toString(),
+            dataProjection: this.srs,
             featureProjection: "EPSG:3857"
         }));
     }
@@ -75,7 +83,7 @@ export default class VectorLayer extends BaseLayer {
      * @memberof Layer
      * @return {Array} - features of the layer
      */
-    public getFeatures(): Feature[] {
+    private getFeatures(): Feature[] {
         return (<OlVectorLayer> this.layer).getSource().getFeatures();
     }
     
@@ -87,7 +95,10 @@ export default class VectorLayer extends BaseLayer {
      * @return {String} - GeoJSON
      */
     public getFeaturesAsFeatureCollection(): string {
-        return new GeoJSON().writeFeatures(this.getFeatures());
+        return new GeoJSON().writeFeatures(this.getFeatures(), {
+            dataProjection: this.srs,
+            featureProjection: "EPSG:3857"
+        });
     }
 
     /**
@@ -102,16 +113,19 @@ export default class VectorLayer extends BaseLayer {
         this.getFeatures().forEach((el): void => {
             geoms.push(el.getGeometry());
         });
-        return new GeoJSON().writeGeometry(new GeometryCollection(geoms));
+        return new GeoJSON().writeGeometry(new GeometryCollection(geoms), {
+            dataProjection: this.srs,
+            featureProjection: "EPSG:3857"
+        });
     }
 
-    private getSRSId(opts?: unknown): number {
-        let srs = 3857;
+    /* private getSRS(opts?: unknown): string {
+        let srs = "EPSG:3857";
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
             srs = srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"];
         }
-        return srs;
-    }
+        return "EPSG:" + srs;
+    } */
 
 }

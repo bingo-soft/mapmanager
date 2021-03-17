@@ -9,8 +9,9 @@ import MethodNotImplemented from "../../Exception/MethodNotImplemented"
 export default abstract class BaseLayer implements LayerInterface
 {
     protected layer: OlLayer;
+    protected srs: string;
 
-    getLayer(): OlLayer {
+    public getLayer(): OlLayer {
         return this.layer;
     }
 
@@ -19,6 +20,10 @@ export default abstract class BaseLayer implements LayerInterface
     public setType(type: SourceType): void {
         console.log(type);
         throw new MethodNotImplemented();
+    }
+
+    public getSRS(): string {
+        return this.srs;
     }
 
     public abstract getSource(): OlSource;

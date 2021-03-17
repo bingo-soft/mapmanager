@@ -85,6 +85,7 @@ const accentLayer1: LayerInterface = MapManager.createLayerFromFeatures(geojsonO
 console.log(accentLayer1.getType());
 MapManager.setZIndex(accentLayer1, 10);
 MapManager.addLayer(accentMap, accentLayer1);
+console.log(MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer1));
 
 /* Put a layer consisting of remotely received features to the map */
 const opts2 = {
@@ -105,6 +106,11 @@ MapManager.fitLayer(accentMap, accentLayer2);
 
 /* Create an empty layer to draw on */
 const opts3 = {
+    "srs_handling": {
+        "native_coordinate_system_id": 4326,
+        "declared_coordinate_system_id": 3857,
+        "srs_handling_type": "reproject"
+    }, 
     "style": {
         "point": {
             "marker_type":"simple_point",

@@ -192,7 +192,10 @@ export default class Map {
         }); */
         const listener: EventsKey = source.on("addfeature", (e: VectorSourceEvent) => { 
             if (typeof callback === "function") {
-                callback(new GeoJSON().writeFeature(e.feature));
+                callback(new GeoJSON().writeFeature(e.feature, {
+                    dataProjection: layer.getSRS(),
+                    featureProjection: "EPSG:3857"
+                }));
                 e.target.un("addfeature", listener);
             }
         });

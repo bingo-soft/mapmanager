@@ -118,7 +118,7 @@ export default class MapManager {
         let builder: LayerBuilder;
         switch (type) {
             case SourceType.Vector:
-                builder = new LayerBuilder(new VectorLayer());
+                builder = new LayerBuilder(new VectorLayer(opts));
                 builder.setSource(SourceType.Vector);       
                 break;
             /* case SourceType.Tile:
@@ -166,7 +166,9 @@ export default class MapManager {
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
         const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
-        layer.addFeatures(features, opts);
+        if (features) {
+            layer.addFeatures(features/* , opts */);
+        }
         return layer;
     }
 
