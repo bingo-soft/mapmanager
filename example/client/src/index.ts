@@ -15,7 +15,10 @@ const geojsonObject = "{\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\
 //const geojsonObject = "{ \"type\": \"Point\", \"coordinates\": [43.9930658, 56.325005] }";
 //const geojsonObject = JSON.stringify({ 'type': 'FeatureCollection', 'features': [{ 'type': 'Point', 'coordinates': [43.9930658, 56.325005] }] })
 
-
+const gc = '{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[4897603.92,7623148.2]},{"type":"Point","coordinates":[4899454.21,7623553.69]}]}';
+const flat = MapManager.flattenGeometry(gc);
+console.log(gc);
+console.log(flat);
 
 /* Create and initialize map */
 const optsMap = { 

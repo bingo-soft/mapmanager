@@ -197,6 +197,19 @@ export default class MapManager {
     public static getFeaturesAsGeometryCollection(layer: VectorLayer): string {
         return layer.getFeaturesAsGeometryCollection();
     }
+
+    /**
+     * Flattens geometry from GeometryCollection to FeatureCollection
+     *
+     * @function flattenGeometry
+     * @memberof MapManager
+     * @static
+     * @param {String} features - features to flatten
+     * @return {String} flattened features
+     */
+    public static flattenGeometry(features: string): string { debugger;
+        return VectorLayer.flattenGeometry(features);
+    }
     
     /**
      * Adds layer to the map.
