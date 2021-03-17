@@ -119,36 +119,4 @@ export default class VectorLayer extends BaseLayer {
         });
     }
 
-    /**
-     * Flattens geometry from GeometryCollection to FeatureCollection
-     *
-     * @function flattenGeometry
-     * @memberof Layer
-     * @static
-     * @param {String} features - features to flatten
-     * @return {String} flattened features
-     */
-    public static flattenGeometry(features: string): string {
-        const objFeatures: unknown = JSON.parse(features);  
-        if (objFeatures["type"] !== "undefined" && objFeatures["type"] == "GeometryCollection") {
-            const featureCollection: unknown = { type: "FeatureCollection", features: [] };
-            const geometries: unknown[] = objFeatures["geometries"];
-            geometries.forEach(el => {
-                featureCollection["features"].push({ "type": "Feature", "geometry": el });
-            });
-            return JSON.stringify(featureCollection);
-        }
-        return features;
-    }
-
-    
-    /* private getSRS(opts?: unknown): string {
-        let srs = "EPSG:3857";
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
-            const srsH: unknown = opts["srs_handling"];
-            srs = srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"];
-        }
-        return "EPSG:" + srs;
-    } */
-
 }

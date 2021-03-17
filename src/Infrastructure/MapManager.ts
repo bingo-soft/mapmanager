@@ -7,6 +7,7 @@ import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
+import Geometry from "./Util/Geometry"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -165,8 +166,9 @@ export default class MapManager {
      * @return {LayerInterface} created layer instance
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
+        features = Geometry.flattenGeometry(features);
         const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
-        if (features) {
+            if (features) {
             layer.addFeatures(features/* , opts */);
         }
         return layer;
@@ -198,19 +200,6 @@ export default class MapManager {
         return layer.getFeaturesAsGeometryCollection();
     }
 
-    /**
-     * Flattens geometry from GeometryCollection to FeatureCollection
-     *
-     * @function flattenGeometry
-     * @memberof MapManager
-     * @static
-     * @param {String} features - features to flatten
-     * @return {String} flattened features
-     */
-    public static flattenGeometry(features: string): string { debugger;
-        return VectorLayer.flattenGeometry(features);
-    }
-    
     /**
      * Adds layer to the map.
      *
