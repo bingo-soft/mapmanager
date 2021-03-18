@@ -168,9 +168,9 @@ export default class MapManager {
      * @return {LayerInterface} created layer instance
      */
     public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
-        features = Geometry.flattenGeometry(features);
         const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
-            if (features) {
+        if (features) {
+            features = Geometry.flattenGeometry(features);
             layer.addFeatures(features/* , opts */);
         }
         return layer;
