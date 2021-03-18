@@ -30,9 +30,9 @@ export default abstract class BaseLayer implements LayerInterface
 
     public abstract setSource(source: SourceInterface): void;    
 
-    public setLoader(loader: () => Promise<string>, opts?: unknown): void {
+    public setLoader(loader: () => Promise<string>/* , opts?: unknown */): void {
         console.log(loader);
-        console.log(opts);
+        //console.log(opts);
         throw new MethodNotImplemented();
     }
 

@@ -13,8 +13,7 @@ export default class Geometry {
         const objFeatures: unknown = JSON.parse(features);  
         if (objFeatures["type"] !== "undefined" && objFeatures["type"] == "GeometryCollection") {
             const featureCollection: unknown = { type: "FeatureCollection", features: [] };
-            const geometries: unknown[] = objFeatures["geometries"];
-            geometries.forEach(el => {
+            objFeatures["geometries"].forEach((el: unknown): void => {
                 featureCollection["features"].push({ "type": "Feature", "geometry": el });
             });
             return JSON.stringify(featureCollection);

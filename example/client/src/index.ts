@@ -91,7 +91,7 @@ console.log(MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer1
 const opts2 = {
     "request": {
         "method": HttpMethod.POST,
-        "base_url": "http://89.109.52.230:18181/geojson/layer/90",
+        "base_url": "http://89.109.52.230:18181/geojson/layer/90", //"http://82.208.68.85:8085/geoserver/nnov/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=nnov%3Alayer_931_&outputFormat=application%2Fjson"
         "headers": null,
         "data": null
     },
@@ -184,7 +184,7 @@ btDraw.onclick = function() {
 };
 
 /* XYZ layer */
-/* const opts4 = {
+const opts4 = {
     url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
 }
 const accentLayer4: LayerInterface = MapManager.createLayer(SourceType.XYZ, opts4);
@@ -193,17 +193,17 @@ MapManager.addLayer(accentMap, accentLayer4);
 MapManager.setActiveLayer(accentMap, accentLayer4);
 const activeLayer: LayerInterface = MapManager.getActiveLayer(accentMap);
 MapManager.setZIndex(activeLayer, 5);
-MapManager.setOpacity(activeLayer, 70); */
+MapManager.setOpacity(activeLayer, 70);
 
 
 
 /* TileArcGISRest layer */
-/* const opts5 = {
+const opts5 = {
     url: "https://pkk.rosreestr.ru/arcgis/rest/services/PKK6/ZONES/MapServer/export?layers=show%3A5&dpi=96&transparent=true&format=png32&bboxSR=102100&imageSR=102100&f=image&ID1=Rosreestr_TerriroryZones&Name1=Территориальные%20зоны&Projection=EPSG:3857"
 }
 const accentLayer5: LayerInterface = MapManager.createLayer(SourceType.TileArcGISRest, opts5);
 MapManager.addLayer(accentMap, accentLayer5);
-console.log(accentLayer5.getType()); */
+console.log(accentLayer5.getType());
 
 
 /* Patterns example */

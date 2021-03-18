@@ -138,19 +138,21 @@ export default class MapManager {
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
-            if (Object.prototype.hasOwnProperty.call(opts, "request")) { 
+            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
                     builder.setLoader(async (): Promise<string> => {
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(opts["request"]);
-                    }, opts);
+                    }/* , opts */);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
+            if (type == SourceType.Vector) {
+                builder.setStyle(opts["style"]);
+            }
+            if ((type == SourceType.XYZ || type == SourceType.TileArcGISRest) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
             }
-            builder.setStyle(opts["style"]);
         }
         return builder.build();
     }

@@ -1,5 +1,6 @@
 import { Vector as OlVectorSource } from "ol/source"
 import { Extent as olExtent } from "ol/extent"
+import * as olLoadingstrategy from 'ol/loadingstrategy';
 import GeoJSON from "ol/format/GeoJSON"
 import BaseSource from "../BaseSource"
 import SourceType from "../SourceType"
@@ -14,7 +15,8 @@ export default class VectorSource extends BaseSource {
     constructor() {
         super();
         this.source = new OlVectorSource({
-            format: new GeoJSON()
+            format: new GeoJSON(),
+            strategy: olLoadingstrategy.bbox
         });
     }
 

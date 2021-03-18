@@ -12,7 +12,7 @@ export default interface LayerInterface
     getSRS(): string;
     getSource(): OlSource;
     setSource(source: SourceInterface): void;
-    setLoader(loader: () => Promise<string>, opts?: unknown): void;
+    setLoader(loader: () => Promise<string>/* , opts?: unknown */): void;
     setUrl(url: string): void;
     setZIndex(zIndex: number): void;
     setOpacity(opacity: number): void;
