@@ -81,7 +81,7 @@ export default class StyleBuilder {
             style = new Style({
                 image: new Icon({
                     opacity: opts["opacity"] / 100,
-                    rotation: opts["rotation"],
+                    rotation: opts["rotation"] * Math.PI / 180,
                     offset: opts["offset"],
                     anchor: [StyleBuilder.POSITIONS[opts["anchor"][0]], StyleBuilder.POSITIONS[opts["anchor"][1]]],
                     src: opts["image_path"],

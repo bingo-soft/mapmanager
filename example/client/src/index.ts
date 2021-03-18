@@ -48,10 +48,12 @@ const opts1 = {
             "color":"#FC0515",
             "opacity": 100,
             "size": 23,
-            "rotation":0,
+            "rotation": 90,
             "offset":[1, 5],
             "anchor":["top", "left"],
-            "icon_file": "assets/car-icon.png"
+            "icon_file": {},
+            "image_path": "assets/car-icon.png"
+            //"image_path": "assets/point.svg"
         },
         "linestring": {
             "color":"#DE0D0D",
@@ -91,7 +93,9 @@ console.log(MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer1
 const opts2 = {
     "request": {
         "method": HttpMethod.POST,
-        "base_url": "http://89.109.52.230:18181/geojson/layer/90", //"http://82.208.68.85:8085/geoserver/nnov/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=nnov%3Alayer_931_&outputFormat=application%2Fjson"
+        "base_url": "http://89.109.52.230:18181/geojson/layer/90",
+        //"base_url": "http://172.24.64.93:8181/geojson/layer/90",
+        //"base_url": "http://82.208.68.85:8085/geoserver/nnov/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=nnov%3Alayer_931_&outputFormat=application%2Fjson",
         "headers": null,
         "data": null
     },
