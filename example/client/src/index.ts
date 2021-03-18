@@ -44,14 +44,14 @@ const opts1 = {
     }, 
     "style": {
         "point": {
-            "marker_type":"simple_point",
+            "marker_type":"image",
             "color":"#FC0515",
-            "opacity":85,
-            "size":23,
+            "opacity": 100,
+            "size": 23,
             "rotation":0,
-            "offset":[5,10],
-            "anchor":["top","right"],
-            "icon_file":[]
+            "offset":[1, 5],
+            "anchor":["top", "left"],
+            "icon_file": "assets/car-icon.png"
         },
         "linestring": {
             "color":"#DE0D0D",
@@ -120,7 +120,7 @@ const opts3 = {
             "rotation":0,
             "offset":[5,10],
             "anchor":["top","right"],
-            "icon_file":[]
+            "icon_file": ""
         },
         "linestring": {
             "color":"#DE0D0D",
@@ -184,7 +184,7 @@ btDraw.onclick = function() {
 };
 
 /* XYZ layer */
-const opts4 = {
+/* const opts4 = {
     url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
 }
 const accentLayer4: LayerInterface = MapManager.createLayer(SourceType.XYZ, opts4);
@@ -193,17 +193,17 @@ MapManager.addLayer(accentMap, accentLayer4);
 MapManager.setActiveLayer(accentMap, accentLayer4);
 const activeLayer: LayerInterface = MapManager.getActiveLayer(accentMap);
 MapManager.setZIndex(activeLayer, 5);
-MapManager.setOpacity(activeLayer, 70);
+MapManager.setOpacity(activeLayer, 70); */
 
 
 
 /* TileArcGISRest layer */
-const opts5 = {
+/* const opts5 = {
     url: "https://pkk.rosreestr.ru/arcgis/rest/services/PKK6/ZONES/MapServer/export?layers=show%3A5&dpi=96&transparent=true&format=png32&bboxSR=102100&imageSR=102100&f=image&ID1=Rosreestr_TerriroryZones&Name1=Территориальные%20зоны&Projection=EPSG:3857"
 }
 const accentLayer5: LayerInterface = MapManager.createLayer(SourceType.TileArcGISRest, opts5);
 MapManager.addLayer(accentMap, accentLayer5);
-console.log(accentLayer5.getType());
+console.log(accentLayer5.getType()); */
 
 
 /* Patterns example */

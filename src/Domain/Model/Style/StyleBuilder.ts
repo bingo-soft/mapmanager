@@ -13,7 +13,7 @@ export default class StyleBuilder {
         "top": 0,
         "bottom": 1,
         "left": 0,
-        "right": 100,
+        "right": 1,
         "middle": 0.5
     }
 
@@ -80,7 +80,7 @@ export default class StyleBuilder {
         } else if (opts["marker_type"] == "image") {
             style = new Style({
                 image: new Icon({
-                    opacity: opts["opacity"],
+                    opacity: opts["opacity"] / 100,
                     rotation: opts["rotation"],
                     offset: opts["offset"],
                     anchor: [StyleBuilder.POSITIONS[opts["anchor"][0]], StyleBuilder.POSITIONS[opts["anchor"][1]]],
