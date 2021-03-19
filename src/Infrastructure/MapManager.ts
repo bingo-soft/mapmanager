@@ -7,7 +7,10 @@ import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
+import Feature from "../Domain/Model/Feature/Feature"
+import FeatureCollection from "../Domain/Model/FeatureCollection/FeatureCollection"
 import Geometry from "./Util/Geometry"
+
 
 /** @class MapManager */
 export default class MapManager { 
@@ -168,7 +171,7 @@ export default class MapManager {
      * @return {LayerInterface} created layer instance
      */
     public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
-        const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
+        const layer: VectorLayer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
         if (geoJSON) {
             geoJSON = Geometry.flattenGeometry(geoJSON);
             layer.addFeatures(geoJSON);
@@ -176,8 +179,8 @@ export default class MapManager {
         return layer;
     }
 
-    public static validateFeatures(layer: VectorLayer, geometryType: string): boolean {
-        return layer.validateFeatures(layer, geometryType);
+    public static getFeatureCollection(layer: VectorLayer): FeatureCollection {
+        return layer.getFeatureCollection();
     }
 
     /**
@@ -189,9 +192,9 @@ export default class MapManager {
      * @param {LayerInterface} layer - layer instance
      * @return {String} GeoJSON representing features as FeatureCollection
      */
-    public static getFeaturesAsFeatureCollection(layer: VectorLayer): string {
+    /* public static getFeaturesAsFeatureCollection(layer: VectorLayer): string {
         return layer.getFeaturesAsFeatureCollection();
-    }
+    } */
 
     /**
      * Gets features of the layer as single geometry GeoJSON
@@ -202,8 +205,8 @@ export default class MapManager {
      * @param {LayerInterface} layer - layer instance
      * @return {String} GeoJSON representing features as single geometry
      */
-    public static getFeaturesAsSingleGeometry(layer: VectorLayer): string {
-        return layer.getFeaturesAsSingleGeometry();
+    public static getFeaturesAsSingleGeometry(features: FeatureCollection): string {
+        return features.getAsSingleGeometry();
     }
 
     /**
@@ -215,8 +218,8 @@ export default class MapManager {
      * @param {LayerInterface} layer - layer instance
      * @return {String} GeoJSON representing features as multi geometry
      */
-    public static getFeaturesAsMultiGeometry(layer: VectorLayer): string {
-        return layer.getFeaturesAsMultiGeometry();
+    public static getFeaturesAsMultiGeometry(features: FeatureCollection): string {
+        return features.getAsMultiGeometry();
     }
 
     /**
@@ -228,8 +231,8 @@ export default class MapManager {
      * @param {LayerInterface} layer - layer instance
      * @return {String} GeoJSON representing features as GeometryCollection
      */
-    public static getFeaturesAsGeometryCollection(layer: VectorLayer): string {
-        return layer.getFeaturesAsGeometryCollection();
+    public static getFeaturesAsGeometryCollection(features: FeatureCollection): string {
+        return features.getAsGeometryCollection();
     }
 
     /**

@@ -6,8 +6,10 @@ import SourceType from "../../../src/Domain/Model/Source/SourceType"
 import VectorLayer from "../../../src/Domain/Model/Layer/Impl/VectorLayer";
 import LayerInterface from "../../../src/Domain/Model/Layer/LayerInterface";
 import Feature from "../../../src/Domain/Model/Feature/Feature";
+import FeatureCollection from "../../../src/Domain/Model/FeatureCollection/FeatureCollection";
 import Pattern from "../../../src/Infrastructure/Util/Pattern";
 import { HttpMethod } from "../../../src/Infrastructure/Http/HttpMethod";
+
 
 //const geojsonObject = "{\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}},\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9959246, 56.3238061]},\"properties\":{}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9930658,56.325005]},\"properties\":{}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9910433,56.329966]},\"properties\":{}}]}";
 const geojsonObject = '{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[43.9959246, 56.3238061]},{"type":"Point","coordinates":[43.9930658,56.325005]},{"type":"Point","coordinates":[43.9910433,56.329966]}]}';
@@ -85,10 +87,8 @@ const opts1 = {
     }
 }
 const accentLayer1: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, opts1);
-console.log(accentLayer1.getType());
 MapManager.setZIndex(accentLayer1, 10);
 MapManager.addLayer(accentMap, accentLayer1);
-console.log(MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer1));
 
 /* Put a layer consisting of remotely received features to the map */
 const opts2 = {
@@ -159,41 +159,54 @@ const accentLayer3: LayerInterface = MapManager.createLayer(SourceType.Vector, o
 MapManager.setZIndex(accentLayer3, 10);
 MapManager.addLayer(accentMap, accentLayer3);
 
-const btDraw: HTMLElement = document.getElementById("draw-btn");
-btDraw.onclick = function() {
-    btDraw.style.backgroundColor = "#777";
-    btDraw.style.color = "#fff";
+const btDrawPoint: HTMLElement = document.getElementById("draw-btn-point");
+const btDrawLine: HTMLElement = document.getElementById("draw-btn-line");
+btDrawPoint.onclick = onClick;
+btDrawLine.onclick = onClick;
+
+
+function onClick(e): any {
+    e.target.style.backgroundColor = "#777";
+    e.target.style.color = "#fff";
+    let geomType: string = "Point";
+    switch(e.target.id) {
+        case "draw-btn-point": 
+            geomType = "Point";
+            break;
+        case "draw-btn-line": 
+            geomType = "LineString";
+            break;
+        default:
+            geomType = "Point";
+    }
     const regime: Regime = MapManager.getRegime(accentMap);
     if (regime == Regime.Normal) {
         MapManager.setDrawRegime(
             accentMap, // map to draw on
             accentLayer3, // layer to draw on
             {
-                geometry_type: "LineString",
+                geometry_type: geomType,
                 draw_callback: function(feature: Feature): void {
-                    console.log("Drawn feature: " + feature.getGeometryAsGeoJSON());
-                    const isValid = MapManager.validateFeatures(<VectorLayer> accentLayer3, "Point");
-                    if (isValid) {
-                        const sg = MapManager.getFeaturesAsSingleGeometry(<VectorLayer> accentLayer3);
-                        const mg = MapManager.getFeaturesAsMultiGeometry(<VectorLayer> accentLayer3);
-                        const gc = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
-                        console.log("Layer's features as single geometry: " + sg);
-                        console.log("Layer's features as multi geometry: " + mg);
-                        console.log("Layer's features as GeometryCollection: " + gc);
+                   // console.log("Drawn feature: " + feature.getGeometryAsGeoJSON());
+                    const fc: FeatureCollection = MapManager.getFeatureCollection(<VectorLayer> accentLayer3);
+                    let geometry: string = "";
+                    if (fc.isSingle()) {
+                        geometry = MapManager.getFeaturesAsSingleGeometry(fc);
                     }
-                    //const jsonGC: string = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
-                    //console.log(jsonGC);
+                    if (fc.isMixed()) {
+                        geometry = MapManager.getFeaturesAsGeometryCollection(fc);
+                    }
+                    if (!fc.isSingle() && !fc.isMixed()) {
+                        geometry = MapManager.getFeaturesAsMultiGeometry(fc);
+                    }
+                    console.log(geometry);
                 }
             }
         );
     } else {
-        btDraw.style.backgroundColor = "initial";
-        btDraw.style.color = "initial";
+        e.target.style.backgroundColor = "initial";
+        e.target.style.color = "initial";
         MapManager.setNormalRegime(accentMap);
-        const json: string = MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer3);
-        const jsonGC = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
-        console.log(json);
-        console.log(jsonGC);
     }
 };
 

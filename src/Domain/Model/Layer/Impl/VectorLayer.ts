@@ -3,9 +3,7 @@ import { Vector as OlVectorLayer } from "ol/layer"
 import { Source as OlSource } from "ol/source"
 import { Vector as OlVectorSource } from "ol/source"
 import GeoJSON from "ol/format/GeoJSON"
-import Geometry from "ol/geom/Geometry"
-import Feature from "ol/Feature"
-import GeometryCollection from "ol/geom/GeometryCollection"
+import OlFeature from "ol/Feature"
 import GeometryType from "ol/geom/GeometryType"
 import Style from "ol/style/Style"
 import { StyleType } from "../../Style/StyleType"
@@ -13,6 +11,7 @@ import BaseLayer from "../BaseLayer"
 import SourceType from "../../Source/SourceType"
 import SourceInterface from "../../Source/SourceInterface"
 import { DefaultStyle } from "../../Style/Impl/DefaultStyle"
+import FeatureCollection from "../../FeatureCollection/FeatureCollection"
 
 
 /** @class VectorLayer */
@@ -33,7 +32,7 @@ export default class VectorLayer extends BaseLayer {
         }
         this.style = DefaultStyle;
         this.layer = new OlVectorLayer({
-            style: (feature): Style => {
+            style: (feature: OlFeature): Style => {
                 const geomType: GeometryType = feature.getGeometry().getType();
                 return this.style[geomType];
             }
@@ -83,12 +82,12 @@ export default class VectorLayer extends BaseLayer {
      * @memberof Layer
      * @return {Array} - features of the layer
      */
-    private getFeatures(): Feature[] {
+    private getFeatures(): OlFeature[] {
         return (<OlVectorLayer> this.layer).getSource().getFeatures();
     }
 
-    public validateFeatures(layer: VectorLayer, geometryType: string): boolean {
-        return true; // TODO
+    public getFeatureCollection(): FeatureCollection {
+        return new FeatureCollection(this.getFeatures(), this.srs);
     }
     
     /**
@@ -98,51 +97,11 @@ export default class VectorLayer extends BaseLayer {
      * @memberof Layer
      * @return {String} - GeoJSON
      */
-    public getFeaturesAsFeatureCollection(): string {
+    /* public getFeaturesAsFeatureCollection(): string {
         return new GeoJSON().writeFeatures(this.getFeatures(), {
             dataProjection: this.srs,
             featureProjection: "EPSG:3857"
         });
-    }
-
-    /**
-     * Gets features of the layer as single geometry GeoJSON
-     *
-     * @function getFeaturesAsSingleGeometry
-     * @memberof Layer
-     * @return {String} - GeoJSON
-     */
-    public getFeaturesAsSingleGeometry(): string {
-        return "Not implemented yet"; // TODO
-    }
-
-    /**
-     * Gets features of the layer as multi geometry GeoJSON
-     *
-     * @function getFeaturesAsMultiGeometry
-     * @memberof Layer
-     * @return {String} - GeoJSON
-     */
-    public getFeaturesAsMultiGeometry(): string {
-        return "Not implemented yet"; // TODO
-    }
-
-    /**
-     * Gets features of the layer as GeometryCollection GeoJSON
-     *
-     * @function getFeaturesAsGeometryCollection
-     * @memberof Layer
-     * @return {String} - GeoJSON
-     */
-    public getFeaturesAsGeometryCollection(): string {
-        const geoms: Geometry[] = [];
-        this.getFeatures().forEach((el): void => {
-            geoms.push(el.getGeometry());
-        });
-        return new GeoJSON().writeGeometry(new GeometryCollection(geoms), {
-            dataProjection: this.srs,
-            featureProjection: "EPSG:3857"
-        });
-    }
+    } */
 
 }

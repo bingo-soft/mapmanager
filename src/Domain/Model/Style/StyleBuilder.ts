@@ -106,7 +106,6 @@ export default class StyleBuilder {
     }
 
     private setPolygonStyle(opts: unknown): void {
-        console.log(opts);
     }
 
     /**
