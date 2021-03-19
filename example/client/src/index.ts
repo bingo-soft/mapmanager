@@ -5,6 +5,7 @@ import Regime from "../../../src/Domain/Model/Map/Regime"
 import SourceType from "../../../src/Domain/Model/Source/SourceType"
 import VectorLayer from "../../../src/Domain/Model/Layer/Impl/VectorLayer";
 import LayerInterface from "../../../src/Domain/Model/Layer/LayerInterface";
+import Feature from "../../../src/Domain/Model/Feature/Feature";
 import Pattern from "../../../src/Infrastructure/Util/Pattern";
 import { HttpMethod } from "../../../src/Infrastructure/Http/HttpMethod";
 
@@ -83,7 +84,7 @@ const opts1 = {
         }
     }
 }
-const accentLayer1: LayerInterface = MapManager.createLayerFromFeatures(geojsonObject, opts1);
+const accentLayer1: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, opts1);
 console.log(accentLayer1.getType());
 MapManager.setZIndex(accentLayer1, 10);
 MapManager.addLayer(accentMap, accentLayer1);
@@ -93,9 +94,9 @@ console.log(MapManager.getFeaturesAsFeatureCollection(<VectorLayer> accentLayer1
 const opts2 = {
     "request": {
         "method": HttpMethod.POST,
-        "base_url": "http://89.109.52.230:18181/geojson/layer/90",
+        //"base_url": "http://89.109.52.230:18181/geojson/layer/90",
         //"base_url": "http://172.24.64.93:8181/geojson/layer/90",
-        //"base_url": "http://82.208.68.85:8085/geoserver/nnov/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=nnov%3Alayer_931_&outputFormat=application%2Fjson",
+        "base_url": "http://82.208.68.85:8085/geoserver/accent/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=accent%3Alayer_931_&outputFormat=application%2Fjson",
         "headers": null,
         "data": null
     },
@@ -169,10 +170,19 @@ btDraw.onclick = function() {
             accentLayer3, // layer to draw on
             {
                 geometry_type: "LineString",
-                draw_callback: function(geoJSON: string): void {
-                    console.log(geoJSON);
-                    const jsonGC: string = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
-                    console.log(jsonGC);
+                draw_callback: function(feature: Feature): void {
+                    console.log("Drawn feature: " + feature.getGeometryAsGeoJSON());
+                    const isValid = MapManager.validateFeatures(<VectorLayer> accentLayer3, "Point");
+                    if (isValid) {
+                        const sg = MapManager.getFeaturesAsSingleGeometry(<VectorLayer> accentLayer3);
+                        const mg = MapManager.getFeaturesAsMultiGeometry(<VectorLayer> accentLayer3);
+                        const gc = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
+                        console.log("Layer's features as single geometry: " + sg);
+                        console.log("Layer's features as multi geometry: " + mg);
+                        console.log("Layer's features as GeometryCollection: " + gc);
+                    }
+                    //const jsonGC: string = MapManager.getFeaturesAsGeometryCollection(<VectorLayer> accentLayer3);
+                    //console.log(jsonGC);
                 }
             }
         );

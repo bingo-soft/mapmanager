@@ -167,13 +167,17 @@ export default class MapManager {
      * @param {Object} opts - options
      * @return {LayerInterface} created layer instance
      */
-    public static createLayerFromFeatures(features: string, opts?: unknown): LayerInterface {
+    public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
         const layer: VectorLayer = <VectorLayer>this.createLayer(SourceType.Vector, opts);
-        if (features) {
-            features = Geometry.flattenGeometry(features);
-            layer.addFeatures(features/* , opts */);
+        if (geoJSON) {
+            geoJSON = Geometry.flattenGeometry(geoJSON);
+            layer.addFeatures(geoJSON);
         }
         return layer;
+    }
+
+    public static validateFeatures(layer: VectorLayer, geometryType: string): boolean {
+        return layer.validateFeatures(layer, geometryType);
     }
 
     /**
@@ -187,6 +191,32 @@ export default class MapManager {
      */
     public static getFeaturesAsFeatureCollection(layer: VectorLayer): string {
         return layer.getFeaturesAsFeatureCollection();
+    }
+
+    /**
+     * Gets features of the layer as single geometry GeoJSON
+     *
+     * @function getFeaturesAsSingleGeometry
+     * @memberof MapManager
+     * @static
+     * @param {LayerInterface} layer - layer instance
+     * @return {String} GeoJSON representing features as single geometry
+     */
+    public static getFeaturesAsSingleGeometry(layer: VectorLayer): string {
+        return layer.getFeaturesAsSingleGeometry();
+    }
+
+    /**
+     * Gets features of the layer as multi geometry GeoJSON
+     *
+     * @function getFeaturesAsMultiGeometry
+     * @memberof MapManager
+     * @static
+     * @param {LayerInterface} layer - layer instance
+     * @return {String} GeoJSON representing features as multi geometry
+     */
+    public static getFeaturesAsMultiGeometry(layer: VectorLayer): string {
+        return layer.getFeaturesAsMultiGeometry();
     }
 
     /**

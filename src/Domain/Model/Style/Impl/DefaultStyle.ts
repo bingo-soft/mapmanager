@@ -32,8 +32,8 @@ export const DefaultStyle: StyleType = {
     [GeometryType.POLYGON]: new Style({
         stroke: new Stroke({
             color: "blue",
-            lineDash: [4],
-            width: 3,
+            //lineDash: [4],
+            width: 1,
         }),
         fill: new Fill({
             color: "rgba(255, 255, 0, 0.3)",

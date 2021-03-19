@@ -9,19 +9,22 @@ import { Tile as TileLayer } from "ol/layer"
 import * as Coordinate from "ol/coordinate"
 import * as Proj from "ol/proj"
 import Interaction from "ol/interaction/Interaction"
-import LayerInterface from "../Layer/LayerInterface"
-import BaseLayer from "./BaseLayer"
-import Regime from "./Regime"
 import Draw, { DrawEvent } from "ol/interaction/Draw"
 import GeometryType from "ol/geom/GeometryType";
 import VectorLayer from "ol/layer/Vector"
 import GeoJSON from "ol/format/GeoJSON"
 import Collection from 'ol/Collection';
+import { EventsKey } from "ol/events";
+import LayerInterface from "../Layer/LayerInterface"
+import BaseLayer from "./BaseLayer"
+import Regime from "./Regime"
+import SourceType from "../Source/SourceType"
+import Feature from "../Feature/Feature"
 /* import Projection from "ol/proj/Projection"  */
 import "ol-ext/dist/ol-ext.css"
 import "ol/ol.css"
-import SourceType from "../Source/SourceType"
-import { EventsKey } from "ol/events";
+
+
 
 /** @class Map */
 export default class Map { 
@@ -171,7 +174,7 @@ export default class Map {
      * @param {string} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public setDrawRegime(layer: LayerInterface, geometryType: string, callback: (geoJSON: string) => void): void {
+    public setDrawRegime(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void): void {
         if (layer.getType() != SourceType.Vector) {
             return;
         }
@@ -192,10 +195,11 @@ export default class Map {
         }); */
         const listener: EventsKey = source.on("addfeature", (e: VectorSourceEvent) => { 
             if (typeof callback === "function") {
-                callback(new GeoJSON().writeFeature(e.feature, {
+                /* callback(new GeoJSON().writeFeature(e.feature, {
                     dataProjection: layer.getSRS(),
                     featureProjection: "EPSG:3857"
-                }));
+                })); */
+                callback(new Feature(e.feature));
                 e.target.un("addfeature", listener);
             }
         });

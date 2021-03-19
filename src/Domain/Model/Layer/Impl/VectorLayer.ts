@@ -86,6 +86,10 @@ export default class VectorLayer extends BaseLayer {
     private getFeatures(): Feature[] {
         return (<OlVectorLayer> this.layer).getSource().getFeatures();
     }
+
+    public validateFeatures(layer: VectorLayer, geometryType: string): boolean {
+        return true; // TODO
+    }
     
     /**
      * Gets features of layer as FeatureCollection GeoJSON
@@ -99,6 +103,28 @@ export default class VectorLayer extends BaseLayer {
             dataProjection: this.srs,
             featureProjection: "EPSG:3857"
         });
+    }
+
+    /**
+     * Gets features of the layer as single geometry GeoJSON
+     *
+     * @function getFeaturesAsSingleGeometry
+     * @memberof Layer
+     * @return {String} - GeoJSON
+     */
+    public getFeaturesAsSingleGeometry(): string {
+        return "Not implemented yet"; // TODO
+    }
+
+    /**
+     * Gets features of the layer as multi geometry GeoJSON
+     *
+     * @function getFeaturesAsMultiGeometry
+     * @memberof Layer
+     * @return {String} - GeoJSON
+     */
+    public getFeaturesAsMultiGeometry(): string {
+        return "Not implemented yet"; // TODO
     }
 
     /**
