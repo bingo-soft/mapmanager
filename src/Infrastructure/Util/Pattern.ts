@@ -1,5 +1,5 @@
 import FillPattern from "ol-ext/style/FillPattern";
-import { Fill, Icon } from "ol/style";
+import { Fill as OlFill, Icon as OlIcon } from "ol/style";
 
 /** @class Pattern */
 export default class Pattern { 
@@ -49,15 +49,15 @@ export default class Pattern {
         if (patternName == "empty") {
             p = new FillPattern({
                 pattern: patternName,
-                fill: new Fill({ color: options["background_color"] })
+                fill: new OlFill({ color: options["background_color"] })
             });
         } else {
             p = new FillPattern({
                 pattern: patternName,
-                //image: new Icon({ src: options["image_src"] }),
+                //image: new OlIcon({ src: options["image_src"] }),
                 size: options["pattern_stroke_width"],
                 color: options["pattern_color"],
-                fill: new Fill({ color: options["background_color"] }),
+                fill: new OlFill({ color: options["background_color"] }),
                 spacing: options["pattern_stroke_spacing"],
                 angle: options["pattern_stroke_rotation"]
             });

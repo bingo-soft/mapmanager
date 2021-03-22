@@ -1,11 +1,11 @@
-import BaseEvent from "ol/events/Event";
-import { EventsKey } from "ol/events";
-import LayerInterface from "./LayerInterface"
-import SourceType from "../Source/SourceType"
-import VectorSource from "../Source/Impl/VectorSource"
-import XYZSource from "../Source/Impl/XYZSource"
-import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource"
-import StyleBuilder from "../Style/StyleBuilder"
+import OlBaseEvent from "ol/events/Event";
+import { EventsKey as OlEventsKey } from "ol/events";
+import LayerInterface from "./LayerInterface";
+import SourceType from "../Source/SourceType";
+import VectorSource from "../Source/Impl/VectorSource";
+import XYZSource from "../Source/Impl/XYZSource";
+import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
+import StyleBuilder from "../Style/StyleBuilder";
 import { StyleType } from "../Style/StyleType";
 
 /** @class LayerBuilder */
@@ -59,7 +59,7 @@ export default class LayerBuilder {
     }
 
     public setLoadCallback(callback: () => void): void {
-        const sourceEventListener: EventsKey = this.layer.getSource().on("change", function(e: BaseEvent) {
+        const sourceEventListener: OlEventsKey = this.layer.getSource().on("change", function(e: OlBaseEvent) {
             if (e.target.getState() == "ready" && typeof callback === "function") {
                 callback();
                 e.target.un("change", sourceEventListener);                

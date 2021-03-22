@@ -1,16 +1,16 @@
 import OlFeature from "ol/Feature";
-import Geometry from "ol/geom/Geometry"
-import OlGeometryCollection from "ol/geom/GeometryCollection"
-import GeoJSON from "ol/format/GeoJSON"
-import GeometryType from "ol/geom/GeometryType";
-import { Coordinate } from "ol/coordinate";
-import Point from "ol/geom/Point";
-import LineString from "ol/geom/LineString";
-import Polygon from "ol/geom/Polygon";
-import MultiPoint from "ol/geom/MultiPoint";
-import MultiLineString from "ol/geom/MultiLineString";
-import MultiPolygon from "ol/geom/MultiPolygon";
-import Feature from "./Feature"
+import OlGeometry from "ol/geom/Geometry";
+import OlGeometryCollection from "ol/geom/GeometryCollection";
+import OlGeoJSON from "ol/format/GeoJSON";
+import OlGeometryType from "ol/geom/GeometryType";
+import { Coordinate as OlCoordinate } from "ol/coordinate";
+import OlPoint from "ol/geom/Point";
+import OlLineString from "ol/geom/LineString";
+import OlPolygon from "ol/geom/Polygon";
+import OlMultiPoint from "ol/geom/MultiPoint";
+import OlMultiLineString from "ol/geom/MultiLineString";
+import OlMultiPolygon from "ol/geom/MultiPolygon";
+import Feature from "./Feature";
 
 
 /** @class FeatureCollection */
@@ -52,8 +52,8 @@ export default class FeatureCollection {
      */
      public getAsSingleGeometry(): string {
         if (this.features.length) {
-            const geom: Geometry = this.features[0].getFeature().getGeometry();
-            return new GeoJSON().writeGeometry(geom, {
+            const geom: OlGeometry = this.features[0].getFeature().getGeometry();
+            return new OlGeoJSON().writeGeometry(geom, {
                 dataProjection: this.srs,
                 featureProjection: "EPSG:3857"
             });
@@ -69,39 +69,39 @@ export default class FeatureCollection {
      * @return {String} - GeoJSON
      */
     public getAsMultiGeometry(): string {
-        let geomType: GeometryType;
+        let geomType: OlGeometryType;
         if (this.features.length) {
             geomType = this.features[0].getFeature().getGeometry().getType();
-            const coordsPoint: Coordinate[] = [];
-            const coordsLineString: Coordinate[][] = [];
-            const coordsPolygon: Coordinate[][][] = [];
+            const coordsPoint: OlCoordinate[] = [];
+            const coordsLineString: OlCoordinate[][] = [];
+            const coordsPolygon: OlCoordinate[][][] = [];
             this.features.forEach((el): void => {
-                const geom: Geometry = el.getFeature().getGeometry();
-                if (geomType == GeometryType.POINT) {
-                    coordsPoint.push((<Point> geom).getCoordinates());
-                } else if (geomType == GeometryType.LINE_STRING) {
-                    coordsLineString.push((<LineString> geom).getCoordinates());
-                } else if (geomType == GeometryType.POLYGON) {
-                    coordsPolygon.push((<Polygon> geom).getCoordinates());
+                const geom: OlGeometry = el.getFeature().getGeometry();
+                if (geomType == OlGeometryType.POINT) {
+                    coordsPoint.push((<OlPoint> geom).getCoordinates());
+                } else if (geomType == OlGeometryType.LINE_STRING) {
+                    coordsLineString.push((<OlLineString> geom).getCoordinates());
+                } else if (geomType == OlGeometryType.POLYGON) {
+                    coordsPolygon.push((<OlPolygon> geom).getCoordinates());
                 } else {
 
                 } 
             });
-            let returnGeom: Geometry = null;
+            let returnGeom: OlGeometry = null;
             switch(geomType) {
-                case GeometryType.POINT:
-                    returnGeom = new MultiPoint(coordsPoint);
+                case OlGeometryType.POINT:
+                    returnGeom = new OlMultiPoint(coordsPoint);
                     break;
-                case GeometryType.LINE_STRING:
-                    returnGeom = new MultiLineString(coordsLineString);
+                case OlGeometryType.LINE_STRING:
+                    returnGeom = new OlMultiLineString(coordsLineString);
                     break;
-                case GeometryType.POLYGON:
-                    returnGeom = new MultiPolygon(coordsPolygon);
+                case OlGeometryType.POLYGON:
+                    returnGeom = new OlMultiPolygon(coordsPolygon);
                     break;
                 default:
                     break;
             }
-            return new GeoJSON().writeGeometry(returnGeom, {
+            return new OlGeoJSON().writeGeometry(returnGeom, {
                 dataProjection: this.srs,
                 featureProjection: "EPSG:3857"
             });
@@ -118,11 +118,11 @@ export default class FeatureCollection {
      */
     public getAsGeometryCollection(): string {
         if (this.features.length) {
-            const geoms: Geometry[] = [];
+            const geoms: OlGeometry[] = [];
             this.features.forEach((el): void => {
                 geoms.push(el.getFeature().getGeometry());
             });
-            return new GeoJSON().writeGeometry(new OlGeometryCollection(geoms), {
+            return new OlGeoJSON().writeGeometry(new OlGeometryCollection(geoms), {
                 dataProjection: this.srs,
                 featureProjection: "EPSG:3857"
             });

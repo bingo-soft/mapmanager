@@ -1,7 +1,7 @@
 //import { Tile as OlTileSource } from "ol/source"
-import TileArcGISRest from 'ol/source/TileArcGISRest';
-import BaseSource from "../BaseSource"
-import SourceType from "../SourceType"
+import OlTileArcGISRest from 'ol/source/TileArcGISRest';
+import BaseSource from "../BaseSource";
+import SourceType from "../SourceType";
 
 /** @class TileArcGISRestSource */
 export default class TileArcGISRestSource extends BaseSource {
@@ -12,7 +12,7 @@ export default class TileArcGISRestSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new TileArcGISRest();
+        this.source = new OlTileArcGISRest();
     }
 
     public getType(): SourceType {

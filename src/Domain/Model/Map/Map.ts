@@ -1,28 +1,29 @@
-import OlMap from "ol/Map"
-import View from "ol/View"
-import { Extent as olExtent } from "ol/extent"
-import { OverviewMap, defaults as defaultControls } from "ol/control"
-import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
-import TileSource from "ol/source/Tile";
-import { OSM } from "ol/source"
-import { Tile as TileLayer } from "ol/layer"
-import * as Coordinate from "ol/coordinate"
-import * as Proj from "ol/proj"
-import Interaction from "ol/interaction/Interaction"
-import Draw, { DrawEvent } from "ol/interaction/Draw"
-import GeometryType from "ol/geom/GeometryType";
-import VectorLayer from "ol/layer/Vector"
-import GeoJSON from "ol/format/GeoJSON"
-import Collection from 'ol/Collection';
-import { EventsKey } from "ol/events";
+import "ol-ext/dist/ol-ext.css";
+import "ol/ol.css";
+import OlMap from "ol/Map";
+import OlView from "ol/View";
+import { Extent as OlExtent } from "ol/extent";
+import { OverviewMap as OlOverviewMap, defaults as OlDefaultControls } from "ol/control";
+import OlVectorSource, { VectorSourceEvent as OlVectorSourceEvent} from "ol/source/Vector";
+import OlTileSource from "ol/source/Tile";
+import { OSM as OlOSM } from "ol/source";
+import { Tile as OlTileLayer } from "ol/layer";
+import * as OlCoordinate from "ol/coordinate";
+import * as OlProj from "ol/proj";
+import OlInteraction from "ol/interaction/Interaction";
+import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
+import OlGeometryType from "ol/geom/GeometryType";
+import OlVectorLayer from "ol/layer/Vector";
+//import OlGeoJSON from "ol/format/GeoJSON";
+import OlCollection from 'ol/Collection';
+import { EventsKey as OlEventsKey } from "ol/events";
 import LayerInterface from "../Layer/LayerInterface"
-import BaseLayer from "./BaseLayer"
-import Regime from "./Regime"
-import SourceType from "../Source/SourceType"
-import Feature from "../Feature/Feature"
-/* import Projection from "ol/proj/Projection"  */
-import "ol-ext/dist/ol-ext.css"
-import "ol/ol.css"
+import BaseLayer from "./BaseLayer";
+import Regime from "./Regime";
+import SourceType from "../Source/SourceType";
+import Feature from "../Feature/Feature";
+/* import Projection from "ol/proj/Projection";  */
+
 
 
 
@@ -31,8 +32,8 @@ export default class Map {
     private map: OlMap;
     private activeLayer: LayerInterface;
     private regime: Regime = Regime.Normal;
-    private interactions: Interaction[] = [];
-    private lastInteraction: Interaction;    
+    private interactions: OlInteraction[] = [];
+    private lastInteraction: OlInteraction;    
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
@@ -69,32 +70,32 @@ export default class Map {
                 zoom = opts["zoom"];
             }
         }
-        let center: Coordinate.Coordinate = [centerX, centerY];
+        let center: OlCoordinate.Coordinate = [centerX, centerY];
         if (centerSRSId != srsId) {
-            center = Proj.transform(center, "EPSG:" + centerSRSId, "EPSG:" + srsId);
+            center = OlProj.transform(center, "EPSG:" + centerSRSId, "EPSG:" + srsId);
         }
-        let source: TileSource = null;
+        let source: OlTileSource = null;
         if (baseLayer == BaseLayer.OSM) {
-             source = new OSM();
+             source = new OlOSM();
         } /* else if (...) {
             TODO
         } */
-        const overviewMapControl: OverviewMap = new OverviewMap({
+        const overviewMapControl: OlOverviewMap = new OlOverviewMap({
             layers: [
-                new TileLayer({
+                new OlTileLayer({
                     source: source,
                 })
             ],
         });
         this.map = new OlMap({
-            controls: defaultControls().extend([overviewMapControl]),
+            controls: OlDefaultControls().extend([overviewMapControl]),
             layers: [
-                new TileLayer({
+                new OlTileLayer({
                     source: source
                 })
             ],
             target: targetDOMId,
-            view: new View({
+            view: new OlView({
                 projection: "EPSG:" + srsId,
                 center: center,
                 zoom: zoom
@@ -146,9 +147,9 @@ export default class Map {
             }
         }
         const mapProj: string = this.map.getView().getProjection().getCode();
-        let coordinate: Coordinate.Coordinate = [centerX, centerY];
+        let coordinate: OlCoordinate.Coordinate = [centerX, centerY];
         if (mapProj != "EPSG:" + centerSRSId) {
-            coordinate = Proj.transform(coordinate, "EPSG:" + centerSRSId, mapProj);
+            coordinate = OlProj.transform(coordinate, "EPSG:" + centerSRSId, mapProj);
         }
         this.map.getView().setCenter(coordinate);
     }
@@ -182,18 +183,18 @@ export default class Map {
         console.log(proj); */
         this.clearInteractions();
         this.regime = Regime.Draw;
-        const source = (<VectorLayer>layer.getLayer()).getSource();
-        const draw: Draw = new Draw({
+        const source = (<OlVectorLayer>layer.getLayer()).getSource();
+        const draw: OlDraw = new OlDraw({
             source: source,
-            features: new Collection(),
-            type: <GeometryType>geometryType,
+            features: new OlCollection(),
+            type: <OlGeometryType>geometryType,
         });
-        /* draw.on("drawend", (e: DrawEvent) => { console.log(new GeoJSON().writeFeature(e.feature));
+        /* draw.on("drawend", (e: OlDrawEvent) => { console.log(new GeoJSON().writeFeature(e.feature));
             if (typeof callback === "function") {
                 callback(new GeoJSON().writeFeature(e.feature));
             }
         }); */
-        const listener: EventsKey = source.on("addfeature", (e: VectorSourceEvent) => { 
+        const listener: OlEventsKey = source.on("addfeature", (e: OlVectorSourceEvent) => { 
             if (typeof callback === "function") {
                 /* callback(new GeoJSON().writeFeature(e.feature, {
                     dataProjection: layer.getSRS(),
@@ -282,7 +283,7 @@ export default class Map {
      * @memberof Map
      * @param {Extent} extent - extent to fit to
      */
-    public fitExtent(extent: olExtent): void {
+    public fitExtent(extent: OlExtent): void {
         this.map.getView().fit(extent);
     }
 
@@ -294,7 +295,7 @@ export default class Map {
      * @param {LayerInterface} layer - layer instance
      */
     public fitLayer(layer: LayerInterface): void {
-        const extent = (<VectorSource>layer.getSource()).getExtent();
+        const extent = (<OlVectorSource>layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
             this.map.getView().fit(extent);
         }

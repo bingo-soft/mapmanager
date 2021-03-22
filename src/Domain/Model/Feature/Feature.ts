@@ -1,6 +1,6 @@
 import OlFeature from "ol/Feature";
-import GeoJSON from "ol/format/GeoJSON"
-import GeometryType from "ol/geom/GeometryType"
+/* import OlGeoJSON from "ol/format/GeoJSON";
+import OlGeometryType from "ol/geom/GeometryType"; */
 
 
 /** @class Feature */
@@ -29,7 +29,7 @@ export default class Feature {
     }
 
     /* public getGeometryAsGeoJSON(): string {
-        return new GeoJSON().writeFeature(this.feature);
+        return new OlGeoJSON().writeFeature(this.feature);
     } */
 
 }

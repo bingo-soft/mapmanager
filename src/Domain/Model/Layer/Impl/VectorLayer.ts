@@ -1,17 +1,17 @@
-import { Vector as OlVectorLayer } from "ol/layer"
-//import BaseVector from "ol/layer/BaseVector"
-import { Source as OlSource } from "ol/source"
-import { Vector as OlVectorSource } from "ol/source"
-import GeoJSON from "ol/format/GeoJSON"
-import OlFeature from "ol/Feature"
-import GeometryType from "ol/geom/GeometryType"
-import Style from "ol/style/Style"
-import { StyleType } from "../../Style/StyleType"
-import BaseLayer from "../BaseLayer"
-import SourceType from "../../Source/SourceType"
-import SourceInterface from "../../Source/SourceInterface"
-import { DefaultStyle } from "../../Style/Impl/DefaultStyle"
-import FeatureCollection from "../../Feature/FeatureCollection"
+import { Vector as OlVectorLayer } from "ol/layer";
+//import OlBaseVector from "ol/layer/BaseVector";
+import { Source as OlSource } from "ol/source";
+import { Vector as OlVectorSource } from "ol/source";
+import OlGeoJSON from "ol/format/GeoJSON";
+import OlFeature from "ol/Feature";
+import OlGeometryType from "ol/geom/GeometryType";
+import OlStyle from "ol/style/Style";
+import { StyleType } from "../../Style/StyleType";
+import BaseLayer from "../BaseLayer";
+import SourceType from "../../Source/SourceType";
+import SourceInterface from "../../Source/SourceInterface";
+import { DefaultStyle } from "../../Style/Impl/DefaultStyle";
+import FeatureCollection from "../../Feature/FeatureCollection";
 
 
 /** @class VectorLayer */
@@ -32,8 +32,8 @@ export default class VectorLayer extends BaseLayer {
         }
         this.style = DefaultStyle;
         this.layer = new OlVectorLayer({
-            style: (feature: OlFeature): Style => {
-                const geomType: GeometryType = feature.getGeometry().getType();
+            style: (feature: OlFeature): OlStyle => {
+                const geomType: OlGeometryType = feature.getGeometry().getType();
                 return this.style[geomType];
             }
         });
@@ -55,7 +55,7 @@ export default class VectorLayer extends BaseLayer {
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
         source.setLoader(async () => {
             const data = await loader();
-            source.addFeatures(new GeoJSON().readFeatures(data, {
+            source.addFeatures(new OlGeoJSON().readFeatures(data, {
                 dataProjection: this.srs,
                 featureProjection: "EPSG:3857"
             }));
@@ -69,7 +69,7 @@ export default class VectorLayer extends BaseLayer {
 
     public addFeatures(features: string/* , opts?: unknown */): void {
         //const srs: number = this.getSRSId(opts);
-        (<OlVectorLayer> this.layer).getSource().addFeatures(new GeoJSON().readFeatures(features, {
+        (<OlVectorLayer> this.layer).getSource().addFeatures(new OlGeoJSON().readFeatures(features, {
             dataProjection: this.srs,
             featureProjection: "EPSG:3857"
         }));

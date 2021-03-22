@@ -1,8 +1,8 @@
 import OlSource from "ol/source/Source";
-import { Extent as olExtent } from "ol/extent"
-import SourceInterface from "./SourceInterface"
-import SourceType from "./SourceType"
-import MethodNotImplemented from "../../Exception/MethodNotImplemented"
+import { Extent as OlExtent } from "ol/extent";
+import SourceInterface from "./SourceInterface";
+import SourceType from "./SourceType";
+import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 
 export default abstract class BaseSource implements SourceInterface
 {
@@ -14,7 +14,7 @@ export default abstract class BaseSource implements SourceInterface
 
     public abstract getType(): SourceType;
 
-    public getExtent(): olExtent {
+    public getExtent(): OlExtent {
         throw new MethodNotImplemented();
     }
 

@@ -1,7 +1,7 @@
 //import { Tile as OlTileSource } from "ol/source"
-import XYZ from "ol/source/XYZ";
-import BaseSource from "../BaseSource"
-import SourceType from "../SourceType"
+import OlXYZ from "ol/source/XYZ";
+import BaseSource from "../BaseSource";
+import SourceType from "../SourceType";
 
 /** @class XYZSource */
 export default class XYZSource extends BaseSource {
@@ -12,7 +12,7 @@ export default class XYZSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new XYZ();
+        this.source = new OlXYZ();
     }
 
     public getType(): SourceType {

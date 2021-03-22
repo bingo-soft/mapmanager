@@ -1,74 +1,74 @@
-import {Circle as CircleStyle, Fill, Stroke, Style} from "ol/style";
-import GeometryType from "ol/geom/GeometryType"
-import { StyleType } from "../StyleType"
+import {Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
+import OlGeometryType from "ol/geom/GeometryType";
+import { StyleType as OlStyleType } from "../StyleType";
 
-export const DefaultStyle: StyleType = {
-    [GeometryType.POINT]: new Style({
-        image: new CircleStyle({
+export const DefaultStyle: OlStyleType = {
+    [OlGeometryType.POINT]: new OlStyle({
+        image: new OlCircleStyle({
             radius: 5,
-            fill: new Fill({color: "green"}),
-            stroke: new Stroke({color: "green", width: 1}),
+            fill: new OlFill({color: "green"}),
+            stroke: new OlStroke({color: "green", width: 1}),
         }),
     }),
-    [GeometryType.MULTI_POINT]: null/* new Style({
-        image: new CircleStyle({
+    [OlGeometryType.MULTI_POINT]: null/* new OlStyle({
+        image: new OlCircleStyle({
             radius: 5,
             fill: null,
-            stroke: new Stroke({color: "red", width: 1}),
+            stroke: new OlStroke({color: "red", width: 1}),
         }),
     }) */,
-    [GeometryType.LINE_STRING]: new Style({
-        stroke: new Stroke({
+    [OlGeometryType.LINE_STRING]: new OlStyle({
+        stroke: new OlStroke({
             color: "green",
             width: 2,
         }),
     }),
-    [GeometryType.MULTI_LINE_STRING]: null /* new Style({
-        stroke: new Stroke({
+    [OlGeometryType.MULTI_LINE_STRING]: null /* new OlStyle({
+        stroke: new OlStroke({
             color: "green",
             width: 1,
         }),
     }) */,
-    [GeometryType.POLYGON]: new Style({
-        stroke: new Stroke({
+    [OlGeometryType.POLYGON]: new OlStyle({
+        stroke: new OlStroke({
             color: "blue",
             //lineDash: [4],
             width: 1,
         }),
-        fill: new Fill({
+        fill: new OlFill({
             color: "rgba(255, 255, 0, 0.3)",
         }),
     }),
-    [GeometryType.MULTI_POLYGON]: null /* new Style({
-        stroke: new Stroke({
+    [OlGeometryType.MULTI_POLYGON]: null /* new OlStyle({
+        stroke: new OlStroke({
             color: "yellow",
             width: 1,
         }),
-        fill: new Fill({
+        fill: new OlFill({
             color: "rgba(0, 0, 255, 0.3)",
         }),
     }) */,
-    [GeometryType.CIRCLE]: new Style({
-        stroke: new Stroke({
+    [OlGeometryType.CIRCLE]: new OlStyle({
+        stroke: new OlStroke({
             color: "red",
             width: 2,
         }),
-        fill: new Fill({
+        fill: new OlFill({
             color: "rgba(255,0,0,0.2)",
         }),
     }),
-    [GeometryType.GEOMETRY_COLLECTION]: new Style({
-        stroke: new Stroke({
+    [OlGeometryType.GEOMETRY_COLLECTION]: new OlStyle({
+        stroke: new OlStroke({
             color: "magenta",
             width: 2,
         }),
-        fill: new Fill({
+        fill: new OlFill({
             color: "magenta",
         }),
-        image: new CircleStyle({
+        image: new OlCircleStyle({
             radius: 10,
             fill: null,
-            stroke: new Stroke({
+            stroke: new OlStroke({
                 color: "magenta",
             }),
         }),

@@ -1,10 +1,10 @@
 import OlLayer from "ol/layer/Layer";
-import { Source as OlSource } from "ol/source"
-import LayerInterface from "./LayerInterface"
-import SourceType from "../Source/SourceType"
-import SourceInterface from "../Source/SourceInterface"
-import { StyleType } from "../Style/StyleType"
-import MethodNotImplemented from "../../Exception/MethodNotImplemented"
+import { Source as OlSource } from "ol/source";
+import LayerInterface from "./LayerInterface";
+import SourceType from "../Source/SourceType";
+import SourceInterface from "../Source/SourceInterface";
+import { StyleType } from "../Style/StyleType";
+import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 
 export default abstract class BaseLayer implements LayerInterface
 {

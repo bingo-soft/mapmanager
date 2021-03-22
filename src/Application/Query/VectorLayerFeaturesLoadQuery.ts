@@ -1,4 +1,4 @@
-import VectorLayerRepositoryInterface from "../../Domain/Repository/VectorLayerRepositoryInterface"
+import VectorLayerRepositoryInterface from "../../Domain/Repository/VectorLayerRepositoryInterface";
 
 /** @class VectorLayerFeaturesQuery */
 export default class VectorLayerFeaturesLoadQuery {

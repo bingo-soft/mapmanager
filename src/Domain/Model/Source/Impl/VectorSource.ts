@@ -1,9 +1,9 @@
-import { Vector as OlVectorSource } from "ol/source"
-import { Extent as olExtent } from "ol/extent"
-import * as olLoadingstrategy from 'ol/loadingstrategy';
-import GeoJSON from "ol/format/GeoJSON"
-import BaseSource from "../BaseSource"
-import SourceType from "../SourceType"
+import { Vector as OlVectorSource } from "ol/source";
+import { Extent as OlExtent } from "ol/extent";
+import * as OlLoadingstrategy from 'ol/loadingstrategy';
+import OlGeoJSON from "ol/format/GeoJSON";
+import BaseSource from "../BaseSource";
+import SourceType from "../SourceType";
 
 /** @class VectorSource */
 export default class VectorSource extends BaseSource {
@@ -15,8 +15,8 @@ export default class VectorSource extends BaseSource {
     constructor() {
         super();
         this.source = new OlVectorSource({
-            format: new GeoJSON(),
-            strategy: olLoadingstrategy.bbox
+            format: new OlGeoJSON(),
+            strategy: OlLoadingstrategy.bbox
         });
     }
 
@@ -24,7 +24,7 @@ export default class VectorSource extends BaseSource {
         return SourceType.Vector;
     }
 
-    public getExtent(): olExtent {
+    public getExtent(): OlExtent {
         const source = <OlVectorSource> this.source;
         return source.getExtent();
     }

@@ -1,9 +1,9 @@
-import { Tile as OlTileLayer } from "ol/layer"
-import { Source as OlSource } from "ol/source"
-import { TileImage as OlTileImage } from "ol/source"
-import BaseLayer from "../BaseLayer"
-import SourceType from "../../Source/SourceType"
-import SourceInterface from "../../Source/SourceInterface"
+import { Tile as OlTileLayer } from "ol/layer";
+import { Source as OlSource } from "ol/source";
+import { TileImage as OlTileImage } from "ol/source";
+import BaseLayer from "../BaseLayer";
+import SourceType from "../../Source/SourceType";
+import SourceInterface from "../../Source/SourceInterface";
 
 /** @class TileLayer */
 export default class TileLayer extends BaseLayer {
