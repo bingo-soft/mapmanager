@@ -33,25 +33,33 @@ export default class Pattern {
      * @param {Object} opts - pattern options.
      * @return {String} data URI containing a representation of the image
      */
-    public static getPatternDataURI(patternName: string, opts: unknown): string | null {
+    public static getPatternDataURI(patternName: string, opts?: unknown): string | null {
         if (typeof opts === "undefined") {
-            return null;
+            opts = {};
         }
+        const options: unknown = {
+            pattern_color: opts["pattern_color"] || "rgb(0, 0, 0)",
+            background_color: opts["background_color"] || "rgb(255, 255, 255)", 
+            pattern_stroke_width: opts["pattern_stroke_width"] || 1,
+            pattern_stroke_spacing: opts["pattern_stroke_spacing"] || 0,
+            pattern_stroke_rotation: opts["pattern_stroke_rotation"] || 0,
+
+        };
         let p: FillPattern = null;
         if (patternName == "empty") {
             p = new FillPattern({
                 pattern: patternName,
-                fill: new Fill({ color: opts["background_color"] })
+                fill: new Fill({ color: options["background_color"] })
             });
         } else {
             p = new FillPattern({
                 pattern: patternName,
-                image: new Icon({ src: opts["image_src"] }),
-                size: opts["size"],
-                color: opts["pattern_color"],
-                fill: new Fill({ color: opts["background_color"] }),
-                spacing: opts["spacing"],
-                angle: opts["angle"]
+                //image: new Icon({ src: options["image_src"] }),
+                size: options["pattern_stroke_width"],
+                color: options["pattern_color"],
+                fill: new Fill({ color: options["background_color"] }),
+                spacing: options["pattern_stroke_spacing"],
+                angle: options["pattern_stroke_rotation"]
             });
         }
         return p.getImage().toDataURL();
