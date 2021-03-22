@@ -30,27 +30,28 @@ export default class Pattern {
      * @static
      * @memberof MapManager
      * @param {String} patternName - pattern name.
-     * @param {String} fillColor - fill color.
-     * @param {String} imageSrc - path to image file.
-     * @param {Number} size - line size for hash/dot/circle/cross pattern.
-     * @param {Number} spacing - spacing for hash/dot/circle/cross pattern.
-     * @param {Number | Boolean} angle - angle for hash pattern, true for 45deg dot/circle/cross.
+     * @param {Object} opts - pattern options.
      * @return {String} data URI containing a representation of the image
      */
-    public static getPatternDataURI(patternName: string, fillColor?: string, imageSrc?: string, size?: number, spacing?: number, angle?: number | boolean): string {
+    public static getPatternDataURI(patternName: string, opts: unknown): string | null {
+        if (typeof opts === "undefined") {
+            return null;
+        }
         let p: FillPattern = null;
         if (patternName == "empty") {
             p = new FillPattern({
                 pattern: patternName,
-                fill: new Fill({ color: fillColor })
+                fill: new Fill({ color: opts["background_color"] })
             });
         } else {
             p = new FillPattern({
                 pattern: patternName,
-                image: new Icon({ src: imageSrc }),
-                size: size,
-                spacing: spacing,
-                angle: angle
+                image: new Icon({ src: opts["image_src"] }),
+                size: opts["size"],
+                color: opts["pattern_color"],
+                fill: new Fill({ color: opts["background_color"] }),
+                spacing: opts["spacing"],
+                angle: opts["angle"]
             });
         }
         return p.getImage().toDataURL();
