@@ -106,6 +106,17 @@ export default class StyleBuilder {
     }
 
     private setPolygonStyle(opts: unknown): void {
+        const style: Style = new Style({
+            stroke: new Stroke({
+                color: opts["color"], 
+                width: opts["stroke_width"]
+            }),
+            fill: new Fill({
+                color: opts["background_color"],
+            }),
+        });
+        this.style[GeometryType.POLYGON] = style;
+        this.style[GeometryType.MULTI_POLYGON] = style;
     }
 
     /**

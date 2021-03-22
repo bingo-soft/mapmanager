@@ -6,7 +6,7 @@ import SourceType from "../../../src/Domain/Model/Source/SourceType"
 import VectorLayer from "../../../src/Domain/Model/Layer/Impl/VectorLayer";
 import LayerInterface from "../../../src/Domain/Model/Layer/LayerInterface";
 import Feature from "../../../src/Domain/Model/Feature/Feature";
-import FeatureCollection from "../../../src/Domain/Model/FeatureCollection/FeatureCollection";
+import FeatureCollection from "../../../src/Domain/Model/Feature/FeatureCollection";
 import Pattern from "../../../src/Infrastructure/Util/Pattern";
 import { HttpMethod } from "../../../src/Infrastructure/Http/HttpMethod";
 
@@ -91,7 +91,7 @@ MapManager.setZIndex(accentLayer1, 10);
 MapManager.addLayer(accentMap, accentLayer1);
 
 /* Put a layer consisting of remotely received features to the map */
-const opts2 = {
+/* const opts2 = {
     "request": {
         "method": HttpMethod.POST,
         //"base_url": "http://89.109.52.230:18181/geojson/layer/90",
@@ -107,7 +107,7 @@ const opts2 = {
 const accentLayer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
 MapManager.setZIndex(accentLayer2, 10);
 MapManager.addLayer(accentMap, accentLayer2);
-MapManager.fitLayer(accentMap, accentLayer2);
+MapManager.fitLayer(accentMap, accentLayer2); */
 
 /* Create an empty layer to draw on */
 const opts3 = {
@@ -161,10 +161,10 @@ MapManager.addLayer(accentMap, accentLayer3);
 
 const btDrawPoint: HTMLElement = document.getElementById("draw-btn-point");
 const btDrawLine: HTMLElement = document.getElementById("draw-btn-line");
+const btDrawPolygon: HTMLElement = document.getElementById("draw-btn-polygon");
 btDrawPoint.onclick = onClick;
 btDrawLine.onclick = onClick;
-
-
+btDrawPolygon.onclick = onClick;
 function onClick(e): any {
     e.target.style.backgroundColor = "#777";
     e.target.style.color = "#fff";
@@ -175,6 +175,9 @@ function onClick(e): any {
             break;
         case "draw-btn-line": 
             geomType = "LineString";
+            break;
+        case "draw-btn-polygon": 
+            geomType = "Polygon";
             break;
         default:
             geomType = "Point";

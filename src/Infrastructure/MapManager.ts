@@ -7,8 +7,7 @@ import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
 import SourceType from "../Domain/Model/Source/SourceType"
 import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
-import Feature from "../Domain/Model/Feature/Feature"
-import FeatureCollection from "../Domain/Model/FeatureCollection/FeatureCollection"
+import FeatureCollection from "../Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Util/Geometry"
 
 

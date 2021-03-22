@@ -11,7 +11,7 @@ import BaseLayer from "../BaseLayer"
 import SourceType from "../../Source/SourceType"
 import SourceInterface from "../../Source/SourceInterface"
 import { DefaultStyle } from "../../Style/Impl/DefaultStyle"
-import FeatureCollection from "../../FeatureCollection/FeatureCollection"
+import FeatureCollection from "../../Feature/FeatureCollection"
 
 
 /** @class VectorLayer */
