@@ -1,5 +1,5 @@
-import OlGeometryType from "ol/geom/GeometryType"
-import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
+//import OlGeometryType from "ol/geom/GeometryType"
+import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 //import { Options as OlCircleOptions } from "ol/style/Circle";
 import { DefaultStyle } from "./Impl/DefaultStyle"
 //import { DynamicStyle } from "./Impl/DynamicStyle"
@@ -30,32 +30,43 @@ export default class StyleBuilder {
             "MultiLineString": null,
             "Polygon": null,
             "MultiPolygon": null,
-            "Circle": null,
-            "GeometryCollection": null
+            //"Circle": null,
+            "GeometryCollection": null,
+            "Text": null
         };
         this.applyOptions(opts);
     }
 
     private applyOptions(opts?: unknown) {
         if (typeof opts !== "undefined") {
-            if (Object.prototype.hasOwnProperty.call(opts, "point")) {
+            if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length) {
                 this.setPointStyle(opts["point"]);
             } else {
-                this.style[OlGeometryType.POINT] = DefaultStyle[OlGeometryType.POINT];
-                this.style[OlGeometryType.MULTI_POINT] = DefaultStyle[OlGeometryType.POINT];
+                this.style["Point"] = DefaultStyle["Point"];
+                this.style["MultiPoint"] = DefaultStyle["MultiPoint"];
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "linestring")) {
+            if (Object.prototype.hasOwnProperty.call(opts, "linestring") && Object.keys(opts["linestring"]).length) {
                 this.setLinestringStyle(opts["linestring"]);
             } else {
-                this.style[OlGeometryType.LINE_STRING] = DefaultStyle[OlGeometryType.LINE_STRING];
-                this.style[OlGeometryType.MULTI_LINE_STRING] = DefaultStyle[OlGeometryType.LINE_STRING];
+                this.style["LineString"] = DefaultStyle["LineString"];
+                this.style["MultiLineString"] = DefaultStyle["MultiLineString"];
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "polygon")) {
+            if (Object.prototype.hasOwnProperty.call(opts, "polygon") && Object.keys(opts["polygon"]).length) {
                 this.setPolygonStyle(opts["polygon"]);
             } else {
-                this.style[OlGeometryType.POLYGON] = DefaultStyle[OlGeometryType.POLYGON];
-                this.style[OlGeometryType.MULTI_POLYGON] = DefaultStyle[OlGeometryType.POLYGON];
+                this.style["Polygon"] = DefaultStyle["Polygon"];
+                this.style["MultiPolygon"] = DefaultStyle["MultiPolygon"];
             }
+/*             if (Object.prototype.hasOwnProperty.call(opts, "geometrycollection") && Object.keys(opts["geometrycollection"]).length) {
+                this.setGeometryCollectionStyle(opts["geometrycollection"]);
+            } else {
+                this.style["GeometryCollection"] = DefaultStyle["GeometryCollection"];
+            } */
+            if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length) {
+                this.setTextStyle(opts["label"]);
+            }/*  else { // не имеет смысла, т.к. label не задан
+                this.style["Text"] = DefaultStyle["Text"];
+            } */
         } else {
             this.style = DefaultStyle;
         }
@@ -64,7 +75,7 @@ export default class StyleBuilder {
     private setPointStyle(opts: unknown): void {
         let style: OlStyle = null;
         if (opts["marker_type"] == "simple_point") {
-            const defaultImage: OlCircleStyle = <OlCircleStyle> DefaultStyle[OlGeometryType.POINT].getImage();
+            const defaultImage: OlCircleStyle = <OlCircleStyle> DefaultStyle["Point"].getImage();
             style = new OlStyle({
                 image: new OlCircleStyle({
                     radius: opts["size"] ? opts["size"] : defaultImage.getRadius(),
@@ -90,8 +101,8 @@ export default class StyleBuilder {
         } else {
             return;
         }
-        this.style[OlGeometryType.POINT] = style;
-        this.style[OlGeometryType.MULTI_POINT] = style;
+        this.style["Point"] = style;
+        this.style["MultiPoint"] = style;
     }
 
     private setLinestringStyle(opts: unknown): void {
@@ -101,8 +112,8 @@ export default class StyleBuilder {
                 width: opts["stroke_width"]
             }),
         });
-        this.style[OlGeometryType.LINE_STRING] = style;
-        this.style[OlGeometryType.MULTI_LINE_STRING] = style;
+        this.style["LineString"] = style;
+        this.style["MultiLineString"] = style;
     }
 
     private setPolygonStyle(opts: unknown): void {
@@ -115,8 +126,41 @@ export default class StyleBuilder {
                 color: opts["background_color"],
             }),
         });
-        this.style[OlGeometryType.POLYGON] = style;
-        this.style[OlGeometryType.MULTI_POLYGON] = style;
+        this.style["Polygon"] = style;
+        this.style["MultiPolygon"] = style;
+    }
+
+    /* private setGeometryCollectionStyle(opts: unknown): void {
+        const style: OlStyle = new OlStyle({
+            stroke: new OlStroke({
+                color: opts["color"], 
+                width: opts["stroke_width"]
+            }),
+            fill: new OlFill({
+                color: opts["background_color"],
+            }),
+        });
+        this.style[OlGeometryType.GEOMETRY_COLLECTION] = style;
+    } */
+
+    private setTextStyle(opts: unknown): void {
+        if (typeof opts["style"] !== "undefined") {
+            const style: OlTextStyle = new OlTextStyle({
+                stroke: new OlStroke({
+                    color: typeof opts["style"]["stroke"] !== "undefined" ? opts["style"]["stroke"]["color"] : DefaultStyle["Text"].getStroke().getColor(), 
+                    width: typeof opts["style"]["stroke"] !== "undefined" ? opts["style"]["stroke"]["stroke_width"] : DefaultStyle["Text"].getStroke().getWidth()
+                }),
+                fill: new OlFill({
+                    color: typeof opts["style"]["fill"] !== "undefined" ? opts["style"]["fill"]["background_color"] : DefaultStyle["Text"].getFill().getColor()
+                }),
+                font: opts["style"]["font"],
+                text: opts["field"]
+            });
+            this.style["Text"] = style;
+        }  else {
+            this.style["Text"] = DefaultStyle["Text"];
+            this.style["Text"].setText(opts["field"]);
+        }
     }
 
     /**

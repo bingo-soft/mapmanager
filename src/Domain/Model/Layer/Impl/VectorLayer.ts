@@ -5,7 +5,7 @@ import { Vector as OlVectorSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import OlGeometryType from "ol/geom/GeometryType";
-import OlStyle from "ol/style/Style";
+import { Style as OlStyle, Text as OlTextStyle, Fill as OlFill, Stroke as OlStroke } from "ol/style";
 import { StyleType } from "../../Style/StyleType";
 import BaseLayer from "../BaseLayer";
 import SourceType from "../../Source/SourceType";
@@ -32,9 +32,28 @@ export default class VectorLayer extends BaseLayer {
         }
         this.style = DefaultStyle;
         this.layer = new OlVectorLayer({
-            style: (feature: OlFeature): OlStyle => {
+            style: (feature: OlFeature): OlStyle => { 
                 const geomType: OlGeometryType = feature.getGeometry().getType();
-                return this.style[geomType];
+                const style: OlStyle = this.style[geomType];
+                const textStyle: OlTextStyle = this.style["Text"];
+                if (style && textStyle) {
+                    const textValue: string = feature.getProperties()[textStyle.getText()];
+                    if (textValue) {
+                        const newTextStyle: OlTextStyle = new OlTextStyle({
+                            stroke: new OlStroke({
+                                color: textStyle.getStroke().getColor(),
+                                width: textStyle.getStroke().getWidth()
+                            }),
+                            fill: new OlFill({
+                                color: textStyle.getFill().getColor()
+                            }),
+                            font: textStyle.getFont()
+                        });
+                        newTextStyle.setText(textValue);
+                        style.setText(newTextStyle);
+                    }
+                }
+                return style;
             }
         });
     }
@@ -98,10 +117,10 @@ export default class VectorLayer extends BaseLayer {
      * @return {String} - GeoJSON
      */
     /* public getFeaturesAsFeatureCollection(): string {
-        return new GeoJSON().writeFeatures(this.getFeatures(), {
+        return new OlGeoJSON().writeFeatures(this.getFeatures(), {
             dataProjection: this.srs,
             featureProjection: "EPSG:3857"
         });
-    } */
+    }  */
 
 }

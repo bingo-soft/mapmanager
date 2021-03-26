@@ -43,7 +43,8 @@ export default class Pattern {
             pattern_stroke_width: opts["pattern_stroke_width"] || 1,
             pattern_stroke_spacing: opts["pattern_stroke_spacing"] || 0,
             pattern_stroke_rotation: opts["pattern_stroke_rotation"] || 0,
-
+            pattern_offset: opts["pattern_offset"] || 0,
+            pattern_scale: opts["pattern_scale"] || 0
         };
         let p: FillPattern = null;
         if (patternName == "empty") {
@@ -57,6 +58,8 @@ export default class Pattern {
                 //image: new OlIcon({ src: options["image_src"] }),
                 size: options["pattern_stroke_width"],
                 color: options["pattern_color"],
+                offset: options["pattern_offset"],
+                scale: options["pattern_scale"],
                 fill: new OlFill({ color: options["background_color"] }),
                 spacing: options["pattern_stroke_spacing"],
                 angle: options["pattern_stroke_rotation"]

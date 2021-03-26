@@ -100,7 +100,7 @@ export default class MapManager {
      * @static
      * @param {AccentMap} map - map instance
      * @param {LayerInterface} layer - layer instance
-     * @param {Object} opts - feature type
+     * @param {Object} opts - options
      */
     public static setDrawRegime(map: AccentMap, layer: LayerInterface, opts: unknown): void {
         map.setDrawRegime(layer, opts["geometry_type"], opts["draw_callback"]);
