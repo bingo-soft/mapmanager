@@ -14,23 +14,25 @@ import OlInteraction from "ol/interaction/Interaction";
 import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
 import OlGeometryType from "ol/geom/GeometryType";
 import OlVectorLayer from "ol/layer/Vector";
+import OlFeature from "ol/Feature";
 //import OlGeoJSON from "ol/format/GeoJSON";
 import OlCollection from 'ol/Collection';
+import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import { EventsKey as OlEventsKey } from "ol/events";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import Regime from "./Regime";
 import SourceType from "../Source/SourceType";
 import Feature from "../Feature/Feature";
+import FeatureCollection from "../Feature/FeatureCollection";
 /* import Projection from "ol/proj/Projection";  */
-
-
 
 
 /** @class Map */
 export default class Map { 
     private map: OlMap;
     private activeLayer: LayerInterface;
+    //private visibleLayers: OlCollection<string> = new OlCollection();
     private regime: Regime = Regime.Normal;
     private interactions: OlInteraction[] = [];
     private lastInteraction: OlInteraction;    
@@ -101,6 +103,12 @@ export default class Map {
                 zoom: zoom
             })
         });
+        this.map.on("click", ((e: OlMapBrowserEvent): void => {
+            const fc: FeatureCollection = this.pin(e);
+            if (Object.prototype.hasOwnProperty.call(opts, "select_callback") && typeof opts["select_callback"] === "function") {
+                opts["select_callback"](fc);
+            }
+        }));
     }
 
     /**
@@ -263,6 +271,7 @@ export default class Map {
      */
     public addLayer(layer: LayerInterface): void {
         this.map.addLayer(layer.getLayer());
+        //this.map.visibleLayers.set(layer.getLayer().getId(), layer);
     }
 
     /**
@@ -299,5 +308,24 @@ export default class Map {
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
             this.map.getView().fit(extent);
         }
+    }
+
+    /**
+     * Returns FeatureCollection of features below clicked map point 
+     *
+     * @function pin
+     * @memberof Map
+     * @param {Object} point - clicked point on map
+     * @return {Object} FeatureCollection 
+     */     
+     private pin(point: OlMapBrowserEvent): FeatureCollection {
+        const featureArr: Feature[] = [];
+        this.map.forEachFeatureAtPixel(point.pixel, (feature: OlFeature, layer: OlVectorLayer): void => {
+            if (layer) {
+                const accentFeature = new Feature(feature, layer);
+                featureArr.push(accentFeature);
+            }
+        });
+        return new FeatureCollection(featureArr, this.map.getView().getProjection().getCode());
     }
 }

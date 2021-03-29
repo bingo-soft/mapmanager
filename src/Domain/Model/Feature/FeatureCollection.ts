@@ -19,10 +19,19 @@ export default class FeatureCollection {
     private features: Feature[] = [];
     private srs: string = "EPSG:3857";
     
-    constructor(features: OlFeature[], srs: string) {
-        features.forEach((el: OlFeature): void => {
-            this.features.push(new Feature(el));
-        })
+    constructor(features: OlFeature[] | Feature[], srs: string) {
+        if (features[0]) {
+            if (features[0] instanceof OlFeature) {
+                (<OlFeature[]> features).forEach((el: OlFeature): void => {
+                    this.features.push(new Feature(el));
+                });
+            }
+            if (features[0] instanceof Feature) {
+                (<Feature[]> features).forEach((el: Feature): void => {
+                    this.features.push(el);
+                });
+            }
+        }
         this.srs = srs;
     }
 

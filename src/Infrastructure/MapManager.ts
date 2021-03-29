@@ -140,6 +140,9 @@ export default class MapManager {
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
+            /* if (typeof opts["properties"] !== "undefined") { 
+                builder.setProperties(opts["properties"]);
+            } */
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
                     builder.setLoader(async (): Promise<string> => {
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());

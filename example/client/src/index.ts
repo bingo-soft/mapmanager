@@ -1,5 +1,5 @@
 import MapManager from "map-component-accent2";
-import AccentMap from "../../../src/Domain/Model/Map/Map";
+import Map from "../../../src/Domain/Model/Map/Map";
 import BaseLayer from "../../../src/Domain/Model/Map/BaseLayer";
 import Regime from "../../../src/Domain/Model/Map/Regime";
 import SourceType from "../../../src/Domain/Model/Source/SourceType";
@@ -13,7 +13,7 @@ import { HttpMethod } from "../../../src/Infrastructure/Http/HttpMethod";
 
 //const geojsonObject = "{\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}},\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9959246, 56.3238061]},\"properties\":{}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9930658,56.325005]},\"properties\":{}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9910433,56.329966]},\"properties\":{}}]}";
 //const geojsonObject = '{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[43.9959246, 56.3238061]},{"type":"Point","coordinates":[43.9930658,56.325005]},{"type":"Point","coordinates":[43.9910433,56.329966]}]}';
-const geojsonObject = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[43.91243896752929,56.32925921113059]},"properties":{"attr_123_": "Hello1"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[43.918962099853516,56.33506428695259]},"properties":{"attr_123_": "Hello2"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[43.92376861840821,56.329925412221826],[43.92806015283203,56.3157423355226]]},"properties":{"attr_123_": "Hello3"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[43.933038332763665,56.33382721368193],[43.94917450219726,56.325737669335865],[43.94934616357422,56.34029761476677],[43.933038332763665,56.33382721368193]]]},"properties":{"attr_123_": "Hello4"}}]}';
+const geojsonObject = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[43.91243896752929,56.32925921113059]},"properties":{"attr_123_": "Hello1"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[43.918962099853516,56.33506428695259]},"properties":{"attr_123_": "Hello2"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[43.92376861840821,56.329925412221826],[43.92806015283203,56.3157423355226]]},"properties":{"attr_123_": "Hello3"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[43.933038332763665,56.33382721368193],[43.94917450219726,56.325737669335865],[43.94934616357422,56.34029761476677],[43.933038332763665,56.33382721368193]]]},"properties":{"attr_123_": "Hello4"}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[43.933038332763665,56.33382721368193],[43.94917450219726,56.325737669335865],[43.94934616357422,56.34029761476677],[43.933038332763665,56.33382721368193]]]},"properties":{"attr_123_": "Hello5"}}]}';
 //const geojsonObject = '{"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::3857"}},"features":[{"type":"Feature","geometry":{"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Point","coordinates":[4897285.68,7623388.9]},{"type":"Point","coordinates":[4898484.87,7623790.91]},{"type":"LineString","coordinates":[[4897817.19,7624377.45],[4898645.61,7622454.66],[4902198.11,7623264.84],[4899468.86,7624971.7]]}]},"properties":{"attr_123_": "Hello1"}},{"type":"Feature","geometry":{"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Point","coordinates":[4897603.92,7623148.2]},{"type":"Point","coordinates":[4898706.41,7623196.37]},{"type":"LineString","coordinates":[[4898240.55,7624142.63],[4898057.83,7621101.13]]},{"type":"Point","coordinates":[4899849.71,7623978.33]},{"type":"Polygon","coordinates":[[[4902095.24,7624145.55],[4903762.69,7622836.54],[4900630.09,7621877.02],[4902095.24,7624145.55]]]}]},"properties":{"attr_123_": "Hello2"}},{"type":"Feature","geometry":{"type":"Point","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"coordinates":[4897285.68,7623388.9]},"properties":{"attr_123_": "Hello3"}},{"type":"Feature","geometry":{"type":"Point","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"coordinates":[4897060.54,7624384.95]},"properties":{"attr_123_": "Hello4"}}]}';
 //const geojsonObject = '{"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::3857"}},"features":[{"type":"Feature","geometry":{"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Point","coordinates":[4897285.68,7623388.9]},{"type":"Point","coordinates":[4898484.87,7623790.91]},{"type":"LineString","coordinates":[[4897817.19,7624377.45],[4898645.61,7622454.66],[4902198.11,7623264.84],[4899468.86,7624971.7]]}]},"properties":{}},{"type":"Feature","geometry":{"type":"GeometryCollection","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"geometries":[{"type":"Point","coordinates":[4897603.92,7623148.2]},{"type":"Point","coordinates":[4898706.41,7623196.37]},{"type":"LineString","coordinates":[[4898240.55,7624142.63],[4898057.83,7621101.13]]},{"type":"Point","coordinates":[4899849.71,7623978.33]},{"type":"Polygon","coordinates":[[[4902095.24,7624145.55],[4903762.69,7622836.54],[4900630.09,7621877.02],[4902095.24,7624145.55]]]}]},"properties":{}},{"type":"Feature","geometry":{"type":"Point","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"coordinates":[4897285.68,7623388.9]},"properties":{}},{"type":"Feature","geometry":{"type":"Point","crs":{"type":"name","properties":{"name":"EPSG:3857"}},"coordinates":[4897060.54,7624384.95]},"properties":{}}]}';
 //const geojsonObject = "{\"type\":\"Point\",\"coordinates\":[43.9930658,56.325005]}";
@@ -32,17 +32,22 @@ const optsMap = {
         y: 56.319241, // 7623033.01317983,
         declared_coordinate_system_id: 4326 // 3857
     }, 
-    zoom: 13
+    zoom: 13,
+    "select_callback": (features: FeatureCollection) => {
+        console.log(features);
+    },
 }
-const accentMap: AccentMap = MapManager.createMap("map", optsMap);
+const map: Map = MapManager.createMap("map", optsMap);
 
 /* Set center and zoom separately */
-MapManager.setZoom(accentMap, 13);
-MapManager.setCenter(accentMap, {x: 44.008741, y: 56.319241, declared_coordinate_system_id: 4326});
-//MapManager.setCenter(accentMap, {x: 4883416.36233908, y: 7623033.01317983, declared_coordinate_system_id: 3857});
+MapManager.setZoom(map, 13);
+MapManager.setCenter(map, {x: 44.008741, y: 56.319241, declared_coordinate_system_id: 4326});
 
 /* Put a layer consisting of simple features to the map */
 const opts1 = {
+    /* "properties": {
+        "name": "Слой 1"
+    }, */
     "srs_handling": {
         "native_coordinate_system_id": 4326,
         "declared_coordinate_system_id": 3857,
@@ -102,9 +107,9 @@ const opts1 = {
         }
     }
 }
-const accentLayer1: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, opts1);
-MapManager.setZIndex(accentLayer1, 10);
-MapManager.addLayer(accentMap, accentLayer1);
+const layer1: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, opts1);
+MapManager.setZIndex(layer1, 10);
+MapManager.addLayer(map, layer1);
 
 /* Put a layer consisting of remotely received features to the map */
 /* const opts2 = {
@@ -172,10 +177,10 @@ MapManager.addLayer(accentMap, accentLayer1);
         }
     }
 }
-const accentLayer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
-MapManager.setZIndex(accentLayer2, 10);
-MapManager.addLayer(accentMap, accentLayer2);
-MapManager.fitLayer(accentMap, accentLayer2); */
+const layer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
+MapManager.setZIndex(layer2, 10);
+MapManager.addLayer(accentMap, layer2);
+MapManager.fitLayer(accentMap, layer2); */
 
 /* Create an empty layer to draw on */
 const opts3 = {
@@ -223,9 +228,9 @@ const opts3 = {
         }
     }
 }
-const accentLayer3: LayerInterface = MapManager.createLayer(SourceType.Vector, opts3);
-MapManager.setZIndex(accentLayer3, 10);
-MapManager.addLayer(accentMap, accentLayer3);
+const layer3: LayerInterface = MapManager.createLayer(SourceType.Vector, opts3);
+MapManager.setZIndex(layer3, 10);
+MapManager.addLayer(map, layer3);
 
 const btDrawPoint: HTMLElement = document.getElementById("draw-btn-point");
 const btDrawLine: HTMLElement = document.getElementById("draw-btn-line");
@@ -250,16 +255,16 @@ function onClick(e): any {
         default:
             geomType = "Point";
     }
-    const regime: Regime = MapManager.getRegime(accentMap);
+    const regime: Regime = MapManager.getRegime(map);
     if (regime == Regime.Normal) {
         MapManager.setDrawRegime(
-            accentMap, // map to draw on
-            accentLayer3, // layer to draw on
+            map, // map to draw on
+            layer3, // layer to draw on
             {
                 geometry_type: geomType,
                 draw_callback: function(feature: Feature): void {
                     //console.log("Drawn feature: " + (<VectorLayer> accentLayer3).getFeaturesAsFeatureCollection());
-                    const fc: FeatureCollection = MapManager.getFeatureCollection(<VectorLayer> accentLayer3);
+                    const fc: FeatureCollection = MapManager.getFeatureCollection(<VectorLayer> layer3);
                     let geometry: string = "";
                     if (fc.isSingle()) {
                         geometry = MapManager.getFeaturesAsSingleGeometry(fc);
@@ -277,7 +282,7 @@ function onClick(e): any {
     } else {
         e.target.style.backgroundColor = "initial";
         e.target.style.color = "initial";
-        MapManager.setNormalRegime(accentMap);
+        MapManager.setNormalRegime(map);
     }
 };
 
@@ -285,10 +290,10 @@ function onClick(e): any {
 /* const opts4 = {
     url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
 }
-const accentLayer4: LayerInterface = MapManager.createLayer(SourceType.XYZ, opts4);
-console.log(accentLayer4.getType());
-MapManager.addLayer(accentMap, accentLayer4);
-MapManager.setActiveLayer(accentMap, accentLayer4);
+const layer4: LayerInterface = MapManager.createLayer(SourceType.XYZ, opts4);
+console.log(layer4.getType());
+MapManager.addLayer(accentMap, layer4);
+MapManager.setActiveLayer(accentMap, layer4);
 const activeLayer: LayerInterface = MapManager.getActiveLayer(accentMap);
 MapManager.setZIndex(activeLayer, 5);
 MapManager.setOpacity(activeLayer, 70); */
@@ -299,9 +304,9 @@ MapManager.setOpacity(activeLayer, 70); */
 /* const opts5 = {
     url: "https://pkk.rosreestr.ru/arcgis/rest/services/PKK6/ZONES/MapServer/export?layers=show%3A5&dpi=96&transparent=true&format=png32&bboxSR=102100&imageSR=102100&f=image&ID1=Rosreestr_TerriroryZones&Name1=Территориальные%20зоны&Projection=EPSG:3857"
 }
-const accentLayer5: LayerInterface = MapManager.createLayer(SourceType.TileArcGISRest, opts5);
-MapManager.addLayer(accentMap, accentLayer5);
-console.log(accentLayer5.getType()); */
+const layer5: LayerInterface = MapManager.createLayer(SourceType.TileArcGISRest, opts5);
+MapManager.addLayer(accentMap, layer5);
+console.log(layer5.getType()); */
 
 
 /* Patterns example */
