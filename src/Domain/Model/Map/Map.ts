@@ -4,27 +4,29 @@ import OlMap from "ol/Map";
 import OlView from "ol/View";
 import { Extent as OlExtent } from "ol/extent";
 import { OverviewMap as OlOverviewMap, defaults as OlDefaultControls } from "ol/control";
-import OlVectorSource, { VectorSourceEvent as OlVectorSourceEvent} from "ol/source/Vector";
+import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
 import { Tile as OlTileLayer } from "ol/layer";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
 import OlInteraction from "ol/interaction/Interaction";
-import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
-import OlGeometryType from "ol/geom/GeometryType";
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
 //import OlGeoJSON from "ol/format/GeoJSON";
-import OlCollection from 'ol/Collection';
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
-import { EventsKey as OlEventsKey } from "ol/events";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
-import Regime from "./Regime";
+import InteractionType from "./Interaction/InteractionType";
 import SourceType from "../Source/SourceType";
 import Feature from "../Feature/Feature";
 import FeatureCollection from "../Feature/FeatureCollection";
+import InteractionInterface from "./Interaction/InteractionInterface";
+import NormalInteraction from "./Interaction/Impl/NormalInteraction";
+import DrawInteraction from "./Interaction/Impl/DrawInteraction";
+import SelectionInteraction from "./Interaction/Impl/SelectionInteraction";
+import SelectionType from "./Interaction/Impl/SelectionType";
+import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 /* import Projection from "ol/proj/Projection";  */
 
 
@@ -33,9 +35,8 @@ export default class Map {
     private map: OlMap;
     private activeLayer: LayerInterface;
     //private visibleLayers: OlCollection<string> = new OlCollection();
-    private regime: Regime = Regime.Normal;
-    private interactions: OlInteraction[] = [];
-    private lastInteraction: OlInteraction;    
+    private interaction: InteractionInterface;
+    private interactions: InteractionInterface[] = [];
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
@@ -122,17 +123,6 @@ export default class Map {
     }
 
     /**
-     * Gets current regime.
-     *
-     * @function getRegime
-     * @memberof Map
-     * @return {Regime} current regime
-     */
-    public getRegime(): Regime {
-        return this.regime;
-    }
-
-    /**
      * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
      *
      * @function setCenter
@@ -173,59 +163,58 @@ export default class Map {
         this.map.getView().setZoom(zoom);
     }
     
+    /**
+     * Sets map normal interaction
+     *
+     * @function setNormalInteractionType
+     * @memberof Map
+     */
+    public setNormalInteraction(): void {
+        this.clearInteractions();
+        this.interaction = new NormalInteraction();
+    }
 
     /**
-     * Sets map draw regime
+     * Sets map draw interaction
      *
-     * @function setRegime
+     * @function setInteractionType
      * @memberof Map
      * @param {LayerInterface} layer - layer instance
      * @param {string} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public setDrawRegime(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void): void {
+    public setDrawInteraction(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void): void {
         if (layer.getType() != SourceType.Vector) {
-            return;
+            throw new InteractionNotSupported(InteractionType.Draw);
         }
-        /* const proj: Projection = layer.getSource().getProjection().getCode();
-        console.log(proj); */
+        
         this.clearInteractions();
-        this.regime = Regime.Draw;
-        const source = (<OlVectorLayer>layer.getLayer()).getSource();
-        const draw: OlDraw = new OlDraw({
-            source: source,
-            features: new OlCollection(),
-            type: <OlGeometryType>geometryType,
-        });
-        /* draw.on("drawend", (e: OlDrawEvent) => { console.log(new GeoJSON().writeFeature(e.feature));
-            if (typeof callback === "function") {
-                callback(new GeoJSON().writeFeature(e.feature));
-            }
-        }); */
-        const listener: OlEventsKey = source.on("addfeature", (e: OlVectorSourceEvent) => { 
-            if (typeof callback === "function") {
-                /* callback(new GeoJSON().writeFeature(e.feature, {
-                    dataProjection: layer.getSRS(),
-                    featureProjection: "EPSG:3857"
-                })); */
-                callback(new Feature(e.feature));
-                e.target.un("addfeature", listener);
-            }
-        });
-        this.map.addInteraction(draw);
-        this.interactions.push(draw);
-        this.lastInteraction = draw;
+
+        this.interaction = new DrawInteraction(
+            layer,
+            geometryType,
+            callback
+        );
+
+        this.addInteraction(this.interaction);        
     }
     
     /**
-     * Sets map normal regime
+     * Sets selection interaction
      *
-     * @function setNormalRegime
+     * @function setSelectionInteractionType
      * @memberof Map
      */
-    public setNormalRegime(): void {
+    public setSelectionInteraction(type: SelectionType, callback: (feature: FeatureCollection) => void): void {
         this.clearInteractions();
-        this.regime = Regime.Normal;
+        this.interaction = new SelectionInteraction(type, callback);
+
+        this.addInteraction(this.interaction);  
+    }
+
+    private addInteraction(interaction: InteractionInterface): void {
+        this.map.addInteraction(interaction.getInteraction());
+        this.interactions.push(interaction);
     }
 
     /**
@@ -236,7 +225,7 @@ export default class Map {
      */
     private clearInteractions(): void {
         for (const i in this.interactions) {
-            this.map.removeInteraction(this.interactions[i]);
+            this.map.removeInteraction(this.interactions[i].getInteraction());
         }
     }
 
