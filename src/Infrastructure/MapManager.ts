@@ -8,7 +8,7 @@ import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeatur
 import VectorLayerRepository from "./Repository/VectorLayerRepository"
 import FeatureCollection from "../Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Util/Geometry"
-import InteractionType from "src/Domain/Model/Map/Interaction/InteractionType"
+import InteractionType from "../Domain/Model/Map/Interaction/InteractionType"
 
 /** @class MapManager */
 export default class MapManager { 
