@@ -8,9 +8,9 @@ import { VectorSourceEvent as OlVectorSourceEvent} from "ol/source/Vector";
 import BaseInteraction from "./BaseInteraction"
 import LayerInterface from "../../../Layer/LayerInterface"
 import Feature from "../../../Feature/Feature";
+import InteractionType from "../InteractionType"
 
 export default class DrawInteraction extends BaseInteraction {
-    private interaction: OLInteraction;
 
     constructor(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void) {
         super();
@@ -22,6 +22,7 @@ export default class DrawInteraction extends BaseInteraction {
             features: new OlCollection(),
             type: <OlGeometryType>geometryType,
         });
+        this.type = InteractionType.Draw;
 
         const listener: OlEventsKey = source.on("addfeature", (e: OlVectorSourceEvent) => { 
             if (typeof callback === "function") {
@@ -31,10 +32,6 @@ export default class DrawInteraction extends BaseInteraction {
         });
 
     }
-
-    getInteraction(): OLInteraction
-    {
-        return this.interaction;
-    }
+   
 
 }

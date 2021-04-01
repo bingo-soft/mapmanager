@@ -6,7 +6,7 @@ import SourceInterface from "../Source/SourceInterface";
 import { StyleType } from "../Style/StyleType";
 import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 
-export default abstract class BaseLayer implements LayerInterface
+export default abstract class AbstractLayer implements LayerInterface
 {
     protected layer: OlLayer;
     protected srs: string;

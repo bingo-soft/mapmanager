@@ -7,15 +7,15 @@ import OlFeature from "ol/Feature";
 import OlGeometryType from "ol/geom/GeometryType";
 import { Style as OlStyle, Text as OlTextStyle, Fill as OlFill, Stroke as OlStroke } from "ol/style";
 import { StyleType } from "../../Style/StyleType";
-import BaseLayer from "../BaseLayer";
 import SourceType from "../../Source/SourceType";
 import SourceInterface from "../../Source/SourceInterface";
 import { DefaultStyle } from "../../Style/Impl/DefaultStyle";
 import FeatureCollection from "../../Feature/FeatureCollection";
+import AbstractLayer from "../AbstractLayer";
 
 
 /** @class VectorLayer */
-export default class VectorLayer extends BaseLayer {
+export default class VectorLayer extends AbstractLayer{
 
     private style: StyleType;
     

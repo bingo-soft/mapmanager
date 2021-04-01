@@ -14,7 +14,6 @@ import OlInteraction from "ol/interaction/Interaction";
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
 //import OlGeoJSON from "ol/format/GeoJSON";
-import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "./Interaction/InteractionType";
@@ -83,6 +82,7 @@ export default class Map {
         } /* else if (...) {
             TODO
         } */
+        this.setNormalInteraction();
         const overviewMapControl: OlOverviewMap = new OlOverviewMap({
             layers: [
                 new OlTileLayer({
@@ -104,12 +104,16 @@ export default class Map {
                 zoom: zoom
             })
         });
-        this.map.on("click", ((e: OlMapBrowserEvent): void => {
-            const fc: FeatureCollection = this.pin(e);
-            if (Object.prototype.hasOwnProperty.call(opts, "select_callback") && typeof opts["select_callback"] === "function") {
-                opts["select_callback"](fc);
-            }
-        }));
+    }
+
+    /**
+     * Returnas OpMap map instance
+     *
+     * @function getMap
+     * @memberof Map
+     */
+     public getMap(): OlMap {
+        return this.map;
     }
 
     /**
@@ -162,6 +166,11 @@ export default class Map {
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
     }
+
+
+    public getInteraction(): InteractionType {
+        return this.interaction.getType();
+    }
     
     /**
      * Sets map normal interaction
@@ -187,15 +196,8 @@ export default class Map {
         if (layer.getType() != SourceType.Vector) {
             throw new InteractionNotSupported(InteractionType.Draw);
         }
-        
         this.clearInteractions();
-
-        this.interaction = new DrawInteraction(
-            layer,
-            geometryType,
-            callback
-        );
-
+        this.interaction = new DrawInteraction(layer, geometryType, callback);
         this.addInteraction(this.interaction);        
     }
     
@@ -207,9 +209,10 @@ export default class Map {
      */
     public setSelectionInteraction(type: SelectionType, callback: (feature: FeatureCollection) => void): void {
         this.clearInteractions();
-        this.interaction = new SelectionInteraction(type, callback);
-
-        this.addInteraction(this.interaction);  
+        this.interaction = new SelectionInteraction(this, type, callback);
+        if (type != SelectionType.Pin) {
+            this.addInteraction(this.interaction);  
+        }
     }
 
     private addInteraction(interaction: InteractionInterface): void {
@@ -299,22 +302,5 @@ export default class Map {
         }
     }
 
-    /**
-     * Returns FeatureCollection of features below clicked map point 
-     *
-     * @function pin
-     * @memberof Map
-     * @param {Object} point - clicked point on map
-     * @return {Object} FeatureCollection 
-     */     
-     private pin(point: OlMapBrowserEvent): FeatureCollection {
-        const featureArr: Feature[] = [];
-        this.map.forEachFeatureAtPixel(point.pixel, (feature: OlFeature, layer: OlVectorLayer): void => {
-            if (layer) {
-                const accentFeature = new Feature(feature, layer);
-                featureArr.push(accentFeature);
-            }
-        });
-        return new FeatureCollection(featureArr, this.map.getView().getProjection().getCode());
-    }
+    
 }

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "serve": "cp -r -f assets dist && parcel serve src/index.html --host 172.24.64.91 --port 8081",
-    "build": "parcel build --public-url . src/index.html"
+    "serve": "mkdir -p dist && cp -r -f assets dist && parcel serve src/index.html --host 172.24.64.91 --port 8081",
+    "build": "parcel build --public-url . src/index.html && cp -r -f assets dist"
   },
   "author": "BingoSoft",
   "license": "ISC",

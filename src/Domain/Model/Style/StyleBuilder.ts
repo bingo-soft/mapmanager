@@ -72,7 +72,7 @@ export default class StyleBuilder {
         }
     }
 
-    private setPointStyle(opts: unknown): void {
+    private setPointStyle(opts: unknown): StyleBuilder {
         let style: OlStyle = null;
         if (opts["marker_type"] == "simple_point") {
             const defaultImage: OlCircleStyle = <OlCircleStyle> DefaultStyle["Point"].getImage();
@@ -103,9 +103,10 @@ export default class StyleBuilder {
         }
         this.style["Point"] = style;
         this.style["MultiPoint"] = style;
+        return this;
     }
 
-    private setLinestringStyle(opts: unknown): void {
+    private setLinestringStyle(opts: unknown): StyleBuilder {
         const style: OlStyle = new OlStyle({
             stroke: new OlStroke({
                 color: opts["color"], 
@@ -114,9 +115,10 @@ export default class StyleBuilder {
         });
         this.style["LineString"] = style;
         this.style["MultiLineString"] = style;
+        return this;
     }
 
-    private setPolygonStyle(opts: unknown): void {
+    private setPolygonStyle(opts: unknown): StyleBuilder {
         const style: OlStyle = new OlStyle({
             stroke: new OlStroke({
                 color: opts["color"], 
@@ -128,6 +130,7 @@ export default class StyleBuilder {
         });
         this.style["Polygon"] = style;
         this.style["MultiPolygon"] = style;
+        return this;
     }
 
     /* private setGeometryCollectionStyle(opts: unknown): void {
@@ -143,7 +146,7 @@ export default class StyleBuilder {
         this.style[OlGeometryType.GEOMETRY_COLLECTION] = style;
     } */
 
-    private setTextStyle(opts: unknown): void {
+    private setTextStyle(opts: unknown): StyleBuilder {
         if (typeof opts["style"] !== "undefined") {
             const style: OlTextStyle = new OlTextStyle({
                 stroke: new OlStroke({
@@ -161,6 +164,7 @@ export default class StyleBuilder {
             this.style["Text"] = DefaultStyle["Text"];
             this.style["Text"].setText(opts["field"]);
         }
+        return this;
     }
 
     /**

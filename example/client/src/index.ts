@@ -1,7 +1,6 @@
 import MapManager from "map-component-accent2";
 import Map from "../../../src/Domain/Model/Map/Map";
 import BaseLayer from "../../../src/Domain/Model/Map/BaseLayer";
-import Regime from "../../../src/Domain/Model/Map/Regime";
 import SourceType from "../../../src/Domain/Model/Source/SourceType";
 import VectorLayer from "../../../src/Domain/Model/Layer/Impl/VectorLayer";
 import LayerInterface from "../../../src/Domain/Model/Layer/LayerInterface";
@@ -9,6 +8,7 @@ import Feature from "../../../src/Domain/Model/Feature/Feature";
 import FeatureCollection from "../../../src/Domain/Model/Feature/FeatureCollection";
 import Pattern from "../../../src/Infrastructure/Util/Pattern";
 import { HttpMethod } from "../../../src/Infrastructure/Http/HttpMethod";
+import InteractionType from "../../../src/Domain/Model/Map/Interaction/InteractionType";
 
 
 //const geojsonObject = "{\"type\":\"FeatureCollection\",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:EPSG::4326\"}},\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9959246, 56.3238061]},\"properties\":{}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9930658,56.325005]},\"properties\":{}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[43.9910433,56.329966]},\"properties\":{}}]}";
@@ -32,10 +32,7 @@ const optsMap = {
         y: 56.319241, // 7623033.01317983,
         declared_coordinate_system_id: 4326 // 3857
     }, 
-    zoom: 13,
-    "select_callback": (features: FeatureCollection) => {
-        console.log(features);
-    },
+    zoom: 13
 }
 const map: Map = MapManager.createMap("map", optsMap);
 
@@ -235,10 +232,10 @@ MapManager.addLayer(map, layer3);
 const btDrawPoint: HTMLElement = document.getElementById("draw-btn-point");
 const btDrawLine: HTMLElement = document.getElementById("draw-btn-line");
 const btDrawPolygon: HTMLElement = document.getElementById("draw-btn-polygon");
-btDrawPoint.onclick = onClick;
-btDrawLine.onclick = onClick;
-btDrawPolygon.onclick = onClick;
-function onClick(e): any {
+btDrawPoint.onclick = onDrawClick;
+btDrawLine.onclick = onDrawClick;
+btDrawPolygon.onclick = onDrawClick;
+function onDrawClick(e): any {
     e.target.style.backgroundColor = "#777";
     e.target.style.color = "#fff";
     let geomType: string = "Point";
@@ -255,9 +252,9 @@ function onClick(e): any {
         default:
             geomType = "Point";
     }
-    const regime: Regime = MapManager.getRegime(map);
-    if (regime == Regime.Normal) {
-        MapManager.setDrawRegime(
+    const regime: InteractionType = MapManager.getInteraction(map);
+    if (regime == InteractionType.Normal) {
+        MapManager.setDrawInteraction(
             map, // map to draw on
             layer3, // layer to draw on
             {
@@ -282,9 +279,28 @@ function onClick(e): any {
     } else {
         e.target.style.backgroundColor = "initial";
         e.target.style.color = "initial";
-        MapManager.setNormalRegime(map);
+        MapManager.setNormalInteraction(map);
     }
 };
+
+const btPin: HTMLElement = document.getElementById("pin-btn");
+btPin.onclick = function(e: any): any {
+    e.target.style.backgroundColor = "#777";
+    e.target.style.color = "#fff";
+    const regime: InteractionType = MapManager.getInteraction(map);
+    if (regime == InteractionType.Normal) {
+        MapManager.setSelectionInteraction(map, {
+            "selection_type": "pin",
+            "select_callback": (features: FeatureCollection) => {
+                console.log(features);
+            }
+        })
+    } else {
+        e.target.style.backgroundColor = "initial";
+        e.target.style.color = "initial";
+        MapManager.setNormalInteraction(map);
+    }
+}
 
 /* XYZ layer */
 /* const opts4 = {
