@@ -1,5 +1,5 @@
-import BaseInteraction from "./BaseInteraction"
-import InteractionType from "../InteractionType"
+import BaseInteraction from "./BaseInteraction";
+import InteractionType from "../InteractionType";
 
 export default class NormalInteraction extends BaseInteraction {
 

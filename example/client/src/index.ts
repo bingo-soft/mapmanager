@@ -23,6 +23,7 @@ const geojsonObject = '{"type":"FeatureCollection","features":[{"type":"Feature"
 //const geojsonObject = JSON.stringify({ 'type': 'FeatureCollection', 'features': [{ 'type': 'Point', 'coordinates': [43.9930658, 56.325005] }] })
 
 
+
 /* Create and initialize map */
 const optsMap = { 
     base_layer: BaseLayer.OSM,
@@ -53,55 +54,19 @@ const opts1 = {
     "style": {
         "point": {
             "marker_type":"image",
-            "color":"#FC0515",
+            //"marker_type":"simple_point",
+            "color":"#00ff00",
             "opacity": 100,
-            "size": 23,
+            "size": 15,
             "rotation": 90,
             "offset":[1, 5],
             "anchor":["top", "left"],
             "icon_file": {},
             "image_path": "assets/car-icon.png"
             //"image_path": "assets/point.svg"
-        },
-        "linestring": {
-            "color":"#DE0D0D",
-            "opacity":100,
-            "stroke_width":3,
-            "stroke_style": {
-                "guid":"78692f92-7354-4321-b8d3-64bb571e7079",
-                "pattern":["5","10","15","20","25","30"]
-            },
-            "arrow":"end"
-        },
-        "polygon": {
-            "color":"#0E38CF",
-            "opacity":100,
-            "stroke_width":2,
-            "stroke_style":{
-                "guid":"e3065873-891d-4777-9b1e-148e77418f1f",
-                "pattern":["4","6","8","10","12","14","16","18","20","22","24","26","28","30"]
-            },
-            "background_color":"#FFFFFF",
-            "pattern_color":"#000000",
-            "pattern_stroke_width":5,
-            "pattern_stroke_spacing":10,
-            "pattern_stroke_rotation":0,
-            "pattern_offset":0,
-            "pattern_scale":1
-        },
-        "label": {
-            "style": {
-            /*     "stroke": {
-                    "color": "yellow",
-                    "stroke_width": 1
-                }, */
-                "fill": {
-                    "background_color": "red"
-                },
-                "font": "15px Arial",
-            },
-            "field": "attr_123_"
-        }
+         },
+        "linestring":{},
+        "polygon":{}
     }
 }
 const layer1: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, opts1);
@@ -109,11 +74,12 @@ MapManager.setZIndex(layer1, 10);
 MapManager.addLayer(map, layer1);
 
 /* Put a layer consisting of remotely received features to the map */
-/* const opts2 = {
+const opts2 = {
     "request": {
-        "method": HttpMethod.POST,
+        "method": HttpMethod.GET,
         //http://172.24.64.101:8085/mapeditor/geojson/registry/2760
-        "base_url": "http://172.24.64.101:8085/mapeditor/geojson/registry/2760",
+        //"base_url": "http://172.24.64.101:8085/mapeditor/geojson/layer/136",
+        "base_url": "layer1.json",
         //"base_url": "http://89.109.52.230:18181/geojson/layer/90",
         //"base_url": "http://172.24.64.93:8181/geojson/layer/90",
         //"base_url": "http://82.208.68.85:8085/geoserver/accent/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=accent%3Alayer_931_&outputFormat=application%2Fjson",
@@ -126,58 +92,24 @@ MapManager.addLayer(map, layer1);
     },
     "style": {
         "point": {
-            //"marker_type":"image",
-            "marker_type":"simple_point",
-            "color":"#FC0515",
-            "opacity": 100,
-            "size": 5,
-            "rotation": 90,
-            "offset":[1, 5],
-            "anchor":["top", "left"],
-            "icon_file": {},
-            "image_path": "assets/car-icon.png"
-            //"image_path": "assets/point.svg"
-        },
-        "linestring": {
-            "color":"#DE0D0D",
+            "marker_type":"image",
+            "color":"#000000",
             "opacity":100,
-            "stroke_width":3,
-            "stroke_style": {
-                "guid":"78692f92-7354-4321-b8d3-64bb571e7079",
-                "pattern":["5","10","15","20","25","30"]
-            },
-            "arrow":"end"
+            "size":5,
+            "rotation":0,
+            "offset":[0,0],
+            "anchor":["center","center"],
+            "icon_file":{"guid":"37c4c933-532b-4b18-8b0d-329a225203b1","extension":"png"},
+            "image_path":"assets/car-icon.png"
         },
-        "polygon": {
-            "color":"#0E38CF",
-            "opacity":100,
-            "stroke_width":2,
-            "stroke_style":{
-                "guid":"e3065873-891d-4777-9b1e-148e77418f1f",
-                "pattern":["4","6","8","10","12","14","16","18","20","22","24","26","28","30"]
-            },
-            "background_color":"#FFFFFF",
-            "pattern_color":"#000000",
-            "pattern_stroke_width":5,
-            "pattern_stroke_spacing":10,
-            "pattern_stroke_rotation":0,
-            "pattern_offset":0,
-            "pattern_scale":1
-        },
-        "text": {
-            "stroke": {
-                "color": "rgb(96, 123, 139)",
-                "width": 1
-            },
-            "font": "10px Arial",
-            "text": "attr_123_"
-        }
+        "linestring":{},
+        "polygon":{}
     }
 }
 const layer2: LayerInterface = MapManager.createLayer(SourceType.Vector, opts2);
 MapManager.setZIndex(layer2, 10);
-MapManager.addLayer(accentMap, layer2);
-MapManager.fitLayer(accentMap, layer2); */
+MapManager.addLayer(map, layer2);
+MapManager.fitLayer(map, layer2);
 
 /* Create an empty layer to draw on */
 const opts3 = {
@@ -188,14 +120,17 @@ const opts3 = {
     }, 
     "style": {
         "point": {
-            "marker_type":"simple_point",
-            "color":"#FC0515",
-            "opacity":85,
-            "size":23,
-            "rotation":0,
-            "offset":[5,10],
-            "anchor":["top","right"],
-            "icon_file": ""
+           //"marker_type":"image",
+           "marker_type":"simple_point",
+           "color":"#00ff00",
+           "opacity": 100,
+           "size": 15,
+           "rotation": 90,
+           "offset":[1, 5],
+           "anchor":["top", "left"],
+           "icon_file": {},
+           "image_path": "assets/car-icon.png"
+           //"image_path": "assets/point.svg"
         },
         "linestring": {
             "color":"#DE0D0D",

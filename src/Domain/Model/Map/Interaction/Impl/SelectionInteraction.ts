@@ -1,14 +1,14 @@
-import { Interaction as OLInteraction} from "ol/interaction"
+import { Interaction as OLInteraction} from "ol/interaction";
 import OlMap from "ol/Map";
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
-import OlSelect from "ol/interaction/Select"
+import OlSelect from "ol/interaction/Select";
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
-import InteractionType from "../InteractionType"
-import BaseInteraction from "./BaseInteraction"
-import SelectionType from "./SelectionType"
+import InteractionType from "../InteractionType";
+import BaseInteraction from "./BaseInteraction";
+import SelectionType from "./SelectionType";
 import Feature from "../../../Feature/Feature";
-import FeatureCollection from "../../../Feature/FeatureCollection"
+import FeatureCollection from "../../../Feature/FeatureCollection";
 import Map from "../../Map";
 
 export default class SelectionInteraction extends BaseInteraction {
@@ -20,9 +20,7 @@ export default class SelectionInteraction extends BaseInteraction {
      */
     constructor(map: Map, type: SelectionType, callback: (feature: FeatureCollection) => void) {
         super();
-
         this.type = InteractionType.Select;
-        
         switch(type) {
             case SelectionType.Pin:
                 const olMap: OlMap = map.getMap();

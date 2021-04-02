@@ -1,7 +1,7 @@
-import { Interaction as OLInteraction} from "ol/interaction"
-import InteractionInterface from "../InteractionInterface"
+import { Interaction as OLInteraction} from "ol/interaction";
+import InteractionInterface from "../InteractionInterface";
 import InteractionType from "../InteractionType";
-import MethodNotImplemented from "../../../../Exception/MethodNotImplemented"
+import MethodNotImplemented from "../../../../Exception/MethodNotImplemented";
 
 export default abstract class BaseInteraction implements InteractionInterface
 {

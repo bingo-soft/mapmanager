@@ -14,7 +14,7 @@ export default class StyleBuilder {
         "bottom": 1,
         "left": 0,
         "right": 1,
-        "middle": 0.5
+        "center": 0.5
     }
 
     /**
