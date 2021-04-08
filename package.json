@@ -1,14 +1,14 @@
 {
-  "name": "mapmanager",
-  "version": "1.0.0",
+  "name": "@bingo-soft/mapmanager",
+  "version": "1.0.1",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "scripts": {
     "serve": "parcel serve src/MapManager.ts --host http://localhost --port 8081",
     "build": "parcel build --public-url . src/MapManager.ts"
   },
-  "author": "BingoSoft",
-  "license": "ISC",
+  "author": "Bingo-Soft",
+  "license": "MIT",
   "dependencies": {
     "@types/ol": "^6.4.2",
     "axios": "^0.18.1",
