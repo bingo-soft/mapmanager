@@ -1,8 +1,12 @@
 {
   "name": "@bingo-soft/mapmanager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bingo-soft/mapmanager.git"
+  },
   "scripts": {
     "serve": "parcel serve src/MapManager.ts --host http://localhost --port 8081",
     "build": "parcel build --public-url . src/MapManager.ts"
