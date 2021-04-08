@@ -19,4 +19,6 @@ export default abstract class BaseInteraction implements InteractionInterface
     getType(): InteractionType {
         return this.type;
     }
+
+    clear(): void {}
 }

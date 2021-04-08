@@ -1,14 +1,15 @@
-import AccentMap from "../Domain/Model/Map/Map"
-import LayerInterface from "../Domain/Model/Layer/LayerInterface"
-import VectorLayer from "../Domain/Model/Layer/Impl/VectorLayer"
-import TileLayer from "../Domain/Model/Layer/Impl/TileLayer"
-import LayerBuilder from "../Domain/Model/Layer/LayerBuilder"
-import SourceType from "../Domain/Model/Source/SourceType"
-import VectorLayerFeaturesLoadQuery from "../Application/Query/VectorLayerFeaturesLoadQuery"
-import VectorLayerRepository from "./Repository/VectorLayerRepository"
-import FeatureCollection from "../Domain/Model/Feature/FeatureCollection"
-import Geometry from "./Util/Geometry"
-import InteractionType from "../Domain/Model/Map/Interaction/InteractionType"
+import AccentMap from "./Domain/Model/Map/Map"
+import Interaction from "./Domain/Model/Map/Interaction/InteractionType"
+import LayerInterface from "./Domain/Model/Layer/LayerInterface"
+import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
+import TileLayer from "./Domain/Model/Layer/Impl/TileLayer"
+import LayerBuilder from "./Domain/Model/Layer/LayerBuilder"
+import SourceType from "./Domain/Model/Source/SourceType"
+import VectorLayerFeaturesLoadQuery from "./Application/Query/VectorLayerFeaturesLoadQuery"
+import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerRepository"
+import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
+import Geometry from "./Infrastructure/Util/Geometry"
+
 
 /** @class MapManager */
 export default class MapManager { 
@@ -69,20 +70,20 @@ export default class MapManager {
     /**
      * Gets map regime
      *
-     * @function getMapRegime
+     * @function getMapInteraction
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
-     * @return {Regime} map regime
+     * @return {Interaction} map regime
      */
-    public static getInteraction(map: AccentMap): InteractionType {
+    public static getInteraction(map: AccentMap): Interaction {
         return map.getInteraction();
     }
 
     /**
      * Sets map normal regime
      *
-     * @function setDrawRegime
+     * @function setDrawInteraction
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
@@ -94,7 +95,7 @@ export default class MapManager {
     /**
      * Sets map draw regime
      *
-     * @function setDrawRegime
+     * @function setDrawInteraction
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
@@ -103,20 +104,6 @@ export default class MapManager {
      */
     public static setDrawInteraction(map: AccentMap, layer: LayerInterface, opts: unknown): void {
         map.setDrawInteraction(layer, opts["geometry_type"], opts["draw_callback"]);
-    }
-
-    /**
-     * Sets map draw regime
-     *
-     * @function setDrawRegime
-     * @memberof MapManager
-     * @static
-     * @param {AccentMap} map - map instance
-     * @param {LayerInterface} layer - layer instance
-     * @param {Object} opts - options
-     */
-     public static setSelectionInteraction(map: AccentMap, opts: unknown): void {
-        map.setSelectionInteraction(opts["selection_type"], opts["select_callback"]);
     }
 
     /**

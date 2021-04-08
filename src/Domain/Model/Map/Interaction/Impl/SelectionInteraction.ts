@@ -7,11 +7,14 @@ import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
 import SelectionType from "./SelectionType";
+import { EventHandlerCollection } from "../EventHandlerCollection";
 import Feature from "../../../Feature/Feature";
 import FeatureCollection from "../../../Feature/FeatureCollection";
 import Map from "../../Map";
 
 export default class SelectionInteraction extends BaseInteraction {
+
+    private eventHandlers: EventHandlerCollection;
 
     /**
      * @constructor
@@ -24,15 +27,28 @@ export default class SelectionInteraction extends BaseInteraction {
         switch(type) {
             case SelectionType.Pin:
                 const olMap: OlMap = map.getMap();
-                olMap.on("click", ((e: OlMapBrowserEvent): void => {
+                const clickHandler = (e: OlMapBrowserEvent): void => {
                     const fc: FeatureCollection = this.pin(olMap, e);
                     if (typeof callback === "function") {
                         callback(fc);
                     }
-                }));
+                };
+                this.eventHandlers["click"].push(clickHandler);
+                olMap.on("click", (e: OlMapBrowserEvent): void => {
+                    const fc: FeatureCollection = this.pin(olMap, e);
+                    if (typeof callback === "function") {
+                        callback(fc);
+                    }
+                });
                 break;
             default:
                 break;
+        }
+    }
+
+    clear(): void {
+        for (let i in this.eventHandlers["click"]) {
+            
         }
     }
 
