@@ -1,5 +1,5 @@
 {
-  "name": "@bingo-soft/mapmanager",
+  "name": "@bingo_soft/mapmanager",
   "version": "1.0.2",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
