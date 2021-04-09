@@ -8,4 +8,4 @@ MapManager depends on [OpenLayers](https://github.com/openlayers/openlayers) lib
 
 ## Examples
 
-Explore [examples](examples/index.html) to learn how to use the library
+Explore [examples](examples/) to learn how to use the library
