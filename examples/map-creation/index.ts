@@ -2,7 +2,6 @@ import MapManager from "../../src/MapManager";
 import Map from "../../src/Domain/Model/Map/Map";
 import BaseLayer from "../../src/Domain/Model/Map/BaseLayer";
 
-debugger
 /* Create and initialize map */
 const optsMap = { 
     base_layer: BaseLayer.OSM,
