@@ -1,6 +1,6 @@
 # MapManager
 
-MapManager - is a JavaScript and TypeScript library, which simplifies usage of OpenLayers in GIS projects
+MapManager is a JavaScript and TypeScript library, which simplifies usage of OpenLayers in GIS projects
 
 ## Dependencies
 
