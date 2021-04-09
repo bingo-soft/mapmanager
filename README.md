@@ -51,7 +51,7 @@ body, html {
 }
 ```
 
-index.js
+index.ts
 
 ```js
 import MapManager from "../../src/MapManager";
