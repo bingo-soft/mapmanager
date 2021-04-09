@@ -16,16 +16,17 @@ import OlFeature from "ol/Feature";
 //import OlGeoJSON from "ol/format/GeoJSON";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
-import InteractionType from "./Interaction/InteractionType";
+import InteractionType from "../Interaction/InteractionType";
 import SourceType from "../Source/SourceType";
 import Feature from "../Feature/Feature";
 import FeatureCollection from "../Feature/FeatureCollection";
-import InteractionInterface from "./Interaction/InteractionInterface";
-import NormalInteraction from "./Interaction/Impl/NormalInteraction";
-import DrawInteraction from "./Interaction/Impl/DrawInteraction";
-import SelectionInteraction from "./Interaction/Impl/SelectionInteraction";
-import SelectionType from "./Interaction/Impl/SelectionType";
+import InteractionInterface from "../Interaction/InteractionInterface";
+import NormalInteraction from "../Interaction/Impl/NormalInteraction";
+import DrawInteraction from "../Interaction/Impl/DrawInteraction";
+import SelectInteraction from "../Interaction/Impl/SelectInteraction";
+import SelectionType from "../Interaction/Impl/SelectionType";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
+import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 /* import Projection from "ol/proj/Projection";  */
 
 
@@ -36,6 +37,7 @@ export default class Map {
     //private visibleLayers: OlCollection<string> = new OlCollection();
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
+    //private eventHandlers: EventHandlerCollection;
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
@@ -82,7 +84,6 @@ export default class Map {
         } /* else if (...) {
             TODO
         } */
-        this.setNormalInteraction();
         const overviewMapControl: OlOverviewMap = new OlOverviewMap({
             layers: [
                 new OlTileLayer({
@@ -104,6 +105,9 @@ export default class Map {
                 zoom: zoom
             })
         });
+        //this.eventHandlers = new EventHandlerCollection(this.map);
+        this.setNormalInteraction();
+
     }
 
     /**
@@ -115,6 +119,10 @@ export default class Map {
      public getMap(): OlMap {
         return this.map;
     }
+
+    /* public getEventHandlers(): EventHandlerCollection {
+        return this.eventHandlers;
+    } */
 
     /**
      * Updates map size
@@ -179,8 +187,8 @@ export default class Map {
      * @memberof Map
      */
     public setNormalInteraction(): void {
-        this.clearInteractions();
-        this.interaction = new NormalInteraction();
+        this.clearInteractions(); 
+        this.interaction = new NormalInteraction(this);
     }
 
     /**
@@ -207,16 +215,16 @@ export default class Map {
      * @function setSelectionInteractionType
      * @memberof Map
      */
-    public setSelectionInteraction(type: SelectionType, callback: (feature: FeatureCollection) => void): void {
+    public setSelectInteraction(type: SelectionType, callback: (feature: FeatureCollection) => void): void {
         this.clearInteractions();
-        this.interaction = new SelectionInteraction(this, type, callback);
-        if (type != SelectionType.Pin) {
-            this.addInteraction(this.interaction);  
-        }
+        this.interaction = new SelectInteraction(type, this, callback);
+        this.addInteraction(this.interaction, type != SelectionType.Pin);  
     }
-
-    private addInteraction(interaction: InteractionInterface): void {
-        this.map.addInteraction(interaction.getInteraction());
+ 
+    private addInteraction(interaction: InteractionInterface, addToOlMap: boolean = true): void {
+        if (addToOlMap) {
+            this.map.addInteraction(interaction.getInteraction());
+        }
         this.interactions.push(interaction);
     }
 
@@ -225,11 +233,17 @@ export default class Map {
      *
      * @function clearInteractions
      * @memberof Map
-     */
+     */ 
     private clearInteractions(): void {
         for (const i in this.interactions) {
-            this.map.removeInteraction(this.interactions[i].getInteraction());
+            const interaction: InteractionInterface = this.interactions[i];
+            const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
+            if (interactionHandlers) {
+                interactionHandlers.clear();
+            }
+            this.map.removeInteraction(interaction.getInteraction());
         }
+        this.interactions = [];
     }
 
     /**
@@ -282,10 +296,10 @@ export default class Map {
      *
      * @function fitExtent
      * @memberof Map
-     * @param {Extent} extent - extent to fit to
+     * @param {Array} extent - extent to fit to
      */
-    public fitExtent(extent: OlExtent): void {
-        this.map.getView().fit(extent);
+    public fitExtent(extent: number[]): void {
+        this.map.getView().fit(<OlExtent> extent);
     }
 
     /**

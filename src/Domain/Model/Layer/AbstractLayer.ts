@@ -1,14 +1,19 @@
 import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
+import OlFeature from "ol/Feature";
+import { Style as OlStyle } from "ol/style";
 import LayerInterface from "./LayerInterface";
 import SourceType from "../Source/SourceType";
 import SourceInterface from "../Source/SourceInterface";
 import { StyleType } from "../Style/StyleType";
 import MethodNotImplemented from "../../Exception/MethodNotImplemented";
+import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
+import StyleFunction from "../Style/StyleFunctionType";
 
 export default abstract class AbstractLayer implements LayerInterface
 {
     protected layer: OlLayer;
+    protected eventHandlers: EventHandlerCollection;
     protected srs: string;
 
     public getLayer(): OlLayer {
@@ -20,6 +25,10 @@ export default abstract class AbstractLayer implements LayerInterface
     public setType(type: SourceType): void {
         console.log(type);
         throw new MethodNotImplemented();
+    }
+
+    public getEventHandlers(): EventHandlerCollection {
+        return this.eventHandlers;
     }
 
     public getSRS(): string {
@@ -52,8 +61,11 @@ export default abstract class AbstractLayer implements LayerInterface
     /**
      * @param {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} style - style
      */
-    public setStyle(style: StyleType): void { 
+   /*  public setStyle(style: StyleType): void { 
         console.log(style);
+        throw new MethodNotImplemented();
+    } */
+    public setStyle(style: StyleFunction): void { 
         throw new MethodNotImplemented();
     }
 

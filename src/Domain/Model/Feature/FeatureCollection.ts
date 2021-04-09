@@ -18,7 +18,15 @@ export default class FeatureCollection {
     
     private features: Feature[] = [];
     private srs: string = "EPSG:3857";
+
+    private static readonly MAP_SRS_ID = 3857;
     
+    /**
+     * @constructor
+     * @memberof FeatureCollection
+     * @param {Array} features - array of features
+     * @param {String} srs - SRS of features
+     */
     constructor(features: OlFeature[] | Feature[], srs: string) {
         if (features[0]) {
             if (features[0] instanceof OlFeature) {
@@ -35,6 +43,18 @@ export default class FeatureCollection {
         this.srs = srs;
     }
 
+    public forEach(callbackfn: (value: Feature, key: string, arr: Feature[]) => void, thisArg?: any) {
+        if (typeof callbackfn != "function") {
+            throw new TypeError();
+        }
+        const length: number = this.features.length;
+        for (var i = 0; i < length; i++) {
+            if (i in this.features) {
+                callbackfn.call(thisArg, this.features[i], i, this.features);
+            }
+        }
+    }
+
     /* public getFeatures(): Feature[] {
         return this.features;   
     } */
@@ -43,17 +63,31 @@ export default class FeatureCollection {
         return this.srs;   
     } */
 
+    /**
+     * Returns true if feature collection consists of a singe feature, otherwise returns false
+     *
+     * @function isSingle
+     * @memberof FeatureCollection
+     * @return {Boolean} is feature collection single
+     */
     public isSingle(): boolean {
         return this.features.length == 1;
     }
 
+    /**
+     * Returns true if feature collection consists of multiple features of different types, otherwise returns false
+     *
+     * @function isMixed
+     * @memberof FeatureCollection
+     * @return {Boolean} is feature collection consists of multiple features of different type
+     */
     public isMixed(): boolean {
         const isEqual = this.features.every((val: Feature, i, arr) => val.getType() === arr[0].getType());
         return !isEqual;
     }
 
     /**
-     * Gets features of the collection as single geometry GeoJSON
+     * Returns features of the collection as single geometry GeoJSON
      *
      * @function getAsSingleGeometry
      * @memberof FeatureCollection
@@ -64,14 +98,14 @@ export default class FeatureCollection {
             const geom: OlGeometry = this.features[0].getFeature().getGeometry();
             return new OlGeoJSON().writeGeometry(geom, {
                 dataProjection: this.srs,
-                featureProjection: "EPSG:3857"
+                featureProjection: "EPSG:3857" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
             });
         }
         return "";
     }
 
     /**
-     * Gets features of the collection as multi geometry GeoJSON
+     * Returns features of the collection as multi geometry GeoJSON
      *
      * @function getAsMultiGeometry
      * @memberof FeatureCollection
@@ -112,14 +146,14 @@ export default class FeatureCollection {
             }
             return new OlGeoJSON().writeGeometry(returnGeom, {
                 dataProjection: this.srs,
-                featureProjection: "EPSG:3857"
+                featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
             });
         } 
         return "";
     }
 
     /**
-     * Gets features of the collection as GeometryCollection GeoJSON
+     * Returns features of the collection as GeometryCollection GeoJSON
      *
      * @function getAsGeometryCollection
      * @memberof FeatureCollection
@@ -133,7 +167,7 @@ export default class FeatureCollection {
             });
             return new OlGeoJSON().writeGeometry(new OlGeometryCollection(geoms), {
                 dataProjection: this.srs,
-                featureProjection: "EPSG:3857"
+                featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
             });
         }
         return "";

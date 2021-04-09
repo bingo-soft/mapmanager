@@ -4,6 +4,7 @@ import { TileImage as OlTileImage } from "ol/source";
 import AbstractLayer from "../AbstractLayer";
 import SourceType from "../../Source/SourceType";
 import SourceInterface from "../../Source/SourceInterface";
+import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 
 /** @class TileLayer */
 export default class TileLayer extends AbstractLayer {
@@ -31,7 +32,9 @@ export default class TileLayer extends AbstractLayer {
     }
 
     public setSource(source: SourceInterface): void {
-        this.layer.setSource(<OlTileImage> source.getSource());
+        const olSource: OlTileImage = <OlTileImage> source.getSource()
+        this.layer.setSource(olSource);
+        this.eventHandlers = new EventHandlerCollection(olSource);
     }
 
     public setUrl(url: string): void {

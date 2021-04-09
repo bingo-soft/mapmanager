@@ -1,5 +1,4 @@
 import AccentMap from "./Domain/Model/Map/Map"
-import Interaction from "./Domain/Model/Map/Interaction/InteractionType"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
 import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
 import TileLayer from "./Domain/Model/Layer/Impl/TileLayer"
@@ -9,7 +8,7 @@ import VectorLayerFeaturesLoadQuery from "./Application/Query/VectorLayerFeature
 import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerRepository"
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
-
+import InteractionType from "./Domain/Model/Interaction/InteractionType"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -70,20 +69,20 @@ export default class MapManager {
     /**
      * Gets map regime
      *
-     * @function getMapInteraction
+     * @function getMapRegime
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
-     * @return {Interaction} map regime
+     * @return {Regime} map regime
      */
-    public static getInteraction(map: AccentMap): Interaction {
+    public static getInteraction(map: AccentMap): InteractionType {
         return map.getInteraction();
     }
 
     /**
      * Sets map normal regime
      *
-     * @function setDrawInteraction
+     * @function setDrawRegime
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
@@ -95,7 +94,7 @@ export default class MapManager {
     /**
      * Sets map draw regime
      *
-     * @function setDrawInteraction
+     * @function setDrawRegime
      * @memberof MapManager
      * @static
      * @param {AccentMap} map - map instance
@@ -104,6 +103,20 @@ export default class MapManager {
      */
     public static setDrawInteraction(map: AccentMap, layer: LayerInterface, opts: unknown): void {
         map.setDrawInteraction(layer, opts["geometry_type"], opts["draw_callback"]);
+    }
+
+    /**
+     * Sets map draw regime
+     *
+     * @function setDrawRegime
+     * @memberof MapManager
+     * @static
+     * @param {AccentMap} map - map instance
+     * @param {LayerInterface} layer - layer instance
+     * @param {Object} opts - options
+     */
+     public static setSelectInteraction(map: AccentMap, opts: unknown): void {
+        map.setSelectInteraction(opts["selection_type"], opts["select_callback"]);
     }
 
     /**
