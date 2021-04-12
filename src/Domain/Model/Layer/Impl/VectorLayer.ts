@@ -4,6 +4,7 @@ import { Source as OlSource } from "ol/source";
 import { Vector as OlVectorSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
+import BaseVectorLayer from "ol/layer/BaseVector";
 import OlGeometryType from "ol/geom/GeometryType";
 import { Style as OlStyle, Text as OlTextStyle, Fill as OlFill, Stroke as OlStroke } from "ol/style";
 import { StyleType } from "../../Style/StyleType";
@@ -12,12 +13,15 @@ import SourceInterface from "../../Source/SourceInterface";
 import { DefaultStyle } from "../../Style/Impl/DefaultStyle";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
+import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
+import StyleFunction from "../../Style/StyleFunctionType";
 
 
 /** @class VectorLayer */
 export default class VectorLayer extends AbstractLayer{
 
-    private style: StyleType;
+    /* private style: StyleType; */
+    //private style: StyleFunction;
     
     /**
      * @constructor
@@ -30,8 +34,8 @@ export default class VectorLayer extends AbstractLayer{
             const srsH: unknown = opts["srs_handling"];
             this.srs = "EPSG:" + (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
         }
-        this.style = DefaultStyle;
-        this.layer = new OlVectorLayer({
+        //this.style = DefaultStyle;
+        this.layer = new OlVectorLayer(/* {
             style: (feature: OlFeature): OlStyle => { 
                 const geomType: OlGeometryType = feature.getGeometry().getType();
                 const style: OlStyle = this.style[geomType];
@@ -55,7 +59,7 @@ export default class VectorLayer extends AbstractLayer{
                 }
                 return style;
             }
-        });
+        } */);
     }
 
     public getType(): SourceType {
@@ -67,7 +71,9 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     public setSource(source: SourceInterface): void {
-        this.layer.setSource(<OlVectorSource> source.getSource());
+        const olSource: OlVectorSource = <OlVectorSource> source.getSource();
+        this.layer.setSource(olSource);
+        this.eventHandlers = new EventHandlerCollection(olSource);
     }
 
     public setLoader(loader: () => Promise<string>): void {   
@@ -81,9 +87,13 @@ export default class VectorLayer extends AbstractLayer{
         });
     }
 
-    public setStyle(style: StyleType): void { 
+   /*  public setStyle(style: StyleType): void { debugger;
         //(<BaseVector> this.layer).setStyle(style);
         this.style = style;
+    } */
+    public setStyle(style: StyleFunction): void {
+        (<BaseVectorLayer> this.layer).setStyle(style);
+        //this.style = style;
     }
 
     public addFeatures(features: string/* , opts?: unknown */): void {

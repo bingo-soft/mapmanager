@@ -1,9 +1,11 @@
-//import OlGeometryType from "ol/geom/GeometryType"
+import OlGeometryType from "ol/geom/GeometryType"
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
+import OlFeature from "ol/Feature";
 //import { Options as OlCircleOptions } from "ol/style/Circle";
 import { DefaultStyle } from "./Impl/DefaultStyle"
 //import { DynamicStyle } from "./Impl/DynamicStyle"
 import { StyleType } from "./StyleType"
+import StyleFunction from "./StyleFunctionType";
 
 /** @class StyleBuilder */
 export default class StyleBuilder {
@@ -21,7 +23,7 @@ export default class StyleBuilder {
      * @constructor
      * @memberof LayerBuilder
      * @param {object} opts - options
-     */
+     */ 
     constructor(opts?: unknown) {
         this.style = {
             "Point": null,
@@ -174,7 +176,34 @@ export default class StyleBuilder {
      * @memberof StyleBuilder
      * @return {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} - style
      */
-    public build(): StyleType {
+    /* public build(): StyleType {
         return this.style;
+    } */
+    public build(): StyleFunction /* StyleType */ {
+        //return this.style;
+
+        return (feature: OlFeature): OlStyle => {
+            const geomType: OlGeometryType = feature.getGeometry().getType();
+            const style: OlStyle = this.style[geomType];
+            const textStyle: OlTextStyle = this.style["Text"];
+            if (style && textStyle) {
+                const textValue: string = feature.getProperties()[textStyle.getText()];
+                if (textValue) {
+                    const newTextStyle: OlTextStyle = new OlTextStyle({
+                        stroke: new OlStroke({
+                            color: textStyle.getStroke().getColor(),
+                            width: textStyle.getStroke().getWidth()
+                        }),
+                        fill: new OlFill({
+                            color: textStyle.getFill().getColor()
+                        }),
+                        font: textStyle.getFont()
+                    });
+                    newTextStyle.setText(textValue);
+                    style.setText(newTextStyle);
+                }
+            }
+            return style;
+        }
     }
 }

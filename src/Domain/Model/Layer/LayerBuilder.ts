@@ -7,6 +7,8 @@ import XYZSource from "../Source/Impl/XYZSource";
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import { StyleType } from "../Style/StyleType";
+import EventType from "../EventHandlerCollection/EventType";
+import Handler from "../EventHandlerCollection/HandlerType";
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
@@ -52,19 +54,31 @@ export default class LayerBuilder {
         return this;
     }
 
-    public setStyle(opts?: unknown): LayerBuilder {
+    /* public setStyle(opts?: unknown): LayerBuilder {
         const style: StyleType = (new StyleBuilder(opts)).build();
         this.layer.setStyle(style);
+        return this;
+    } */
+    public setStyle(opts?: unknown): LayerBuilder {
+        this.layer.setStyle((new StyleBuilder(opts)).build());
         return this;
     }
 
     public setLoadCallback(callback: () => void): void {
-        const sourceEventListener: OlEventsKey = this.layer.getSource().on("change", function(e: OlBaseEvent) {
-            if (e.target.getState() == "ready" && typeof callback === "function") {
-                callback();
-                e.target.un("change", sourceEventListener);                
-            }
-        });
+        if (typeof callback === "function") {
+            this.layer.getEventHandlers().add(EventType.Change, "LayerLoadEventHanler", (e: OlBaseEvent): void => {
+                if (e.target.getState() == "ready") {
+                    callback();
+                    //e.target.un("change", listener);                
+                }
+            });
+            /* const sourceEventListener: OlEventsKey = this.layer.getSource().on("c", function(e: OlBaseEvent) {
+                if (e.target.getState() == "ready" && typeof callback === "function") {
+                    callback();
+                    e.target.un("change", sourceEventListener);                
+                }
+            }); */
+        }
     }
 
     /**
