@@ -108,7 +108,7 @@ export default class SelectInteraction extends BaseInteraction {
      * @param {Object} point - clicked point on map
      * @return {Object} FeatureCollection 
      */     
-     private pin(map: OlMap, point: OlBaseEvent): FeatureCollection {
+     /* private pin(map: OlMap, point: OlBaseEvent): FeatureCollection {
         const featureArr: Feature[] = [];
         map.forEachFeatureAtPixel((<OlMapBrowserEvent> point).pixel, (feature: OlFeature, layer: OlVectorLayer): void => {
             if (layer) {
@@ -117,5 +117,5 @@ export default class SelectInteraction extends BaseInteraction {
             }
         });
         return new FeatureCollection(featureArr, map.getView().getProjection().getCode());
-    }
+    } */
 }
