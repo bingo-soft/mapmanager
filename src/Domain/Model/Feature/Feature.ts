@@ -1,5 +1,5 @@
 import OlFeature from "ol/Feature";
-import OlLayer from "ol/layer/Layer";
+import OlSource from "ol/source/Source";
 /* import OlGeoJSON from "ol/format/GeoJSON";
 import OlGeometryType from "ol/geom/GeometryType"; */
 
@@ -8,7 +8,7 @@ import OlGeometryType from "ol/geom/GeometryType"; */
 export default class Feature { 
     
     private feature: OlFeature;
-    private layer: OlLayer;
+    private source: OlSource;
 
     /**
      * @constructor
@@ -16,10 +16,10 @@ export default class Feature {
      * @param {Object} feature - OpenLayers' feature object
      * @param {Object} layer - OpenLayers' layer object
      */
-    constructor(feature: OlFeature, layer?: OlLayer) {
+    constructor(feature: OlFeature, source?: OlSource) {
         this.feature = feature;
-        if (layer) {
-            this.layer = layer;
+        if (source) {
+            this.source = source;
         }
     }
 
@@ -41,6 +41,7 @@ export default class Feature {
     /* public getId(): string | number {
         return this.feature.getId();
     } */
+    
 
     /**
      * Returns OpenLayers' feature type
@@ -52,6 +53,30 @@ export default class Feature {
     public getType(): string {
         return this.feature.getGeometry().getType();
     }
+
+    /**
+     * Returns OpenLayers' layer object
+     *
+     * @function getLayer
+     * @memberof Feature
+     * @return {Object} layer object
+     */
+     public getSource(): OlSource {
+        return this.source;
+    }
+
+    /**
+     * Sets layer of the feature
+     *
+     * @function getType
+     * @memberof Feature
+     * @param {Object} layer - layer instance
+     */
+    public setSource(source: OlSource): void {
+        this.source = source;
+    }
+
+
 
     /* public getProperties(): unknown {
         return this.feature.getProperties();

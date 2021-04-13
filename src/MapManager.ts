@@ -1,4 +1,4 @@
-import AccentMap from "./Domain/Model/Map/Map"
+import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
 import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
 import TileLayer from "./Domain/Model/Layer/Impl/TileLayer"
@@ -21,10 +21,10 @@ export default class MapManager {
      * @static
      * @param {String} targetDOMId - id of target DOM element
      * @param {Object} opts - options
-     * @return {AccentMap} map instance
+     * @return {Map} map instance
      */
-    public static createMap(targetDOMId: string, opts?: unknown): AccentMap {
-        const map : AccentMap = new AccentMap(targetDOMId, opts); 
+    public static createMap(targetDOMId: string, opts?: unknown): Map {
+        const map : Map = new Map(targetDOMId, opts); 
         return map;
     }
 
@@ -34,9 +34,9 @@ export default class MapManager {
      * @function updateSize
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      */
-    public static updateSize(map: AccentMap): void {
+    public static updateSize(map: Map): void {
         map.updateSize();
     }
 
@@ -46,10 +46,10 @@ export default class MapManager {
      * @function setCenter
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {Object} opts - options
      */
-    public static setCenter(map: AccentMap, opts?: unknown): void {
+    public static setCenter(map: Map, opts?: unknown): void {
         map.setCenter(opts);
     }
 
@@ -59,10 +59,10 @@ export default class MapManager {
      * @function setZoom
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {Number} zoom - zoom value
      */
-    public static setZoom(map: AccentMap, zoom: number): void {
+    public static setZoom(map: Map, zoom: number): void {
         map.setZoom(zoom);
     }
    
@@ -72,10 +72,10 @@ export default class MapManager {
      * @function getMapRegime
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @return {Regime} map regime
      */
-    public static getInteraction(map: AccentMap): InteractionType {
+    public static getInteraction(map: Map): InteractionType {
         return map.getInteraction();
     }
 
@@ -85,9 +85,9 @@ export default class MapManager {
      * @function setDrawRegime
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      */
-    public static setNormalInteraction(map: AccentMap): void {
+    public static setNormalInteraction(map: Map): void {
         map.setNormalInteraction();
     }
 
@@ -97,11 +97,11 @@ export default class MapManager {
      * @function setDrawRegime
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
      * @param {Object} opts - options
      */
-    public static setDrawInteraction(map: AccentMap, layer: LayerInterface, opts: unknown): void {
+    public static setDrawInteraction(map: Map, layer: LayerInterface, opts: unknown): void {
         map.setDrawInteraction(layer, opts["geometry_type"], opts["draw_callback"]);
     }
 
@@ -111,12 +111,12 @@ export default class MapManager {
      * @function setDrawRegime
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
      * @param {Object} opts - options
      */
-     public static setSelectInteraction(map: AccentMap, opts: unknown): void {
-        map.setSelectInteraction(opts["selection_type"], opts["select_callback"]);
+     public static setSelectInteraction(map: Map, opts: unknown): void {
+        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["select_callback"]);
     }
 
     /**
@@ -251,15 +251,28 @@ export default class MapManager {
     }
 
     /**
+     * Removes features from map
+     *
+     * @function removeFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to remove
+     */
+    public static removeFeatures(map: Map, features: FeatureCollection): void {
+        map.removeFeatures(features);
+    }
+
+    /**
      * Adds layer to the map.
      *
      * @function addLayer
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Object} map - map instance
      * @param {LayerInterface} layer - layer instance
      */
-    public static addLayer(map: AccentMap, layer: LayerInterface): void {
+    public static addLayer(map: Map, layer: LayerInterface): void {
         map.addLayer(layer);
     }
 
@@ -269,10 +282,10 @@ export default class MapManager {
      * @function removeLayer
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
      */
-    public static removeLayer(map: AccentMap, layer: LayerInterface): void {
+    public static removeLayer(map: Map, layer: LayerInterface): void {
         map.removeLayer(layer);
     }
 
@@ -282,11 +295,11 @@ export default class MapManager {
      * @function getActiveLayer
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
      * @return {LayerInterface} active layer instance
      */
-    public static getActiveLayer(map: AccentMap): LayerInterface {
+    public static getActiveLayer(map: Map): LayerInterface {
         return map.getActiveLayer();
     }
 
@@ -296,10 +309,10 @@ export default class MapManager {
      * @function setActiveLayer
      * @memberof MapManager
      * @static
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
      */
-    public static setActiveLayer(map: AccentMap, layer: LayerInterface): void {
+    public static setActiveLayer(map: Map, layer: LayerInterface): void {
         map.setActiveLayer(layer);
     }
 
@@ -308,10 +321,10 @@ export default class MapManager {
      *
      * @function fitLayer
      * @memberof Map
-     * @param {AccentMap} map - map instance
+     * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
      */
-    public static fitLayer(map: AccentMap, layer: LayerInterface): void { 
+    public static fitLayer(map: Map, layer: LayerInterface): void { 
         map.fitLayer(layer);
     }
 

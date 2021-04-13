@@ -4,9 +4,10 @@ import OlMap from "ol/Map";
 import OlView from "ol/View";
 import { Extent as OlExtent } from "ol/extent";
 import { OverviewMap as OlOverviewMap, defaults as OlDefaultControls } from "ol/control";
+import OlSource from "ol/source/Source";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
-import { OSM as OlOSM } from "ol/source";
+import { OSM as OlOSM, Source } from "ol/source";
 import { Tile as OlTileLayer } from "ol/layer";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
@@ -215,16 +216,16 @@ export default class Map {
      * @function setSelectionInteractionType
      * @memberof Map
      */
-    public setSelectInteraction(type: SelectionType, callback: (feature: FeatureCollection) => void): void {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback: (feature: FeatureCollection) => void): void {
         this.clearInteractions();
-        this.interaction = new SelectInteraction(type, this, callback);
-        this.addInteraction(this.interaction, type != SelectionType.Pin);  
+        this.interaction = new SelectInteraction(type, this, layers, callback);
+        this.addInteraction(this.interaction/* , type != SelectionType.Pin */);  
     }
  
-    private addInteraction(interaction: InteractionInterface, addToOlMap: boolean = true): void {
-        if (addToOlMap) {
+    private addInteraction(interaction: InteractionInterface/* , addToOlMap: boolean = true */): void {
+        /* if (addToOlMap) { */
             this.map.addInteraction(interaction.getInteraction());
-        }
+        /* } */
         this.interactions.push(interaction);
     }
 
@@ -289,6 +290,21 @@ export default class Map {
      */
     public removeLayer(layer: LayerInterface): void {
         this.map.removeLayer(layer.getLayer());
+    }
+
+    /**
+     * Removes features from map
+     *
+     * @function removeFeatures
+     * @memberof Map
+     * @param {Object} features - features to remove
+     */
+    public removeFeatures(features: FeatureCollection): void {
+        features.forEach((feature): void => { debugger
+            const source: OlVectorSource = <OlVectorSource> feature.getSource();
+            source.removeFeature(feature.getFeature());
+            source.refresh();
+        })
     }
 
     /**
