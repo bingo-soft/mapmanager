@@ -24,26 +24,29 @@ pnpm-debug.log*
 *.sw?
 
 # example
-example/client/node_modules
-example/client/dist
-example/client/.cache
-example/client/.env
+examples/client/node_modules
+examples/client/dist
+examples/client/.cache
+examples/client/.env
 
 # local env files
-example/client/.env.local
-example/client/.env.*.local
+examples/client/.env.local
+examples/client/.env.*.local
 
 # Log files
-example/client/npm-debug.log*
-example/client/yarn-debug.log*
-example/client/yarn-error.log*
-example/client/pnpm-debug.log*
+examples/client/npm-debug.log*
+examples/client/yarn-debug.log*
+examples/client/yarn-error.log*
+examples/client/pnpm-debug.log*
 
 # Editor directories and files
-example/client/.idea
-example/client/.vscode
-example/client/*.suo
-example/client/*.ntvs*
-example/client/*.njsproj
-example/client/*.sln
-example/client/*.sw?
+examples/client/.idea
+examples/client/.vscode
+examples/client/*.suo
+examples/client/*.ntvs*
+examples/client/*.njsproj
+examples/client/*.sln
+examples/client/*.sw?
+
+# debug example 
+example

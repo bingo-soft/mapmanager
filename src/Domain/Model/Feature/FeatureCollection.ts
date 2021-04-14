@@ -1,3 +1,4 @@
+import OlSource from "ol/source/Source";
 import OlFeature from "ol/Feature";
 import OlGeometry from "ol/geom/Geometry";
 import OlGeometryCollection from "ol/geom/GeometryCollection";
@@ -27,15 +28,18 @@ export default class FeatureCollection {
      * @param {Array} features - array of features
      * @param {String} srs - SRS of features
      */
-    constructor(features: OlFeature[] | Feature[], srs: string) {
+    constructor(features: OlFeature[] | Feature[], srs: string, source?: OlSource) {
         if (features[0]) {
             if (features[0] instanceof OlFeature) {
                 (<OlFeature[]> features).forEach((el: OlFeature): void => {
-                    this.features.push(new Feature(el));
+                    this.features.push(new Feature(el, source));
                 });
             }
             if (features[0] instanceof Feature) {
                 (<Feature[]> features).forEach((el: Feature): void => {
+                    if (source) {
+                        el.setSource(source);
+                    }
                     this.features.push(el);
                 });
             }
@@ -47,8 +51,7 @@ export default class FeatureCollection {
         if (typeof callbackfn != "function") {
             throw new TypeError();
         }
-        const length: number = this.features.length;
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < this.features.length; i++) {
             if (i in this.features) {
                 callbackfn.call(thisArg, this.features[i], i, this.features);
             }

@@ -13,13 +13,14 @@ body, html {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: 95%;
     background-color: #eee;
     z-index: 1;
 }
 
 #controls {
     height: 5%;
+    padding: 10px 0 0 10px;
 }
 
 .panel {

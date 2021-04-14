@@ -8,7 +8,7 @@
     "url": "https://github.com/bingo-soft/mapmanager.git"
   },
   "scripts": {
-    "serve": "parcel serve src/MapManager.ts --host http://localhost --port 8081",
+    "serve": "parcel serve src/MapManager.ts --host localhost --port 8081",
     "build": "parcel build --public-url . src/MapManager.ts"
   },
   "author": "Bingo-Soft",

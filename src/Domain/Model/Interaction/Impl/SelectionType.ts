@@ -1,5 +1,7 @@
 enum SelectionType {
-    Pin = "pin"
+    /* Pin = "pin", */
+    SingleClick = "singleclick",
+    Rectangle = "rectangle"
 }
 
 export default SelectionType;
