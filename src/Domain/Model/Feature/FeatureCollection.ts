@@ -85,7 +85,7 @@ export default class FeatureCollection {
      * @return {Boolean} is feature collection consists of multiple features of different type
      */
     public isMixed(): boolean {
-        const isEqual = this.features.every((val: Feature, i, arr) => val.getType() === arr[0].getType());
+        const isEqual = this.features.every((val: Feature, i, arr) => val.getType().replace("Multi", "") === arr[0].getType().replace("Multi", ""));
         return !isEqual;
     }
 
@@ -115,20 +115,33 @@ export default class FeatureCollection {
      * @return {String} - GeoJSON
      */
     public getAsMultiGeometry(): string {
-        let geomType: OlGeometryType;
+        let geomType: OlGeometryType; 
         if (this.features.length) {
-            geomType = this.features[0].getFeature().getGeometry().getType();
+            //geomType = this.features[0].getFeature().getGeometry().getType();
             const coordsPoint: OlCoordinate[] = [];
             const coordsLineString: OlCoordinate[][] = [];
             const coordsPolygon: OlCoordinate[][][] = [];
             this.features.forEach((el): void => {
                 const geom: OlGeometry = el.getFeature().getGeometry();
+                geomType = geom.getType();
                 if (geomType == OlGeometryType.POINT) {
                     coordsPoint.push((<OlPoint> geom).getCoordinates());
+                } else if (geomType == OlGeometryType.MULTI_POINT) {
+                    (<OlMultiPoint> geom).getCoordinates().forEach((coord: OlCoordinate): void => {
+                        coordsPoint.push(coord);
+                    });
                 } else if (geomType == OlGeometryType.LINE_STRING) {
                     coordsLineString.push((<OlLineString> geom).getCoordinates());
+                } else if (geomType == OlGeometryType.MULTI_LINE_STRING) {
+                    (<OlMultiLineString> geom).getCoordinates().forEach((coord: OlCoordinate[]): void => {
+                        coordsLineString.push(coord);
+                    });
                 } else if (geomType == OlGeometryType.POLYGON) {
                     coordsPolygon.push((<OlPolygon> geom).getCoordinates());
+                } else if (geomType == OlGeometryType.MULTI_POLYGON) {
+                    (<OlMultiPolygon> geom).getCoordinates().forEach((coord: OlCoordinate[][]): void => {
+                        coordsPolygon.push(coord);
+                    });
                 } else {
 
                 } 
@@ -136,12 +149,15 @@ export default class FeatureCollection {
             let returnGeom: OlGeometry = null;
             switch(geomType) {
                 case OlGeometryType.POINT:
+                case OlGeometryType.MULTI_POINT:
                     returnGeom = new OlMultiPoint(coordsPoint);
                     break;
                 case OlGeometryType.LINE_STRING:
+                case OlGeometryType.MULTI_LINE_STRING:
                     returnGeom = new OlMultiLineString(coordsLineString);
                     break;
                 case OlGeometryType.POLYGON:
+                case OlGeometryType.MULTI_POLYGON:
                     returnGeom = new OlMultiPolygon(coordsPolygon);
                     break;
                 default:
