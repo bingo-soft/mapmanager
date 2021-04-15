@@ -101,7 +101,7 @@ export default class FeatureCollection {
             const geom: OlGeometry = this.features[0].getFeature().getGeometry();
             return new OlGeoJSON().writeGeometry(geom, {
                 dataProjection: this.srs,
-                featureProjection: "EPSG:3857" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
+                featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
             });
         }
         return "";
@@ -125,9 +125,11 @@ export default class FeatureCollection {
                 const geom: OlGeometry = el.getFeature().getGeometry();
                 geomType = geom.getType();
                 if (geomType == OlGeometryType.POINT) {
+                    //console.log((<OlPoint> geom).getCoordinates());
                     coordsPoint.push((<OlPoint> geom).getCoordinates());
                 } else if (geomType == OlGeometryType.MULTI_POINT) {
                     (<OlMultiPoint> geom).getCoordinates().forEach((coord: OlCoordinate): void => {
+                        //console.log(coord);
                         coordsPoint.push(coord);
                     });
                 } else if (geomType == OlGeometryType.LINE_STRING) {
