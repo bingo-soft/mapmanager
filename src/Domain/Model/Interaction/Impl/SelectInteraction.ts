@@ -39,15 +39,6 @@ export default class SelectInteraction extends BaseInteraction {
             });
         }
         switch(type) {
-/*             case SelectionType.Pin:
-                this.eventHandlers = new EventHandlerCollection(olMap);
-                this.eventHandlers.add(EventType.Click, "PinEventHanler", (e: OlBaseEvent): void => {
-                    fc = this.pin(olMap, e);
-                    if (typeof callback === "function") {
-                        callback(fc);
-                    }
-                });
-                break; */
             case SelectionType.SingleClick:
                 this.interaction = new OlSelect({
                     layers: OlLayersToSelectOn.length ? OlLayersToSelectOn : null,
@@ -58,7 +49,6 @@ export default class SelectInteraction extends BaseInteraction {
                     const selectedFeatures: OlFeature[] = e.target.getFeatures().getArray();
                     const features: Feature[] = [];
                     selectedFeatures.forEach((feature: OlFeature): void => {
-                        //features.push(new Feature(feature, e.target.getLayer(feature).getSource()));
                         features.push(new Feature(feature, e.target.getLayer(feature)));
                     });
                     const srs: string = olMap.getView().getProjection().getCode();
@@ -83,7 +73,6 @@ export default class SelectInteraction extends BaseInteraction {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
-                                    //const feature: Feature = new Feature(olFeature, olLayer.getSource()); 
                                     const feature: Feature = new Feature(olFeature, olLayer); 
                                     features.push(feature);
                                     selectedFeatures.push(olFeature); // just to highlight the selection
@@ -102,22 +91,4 @@ export default class SelectInteraction extends BaseInteraction {
         }
     }
 
-    /**
-     * Returns FeatureCollection of features below clicked map point 
-     *
-     * @function pin
-     * @memberof Map
-     * @param {Object} point - clicked point on map
-     * @return {Object} FeatureCollection 
-     */     
-     /* private pin(map: OlMap, point: OlBaseEvent): FeatureCollection {
-        const featureArr: Feature[] = [];
-        map.forEachFeatureAtPixel((<OlMapBrowserEvent> point).pixel, (feature: OlFeature, layer: OlVectorLayer): void => {
-            if (layer) {
-                const accentFeature = new Feature(feature, layer.getSource());
-                featureArr.push(accentFeature);
-            }
-        });
-        return new FeatureCollection(featureArr, map.getView().getProjection().getCode());
-    } */
 }

@@ -29,24 +29,6 @@ export default class FeatureCollection {
      * @param {Array} features - array of features
      * @param {String} srs - SRS of features
      */
-    /* constructor(features: OlFeature[] | Feature[], srs: string, source?: OlSource) {
-        if (features[0]) {
-            if (features[0] instanceof OlFeature) {
-                (<OlFeature[]> features).forEach((el: OlFeature): void => {
-                    this.features.push(new Feature(el, source));
-                });
-            }
-            if (features[0] instanceof Feature) {
-                (<Feature[]> features).forEach((el: Feature): void => {
-                    if (source) {
-                        el.setSource(source);
-                    }
-                    this.features.push(el);
-                });
-            }
-        }
-        this.srs = srs;
-    } */
     constructor(features: OlFeature[] | Feature[], srs: string, layer?: OlLayer) {
         if (features[0]) {
             if (features[0] instanceof OlFeature) {
@@ -76,14 +58,6 @@ export default class FeatureCollection {
             }
         }
     }
-
-    /* public getFeatures(): Feature[] {
-        return this.features;   
-    } */
-
-    /* public getSRS(): string {
-        return this.srs;   
-    } */
 
     /**
      * Returns true if feature collection consists of a singe feature, otherwise returns false
@@ -144,11 +118,9 @@ export default class FeatureCollection {
                 const geom: OlGeometry = el.getFeature().getGeometry();
                 geomType = geom.getType();
                 if (geomType == OlGeometryType.POINT) {
-                    //console.log((<OlPoint> geom).getCoordinates());
                     coordsPoint.push((<OlPoint> geom).getCoordinates());
                 } else if (geomType == OlGeometryType.MULTI_POINT) {
                     (<OlMultiPoint> geom).getCoordinates().forEach((coord: OlCoordinate): void => {
-                        //console.log(coord);
                         coordsPoint.push(coord);
                     });
                 } else if (geomType == OlGeometryType.LINE_STRING) {
