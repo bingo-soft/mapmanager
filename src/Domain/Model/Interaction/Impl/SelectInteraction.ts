@@ -58,7 +58,8 @@ export default class SelectInteraction extends BaseInteraction {
                     const selectedFeatures: OlFeature[] = e.target.getFeatures().getArray();
                     const features: Feature[] = [];
                     selectedFeatures.forEach((feature: OlFeature): void => {
-                        features.push(new Feature(feature, e.target.getLayer(feature).getSource()));
+                        //features.push(new Feature(feature, e.target.getLayer(feature).getSource()));
+                        features.push(new Feature(feature, e.target.getLayer(feature)));
                     });
                     const srs: string = olMap.getView().getProjection().getCode();
                     fc = new FeatureCollection(features, srs);
@@ -82,7 +83,8 @@ export default class SelectInteraction extends BaseInteraction {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
-                                    const feature: Feature = new Feature(olFeature, olLayer.getSource()); 
+                                    //const feature: Feature = new Feature(olFeature, olLayer.getSource()); 
+                                    const feature: Feature = new Feature(olFeature, olLayer); 
                                     features.push(feature);
                                     selectedFeatures.push(olFeature); // just to highlight the selection
                                 });
