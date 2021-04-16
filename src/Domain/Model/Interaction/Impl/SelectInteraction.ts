@@ -18,14 +18,16 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import LayerInterface from "../../Layer/LayerInterface";
 
-
-
+/** @class SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
 
     /**
      * @constructor
-     * @memberof LayerBuilder
-     * @param {SelectionType} type - type
+     * @memberof SelectInteraction
+     * @param {Object} type - selection type
+     * @param {Object} map - map object to select on
+     * @param {Array} layers - layers to select on
+     * @param {Function} callback - callback function to call after selection is done
      */
     constructor(type: SelectionType, map: Map, layers: LayerInterface[], callback: (feature: FeatureCollection) => void) {
         super();

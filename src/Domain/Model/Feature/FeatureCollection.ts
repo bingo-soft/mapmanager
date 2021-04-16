@@ -1,5 +1,4 @@
 import { Layer as OlLayer } from "ol/layer";
-import OlSource from "ol/source/Source";
 import OlFeature from "ol/Feature";
 import OlGeometry from "ol/geom/Geometry";
 import OlGeometryCollection from "ol/geom/GeometryCollection";
@@ -28,6 +27,7 @@ export default class FeatureCollection {
      * @memberof FeatureCollection
      * @param {Array} features - array of features
      * @param {String} srs - SRS of features
+     * @param {Object} layer - layer of features
      */
     constructor(features: OlFeature[] | Feature[], srs: string, layer?: OlLayer) {
         if (features[0]) {
@@ -48,6 +48,13 @@ export default class FeatureCollection {
         this.srs = srs;
     }
 
+    /**
+     * Iterates the collection
+     *
+     * @function forEach
+     * @memberof FeatureCollection
+     * @param {Function} callbackfn - callback function to call for each element
+     */
     public forEach(callbackfn: (value: Feature, key: string, arr: Feature[]) => void, thisArg?: any) {
         if (typeof callbackfn != "function") {
             throw new TypeError();

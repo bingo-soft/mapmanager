@@ -13,7 +13,7 @@ export default class Feature {
      * @param {Object} feature - OpenLayers' feature object
      * @param {Object} layer - OpenLayers' layer object
      */
-    constructor(feature: OlFeature, layer?: OlLayer /* source?: OlSource */) {
+    constructor(feature: OlFeature, layer?: OlLayer) {
         this.feature = feature;
         if (layer) {
             this.layer = layer;

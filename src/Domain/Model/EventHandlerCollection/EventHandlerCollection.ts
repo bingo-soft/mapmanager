@@ -13,7 +13,7 @@ export default class EventHandlerCollection {
     /**
      * @constructor
      * @memberof EventHandlerCollection
-     * @param {Object} target - handlers target
+     * @param {Object} target - handler target
      */
     constructor(target: OlBaseObject) {
         this.target = target;
@@ -71,6 +71,13 @@ export default class EventHandlerCollection {
         this.handlers.clear();
     }
 
+    /**
+     * Iterates the collection
+     *
+     * @function forEach
+     * @memberof EventHandlerCollection
+     * @param {Function} callbackfn - callback function to call for each element
+     */
     public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any) {
         if (typeof callbackfn !== "function") {
             throw new TypeError();
