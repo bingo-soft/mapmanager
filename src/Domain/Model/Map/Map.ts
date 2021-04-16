@@ -300,11 +300,15 @@ export default class Map {
      * @param {Object} features - features to remove
      */
     public removeFeatures(features: FeatureCollection): void {
-        features.forEach((feature): void => { debugger
-            const source: OlVectorSource = <OlVectorSource> feature.getSource();
+        const changedSources: Set<OlVectorSource> = new Set();
+        features.forEach((feature): void => {
+            const source: OlVectorSource = <OlVectorSource> feature.getLayer().getSource();
             source.removeFeature(feature.getFeature());
+            changedSources.add(source); // set stores unique values
+        });
+        changedSources.forEach((source: OlVectorSource): void => {
             source.refresh();
-        })
+        });
     }
 
     /**
