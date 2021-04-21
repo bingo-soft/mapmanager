@@ -39,7 +39,7 @@ export default class StyleBuilder {
         this.applyOptions(opts);
     }
 
-    private applyOptions(opts?: unknown) {
+    private applyOptions(opts?: unknown) { debugger
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length) {
                 this.setPointStyle(opts["point"]);
@@ -127,7 +127,7 @@ export default class StyleBuilder {
                 width: opts["stroke_width"]
             }),
             fill: new OlFill({
-                color: opts["background_color"],
+                color: this.applyOpacity(opts["background_color"], opts["opacity"]),
             }),
         });
         this.style["Polygon"] = style;
@@ -168,6 +168,20 @@ export default class StyleBuilder {
         }
         return this;
     }
+
+    private applyOpacity(color: string, opacity: number): string {
+        if (color.length == 4) { // short color like #333
+            color += "000";
+        }
+        if (opacity < 0) {
+            opacity = 0;   
+        }
+        if (opacity > 100) {
+            opacity = 100;
+        }
+        opacity = Math.round(opacity * 2.55);
+        return color + opacity.toString(16).toUpperCase().padStart(2, "0");
+      }
 
     /**
      * Builds style
