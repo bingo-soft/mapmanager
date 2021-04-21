@@ -8,6 +8,7 @@ import { StyleType } from "../Style/StyleType";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
 
+/** @interface LayerInterface */
 export default interface LayerInterface
 {
     getLayer(): OlLayer;
@@ -17,10 +18,9 @@ export default interface LayerInterface
     getSRS(): string;
     getSource(): OlSource;
     setSource(source: SourceInterface): void;
-    setLoader(loader: () => Promise<string>/* , opts?: unknown */): void;
+    setLoader(loader: () => Promise<string>): void;
     setUrl(url: string): void;
     setZIndex(zIndex: number): void;
     setOpacity(opacity: number): void;
-    /* setStyle(style: StyleType): void; */
     setStyle(style: StyleFunction): void;
 }

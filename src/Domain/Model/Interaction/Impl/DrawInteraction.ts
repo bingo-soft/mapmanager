@@ -11,8 +11,16 @@ import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 
+/** @class DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
 
+    /**
+     * @constructor
+     * @memberof DrawInteraction
+     * @param {Object} layer - layer to draw on
+     * @param {String} geometryType - type of geometry to draw
+     * @param {Function} callback - callback function to call after geometry is drawn
+     */
     constructor(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void) {
         super();
         const olLayer = <OlVectorLayer> layer.getLayer();
@@ -29,8 +37,7 @@ export default class DrawInteraction extends BaseInteraction {
             if (typeof callback === "function") {
                 callback(new Feature((<OlVectorSourceEvent> e).feature, olLayer));
             }
-        })
+        });
     }
-   
 
 }

@@ -189,7 +189,7 @@ export default class Map {
      */
     public setNormalInteraction(): void {
         this.clearInteractions(); 
-        this.interaction = new NormalInteraction(this);
+        this.interaction = new NormalInteraction();
     }
 
     /**
