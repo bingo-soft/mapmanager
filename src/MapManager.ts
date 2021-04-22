@@ -323,9 +323,10 @@ export default class MapManager {
      * @memberof Map
      * @param {Map} map - map instance
      * @param {LayerInterface} layer - layer instance
+     * @param {Number} zoom - zoom after fit
      */
-    public static fitLayer(map: Map, layer: LayerInterface): void { 
-        map.fitLayer(layer);
+    public static fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
+        map.fitLayer(layer, zoom);
     }
 
     /**
