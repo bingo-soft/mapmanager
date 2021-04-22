@@ -324,10 +324,14 @@ export default class Map {
      * @memberof Map
      * @param {LayerInterface} layer - layer instance
      */
-    public fitLayer(layer: LayerInterface): void {
-        const extent = (<OlVectorSource>layer.getSource()).getExtent();
+    public fitLayer(layer: LayerInterface, zoom?: number): void {
+        const extent: OlExtent = (<OlVectorSource>layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
-            this.map.getView().fit(extent);
+            const view: OlView = this.map.getView();
+            view.fit(extent);
+            if (typeof zoom !== "undefined") {
+                view.setZoom(zoom);
+            }
         }
     }
 
