@@ -19,9 +19,6 @@ import StyleFunction from "../../Style/StyleFunctionType";
 
 /** @class VectorLayer */
 export default class VectorLayer extends AbstractLayer{
-
-    /* private style: StyleType; */
-    //private style: StyleFunction;
     
     /**
      * @constructor
@@ -34,32 +31,7 @@ export default class VectorLayer extends AbstractLayer{
             const srsH: unknown = opts["srs_handling"];
             this.srs = "EPSG:" + (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
         }
-        //this.style = DefaultStyle;
-        this.layer = new OlVectorLayer(/* {
-            style: (feature: OlFeature): OlStyle => { 
-                const geomType: OlGeometryType = feature.getGeometry().getType();
-                const style: OlStyle = this.style[geomType];
-                const textStyle: OlTextStyle = this.style["Text"];
-                if (style && textStyle) {
-                    const textValue: string = feature.getProperties()[textStyle.getText()];
-                    if (textValue) {
-                        const newTextStyle: OlTextStyle = new OlTextStyle({
-                            stroke: new OlStroke({
-                                color: textStyle.getStroke().getColor(),
-                                width: textStyle.getStroke().getWidth()
-                            }),
-                            fill: new OlFill({
-                                color: textStyle.getFill().getColor()
-                            }),
-                            font: textStyle.getFont()
-                        });
-                        newTextStyle.setText(textValue);
-                        style.setText(newTextStyle);
-                    }
-                }
-                return style;
-            }
-        } */);
+        this.layer = new OlVectorLayer();
     }
 
     public getType(): SourceType {
@@ -87,13 +59,8 @@ export default class VectorLayer extends AbstractLayer{
         });
     }
 
-   /*  public setStyle(style: StyleType): void { debugger;
-        //(<BaseVector> this.layer).setStyle(style);
-        this.style = style;
-    } */
     public setStyle(style: StyleFunction): void {
         (<BaseVectorLayer> this.layer).setStyle(style);
-        //this.style = style;
     }
 
     public addFeatures(features: string/* , opts?: unknown */): void {

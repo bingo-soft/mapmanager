@@ -49,6 +49,32 @@ export default class FeatureCollection {
     }
 
     /**
+     * Returns the length of collection
+     *
+     * @function getLength
+     * @memberof FeatureCollection
+     * @return {Number} length of collection
+     */
+     public getLength(): number {
+        return this.features.length;
+    }
+
+    /**
+     * Returns an array of OL feature instances
+     *
+     * @function getFeatures
+     * @memberof FeatureCollection
+     * @return {Array} array of OL feature instances
+     */
+     public getFeatures(): OlFeature[] {
+        const ret: OlFeature[] = [];
+        this.features.forEach((feature: Feature): void => {
+            ret.push(feature.getFeature());
+        });
+        return ret;
+    }
+
+    /**
      * Iterates the collection
      *
      * @function forEach

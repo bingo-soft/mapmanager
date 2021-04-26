@@ -115,8 +115,45 @@ export default class MapManager {
      * @param {Object} layer - layer instance
      * @param {Object} opts - options
      */
-     public static setSelectInteraction(map: Map, opts: unknown): void {
+    public static setSelectInteraction(map: Map, opts: unknown): void {
         map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["select_callback"]);
+    }
+
+    /**
+     * Sets map modify interaction
+     *
+     * @function setModifyInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to modify
+     */
+    /* private static setModifyInteraction(map: Map, opts: unknown): void {
+        map.setModifyInteraction(opts["source"], opts["modify_callback"]);
+    } */
+
+    /**
+     * Sets map modify interaction
+     *
+     * @function editFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to modify
+     */
+    public static editFeatures(map: Map, opts: unknown): void {
+        map.setModifyInteraction(opts["source"], opts["modify_callback"]);
+    }
+
+    /**
+     * Clears map modify interactions
+     *
+     * @function editFeatures
+     * @memberof MapManager
+     * @static
+     */
+     public static clearModifyInteractions(map: Map): void {
+        map.clearModifyInteractions();
     }
 
     /**

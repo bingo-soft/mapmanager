@@ -28,6 +28,7 @@ import SelectInteraction from "../Interaction/Impl/SelectInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
+import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 /* import Projection from "ol/proj/Projection";  */
 
 
@@ -217,34 +218,68 @@ export default class Map {
      * @memberof Map
      */
     public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback: (feature: FeatureCollection) => void): void {
+        if (layers) {
+            layers.forEach((layer: LayerInterface) => {
+                if (layer.getType() != SourceType.Vector) {
+                    throw new InteractionNotSupported(InteractionType.Select);
+                }
+            });
+        }
         this.clearInteractions();
         this.interaction = new SelectInteraction(type, this, layers, callback);
-        this.addInteraction(this.interaction/* , type != SelectionType.Pin */);  
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Sets modify interaction
+     *
+     * @function setModifyInteraction
+     * @memberof Map
+     */
+    public setModifyInteraction(features: FeatureCollection, callback: (feature: FeatureCollection) => void): void {
+        this.clearModifyInteractions();
+        this.interaction = new ModifyInteraction(features, callback);
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Clears modify interactions
+     *
+     * @function clearModifyInteractions
+     * @memberof Map
+     */
+     public clearModifyInteractions(): void {
+        this.clearInteractions(InteractionType.Modify);
     }
  
-    private addInteraction(interaction: InteractionInterface/* , addToOlMap: boolean = true */): void {
-        /* if (addToOlMap) { */
-            this.map.addInteraction(interaction.getInteraction());
-        /* } */
+    private addInteraction(interaction: InteractionInterface): void {
+        this.map.addInteraction(interaction.getInteraction());
         this.interactions.push(interaction);
     }
 
     /**
-     * Clears all interactions
+     * Clears interactions
      *
      * @function clearInteractions
+     * @param {String} - type of interaction to clear, all if not set
      * @memberof Map
      */ 
-    private clearInteractions(): void {
-        for (const i in this.interactions) {
+    public clearInteractions(type?: InteractionType): void {
+        for (const i in this.interactions) { 
             const interaction: InteractionInterface = this.interactions[i];
-            const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
-            if (interactionHandlers) {
-                interactionHandlers.clear();
-            }
-            this.map.removeInteraction(interaction.getInteraction());
+            if ((typeof type !== "undefined" && interaction.getType() == type) || typeof type === "undefined") {
+                const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
+                if (interactionHandlers) {
+                    interactionHandlers.clear();
+                }
+                this.map.removeInteraction(interaction.getInteraction());
+           }
         }
-        this.interactions = [];
+       if (typeof type !=="undefined") {
+            this.interactions = this.interactions.filter((interaction: InteractionInterface) => interaction.getType() !== type);
+        } else {
+            this.interactions = [];
+        }
     }
 
     /**

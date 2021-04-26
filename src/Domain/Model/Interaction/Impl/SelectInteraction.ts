@@ -31,7 +31,7 @@ export default class SelectInteraction extends BaseInteraction {
      */
     constructor(type: SelectionType, map: Map, layers: LayerInterface[], callback: (feature: FeatureCollection) => void) {
         super();
-        const olMap: OlMap = map.getMap();
+        const olMap: OlMap = map.getMap(); 
         this.type = InteractionType.Select;
         let fc: FeatureCollection;
         const OlLayersToSelectOn: OlLayer[] = [];
