@@ -120,17 +120,17 @@ export default class MapManager {
     }
 
     /**
-     * Sets map modify interaction
+     * Sets zoom interaction
      *
-     * @function setModifyInteraction
+     * @function setZoomInteraction
      * @memberof MapManager
      * @static
-     * @param {Object} map - map instance
-     * @param {Object} features - features to modify
+     * @param {Map} map - map instance
+     * @param {Object} opts - options
      */
-    /* private static setModifyInteraction(map: Map, opts: unknown): void {
-        map.setModifyInteraction(opts["source"], opts["modify_callback"]);
-    } */
+     public static setZoomInteraction(map: Map, opts: unknown): void {
+        map.setZoomInteraction(opts["type"]);
+    }
 
     /**
      * Sets map modify interaction
