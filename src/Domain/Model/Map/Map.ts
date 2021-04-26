@@ -24,6 +24,8 @@ import FeatureCollection from "../Feature/FeatureCollection";
 import InteractionInterface from "../Interaction/InteractionInterface";
 import NormalInteraction from "../Interaction/Impl/NormalInteraction";
 import DrawInteraction from "../Interaction/Impl/DrawInteraction";
+import ZoomInteraction from "../Interaction/Impl/ZoomInteraction";
+import ZoomType from "../Interaction/Impl/ZoomType";
 import SelectInteraction from "../Interaction/Impl/SelectInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
@@ -209,6 +211,19 @@ export default class Map {
         this.interaction = new DrawInteraction(layer, geometryType, callback);
         this.addInteraction(this.interaction);        
     }
+
+    /**
+     * Sets map zoom interaction
+     *
+     * @function setZoomInteraction
+     * @memberof Map
+     * @param {string} type - zoom type
+     */
+    public setZoomInteraction(type: ZoomType): void {
+        this.clearInteractions(); 
+        this.interaction = new ZoomInteraction(type, this);
+        this.addInteraction(this.interaction);        
+    }
     
     /**
      * Sets selection interaction
@@ -223,9 +238,10 @@ export default class Map {
     }
  
     private addInteraction(interaction: InteractionInterface/* , addToOlMap: boolean = true */): void {
-        /* if (addToOlMap) { */
+        const olInteraction: OlInteraction = interaction.getInteraction();
+        if (typeof olInteraction !== "undefined") {
             this.map.addInteraction(interaction.getInteraction());
-        /* } */
+        }
         this.interactions.push(interaction);
     }
 

@@ -1,7 +1,8 @@
 enum InteractionType {
     Normal = "normal",
     Draw = "draw",
-    Select = "select"
+    Select = "select",
+    Zoom = "zoom"
 }
 
 export default InteractionType;

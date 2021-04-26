@@ -115,8 +115,21 @@ export default class MapManager {
      * @param {LayerInterface} layer - layer instance
      * @param {Object} opts - options
      */
-     public static setSelectInteraction(map: Map, opts: unknown): void {
+    public static setSelectInteraction(map: Map, opts: unknown): void {
         map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["select_callback"]);
+    }
+
+    /**
+     * Sets zoom interaction
+     *
+     * @function setZoomInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Map} map - map instance
+     * @param {Object} opts - options
+     */
+    public static setZoomInteraction(map: Map, opts: unknown): void {
+        map.setZoomInteraction(opts["type"]);
     }
 
     /**

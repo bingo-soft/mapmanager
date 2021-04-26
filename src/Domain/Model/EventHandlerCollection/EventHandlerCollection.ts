@@ -41,7 +41,7 @@ export default class EventHandlerCollection {
      */
     public add(type: EventType, id: string, handler: Handler): void {
         this.target.on(type, handler);
-        this.handlers.set(id, { type, handler });
+        //this.handlers.set(id, { type, handler });
     }
 
     /**
