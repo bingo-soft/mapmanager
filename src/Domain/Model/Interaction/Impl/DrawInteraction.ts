@@ -10,6 +10,7 @@ import Feature from "../../Feature/Feature";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
+import { DrawCallbackFunction } from "../InteractionCallbackType";
 
 /** @class DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
@@ -21,7 +22,7 @@ export default class DrawInteraction extends BaseInteraction {
      * @param {String} geometryType - type of geometry to draw
      * @param {Function} callback - callback function to call after geometry is drawn
      */
-    constructor(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void) {
+    constructor(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction) {
         super();
         const olLayer = <OlVectorLayer> layer.getLayer();
         const olSource = olLayer.getSource();

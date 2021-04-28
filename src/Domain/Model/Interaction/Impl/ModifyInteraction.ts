@@ -10,6 +10,7 @@ import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCol
 import FeatureCollection from "../../Feature/FeatureCollection";
 import LayerInterface from "../../Layer/LayerInterface";
 import VectorLayer from "../../Layer/Impl/VectorLayer"
+import { ModifyCallbackFunction } from "../InteractionCallbackType";
 
 /** @class ModifyInteraction */
 export default class ModifyInteraction extends BaseInteraction {
@@ -20,7 +21,7 @@ export default class ModifyInteraction extends BaseInteraction {
      * @param {Object} source - layer or features to modify
      * @param {Function} callback - callback function to call after geometry is modified
      */
-    constructor(source: LayerInterface | FeatureCollection, callback: (features: FeatureCollection) => void) {
+    constructor(source: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction) {
         super();
         const opts: unknown = {};
         if (source instanceof FeatureCollection) {

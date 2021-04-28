@@ -31,6 +31,8 @@ import SelectionType from "../Interaction/Impl/SelectionType";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
+import TransformInteraction from "../Interaction/Impl/TransformInteraction";
+import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
 /* import Projection from "ol/proj/Projection";  */
 
 
@@ -120,7 +122,7 @@ export default class Map {
      * @function getMap
      * @memberof Map
      */
-     public getMap(): OlMap {
+    public getMap(): OlMap {
         return this.map;
     }
 
@@ -204,7 +206,7 @@ export default class Map {
      * @param {string} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public setDrawInteraction(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void): void {
+    public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
         if (layer.getType() != SourceType.Vector) {
             throw new InteractionNotSupported(InteractionType.Draw);
         }
@@ -232,7 +234,7 @@ export default class Map {
      * @function setSelectionInteractionType
      * @memberof Map
      */
-    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback: (feature: FeatureCollection) => void): void {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback?: SelectCallbackFunction): void {
         if (layers) {
             layers.forEach((layer: LayerInterface) => {
                 if (layer.getType() != SourceType.Vector) {
@@ -251,9 +253,21 @@ export default class Map {
      * @function setModifyInteraction
      * @memberof Map
      */
-    public setModifyInteraction(features: FeatureCollection, callback: (feature: FeatureCollection) => void): void {
-        this.clearModifyInteractions();
+    public setModifyInteraction(features: FeatureCollection, callback?: ModifyCallbackFunction): void {
+        this.clearModifyAndTransformInteractions();
         this.interaction = new ModifyInteraction(features, callback);
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Sets transform interaction
+     *
+     * @function setTransformInteraction
+     * @memberof Map
+     */
+     public setTransformInteraction(/* features: FeatureCollection,  */callback?: TransformCallbackFunction): void {
+        this.clearModifyAndTransformInteractions();
+        this.interaction = new TransformInteraction(/* features,  */callback);
         this.addInteraction(this.interaction);  
     }
 
@@ -263,8 +277,9 @@ export default class Map {
      * @function clearModifyInteractions
      * @memberof Map
      */
-     public clearModifyInteractions(): void {
+     public clearModifyAndTransformInteractions(): void {
         this.clearInteractions(InteractionType.Modify);
+        this.clearInteractions(InteractionType.Transform);
     }
  
     private addInteraction(interaction: InteractionInterface/* , addToOlMap: boolean = true */): void {
@@ -299,6 +314,11 @@ export default class Map {
             this.interactions = [];
         }
     }
+
+    /* public editFeatures(type: SelectionType, layers: LayerInterface[], features: FeatureCollection, callback?: (feature: FeatureCollection) => void): void {
+        this.setSelectInteraction(type, layers);
+        this.setModifyInteraction(features, callback)
+    } */
 
     /**
      * Gets active layer

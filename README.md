@@ -4,7 +4,7 @@ MapManager is a JavaScript and TypeScript library, which simplifies usage of Ope
 
 ## Dependencies
 
-MapManager depends on [OpenLayers](https://github.com/openlayers/openlayers) library
+MapManager depends on [OpenLayers](https://github.com/openlayers/openlayers) and [ol-ext](https://viglino.github.io/ol-ext) libraries
 
 ## Examples
 

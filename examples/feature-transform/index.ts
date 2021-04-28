@@ -41,66 +41,26 @@ const opts1 = {
 const layer: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, opts1);
 MapManager.addLayer(map, layer);
 
-/* Set buttons click handlers */
-const btSelectByClick: HTMLElement = document.getElementById("select-byclick-btn");
-btSelectByClick.onclick = function(e: any) {
-    doSelect(e, "singleclick");
-}
-const btSelectByRectangle: HTMLElement = document.getElementById("select-byrectangle-btn");
-btSelectByRectangle.onclick = function(e: any) {
-    doSelect(e, "rectangle");
-}
-
 let regime: string = "normal";
-let selectedFeatures: FeatureCollection;
 
-/* Select handler */
-const doSelect = function(e: any, selectionType: string) {
-    e.target.style.backgroundColor = "#777";
-    e.target.style.color = "#fff";
-    const interactionType: InteractionType = MapManager.getInteraction(map);
-    if (interactionType == InteractionType.Normal) {
-        MapManager.setSelectInteraction(map, {
-            "selection_type": selectionType,
-            "layers": null,
-            "select_callback": (features: FeatureCollection) => {
-                selectedFeatures = features;
-                if (regime == "edit") {
-                    MapManager.editFeatures(map, {
-                        "source": selectedFeatures,
-                        "modify_callback": function(features: FeatureCollection): void {
-                            console.log(features);
-                        }
-                    });
-                }
-                console.log(features);
-            }
-        })
-    } else {
-        e.target.style.backgroundColor = "initial";
-        e.target.style.color = "initial";
-        MapManager.setNormalInteraction(map);
-    }
-}
-
-const btSetEditRegime: HTMLElement = document.getElementById("set-edit-regime-btn");
-btSetEditRegime.onclick = function(e: any) {
+const btFeatureTransform: HTMLElement = document.getElementById("feature-transform-btn");
+btFeatureTransform.onclick = function(e: any) {
     if (regime == "normal") {
         e.target.style.backgroundColor = "#777";
         e.target.style.color = "#fff";
         regime = "edit";
-        if (selectedFeatures && selectedFeatures.getLength()) {
-            MapManager.editFeatures(map, {
-                "source": selectedFeatures,
-                "modify_callback": function(features: FeatureCollection): void {
-                    console.log(features);
-                }
-            });
-        }
+        MapManager.setTransformInteraction(map, {
+            "selection_type": "singleclick",
+            "layers": null,
+            "source": layer,
+            "modify_callback": function(features: FeatureCollection): void {
+                console.log(features);
+            }
+        });
     } else {
         e.target.style.backgroundColor = "initial";
         e.target.style.color = "initial";
         regime = "normal";
-        MapManager.clearModifyInteractions(map);
+        MapManager.clearModifyAndTransformInteractions(map);
     }
 }

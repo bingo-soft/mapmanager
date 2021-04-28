@@ -9,6 +9,7 @@ import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerReposi
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
+import SelectionType from "./Domain/Model/Interaction/Impl/SelectionType"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -135,14 +136,28 @@ export default class MapManager {
     /**
      * Sets map modify interaction
      *
-     * @function editFeatures
+     * @function setModifyInteraction
      * @memberof MapManager
      * @static
      * @param {Object} map - map instance
      * @param {Object} features - features to modify
      */
-    public static editFeatures(map: Map, opts: unknown): void {
+    public static setModifyInteraction(map: Map, opts: unknown): void {
         map.setModifyInteraction(opts["source"], opts["modify_callback"]);
+        //map.editFeatures(opts["selection_type"], opts["layers"], opts["source"], opts["modify_callback"]);
+    }
+
+    /**
+     * Sets map transform interaction
+     *
+     * @function setTransformInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to modify
+     */
+     public static setTransformInteraction(map: Map, opts: unknown): void {
+        map.setTransformInteraction(/* opts["source"],  */opts["modify_callback"]);
     }
 
     /**
@@ -152,8 +167,8 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      */
-     public static clearModifyInteractions(map: Map): void {
-        map.clearModifyInteractions();
+     public static clearModifyAndTransformInteractions(map: Map): void {
+        map.clearModifyAndTransformInteractions();
     }
 
     /**
