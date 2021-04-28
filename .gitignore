@@ -1,6 +1,7 @@
 node_modules
 dist
 .cache
+
 .env
 package-lock.json
 
@@ -28,6 +29,10 @@ examples/client/node_modules
 examples/client/dist
 examples/client/.cache
 examples/client/.env
+examples/node_modules
+examples/dist
+examples/.cache
+examples/.env
 
 # local env files
 examples/client/.env.local

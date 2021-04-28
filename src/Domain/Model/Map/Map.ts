@@ -24,10 +24,15 @@ import FeatureCollection from "../Feature/FeatureCollection";
 import InteractionInterface from "../Interaction/InteractionInterface";
 import NormalInteraction from "../Interaction/Impl/NormalInteraction";
 import DrawInteraction from "../Interaction/Impl/DrawInteraction";
+import ZoomInteraction from "../Interaction/Impl/ZoomInteraction";
+import ZoomType from "../Interaction/Impl/ZoomType";
 import SelectInteraction from "../Interaction/Impl/SelectInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
+import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
+import TransformInteraction from "../Interaction/Impl/TransformInteraction";
+import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
 /* import Projection from "ol/proj/Projection";  */
 
 
@@ -117,7 +122,7 @@ export default class Map {
      * @function getMap
      * @memberof Map
      */
-     public getMap(): OlMap {
+    public getMap(): OlMap {
         return this.map;
     }
 
@@ -201,12 +206,25 @@ export default class Map {
      * @param {string} geometryType - feature type
      * @param {Function} callback - callback
      */
-    public setDrawInteraction(layer: LayerInterface, geometryType: string, callback: (feature: Feature) => void): void {
+    public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
         if (layer.getType() != SourceType.Vector) {
             throw new InteractionNotSupported(InteractionType.Draw);
         }
         this.clearInteractions();
         this.interaction = new DrawInteraction(layer, geometryType, callback);
+        this.addInteraction(this.interaction);        
+    }
+
+    /**
+     * Sets map zoom interaction
+     *
+     * @function setZoomInteraction
+     * @memberof Map
+     * @param {string} type - zoom type
+     */
+    public setZoomInteraction(type: ZoomType): void {
+        this.clearInteractions(); 
+        this.interaction = new ZoomInteraction(type, this);
         this.addInteraction(this.interaction);        
     }
     
@@ -216,36 +234,91 @@ export default class Map {
      * @function setSelectionInteractionType
      * @memberof Map
      */
-    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback: (feature: FeatureCollection) => void): void {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback?: SelectCallbackFunction): void {
+        if (layers) {
+            layers.forEach((layer: LayerInterface) => {
+                if (layer.getType() != SourceType.Vector) {
+                    throw new InteractionNotSupported(InteractionType.Select);
+                }
+            });
+        }
         this.clearInteractions();
         this.interaction = new SelectInteraction(type, this, layers, callback);
-        this.addInteraction(this.interaction/* , type != SelectionType.Pin */);  
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Sets modify interaction
+     *
+     * @function setModifyInteraction
+     * @memberof Map
+     */
+    public setModifyInteraction(features: FeatureCollection, callback?: ModifyCallbackFunction): void {
+        this.clearModifyAndTransformInteractions();
+        this.interaction = new ModifyInteraction(features, callback);
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Sets transform interaction
+     *
+     * @function setTransformInteraction
+     * @memberof Map
+     */
+     public setTransformInteraction(/* features: FeatureCollection,  */callback?: TransformCallbackFunction): void {
+        this.clearModifyAndTransformInteractions();
+        this.interaction = new TransformInteraction(/* features,  */callback);
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Clears modify interactions
+     *
+     * @function clearModifyInteractions
+     * @memberof Map
+     */
+     public clearModifyAndTransformInteractions(): void {
+        this.clearInteractions(InteractionType.Modify);
+        this.clearInteractions(InteractionType.Transform);
     }
  
     private addInteraction(interaction: InteractionInterface/* , addToOlMap: boolean = true */): void {
-        /* if (addToOlMap) { */
+        const olInteraction: OlInteraction = interaction.getInteraction();
+        if (typeof olInteraction !== "undefined") {
             this.map.addInteraction(interaction.getInteraction());
-        /* } */
+        }
         this.interactions.push(interaction);
     }
 
     /**
-     * Clears all interactions
+     * Clears interactions
      *
      * @function clearInteractions
+     * @param {String} - type of interaction to clear, all if not set
      * @memberof Map
      */ 
-    private clearInteractions(): void {
-        for (const i in this.interactions) {
+    public clearInteractions(type?: InteractionType): void {
+        for (const i in this.interactions) { 
             const interaction: InteractionInterface = this.interactions[i];
-            const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
-            if (interactionHandlers) {
-                interactionHandlers.clear();
-            }
-            this.map.removeInteraction(interaction.getInteraction());
+            if ((typeof type !== "undefined" && interaction.getType() == type) || typeof type === "undefined") {
+                const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
+                if (interactionHandlers) {
+                    interactionHandlers.clear();
+                }
+                this.map.removeInteraction(interaction.getInteraction());
+           }
         }
-        this.interactions = [];
+       if (typeof type !=="undefined") {
+            this.interactions = this.interactions.filter((interaction: InteractionInterface) => interaction.getType() !== type);
+        } else {
+            this.interactions = [];
+        }
     }
+
+    /* public editFeatures(type: SelectionType, layers: LayerInterface[], features: FeatureCollection, callback?: (feature: FeatureCollection) => void): void {
+        this.setSelectInteraction(type, layers);
+        this.setModifyInteraction(features, callback)
+    } */
 
     /**
      * Gets active layer

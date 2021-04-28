@@ -9,6 +9,7 @@ import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerReposi
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
+import SelectionType from "./Domain/Model/Interaction/Impl/SelectionType"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -67,38 +68,38 @@ export default class MapManager {
     }
    
     /**
-     * Gets map regime
+     * Returns current map interaction
      *
-     * @function getMapRegime
+     * @function getInteraction
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
-     * @return {Regime} map regime
+     * @param {Object} map - map instance
+     * @return {String} current map interaction
      */
     public static getInteraction(map: Map): InteractionType {
         return map.getInteraction();
     }
 
     /**
-     * Sets map normal regime
+     * Sets map normal interaction
      *
-     * @function setDrawRegime
+     * @function setNormalInteraction
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
+     * @param {Object} map - map instance
      */
     public static setNormalInteraction(map: Map): void {
         map.setNormalInteraction();
     }
 
     /**
-     * Sets map draw regime
+     * Sets map draw interaction
      *
-     * @function setDrawRegime
+     * @function setDrawInteraction
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
      * @param {Object} opts - options
      */
     public static setDrawInteraction(map: Map, layer: LayerInterface, opts: unknown): void {
@@ -106,17 +107,68 @@ export default class MapManager {
     }
 
     /**
-     * Sets map draw regime
+     * Sets map selection interaction
      *
-     * @function setDrawRegime
+     * @function setSelectInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
+     * @param {Object} opts - options
+     */
+    public static setSelectInteraction(map: Map, opts: unknown): void {
+        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["select_callback"]);
+    }
+
+    /**
+     * Sets zoom interaction
+     *
+     * @function setZoomInteraction
      * @memberof MapManager
      * @static
      * @param {Map} map - map instance
-     * @param {LayerInterface} layer - layer instance
      * @param {Object} opts - options
      */
-     public static setSelectInteraction(map: Map, opts: unknown): void {
-        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["select_callback"]);
+     public static setZoomInteraction(map: Map, opts: unknown): void {
+        map.setZoomInteraction(opts["type"]);
+    }
+
+    /**
+     * Sets map modify interaction
+     *
+     * @function setModifyInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to modify
+     */
+    public static setModifyInteraction(map: Map, opts: unknown): void {
+        map.setModifyInteraction(opts["source"], opts["modify_callback"]);
+        //map.editFeatures(opts["selection_type"], opts["layers"], opts["source"], opts["modify_callback"]);
+    }
+
+    /**
+     * Sets map transform interaction
+     *
+     * @function setTransformInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to modify
+     */
+     public static setTransformInteraction(map: Map, opts: unknown): void {
+        map.setTransformInteraction(/* opts["source"],  */opts["modify_callback"]);
+    }
+
+    /**
+     * Clears map modify interactions
+     *
+     * @function editFeatures
+     * @memberof MapManager
+     * @static
+     */
+     public static clearModifyAndTransformInteractions(map: Map): void {
+        map.clearModifyAndTransformInteractions();
     }
 
     /**
@@ -125,10 +177,10 @@ export default class MapManager {
      * @function createLayer
      * @memberof MapManager
      * @static
-     * @param {SourceType} type - layer's source type
+     * @param {String} type - layer's source type
      * @param {Object} opts - options
      * @param {Function} callback - callback to run on complete layer load
-     * @return {LayerInterface} created layer instance
+     * @return {Object} created layer instance
      */
     public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
         let builder: LayerBuilder;
@@ -178,12 +230,12 @@ export default class MapManager {
     /**
      * Creates layer from features
      *
-     * @function createLayerFromFeatures
+     * @function createLayerFromGeoJSON
      * @memberof MapManager
      * @static
-     * @param {String} features - a string representing features
+     * @param {String} geoJSON - a string representing features
      * @param {Object} opts - options
-     * @return {LayerInterface} created layer instance
+     * @return {Object} created layer instance
      */
     public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
         const layer: VectorLayer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
@@ -199,12 +251,12 @@ export default class MapManager {
     }
 
     /**
-     * Gets features of the layer as FeatureCollection GeoJSON
+     * Returns features of the layer as FeatureCollection GeoJSON
      *
      * @function getFeaturesAsFeatureCollection
      * @memberof MapManager
      * @static
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      * @return {String} GeoJSON representing features as FeatureCollection
      */
     /* public static getFeaturesAsFeatureCollection(layer: VectorLayer): string {
@@ -212,12 +264,12 @@ export default class MapManager {
     } */
 
     /**
-     * Gets features of the layer as single geometry GeoJSON
+     * Returns features of the layer as single geometry GeoJSON
      *
      * @function getFeaturesAsSingleGeometry
      * @memberof MapManager
      * @static
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      * @return {String} GeoJSON representing features as single geometry
      */
     public static getFeaturesAsSingleGeometry(features: FeatureCollection): string {
@@ -225,12 +277,12 @@ export default class MapManager {
     }
 
     /**
-     * Gets features of the layer as multi geometry GeoJSON
+     * Returns features of the layer as multi geometry GeoJSON
      *
      * @function getFeaturesAsMultiGeometry
      * @memberof MapManager
      * @static
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      * @return {String} GeoJSON representing features as multi geometry
      */
     public static getFeaturesAsMultiGeometry(features: FeatureCollection): string {
@@ -238,12 +290,12 @@ export default class MapManager {
     }
 
     /**
-     * Gets features of the layer as GeometryCollection GeoJSON
+     * Returns features of the layer as GeometryCollection GeoJSON
      *
      * @function getFeaturesAsGeometryCollection
      * @memberof MapManager
      * @static
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      * @return {String} GeoJSON representing features as GeometryCollection
      */
     public static getFeaturesAsGeometryCollection(features: FeatureCollection): string {
@@ -270,7 +322,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} map - map instance
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      */
     public static addLayer(map: Map, layer: LayerInterface): void {
         map.addLayer(layer);
@@ -282,22 +334,21 @@ export default class MapManager {
      * @function removeLayer
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
      */
     public static removeLayer(map: Map, layer: LayerInterface): void {
         map.removeLayer(layer);
     }
 
     /**
-     * Gets active layer of the map.
+     * Returns active layer of the map.
      *
      * @function getActiveLayer
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
-     * @param {LayerInterface} layer - layer instance
-     * @return {LayerInterface} active layer instance
+     * @param {Object} map - map instance
+     * @return {Object} active layer instance
      */
     public static getActiveLayer(map: Map): LayerInterface {
         return map.getActiveLayer();
@@ -309,8 +360,8 @@ export default class MapManager {
      * @function setActiveLayer
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
      */
     public static setActiveLayer(map: Map, layer: LayerInterface): void {
         map.setActiveLayer(layer);
@@ -321,8 +372,8 @@ export default class MapManager {
      *
      * @function fitLayer
      * @memberof Map
-     * @param {Map} map - map instance
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
      * @param {Number} zoom - zoom after fit
      */
     public static fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
@@ -335,7 +386,7 @@ export default class MapManager {
      * @function setZIndex
      * @memberof MapManager
      * @static
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      * @param {Number} zIndex - zIndex to set
      */
     public static setZIndex(layer: LayerInterface, zIndex: number): void {
@@ -348,7 +399,7 @@ export default class MapManager {
      * @function setOpacity
      * @memberof MapManager
      * @static
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      * @param {Number} opacity - opacity to set (from 0 to 100)
      */
     public static setOpacity(layer: LayerInterface, opacity: number): void { 

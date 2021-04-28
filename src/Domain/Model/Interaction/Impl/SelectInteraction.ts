@@ -17,6 +17,7 @@ import Map from "../../Map/Map";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import LayerInterface from "../../Layer/LayerInterface";
+import { SelectCallbackFunction } from "../InteractionCallbackType";
 
 /** @class SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
@@ -29,9 +30,9 @@ export default class SelectInteraction extends BaseInteraction {
      * @param {Array} layers - layers to select on
      * @param {Function} callback - callback function to call after selection is done
      */
-    constructor(type: SelectionType, map: Map, layers: LayerInterface[], callback: (feature: FeatureCollection) => void) {
+    constructor(type: SelectionType, map: Map, layers: LayerInterface[], callback?: SelectCallbackFunction) {
         super();
-        const olMap: OlMap = map.getMap();
+        const olMap: OlMap = map.getMap(); 
         this.type = InteractionType.Select;
         let fc: FeatureCollection;
         const OlLayersToSelectOn: OlLayer[] = [];
