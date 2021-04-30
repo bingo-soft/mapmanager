@@ -10,6 +10,7 @@ import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import SelectionType from "./Domain/Model/Interaction/Impl/SelectionType"
+import Measure, { MeasureType } from "./Infrastructure/Util/Measure"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -68,16 +69,16 @@ export default class MapManager {
     }
    
     /**
-     * Returns current map interaction
+     * Returns current map interaction type
      *
      * @function getInteraction
      * @memberof MapManager
      * @static
      * @param {Object} map - map instance
-     * @return {String} current map interaction
+     * @return {String} current map interaction type
      */
-    public static getInteraction(map: Map): InteractionType {
-        return map.getInteraction();
+    public static getInteractionType(map: Map): InteractionType {
+        return map.getInteractionType();
     }
 
     /**
@@ -404,5 +405,34 @@ export default class MapManager {
      */
     public static setOpacity(layer: LayerInterface, opacity: number): void { 
         layer.setOpacity(opacity);
+    }
+
+    /**
+     * Measures distance and area
+     *
+     * @function startMeasure
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {String} type - measure type
+     * @param {Function} callback - callback function to call after measure is done, measure result and coordinates of tooltip point (in map projection) are passed as parameters
+     */
+     public static startMeasure(type: MeasureType, map: Map, callback: (result: number, tooltipCoord: number[]) => void): void { 
+        const measure: Measure = new Measure(type, map, callback);
+    }
+
+    /**
+     * Creates an overlay and adds it to map
+     *
+     * @function createOverlay
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} element - element to create the overlay on
+     * @param {Array} position - the overlay position in map projection
+     * @param {Array} offset - offset in pixels used when positioning the overlay 
+     */
+     public static createOverlay(map: Map, element: HTMLElement, position: number[], offset: number[]): void { 
+        map.createOverlay(element, position, offset);
     }
 }
