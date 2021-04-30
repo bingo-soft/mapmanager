@@ -1,14 +1,11 @@
 import OlBaseEvent from "ol/events/Event";
-import { EventsKey as OlEventsKey } from "ol/events";
 import LayerInterface from "./LayerInterface";
 import SourceType from "../Source/SourceType";
 import VectorSource from "../Source/Impl/VectorSource";
 import XYZSource from "../Source/Impl/XYZSource";
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
 import StyleBuilder from "../Style/StyleBuilder";
-import { StyleType } from "../Style/StyleType";
 import EventType from "../EventHandlerCollection/EventType";
-import Handler from "../EventHandlerCollection/HandlerType";
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
@@ -17,12 +14,20 @@ export default class LayerBuilder {
     /**
      * @constructor
      * @memberof LayerBuilder
-     * @param {LayerInterface} layer - layer
+     * @param {Object} layer - layer
      */
     constructor(layer: LayerInterface) {
         this.layer = layer;
     }
 
+    /**
+     * Sets layer's source type
+     *
+     * @function setSource
+     * @memberof LayerBuilder
+     * @param {String} type - source type
+     * @return {Object} layer builder instance
+     */
     public setSource(type: SourceType): LayerBuilder {
         switch (type) {
             case SourceType.Vector:
@@ -44,27 +49,54 @@ export default class LayerBuilder {
         return this;
     }
 
-    public setLoader(loader: () => Promise<string>/* , opts?: unknown */): LayerBuilder {
-        this.layer.setLoader(loader/* , opts */);
+    /**
+     * Sets layer's loader
+     *
+     * @function setLoader
+     * @memberof LayerBuilder
+     * @param {Function} loader - loader function
+     * @return {Object} layer builder instance
+     */
+    public setLoader(loader: () => Promise<string>): LayerBuilder {
+        this.layer.setLoader(loader);
         return this;
     }
 
+    /**
+     * Sets layer's source url
+     *
+     * @function setUrl
+     * @memberof LayerBuilder
+     * @param {String} url - source url
+     * @return {Object} layer builder instance
+     */
     public setUrl(url: string): LayerBuilder {
         this.layer.setUrl(url);
         return this;
     }
 
-    /* public setStyle(opts?: unknown): LayerBuilder {
-        const style: StyleType = (new StyleBuilder(opts)).build();
-        this.layer.setStyle(style);
-        return this;
-    } */
+    /**
+     * Sets layer's style
+     *
+     * @function setStyle
+     * @memberof LayerBuilder
+     * @param {Object} opts - options
+     * @return {Object} layer builder instance
+     */
     public setStyle(opts?: unknown): LayerBuilder {
         this.layer.setStyle((new StyleBuilder(opts)).build());
         return this;
     }
 
-    public setLoadCallback(callback: () => void): void {
+    /**
+     * Sets layer's load callback
+     *
+     * @function setLoadCallback
+     * @memberof LayerBuilder
+     * @param {Function} callback - load callback
+     * @return {Object} layer builder instance
+     */
+    public setLoadCallback(callback: () => void): LayerBuilder {
         if (typeof callback === "function") {
             this.layer.getEventHandlers().add(EventType.Change, "LayerLoadEventHanler", (e: OlBaseEvent): void => {
                 if (e.target.getState() == "ready") {
@@ -72,13 +104,8 @@ export default class LayerBuilder {
                     //e.target.un("change", listener);                
                 }
             });
-            /* const sourceEventListener: OlEventsKey = this.layer.getSource().on("c", function(e: OlBaseEvent) {
-                if (e.target.getState() == "ready" && typeof callback === "function") {
-                    callback();
-                    e.target.un("change", sourceEventListener);                
-                }
-            }); */
         }
+        return this;
     }
 
     /**
@@ -86,7 +113,7 @@ export default class LayerBuilder {
      *
      * @function build
      * @memberof LayerBuilder
-     * @return {LayerInterface} - layer
+     * @return {Object} - layer instance
      */
     public build(): LayerInterface {
         return this.layer;

@@ -3,14 +3,11 @@ import {shiftKeyOnly as OlEventConditionShiftKeyOnly} from "ol/events/condition"
 import OlMap from "ol/Map";
 import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
-import Collection from 'ol/Collection';
 import BaseInteraction from "./BaseInteraction";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import FeatureCollection from "../../Feature/FeatureCollection";
-import LayerInterface from "../../Layer/LayerInterface";
-import VectorLayer from "../../Layer/Impl/VectorLayer"
 import { TransformCallbackFunction } from "../InteractionCallbackType";
 
 

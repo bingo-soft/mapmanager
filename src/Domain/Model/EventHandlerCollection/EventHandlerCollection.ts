@@ -1,4 +1,4 @@
-import OlBaseObject from 'ol/Object';
+import OlBaseObject from "ol/Object";
 import EventType from "./EventType";
 import Handler from "./HandlerType";
 

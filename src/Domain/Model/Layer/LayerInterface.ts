@@ -1,10 +1,7 @@
 import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
 import SourceType from "../Source/SourceType";
-import {Style as OlStyle} from "ol/style";
-import OlFeature from "ol/Feature";
 import SourceInterface from "../Source/SourceInterface";
-import { StyleType } from "../Style/StyleType";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
 

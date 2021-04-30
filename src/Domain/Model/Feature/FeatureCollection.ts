@@ -143,7 +143,6 @@ export default class FeatureCollection {
     public getAsMultiGeometry(): string {
         let geomType: OlGeometryType; 
         if (this.features.length) {
-            //geomType = this.features[0].getFeature().getGeometry().getType();
             const coordsPoint: OlCoordinate[] = [];
             const coordsLineString: OlCoordinate[][] = [];
             const coordsPolygon: OlCoordinate[][][] = [];

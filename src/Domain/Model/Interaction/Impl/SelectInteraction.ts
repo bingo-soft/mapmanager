@@ -1,13 +1,10 @@
-import { Interaction as OLInteraction} from "ol/interaction";
 import OlMap from "ol/Map";
 import OlBaseLayer from "ol/layer/Base";
 import { Layer as OlLayer } from "ol/layer";
 import OlVectorLayer from "ol/layer/Vector";
-import OlSource from "ol/source/Source";
 import OlFeature from "ol/Feature";
 import {DragBox as OlDragBox, Select as OlSelect} from 'ol/interaction';
 import OlBaseEvent from "ol/events/Event";
-import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
 import SelectionType from "./SelectionType";

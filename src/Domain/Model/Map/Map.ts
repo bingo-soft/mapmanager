@@ -4,19 +4,15 @@ import OlMap from "ol/Map";
 import OlView from "ol/View";
 import { Extent as OlExtent } from "ol/extent";
 import { OverviewMap as OlOverviewMap, defaults as OlDefaultControls } from "ol/control";
-import OlSource from "ol/source/Source";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
-import { OSM as OlOSM, Source } from "ol/source";
+import { OSM as OlOSM } from "ol/source";
 import { Tile as OlTileLayer } from "ol/layer";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
 import OlInteraction from "ol/interaction/Interaction";
 import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
-import OlVectorLayer from "ol/layer/Vector";
-import OlFeature from "ol/Feature";
-//import OlGeoJSON from "ol/format/GeoJSON";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -35,17 +31,14 @@ import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollec
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
 import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
-/* import Projection from "ol/proj/Projection";  */
 
 
 /** @class Map */
 export default class Map { 
     private map: OlMap;
     private activeLayer: LayerInterface;
-    //private visibleLayers: OlCollection<string> = new OlCollection();
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
-    //private eventHandlers: EventHandlerCollection;
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
@@ -113,24 +106,20 @@ export default class Map {
                 zoom: zoom
             })
         });
-        //this.eventHandlers = new EventHandlerCollection(this.map);
         this.setNormalInteraction();
 
     }
 
     /**
-     * Returnas OpMap map instance
+     * Returns Openlayers map instance
      *
      * @function getMap
      * @memberof Map
+     * @return {Object} Openlayers map instance
      */
     public getMap(): OlMap {
         return this.map;
     }
-
-    /* public getEventHandlers(): EventHandlerCollection {
-        return this.eventHandlers;
-    } */
 
     /**
      * Updates map size
@@ -183,10 +172,24 @@ export default class Map {
         this.map.getView().setZoom(zoom);
     }
 
+    /**
+     * Returns map current interaction instance
+     *
+     * @function getInteraction
+     * @memberof Map
+     * @return {Object} interaction instance
+     */
     public getInteraction(): InteractionInterface {
         return this.interaction;
     }
 
+    /**
+     * Returns map current interaction type
+     *
+     * @function getInteractionType
+     * @memberof Map
+     * @return {String} interaction type
+     */
     public getInteractionType(): InteractionType {
         return this.interaction.getType();
     }
@@ -205,11 +208,11 @@ export default class Map {
     /**
      * Sets map draw interaction
      *
-     * @function setInteractionType
+     * @function setDrawInteraction
      * @memberof Map
-     * @param {LayerInterface} layer - layer instance
-     * @param {string} geometryType - feature type
-     * @param {Function} callback - callback
+     * @param {Object} layer - layer to draw on
+     * @param {String} geometryType - type of geometry to draw
+     * @param {Function} callback - callback function to call after geometry is drawn
      */
     public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
         if (layer.getType() != SourceType.Vector) {
@@ -225,7 +228,7 @@ export default class Map {
      *
      * @function setZoomInteraction
      * @memberof Map
-     * @param {string} type - zoom type
+     * @param {String} type - zoom type
      */
     public setZoomInteraction(type: ZoomType): void {
         this.clearInteractions(); 
@@ -234,10 +237,13 @@ export default class Map {
     }
     
     /**
-     * Sets selection interaction
+     * Sets map selection interaction
      *
      * @function setSelectionInteractionType
      * @memberof Map
+     * @param {String} type - selection type
+     * @param {Array} layers - array of layers which selection applies to
+     * @param {Function} callback - callback function to call after geometry is selected
      */
     public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback?: SelectCallbackFunction): void {
         if (layers) {
@@ -253,10 +259,12 @@ export default class Map {
     }
 
     /**
-     * Sets modify interaction
+     * Sets map modify interaction
      *
      * @function setModifyInteraction
      * @memberof Map
+     * @param {Object} features - features to modify
+     * @param {Function} callback - callback function to call after geometry is modified
      */
     public setModifyInteraction(features: FeatureCollection, callback?: ModifyCallbackFunction): void {
         this.clearModifyAndTransformInteractions();
@@ -265,21 +273,22 @@ export default class Map {
     }
 
     /**
-     * Sets transform interaction
+     * Sets map transform interaction
      *
      * @function setTransformInteraction
      * @memberof Map
+     * @param {Function} callback - callback function to call after geometry is transformed
      */
-     public setTransformInteraction(/* features: FeatureCollection,  */callback?: TransformCallbackFunction): void {
+     public setTransformInteraction(callback?: TransformCallbackFunction): void {
         this.clearModifyAndTransformInteractions();
-        this.interaction = new TransformInteraction(/* features,  */callback);
+        this.interaction = new TransformInteraction(callback);
         this.addInteraction(this.interaction);  
     }
 
     /**
-     * Clears modify interactions
+     * Clears modify and transform interactions
      *
-     * @function clearModifyInteractions
+     * @function clearModifyAndTransformInteractions
      * @memberof Map
      */
      public clearModifyAndTransformInteractions(): void {
@@ -287,7 +296,14 @@ export default class Map {
         this.clearInteractions(InteractionType.Transform);
     }
  
-    private addInteraction(interaction: InteractionInterface/* , addToOlMap: boolean = true */): void {
+    /**
+     * Adds interaction
+     *
+     * @function addInteraction
+     * @memberof Map
+     * @param {Object} interaction - interaction to add
+     */
+    private addInteraction(interaction: InteractionInterface): void {
         const olInteraction: OlInteraction = interaction.getInteraction();
         if (typeof olInteraction !== "undefined") {
             this.map.addInteraction(interaction.getInteraction());
@@ -299,7 +315,7 @@ export default class Map {
      * Clears interactions
      *
      * @function clearInteractions
-     * @param {String} - type of interaction to clear, all if not set
+     * @param {String} type - type of interaction to clear, all if not set
      * @memberof Map
      */ 
     public clearInteractions(type?: InteractionType): void {
@@ -320,17 +336,12 @@ export default class Map {
         }
     }
 
-    /* public editFeatures(type: SelectionType, layers: LayerInterface[], features: FeatureCollection, callback?: (feature: FeatureCollection) => void): void {
-        this.setSelectInteraction(type, layers);
-        this.setModifyInteraction(features, callback)
-    } */
-
     /**
      * Gets active layer
      *
      * @function getActiveLayer
      * @memberof Map
-     * @return {LayerInterface} active layer instance
+     * @return {Object} active layer instance
      */
     public getActiveLayer(): LayerInterface {
         return this.activeLayer;
@@ -341,7 +352,7 @@ export default class Map {
      *
      * @function setActiveLayer
      * @memberof Map
-     * @param {LayerInterface} layer layer instance
+     * @param {Object} layer - layer instance
      */
     public setActiveLayer(layer: LayerInterface): void {
         this.activeLayer = layer;
@@ -352,11 +363,10 @@ export default class Map {
      *
      * @function addLayer
      * @memberof Map
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      */
     public addLayer(layer: LayerInterface): void {
         this.map.addLayer(layer.getLayer());
-        //this.map.visibleLayers.set(layer.getLayer().getId(), layer);
     }
 
     /**
@@ -364,7 +374,7 @@ export default class Map {
      *
      * @function removeLayer
      * @memberof Map
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
      */
     public removeLayer(layer: LayerInterface): void {
         this.map.removeLayer(layer.getLayer());
@@ -400,7 +410,8 @@ export default class Map {
      *
      * @function fitLayer
      * @memberof Map
-     * @param {LayerInterface} layer - layer instance
+     * @param {Object} layer - layer instance
+     * @param {Number} zoom - zoom to set after fit
      */
     public fitLayer(layer: LayerInterface, zoom?: number): void {
         const extent: OlExtent = (<OlVectorSource>layer.getSource()).getExtent();
@@ -418,7 +429,7 @@ export default class Map {
      *
      * @function createOverlay
      * @memberof Map
-     * @param {Object} element - element to create overlay upon
+     * @param {Object} element - DOM element to create overlay upon
      * @param {Array} position - the overlay position in map projection
      * @param {Array} offset - offset in pixels used when positioning the overlay 
      */

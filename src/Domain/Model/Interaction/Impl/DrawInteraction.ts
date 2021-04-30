@@ -3,7 +3,6 @@ import OlVectorLayer from "ol/layer/Vector";
 import OlCollection from 'ol/Collection';
 import OlGeometryType from "ol/geom/GeometryType";
 import OlBaseEvent from "ol/events/Event";
-import { VectorSourceEvent as OlVectorSourceEvent} from "ol/source/Vector";
 import BaseInteraction from "./BaseInteraction";
 import LayerInterface from "../../Layer/LayerInterface";
 import Feature from "../../Feature/Feature";

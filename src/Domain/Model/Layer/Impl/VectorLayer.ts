@@ -1,16 +1,11 @@
 import { Vector as OlVectorLayer } from "ol/layer";
-//import OlBaseVector from "ol/layer/BaseVector";
 import { Source as OlSource } from "ol/source";
 import { Vector as OlVectorSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import BaseVectorLayer from "ol/layer/BaseVector";
-import OlGeometryType from "ol/geom/GeometryType";
-import { Style as OlStyle, Text as OlTextStyle, Fill as OlFill, Stroke as OlStroke } from "ol/style";
-import { StyleType } from "../../Style/StyleType";
 import SourceType from "../../Source/SourceType";
 import SourceInterface from "../../Source/SourceInterface";
-import { DefaultStyle } from "../../Style/Impl/DefaultStyle";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
@@ -23,6 +18,7 @@ export default class VectorLayer extends AbstractLayer{
     /**
      * @constructor
      * @memberof VectorLayer
+     * @param {Object} opts - options
      */
     constructor(opts?: unknown) {
         super();
@@ -34,20 +30,48 @@ export default class VectorLayer extends AbstractLayer{
         this.layer = new OlVectorLayer();
     }
 
+    /**
+     * Returns layer type
+     *
+     * @function getType
+     * @memberof VectorLayer
+     * @return {String} layer type
+     */
     public getType(): SourceType {
         return SourceType.Vector;
     }
 
+    /**
+     * Returns layer's source
+     *
+     * @function getSource
+     * @memberof VectorLayer
+     * @return {Object} layer's source
+     */
     public getSource(): OlSource {
         return this.layer.getSource();
     }
 
+    /**
+     * Sets layer's source
+     *
+     * @function setSource
+     * @memberof VectorLayer
+     * @param {Object} source - layer's source
+     */
     public setSource(source: SourceInterface): void {
         const olSource: OlVectorSource = <OlVectorSource> source.getSource();
         this.layer.setSource(olSource);
         this.eventHandlers = new EventHandlerCollection(olSource);
     }
 
+    /**
+     * Sets layer's loader
+     *
+     * @function setLoader
+     * @memberof VectorLayer
+     * @param {Function} loader - loader function
+     */
     public setLoader(loader: () => Promise<string>): void {   
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
         source.setLoader(async () => {
@@ -59,12 +83,25 @@ export default class VectorLayer extends AbstractLayer{
         });
     }
 
+    /**
+     * Sets layer's style
+     *
+     * @function setStyle
+     * @memberof VectorLayer
+     * @param {Function} style - style function
+     */
     public setStyle(style: StyleFunction): void {
         (<BaseVectorLayer> this.layer).setStyle(style);
     }
 
-    public addFeatures(features: string/* , opts?: unknown */): void {
-        //const srs: number = this.getSRSId(opts);
+    /**
+     * Adds features to layer
+     *
+     * @function addFeatures
+     * @memberof VectorLayer
+     * @param {String} features - features as GeoJSON string
+     */
+    public addFeatures(features: string): void {
         (<OlVectorLayer> this.layer).getSource().addFeatures(new OlGeoJSON().readFeatures(features, {
             dataProjection: this.srs,
             featureProjection: "EPSG:3857"
@@ -72,32 +109,25 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
-     * Gets features of layer
+     * Returns features of layer
      *
      * @function getFeatures
-     * @memberof Layer
-     * @return {Array} - features of the layer
+     * @memberof VectorLayer
+     * @return {Array} features of the layer
      */
     private getFeatures(): OlFeature[] {
         return (<OlVectorLayer> this.layer).getSource().getFeatures();
     }
 
+    /**
+     * Returns FeatureCollection of features
+     *
+     * @function getFeatureCollection
+     * @memberof VectorLayer
+     * @return {Object} FeatureCollection of features
+     */
     public getFeatureCollection(): FeatureCollection {
         return new FeatureCollection(this.getFeatures(), this.srs);
     }
     
-    /**
-     * Gets features of layer as FeatureCollection GeoJSON
-     *
-     * @function getFeaturesAsFeatureCollection
-     * @memberof Layer
-     * @return {String} - GeoJSON
-     */
-    /* public getFeaturesAsFeatureCollection(): string {
-        return new OlGeoJSON().writeFeatures(this.getFeatures(), {
-            dataProjection: this.srs,
-            featureProjection: "EPSG:3857"
-        });
-    }  */
-
 }
