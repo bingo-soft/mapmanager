@@ -12,6 +12,8 @@ import { Tile as OlTileLayer } from "ol/layer";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
 import OlInteraction from "ol/interaction/Interaction";
+import OlOverlay from "ol/Overlay";
+import OlOverlayPositioning from "ol/OverlayPositioning"
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
 //import OlGeoJSON from "ol/format/GeoJSON";
@@ -181,8 +183,11 @@ export default class Map {
         this.map.getView().setZoom(zoom);
     }
 
+    public getInteraction(): InteractionInterface {
+        return this.interaction;
+    }
 
-    public getInteraction(): InteractionType {
+    public getInteractionType(): InteractionType {
         return this.interaction.getType();
     }
     
@@ -406,6 +411,25 @@ export default class Map {
                 view.setZoom(zoom);
             }
         }
+    }
+
+    /**
+     * Creates an overlay and adds it to map
+     *
+     * @function createOverlay
+     * @memberof Map
+     * @param {Object} element - element to create overlay upon
+     * @param {Array} position - the overlay position in map projection
+     * @param {Array} offset - offset in pixels used when positioning the overlay 
+     */
+    public createOverlay(element: HTMLElement, position: number[], offset: number[]): void {
+        const overlay: OlOverlay = new OlOverlay({
+            element: element,
+            offset: offset,
+            position: position,
+            positioning: OlOverlayPositioning.BOTTOM_CENTER
+        });
+        this.map.addOverlay(overlay);
     }
 
     

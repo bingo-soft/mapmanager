@@ -57,7 +57,7 @@ let selectedFeatures: FeatureCollection;
 const doSelect = function(e: any, selectionType: string) {
     e.target.style.backgroundColor = "#777";
     e.target.style.color = "#fff";
-    const regime: InteractionType = MapManager.getInteraction(map);
+    const regime: InteractionType = MapManager.getInteractionType(map);
     if (regime == InteractionType.Normal) {
         MapManager.setSelectInteraction(map, {
             "selection_type": selectionType,
