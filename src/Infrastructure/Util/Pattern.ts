@@ -10,13 +10,13 @@ export default class Pattern {
      * @function getDefaultFillPatterns
      * @static
      * @memberof Pattern
-     * @return {Map} objects representing URIs of default fill patterns
+     * @return {Object} objects representing URIs of default fill patterns
      */
     public static getDefaultFillPatterns(): Map<string, string> {
-        const ret: Map<string, string> = new Map<string, string>();
+        const ret: Map<string, string> = new Map();
         ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
         for (const i in FillPattern.prototype.patterns) {
-            const p = new FillPattern({ pattern: i });
+            const p: FillPattern = new FillPattern({ pattern: i });
             ret.set(i, p.getImage().toDataURL());
         }
         return ret;

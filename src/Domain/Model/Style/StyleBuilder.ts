@@ -1,9 +1,7 @@
 import OlGeometryType from "ol/geom/GeometryType"
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
-//import { Options as OlCircleOptions } from "ol/style/Circle";
 import { DefaultStyle } from "./Impl/DefaultStyle"
-//import { DynamicStyle } from "./Impl/DynamicStyle"
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 
@@ -21,8 +19,8 @@ export default class StyleBuilder {
 
     /**
      * @constructor
-     * @memberof LayerBuilder
-     * @param {object} opts - options
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
      */ 
     constructor(opts?: unknown) {
         this.style = {
@@ -39,7 +37,14 @@ export default class StyleBuilder {
         this.applyOptions(opts);
     }
 
-    private applyOptions(opts?: unknown) {
+    /**
+     * Applies options to style
+     *
+     * @function applyOptions
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     */
+    private applyOptions(opts?: unknown): void {
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length) {
                 this.setPointStyle(opts["point"]);
@@ -74,6 +79,14 @@ export default class StyleBuilder {
         }
     }
 
+    /**
+     * Sets point style
+     *
+     * @function setPointStyle
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     * @return {Object} style builder instance
+     */
     private setPointStyle(opts: unknown): StyleBuilder {
         let style: OlStyle = null;
         if (opts["marker_type"] == "simple_point") {
@@ -108,6 +121,14 @@ export default class StyleBuilder {
         return this;
     }
 
+    /**
+     * Sets linestring style
+     *
+     * @function setLinestringStyle
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     * @return {Object} style builder instance
+     */
     private setLinestringStyle(opts: unknown): StyleBuilder {
         const style: OlStyle = new OlStyle({
             stroke: new OlStroke({
@@ -135,7 +156,15 @@ export default class StyleBuilder {
         return this;
     }
 
-    /* private setGeometryCollectionStyle(opts: unknown): void {
+    /**
+     * Sets geometry collection style
+     *
+     * @function setGeometryCollectionStyle
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     * @return {Object} style builder instance
+     */
+    /* private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
         const style: OlStyle = new OlStyle({
             stroke: new OlStroke({
                 color: opts["color"], 
@@ -146,8 +175,17 @@ export default class StyleBuilder {
             }),
         });
         this.style[OlGeometryType.GEOMETRY_COLLECTION] = style;
+        return this;
     } */
 
+    /**
+     * Sets text style
+     *
+     * @function setTextStyle
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     * @return {Object} style builder instance
+     */
     private setTextStyle(opts: unknown): StyleBuilder {
         if (typeof opts["style"] !== "undefined") {
             const style: OlTextStyle = new OlTextStyle({
@@ -169,6 +207,15 @@ export default class StyleBuilder {
         return this;
     }
 
+    /**
+     * Applies opacity to hex color code
+     *
+     * @function applyOpacity
+     * @memberof StyleBuilder
+     * @param {String} color - hex color code
+     * @param {Number} opacity - opacity value from 1 to 100
+     * @return {String} hex code representing color and opacity
+     */
     private applyOpacity(color: string, opacity: number): string {
         if (color.length == 4) { // short color like #333
             color += "000";
@@ -188,14 +235,9 @@ export default class StyleBuilder {
      *
      * @function build
      * @memberof StyleBuilder
-     * @return {Object<import("ol/geom/GeometryType.js").default, Array<Style>>} - style
+     * @return {Function>} style function
      */
-    /* public build(): StyleType {
-        return this.style;
-    } */
-    public build(): StyleFunction /* StyleType */ {
-        //return this.style;
-
+    public build(): StyleFunction {
         return (feature: OlFeature): OlStyle => {
             const geomType: OlGeometryType = feature.getGeometry().getType();
             const style: OlStyle = this.style[geomType];

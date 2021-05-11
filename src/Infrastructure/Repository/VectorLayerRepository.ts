@@ -6,13 +6,12 @@ import { ApiRequest } from '../Http/ApiRequest'
 export default class VectorLayerRepository implements VectorLayerRepositoryInterface {
 
     /**
-     * Gets data via API request
+     * Returns data via API request
      *
-     * @function request
-     * @memberof ApiClient
-     * @static
+     * @function get
+     * @memberof VectorLayerRepository
      * @param {Object} request - request params
-     * @return {Promise<string>} result of API request
+     * @return {String} result of API request
      */
     public get(request: unknown): Promise<string> {
         return ApiClient.request(<ApiRequest> request);

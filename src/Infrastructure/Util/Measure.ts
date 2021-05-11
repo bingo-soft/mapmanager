@@ -70,11 +70,27 @@ export default class Measure {
         this.map = map;
     }
 
+    /**
+     * Returns the length of linestring in meters
+     *
+     * @function getLength
+     * @memberof Measure
+     * @param {Object} line - linestring instance
+     * @return {Number} the length of linestring
+     */
     private getLength(line: OlLineString): number {
         const length: number = OlSphere.getLength(line);
-        return Math.round(length * 100) / 100
+        return Math.round(length * 100) / 100;
     }
 
+    /**
+     * Returns the area of polygon in square meters
+     *
+     * @function getArea
+     * @memberof Measure
+     * @param {Object} polygon - polygon instance
+     * @return {Number} the area of polygon
+     */
     private getArea(polygon: OlPolygon): number {
         const area: number = OlSphere.getArea(polygon);
         return Math.round(area * 100) / 100;
