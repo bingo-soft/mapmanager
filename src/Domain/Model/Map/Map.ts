@@ -469,6 +469,18 @@ export default class Map {
     }
 
     /**
+     * Fits map to given features extent
+     *
+     * @function fitFeatures
+     * @memberof Map
+     * @param {Object} features - features
+     * @param {Number} zoom - zoom to set after fit
+     */
+     public fitFeatures(features: FeatureCollection, zoom?: number): void {
+        // TODO
+    }
+
+    /**
      * Creates an overlay and adds it to map
      *
      * @function createOverlay
