@@ -17,9 +17,7 @@ export default class ZoomInteraction extends BaseInteraction {
      */
     constructor(type: ZoomType, map: Map) {
         super();
-        
         this.eventHandlers = new EventHandlerCollection(map.getMap());
-
         this.eventHandlers.add(EventType.Click, "ZoomEventHandler", (e: OlBaseEvent): void => {
             const zoom = map.getMap().getView().getZoom();
             map.getMap().getView().setCenter((<OlMapBrowserEvent> e).coordinate);

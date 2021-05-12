@@ -20,10 +20,24 @@ export default class VectorSource extends BaseSource {
         });
     }
 
+    /**
+     * Returns type of source
+     *
+     * @function getType
+     * @memberof VectorSource
+     * @return {String} type of source
+     */
     public getType(): SourceType {
         return SourceType.Vector;
     }
 
+    /**
+     * Returns extent of source
+     *
+     * @function getExtent
+     * @memberof VectorSource
+     * @return {Array} extent of source
+     */
     public getExtent(): OlExtent {
         const source = <OlVectorSource> this.source;
         return source.getExtent();

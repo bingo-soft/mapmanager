@@ -1,4 +1,4 @@
-import { Interaction as OLInteraction} from "ol/interaction";
+import { Interaction as OLInteraction } from "ol/interaction";
 import InteractionInterface from "../InteractionInterface";
 import InteractionType from "../InteractionType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";

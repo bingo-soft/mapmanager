@@ -9,7 +9,8 @@ enum EventType {
     TranslateFeature = "translateend",
     ScaleFeature = "scaleend",
     DrawStart = "drawstart", 
-    DrawEnd = "drawend"
+    DrawEnd = "drawend",
+    PointerMove = "pointermove"
 }
 
 export default EventType;

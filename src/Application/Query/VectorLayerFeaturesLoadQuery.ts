@@ -7,7 +7,7 @@ export default class VectorLayerFeaturesLoadQuery {
     /**
      * @constructor
      * @memberof VectorLayerFeaturesQuery
-     * @param {VectorLayerRepositoryInterface} repository - repository
+     * @param {Object} repository - repository
      */
     constructor(repository: VectorLayerRepositoryInterface) {
         this.repository = repository;
@@ -19,7 +19,7 @@ export default class VectorLayerFeaturesLoadQuery {
      * @function execute
      * @memberof VectorLayerFeaturesQuery
      * @param {Object} - request object
-     * @return {LayerInterface} layer
+     * @return {String} layer features in GeoJSON
      */
     public execute(request: unknown): Promise<string> {
         return this.repository.get(request);

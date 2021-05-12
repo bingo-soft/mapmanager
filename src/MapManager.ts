@@ -382,6 +382,19 @@ export default class MapManager {
     }
 
     /**
+     * Fits map to given features extent
+     *
+     * @function fitFeatures
+     * @memberof Map
+     * @param {Object} map - map instance
+     * @param {Object} features - features
+     * @param {Number} zoom - zoom after fit
+     */
+     public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number): void { 
+        map.fitFeatures(features, zoom);
+    }
+
+    /**
      * Sets zIndex of layer
      *
      * @function setZIndex
@@ -432,7 +445,19 @@ export default class MapManager {
      * @param {Array} position - the overlay position in map projection
      * @param {Array} offset - offset in pixels used when positioning the overlay 
      */
-     public static createOverlay(map: Map, element: HTMLElement, position: number[], offset: number[]): void { 
+    public static createOverlay(map: Map, element: HTMLElement, position: number[], offset: number[]): void { 
         map.createOverlay(element, position, offset);
+    }
+
+    /**
+     * Clears map's selection
+     *
+     * @function clearSelection
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     */
+    public static clearSelection(map: Map): void { 
+        map.clearSelectedFeatures();
     }
 }

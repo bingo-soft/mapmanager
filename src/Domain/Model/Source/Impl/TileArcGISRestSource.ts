@@ -1,5 +1,4 @@
-//import { Tile as OlTileSource } from "ol/source"
-import OlTileArcGISRest from 'ol/source/TileArcGISRest';
+import OlTileArcGISRest from "ol/source/TileArcGISRest";
 import BaseSource from "../BaseSource";
 import SourceType from "../SourceType";
 
@@ -15,6 +14,13 @@ export default class TileArcGISRestSource extends BaseSource {
         this.source = new OlTileArcGISRest();
     }
 
+    /**
+     * Returns type of source
+     *
+     * @function getType
+     * @memberof TileArcGISRestSource
+     * @return {String} type of source
+     */
     public getType(): SourceType {
         return SourceType.TileArcGISRest;
     }

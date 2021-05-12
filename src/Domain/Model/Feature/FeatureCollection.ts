@@ -55,7 +55,7 @@ export default class FeatureCollection {
      * @memberof FeatureCollection
      * @return {Number} length of collection
      */
-     public getLength(): number {
+    public getLength(): number {
         return this.features.length;
     }
 
@@ -143,7 +143,6 @@ export default class FeatureCollection {
     public getAsMultiGeometry(): string {
         let geomType: OlGeometryType; 
         if (this.features.length) {
-            //geomType = this.features[0].getFeature().getGeometry().getType();
             const coordsPoint: OlCoordinate[] = [];
             const coordsLineString: OlCoordinate[][] = [];
             const coordsPolygon: OlCoordinate[][][] = [];

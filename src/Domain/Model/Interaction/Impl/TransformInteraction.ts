@@ -3,14 +3,11 @@ import {shiftKeyOnly as OlEventConditionShiftKeyOnly} from "ol/events/condition"
 import OlMap from "ol/Map";
 import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
-import Collection from 'ol/Collection';
 import BaseInteraction from "./BaseInteraction";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import FeatureCollection from "../../Feature/FeatureCollection";
-import LayerInterface from "../../Layer/LayerInterface";
-import VectorLayer from "../../Layer/Impl/VectorLayer"
 import { TransformCallbackFunction } from "../InteractionCallbackType";
 
 
@@ -45,9 +42,9 @@ export default class TransformInteraction extends BaseInteraction {
         (<OlTransform> this.interaction).Cursors["rotate"] = TransformInteraction.ROTATE_CURSOR;
         this.type = InteractionType.Transform;
         this.eventHandlers = new EventHandlerCollection(this.interaction);
-        this.eventHandlers.add(EventType.RotateFeature, "RotateFeatureEventHanler", this.handler);
-        this.eventHandlers.add(EventType.TranslateFeature, "TranslateFeatureEventHanler", this.handler);
-        this.eventHandlers.add(EventType.ScaleFeature, "ScaleEventFeatureHanler", this.handler);
+        this.eventHandlers.add(EventType.RotateFeature, "RotateFeatureEventHandler", this.handler);
+        this.eventHandlers.add(EventType.TranslateFeature, "TranslateFeatureEventHandler", this.handler);
+        this.eventHandlers.add(EventType.ScaleFeature, "ScaleEventFeatureHandler", this.handler);
     }
 
     private handler(e: OlBaseEvent): void {
