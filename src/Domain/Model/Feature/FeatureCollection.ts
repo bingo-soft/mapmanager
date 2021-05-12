@@ -55,7 +55,7 @@ export default class FeatureCollection {
      * @memberof FeatureCollection
      * @return {Number} length of collection
      */
-     public getLength(): number {
+    public getLength(): number {
         return this.features.length;
     }
 

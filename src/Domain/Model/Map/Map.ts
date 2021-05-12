@@ -13,6 +13,7 @@ import * as OlProj from "ol/proj";
 import OlInteraction from "ol/interaction/Interaction";
 import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
+import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -31,14 +32,18 @@ import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollec
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
 import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
+import EventType from "../EventHandlerCollection/EventType";
+import OlBaseEvent from "ol/events/Event";
 
 
 /** @class Map */
 export default class Map { 
     private map: OlMap;
     private activeLayer: LayerInterface;
+    private selectedFeatures: FeatureCollection;
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
+    private eventHandlers: EventHandlerCollection; 
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
@@ -107,7 +112,14 @@ export default class Map {
             })
         });
         this.setNormalInteraction();
-
+        this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
+        this.eventHandlers = new EventHandlerCollection(this.map);
+        this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
+            // TODO: call clearSelectedFeatures if no features are selected on map
+        });
+        this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
+            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? "pointer" : "default";
+        });
     }
 
     /**
@@ -170,6 +182,38 @@ export default class Map {
      */
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
+    }
+
+    /**
+     * Returns map's selected features
+     *
+     * @function getSelectedFeatures
+     * @memberof Map
+     * @return {Object} selected features
+     */
+    public getSelectedFeatures(): FeatureCollection {
+        return this.selectedFeatures;
+    }
+
+    /**
+     * Sets map's selected features
+     *
+     * @function setSelectedFeatures
+     * @memberof Map
+     * @param {Object} features - selected features
+     */
+    public setSelectedFeatures(features: FeatureCollection): void {
+        this.selectedFeatures = features;
+    }
+
+    /**
+     * Clears map's selected features
+     *
+     * @function clearSelectedFeatures
+     * @memberof Map
+     */
+     public clearSelectedFeatures(): void {
+        this.selectedFeatures = null;
     }
 
     /**

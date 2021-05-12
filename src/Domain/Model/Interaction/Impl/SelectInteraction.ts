@@ -45,7 +45,7 @@ export default class SelectInteraction extends BaseInteraction {
                     multi: true
                 });
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
-                this.eventHandlers.add(EventType.SelectSingleFeature, "SelectSingleFeatureEventHanler", (e: OlBaseEvent): void => {
+                this.eventHandlers.add(EventType.SelectSingleFeature, "SelectSingleFeatureEventHandler", (e: OlBaseEvent): void => {
                     const selectedFeatures: OlFeature[] = e.target.getFeatures().getArray();
                     const features: Feature[] = [];
                     selectedFeatures.forEach((feature: OlFeature): void => {
@@ -53,6 +53,7 @@ export default class SelectInteraction extends BaseInteraction {
                     });
                     const srs: string = olMap.getView().getProjection().getCode();
                     fc = new FeatureCollection(features, srs);
+                    map.setSelectedFeatures(fc);
                     if (typeof callback === "function") {
                         callback(fc);
                     }
@@ -66,7 +67,7 @@ export default class SelectInteraction extends BaseInteraction {
 
                 this.interaction = new OlDragBox();
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
-                this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHanler", (e: OlBaseEvent): void => {
+                this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHandler", (e: OlBaseEvent): void => {
                     var extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
                     const features: Feature[] = [];
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
@@ -81,6 +82,7 @@ export default class SelectInteraction extends BaseInteraction {
                         }
                     });
                     fc = new FeatureCollection(features, olMap.getView().getProjection().getCode());
+                    map.setSelectedFeatures(fc);
                     if (typeof callback === "function") {
                         callback(fc);
                     }

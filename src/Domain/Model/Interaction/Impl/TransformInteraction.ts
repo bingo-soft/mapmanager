@@ -42,9 +42,9 @@ export default class TransformInteraction extends BaseInteraction {
         (<OlTransform> this.interaction).Cursors["rotate"] = TransformInteraction.ROTATE_CURSOR;
         this.type = InteractionType.Transform;
         this.eventHandlers = new EventHandlerCollection(this.interaction);
-        this.eventHandlers.add(EventType.RotateFeature, "RotateFeatureEventHanler", this.handler);
-        this.eventHandlers.add(EventType.TranslateFeature, "TranslateFeatureEventHanler", this.handler);
-        this.eventHandlers.add(EventType.ScaleFeature, "ScaleEventFeatureHanler", this.handler);
+        this.eventHandlers.add(EventType.RotateFeature, "RotateFeatureEventHandler", this.handler);
+        this.eventHandlers.add(EventType.TranslateFeature, "TranslateFeatureEventHandler", this.handler);
+        this.eventHandlers.add(EventType.ScaleFeature, "ScaleEventFeatureHandler", this.handler);
     }
 
     private handler(e: OlBaseEvent): void {
