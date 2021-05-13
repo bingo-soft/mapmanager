@@ -213,6 +213,7 @@ export default class Map {
      * @memberof Map
      */
      public clearSelectedFeatures(): void {
+        // TODO: deselect features physically 
         this.selectedFeatures = null;
     }
 

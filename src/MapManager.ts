@@ -450,6 +450,19 @@ export default class MapManager {
     }
 
     /**
+     * Returns map's selected features
+     *
+     * @function getSelectedFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @return {Object} selected features
+     */
+     public static getSelectedFeatures(map: Map): FeatureCollection { 
+        return map.getSelectedFeatures();
+    }
+
+    /**
      * Clears map's selection
      *
      * @function clearSelection
