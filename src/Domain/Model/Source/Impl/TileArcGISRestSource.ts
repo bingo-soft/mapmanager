@@ -1,4 +1,4 @@
-import OlTileArcGISRest from "ol/source/TileArcGISRest";
+import OlTileArcGISRestSource from "ol/source/TileArcGISRest";
 import BaseSource from "../BaseSource";
 import SourceType from "../SourceType";
 
@@ -11,7 +11,7 @@ export default class TileArcGISRestSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new OlTileArcGISRest();
+        this.source = new OlTileArcGISRestSource();
     }
 
     /**

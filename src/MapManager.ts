@@ -190,10 +190,10 @@ export default class MapManager {
                 builder = new LayerBuilder(new VectorLayer(opts));
                 builder.setSource(SourceType.Vector);       
                 break;
-            /* case SourceType.Tile:
+            case SourceType.TileWMS:
                 builder = new LayerBuilder(new TileLayer());
-                builder.setSource(SourceType.Tile); 
-                break;   */
+                builder.setSource(SourceType.TileWMS); 
+                break;
             case SourceType.XYZ:
                 builder = new LayerBuilder(new TileLayer());
                 builder.setSource(SourceType.XYZ); 
@@ -218,7 +218,7 @@ export default class MapManager {
             if (type == SourceType.Vector) {
                 builder.setStyle(opts["style"]);
             }
-            if ((type == SourceType.XYZ || type == SourceType.TileArcGISRest) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
+            if ((type == SourceType.XYZ || type == SourceType.TileArcGISRest || type == SourceType.TileWMS) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
@@ -458,7 +458,7 @@ export default class MapManager {
      * @param {Object} map - map instance
      * @return {Object} selected features
      */
-     public static getSelectedFeatures(map: Map): FeatureCollection { 
+    public static getSelectedFeatures(map: Map): FeatureCollection { 
         return map.getSelectedFeatures();
     }
 

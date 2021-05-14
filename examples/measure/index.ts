@@ -39,7 +39,7 @@ function measureHanler(e: any) {
         MapManager.startMeasure(measureType, map, function(result: number, toolTipCoord: number[]): void {
             const measureTooltip: HTMLElement = document.createElement("div");
             measureTooltip.className = "tooltip tooltip-static";
-            measureTooltip.innerHTML = result + units;
+            measureTooltip.innerHTML = result.toString() + units;
             MapManager.createOverlay(map, measureTooltip, toolTipCoord, [0, -7]);
         });
     }

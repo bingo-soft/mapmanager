@@ -1,29 +1,29 @@
 //import { Tile as OlTileSource } from "ol/source"
-import OlXYZSource from "ol/source/XYZ";
+import OlTileWMSSource from "ol/source/TileWMS";
 import BaseSource from "../BaseSource";
 import SourceType from "../SourceType";
 
 /** @class XYZSource */
-export default class XYZSource extends BaseSource {
+export default class TileWMSSource extends BaseSource {
     
     /**
      * @constructor
-     * @memberof XYZSource
+     * @memberof TileWMSSource
      */
     constructor() {
         super();
-        this.source = new OlXYZSource();
+        this.source = new OlTileWMSSource();
     }
 
     /**
      * Returns type of source
      *
      * @function getType
-     * @memberof XYZSource
+     * @memberof TileWMSSource
      * @return {String} type of source
      */
     public getType(): SourceType {
-        return SourceType.XYZ;
+        return SourceType.TileWMS;
     }
 
     
