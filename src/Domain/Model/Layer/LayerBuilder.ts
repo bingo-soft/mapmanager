@@ -4,6 +4,7 @@ import SourceType from "../Source/SourceType";
 import VectorSource from "../Source/Impl/VectorSource";
 import XYZSource from "../Source/Impl/XYZSource";
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
+import TileWMSSource from "../Source/Impl/TileWMSSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventType from "../EventHandlerCollection/EventType";
 
@@ -33,8 +34,10 @@ export default class LayerBuilder {
             case SourceType.Vector:
                 this.layer.setSource(new VectorSource());
                 break;
-           /*  case SourceType.Tile:
-                break;  */
+           case SourceType.TileWMS:
+                this.layer.setSource(new TileWMSSource());
+                this.layer.setType(type);
+                break;
             case SourceType.XYZ:
                 this.layer.setSource(new XYZSource());
                 this.layer.setType(type);

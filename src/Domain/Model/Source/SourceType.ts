@@ -1,6 +1,6 @@
 enum SourceType {
     Vector = "vector",
-    Tile = "tile",
+    TileWMS = "tilewms",
     XYZ = "xyz",
     TileArcGISRest = "tilearcgisrest"
 }
