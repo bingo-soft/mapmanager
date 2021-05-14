@@ -115,7 +115,9 @@ export default class Map {
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
-            // TODO: call clearSelectedFeatures if no features are selected on map
+            if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
+                this.clearSelectedFeatures();
+            }
         });
         this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
             this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? "pointer" : "default";
@@ -213,7 +215,7 @@ export default class Map {
      * @memberof Map
      */
      public clearSelectedFeatures(): void {
-        // TODO: deselect features physically 
+        // TODO: deselect features physically ?
         this.selectedFeatures = null;
     }
 
