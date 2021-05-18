@@ -39,6 +39,8 @@ import OlBaseEvent from "ol/events/Event";
 /** @class Map */
 export default class Map { 
     private map: OlMap;
+    private projection: string;
+    private cursor: string;
     private activeLayer: LayerInterface;
     private selectedFeatures: FeatureCollection;
     private interaction: InteractionInterface;
@@ -97,6 +99,7 @@ export default class Map {
                 })
             ],
         });
+        this.projection = "EPSG:" + srsId;
         this.map = new OlMap({
             controls: OlDefaultControls().extend([overviewMapControl]),
             layers: [
@@ -106,11 +109,12 @@ export default class Map {
             ],
             target: targetDOMId,
             view: new OlView({
-                projection: "EPSG:" + srsId,
+                projection: this.projection,
                 center: center,
                 zoom: zoom
             })
         });
+        this.cursor = "default";
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
         this.eventHandlers = new EventHandlerCollection(this.map);
@@ -120,7 +124,7 @@ export default class Map {
             }
         });
         this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
-            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? "pointer" : "default";
+            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? "pointer" : this.cursor;
         });
     }
 
@@ -184,6 +188,18 @@ export default class Map {
      */
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
+    }
+
+    /**
+     * Sets cursor of the map.
+     *
+     * @function setCursor
+     * @memberof Map
+     * @param {String} cursor - cursor CSS value
+     */ 
+    public setCursor(cursor: string): void {
+        this.map.getViewport().style.cursor = cursor;
+        this.cursor = cursor;
     }
 
     /**
@@ -502,5 +518,52 @@ export default class Map {
         this.map.addOverlay(overlay);
     }
 
+    /**
+     * Returns map's event handlers
+     *
+     * @function getEventHandlers
+     * @memberof Map
+     * @return {Object} event handlers collection
+     */
+    public getEventHandlers(): EventHandlerCollection {
+        return this.eventHandlers;
+    }
     
+    /**
+     * Sets map's event handler
+     *
+     * @function setEventHandler
+     * @memberof Map
+     * @param {String} eventType - event type
+     * @param {String} handlerName - handler id
+     * @param {Function} callback - callback function to call when an event is triggered
+     */
+    public setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void {
+        this.eventHandlers.add(eventType, handlerId, callback);
+    }
+
+    /**
+     * Returns coordinates from pixel in map projection
+     *
+     * @function getCoordinateFromPixel
+     * @memberof Map
+     * @param {Array} pixel - pixel coordinates
+     * @return {Array} coordinates in map projection
+     */
+    public getCoordinateFromPixel(pixel: number[]): number[] {
+        return this.map.getCoordinateFromPixel(pixel);
+    }
+
+    /**
+     * Transforms coordinates from one projection to another
+     *
+     * @function transformCoordinates
+     * @memberof Map
+     * @param {Array} coordinates - pixel coordinates
+     * @param {Number} srsId - SRS Id (e.g. 4326)
+     * @return {Array} transformed coordinates
+     */
+    public transformCoordinates(coordinates: number[], srsId: number): number[] {
+        return OlProj.transform(coordinates, this.projection, "EPSG:" + srsId);
+    }
 }

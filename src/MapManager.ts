@@ -9,8 +9,9 @@ import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerReposi
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
-import SelectionType from "./Domain/Model/Interaction/Impl/SelectionType"
 import Measure, { MeasureType } from "./Infrastructure/Util/Measure"
+import EventType from "./Domain/Model/EventHandlerCollection/EventType"
+import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -66,6 +67,18 @@ export default class MapManager {
      */
     public static setZoom(map: Map, zoom: number): void {
         map.setZoom(zoom);
+    }
+
+    /**
+     * Sets cursor of the map.
+     *
+     * @function setCursor
+     * @memberof Map
+     * @param {Map} map - map instance
+     * @param {String} cursor - cursor CSS value
+     */
+    public static setCursor(map: Map, cursor: string): void {
+        map.setCursor(cursor);
     }
    
     /**
@@ -218,7 +231,7 @@ export default class MapManager {
             if (type == SourceType.Vector) {
                 builder.setStyle(opts["style"]);
             }
-            if ((type == SourceType.XYZ || type == SourceType.TileArcGISRest || type == SourceType.TileWMS) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
+            if ((/* type == SourceType.Vector ||  */type == SourceType.XYZ || type == SourceType.TileArcGISRest || type == SourceType.TileWMS) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
@@ -473,4 +486,32 @@ export default class MapManager {
     public static clearSelection(map: Map): void { 
         map.clearSelectedFeatures();
     }
+
+    /**
+     * Sets an event handler on map
+     *
+     * @function setEventHandler
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {String} eventType - event type
+     * @param {String} handlerName - handler id
+     * @param {Function} callback - callback function to call when an event is triggered
+     */
+    public static setEventHandler(map: Map, eventType: EventType, handlerId: string, callback: (data: unknown) => void): void {
+        map.setEventHandler(eventType, handlerId, callback);
+    }
+
+    /**
+     * Returns map's event handlers
+     *
+     * @function getEventHandlers
+     * @memberof Map
+     * @param {Object} map - map instance
+     * @return {Object} event handlers collection
+     */
+    public static getEventHandlers(map: Map): EventHandlerCollection {
+        return map.getEventHandlers();
+    }
+
 }
