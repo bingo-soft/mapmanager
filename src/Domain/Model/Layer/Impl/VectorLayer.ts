@@ -75,7 +75,7 @@ export default class VectorLayer extends AbstractLayer{
     public setLoader(loader: () => Promise<string>): void {   
         const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
         source.setLoader(async () => {
-            const data = await loader();
+            const data = await loader(); 
             source.addFeatures(new OlGeoJSON().readFeatures(data, {
                 dataProjection: this.srs,
                 featureProjection: "EPSG:3857"

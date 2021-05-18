@@ -7,6 +7,7 @@ import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
 import TileWMSSource from "../Source/Impl/TileWMSSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventType from "../EventHandlerCollection/EventType";
+import VectorLayer from "ol/layer/Vector";
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
@@ -119,6 +120,7 @@ export default class LayerBuilder {
      * @return {Object} - layer instance
      */
     public build(): LayerInterface {
+        console.log((<VectorLayer> this.layer.getLayer()).getSource().getFeatures());
         return this.layer;
     }
 }

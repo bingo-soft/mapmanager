@@ -20,4 +20,5 @@ export default class Geometry {
         }
         return features;
     }
+
 }
