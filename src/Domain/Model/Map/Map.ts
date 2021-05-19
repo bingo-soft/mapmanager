@@ -8,6 +8,7 @@ import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
 import { Tile as OlTileLayer } from "ol/layer";
+import OlGeometry from "ol/geom/Geometry";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
 import OlInteraction from "ol/interaction/Interaction";
@@ -34,6 +35,7 @@ import TransformInteraction from "../Interaction/Impl/TransformInteraction";
 import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
 import OlBaseEvent from "ol/events/Event";
+import { GeometryCollection } from "ol/geom";
 
 
 /** @class Map */
@@ -458,7 +460,7 @@ export default class Map {
     }
 
     /**
-     * Fits map to extent
+     * Fits map to given extent
      *
      * @function fitExtent
      * @memberof Map
@@ -495,8 +497,14 @@ export default class Map {
      * @param {Object} features - features
      * @param {Number} zoom - zoom to set after fit
      */
-     public fitFeatures(features: FeatureCollection, zoom?: number): void {
-        // TODO
+    public fitFeatures(features: FeatureCollection, zoom?: number): void {
+         const geometries: OlGeometry[] = features.getFeatureGeometries();
+         const gc: GeometryCollection = new GeometryCollection(geometries);
+         const view: OlView = this.map.getView();
+         view.fit(gc.getExtent());
+         if (typeof zoom !== "undefined") {
+            view.setZoom(zoom);
+        }
     }
 
     /**

@@ -66,10 +66,25 @@ export default class FeatureCollection {
      * @memberof FeatureCollection
      * @return {Array} array of OL feature instances
      */
-     public getFeatures(): OlFeature[] {
+    public getFeatures(): OlFeature[] {
         const ret: OlFeature[] = [];
         this.features.forEach((feature: Feature): void => {
             ret.push(feature.getFeature());
+        });
+        return ret;
+    }
+
+    /**
+     * Returns an array of OL feature geometries
+     *
+     * @function getFeatureGeometries
+     * @memberof FeatureCollection
+     * @return {Array} array of OL feature geometries
+     */
+    public getFeatureGeometries(): OlGeometry[] {
+        const ret: OlGeometry[] = [];
+        this.features.forEach((feature: Feature): void => {
+            ret.push(feature.getFeature().getGeometry());
         });
         return ret;
     }
