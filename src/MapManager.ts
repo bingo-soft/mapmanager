@@ -12,6 +12,7 @@ import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import Measure, { MeasureType } from "./Infrastructure/Util/Measure"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
+import CursorType from "./Domain/Model/Map/CursorType"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -75,9 +76,9 @@ export default class MapManager {
      * @function setCursor
      * @memberof Map
      * @param {Map} map - map instance
-     * @param {String} cursor - cursor CSS value
+     * @param {String} cursor - cursor type
      */
-    public static setCursor(map: Map, cursor: string): void {
+    public static setCursor(map: Map, cursor: CursorType): void {
         map.setCursor(cursor);
     }
    

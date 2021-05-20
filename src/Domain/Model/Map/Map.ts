@@ -1,4 +1,4 @@
-import "ol-ext/dist/ol-ext.css";
+//import "ol-ext/dist/ol-ext.css";
 import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
@@ -9,6 +9,8 @@ import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
 import { Tile as OlTileLayer } from "ol/layer";
 import OlGeometry from "ol/geom/Geometry";
+import OlBaseEvent from "ol/events/Event";
+import { GeometryCollection } from "ol/geom";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
 import OlInteraction from "ol/interaction/Interaction";
@@ -34,8 +36,16 @@ import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
 import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
-import OlBaseEvent from "ol/events/Event";
-import { GeometryCollection } from "ol/geom";
+import CursorType from "./CursorType";
+
+import CursorZoomInUrl from "../../../../assets/cursor-zoom-in.svg"
+import CursorZoomOutUrl from "../../../../assets/cursor-zoom-out.svg"
+import CursorAttributeByAreaUrl from "../../../../assets/cursor-attribute-by-area.svg"
+import CursorAttributeByClickUrl from "../../../../assets/cursor-attribute-by-click.svg"
+import CursorSelectByAreaUrl from "../../../../assets/cursor-select-by-area.svg"
+import CursorSelectByClickUrl from "../../../../assets/cursor-select-by-click.svg"
+import CursoSelectMultipleFeaturesUrl from "../../../../assets/cursor-select-multiple-features.svg"
+import CursorSelectOnMultipleLayersUrl from "../../../../assets/cursor-select-on-multiple-layers.svg"
 
 
 /** @class Map */
@@ -116,7 +126,7 @@ export default class Map {
                 zoom: zoom
             })
         });
-        this.cursor = "default";
+        this.cursor = CursorType.Default;
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
         this.eventHandlers = new EventHandlerCollection(this.map);
@@ -126,7 +136,7 @@ export default class Map {
             }
         });
         this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
-            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? "pointer" : this.cursor;
+            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? CursorType.Pointer : this.cursor;
         });
     }
 
@@ -197,11 +207,39 @@ export default class Map {
      *
      * @function setCursor
      * @memberof Map
-     * @param {String} cursor - cursor CSS value
+     * @param {String} cursor - cursor type
      */ 
-    public setCursor(cursor: string): void {
-        this.map.getViewport().style.cursor = cursor;
-        this.cursor = cursor;
+    public setCursor(cursor: CursorType): void {
+        let realCursor: string = cursor;
+        switch (cursor) {
+            case CursorType.ZoomIn:
+                realCursor = "url(" + CursorZoomInUrl + "), auto";
+                break;
+            case CursorType.ZoomOut:
+                realCursor = "url(" + CursorZoomOutUrl + "), auto";
+                break;
+            case CursorType.AttributeByArea:
+                realCursor = "url(" + CursorAttributeByAreaUrl + "), auto";
+                break;
+            case CursorType.AttributeByClick:
+                realCursor = "url(" + CursorAttributeByClickUrl + "), auto";
+                break;
+            case CursorType.SelectByArea:
+                realCursor = "url(" + CursorSelectByAreaUrl + "), auto";
+                break;
+            case CursorType.SelectByClick:
+                realCursor = "url(" + CursorSelectByClickUrl + "), auto";
+                break;
+            case CursorType.SelectMultipleFeatures:
+                realCursor = "url(" + CursoSelectMultipleFeaturesUrl + "), auto";
+                break;
+            case CursorType.SelectOnMultipleLayers:
+                realCursor = "url(" + CursorSelectOnMultipleLayersUrl + "), auto";
+                break;            
+            default:
+        }
+        this.map.getViewport().style.cursor = realCursor;
+        this.cursor = realCursor;
     }
 
     /**
@@ -479,6 +517,9 @@ export default class Map {
      * @param {Number} zoom - zoom to set after fit
      */
     public fitLayer(layer: LayerInterface, zoom?: number): void {
+        if (layer.getType() != SourceType.Vector) {
+            return;
+        }
         const extent: OlExtent = (<OlVectorSource>layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
             const view: OlView = this.map.getView();
