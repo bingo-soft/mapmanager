@@ -1,6 +1,7 @@
 import MapManager from "../../src/MapManager";
 import Map from "../../src/Domain/Model/Map/Map";
 import BaseLayer from "../../src/Domain/Model/Map/BaseLayer";
+import CursorType from "../../src/Domain/Model/Map/CursorType";
 
 /* Create and initialize map */
 const optsMap = { 
@@ -15,15 +16,16 @@ const optsMap = {
 }
 const map: Map = MapManager.createMap("map", optsMap);
 
-
 /* Set buttons click handlers */
 const btZoomInClick: HTMLElement = document.getElementById("zoom-in");
 btZoomInClick.onclick = function(e: any) {
+    MapManager.setCursor(map, CursorType.ZoomIn);
     zoom(e, "in");
 }
 
 const btZoomOutClick: HTMLElement = document.getElementById("zoom-out");
 btZoomOutClick.onclick = function(e: any) {
+    MapManager.setCursor(map, CursorType.ZoomOut);
     zoom(e, "out");
 }
 

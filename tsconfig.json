@@ -2,7 +2,7 @@
     "compileOnSave": false,
     "include":[
         "src/**/*",
-        "custom.d.ts"
+        "src/*.d.ts"
     ],
     "exclude":[
         "node_modules"
