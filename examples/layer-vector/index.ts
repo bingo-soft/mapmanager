@@ -27,7 +27,7 @@ const opts = {
     },
     "request": {
         "method": HttpMethod.GET,
-        "base_url": "http://bingosoft-office.ru:58080/geoserver/rgisno/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=rgisno%3Ann_gp&outputFormat=application%2Fjson",
+        "base_url": "http://hostname/geoserver/ws/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=layername&outputFormat=application%2Fjson",
         "headers": null,
     },
     "style": {

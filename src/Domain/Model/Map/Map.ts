@@ -30,6 +30,7 @@ import ZoomInteraction from "../Interaction/Impl/ZoomInteraction";
 import ZoomType from "../Interaction/Impl/ZoomType";
 import SelectInteraction from "../Interaction/Impl/SelectInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
+import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
@@ -46,6 +47,7 @@ import CursorSelectByAreaUrl from "../../../../assets/cursor-select-by-area.svg"
 import CursorSelectByClickUrl from "../../../../assets/cursor-select-by-click.svg"
 import CursoSelectMultipleFeaturesUrl from "../../../../assets/cursor-select-multiple-features.svg"
 import CursorSelectOnMultipleLayersUrl from "../../../../assets/cursor-select-on-multiple-layers.svg"
+
 
 
 /** @class Map */
@@ -518,7 +520,7 @@ export default class Map {
      */
     public fitLayer(layer: LayerInterface, zoom?: number): void {
         if (layer.getType() != SourceType.Vector) {
-            return;
+            throw new MethodNotImplemented();
         }
         const extent: OlExtent = (<OlVectorSource>layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
