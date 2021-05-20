@@ -120,7 +120,6 @@ export default class LayerBuilder {
      * @return {Object} - layer instance
      */
     public build(): LayerInterface {
-        console.log((<VectorLayer> this.layer.getLayer()).getSource().getFeatures());
         return this.layer;
     }
 }
