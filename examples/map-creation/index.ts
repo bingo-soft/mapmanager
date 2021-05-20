@@ -2,6 +2,7 @@ import MapManager from "../../src/MapManager";
 import Map from "../../src/Domain/Model/Map/Map";
 import BaseLayer from "../../src/Domain/Model/Map/BaseLayer";
 import EventType from "../../src/Domain/Model/EventHandlerCollection/EventType";
+import CursorType from "../../src/Domain/Model/Map/CursorType";
 
 /* Create and initialize map */
 const optsMap = { 
@@ -15,6 +16,9 @@ const optsMap = {
     zoom: 13
 }
 const map: Map = MapManager.createMap("map", optsMap);
+
+/* Set map cursor type */
+MapManager.setCursor(map, CursorType.SelectByArea);
 
 /* Set an event handler to get cursor coordinates */
 MapManager.setEventHandler(map, EventType.PointerMove, "GetCursorCoords", function(data: any): void {
