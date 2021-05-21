@@ -39,15 +39,14 @@ import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, T
 import EventType from "../EventHandlerCollection/EventType";
 import CursorType from "./CursorType";
 
-import CursorZoomInUrl from "../../../assets/cursor-zoom-in.svg"
-import CursorZoomOutUrl from "../../../assets/cursor-zoom-out.svg"
-import CursorAttributeByAreaUrl from "../../../assets/cursor-attribute-by-area.svg"
-import CursorAttributeByClickUrl from "../../../assets/cursor-attribute-by-click.svg"
-import CursorSelectByAreaUrl from "../../../assets/cursor-select-by-area.svg"
-import CursorSelectByClickUrl from "../../../assets/cursor-select-by-click.svg"
-import CursoSelectMultipleFeaturesUrl from "../../../assets/cursor-select-multiple-features.svg"
-import CursorSelectOnMultipleLayersUrl from "../../../assets/cursor-select-on-multiple-layers.svg"
-
+/* import CursorZoomInUrl from "../../../../assets/cursor-zoom-in.svg"
+import CursorZoomOutUrl from "../../../../assets/cursor-zoom-out.svg"
+import CursorAttributeByAreaUrl from "../../../../assets/cursor-attribute-by-area.svg"
+import CursorAttributeByClickUrl from "../../../../assets/cursor-attribute-by-click.svg"
+import CursorSelectByAreaUrl from "../../../../assets/cursor-select-by-area.svg"
+import CursorSelectByClickUrl from "../../../../assets/cursor-select-by-click.svg"
+import CursoSelectMultipleFeaturesUrl from "../../../../assets/cursor-select-multiple-features.svg"
+import CursorSelectOnMultipleLayersUrl from "../../../../assets/cursor-select-on-multiple-layers.svg" */
 
 
 /** @class Map */
@@ -211,7 +210,7 @@ export default class Map {
      * @memberof Map
      * @param {String} cursor - cursor type
      */ 
-    public setCursor(cursor: CursorType): void {
+    /* public setCursor(cursor: CursorType): void {
         let realCursor: string = cursor;
         switch (cursor) {
             case CursorType.ZoomIn:
@@ -242,6 +241,10 @@ export default class Map {
         }
         this.map.getViewport().style.cursor = realCursor;
         this.cursor = realCursor;
+    } */
+    public setCursor(cursor: string): void {
+        this.map.getViewport().style.cursor = cursor;
+        this.cursor = cursor;
     }
 
     /**

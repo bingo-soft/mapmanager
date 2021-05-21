@@ -78,7 +78,10 @@ export default class MapManager {
      * @param {Map} map - map instance
      * @param {String} cursor - cursor type
      */
-    public static setCursor(map: Map, cursor: CursorType): void {
+    /* public static setCursor(map: Map, cursor: CursorType): void {
+        map.setCursor(cursor);
+    } */
+    public static setCursor(map: Map, cursor: string): void {
         map.setCursor(cursor);
     }
    
