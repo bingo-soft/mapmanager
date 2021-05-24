@@ -9,10 +9,10 @@ import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerReposi
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
-import Measure, { MeasureType } from "./Infrastructure/Util/Measure"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 import CursorType from "./Domain/Model/Map/CursorType"
+import MeasureInteraction from "./Domain/Model/Interaction/Impl/MeasureInteraction"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -158,11 +158,10 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} map - map instance
-     * @param {Object} features - features to modify
+     * @param {Object} opts - options
      */
     public static setModifyInteraction(map: Map, opts: unknown): void {
         map.setModifyInteraction(opts["source"], opts["modify_callback"]);
-        //map.editFeatures(opts["selection_type"], opts["layers"], opts["source"], opts["modify_callback"]);
     }
 
     /**
@@ -172,21 +171,49 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} map - map instance
-     * @param {Object} features - features to modify
+     * @param {Object} opts - options
      */
      public static setTransformInteraction(map: Map, opts: unknown): void {
-        map.setTransformInteraction(/* opts["source"],  */opts["modify_callback"]);
+        map.setTransformInteraction(opts["transform_callback"]);
+    }
+
+    /**
+     * Sets map measure interaction
+     *
+     * @function setMeasureInteraction
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} opts - options
+     */
+    public static setMeasureInteraction(map: Map, opts: unknown): void { 
+       map.setMeasureInteraction(opts["measure_type"], opts["measure_units"]/* , opts["measure_callback"] */);
+    }
+
+    /**
+     * Clears map modify and transform interactions
+     *
+     * @function clearModifyAndTransformInteractions
+     * @memberof MapManager
+     * @param {Object} map - map instance
+     * @static
+     */
+    public static clearModifyAndTransformInteractions(map: Map): void {
+        map.clearModifyAndTransformInteractions();
     }
 
     /**
      * Clears map modify interactions
      *
-     * @function editFeatures
+     * @function clearMeasureResult
      * @memberof MapManager
+     * @param {Object} map - map instance
      * @static
      */
-     public static clearModifyAndTransformInteractions(map: Map): void {
-        map.clearModifyAndTransformInteractions();
+    public static clearMeasureResult(map: Map): void {
+        map.clearMeasureLayer();
+        map.clearMeasureOverlays();
+        map.setNormalInteraction();
     }
 
     /**
@@ -447,9 +474,9 @@ export default class MapManager {
      * @param {String} type - measure type
      * @param {Function} callback - callback function to call after measure is done, measure result and coordinates of tooltip point (in map projection) are passed as parameters
      */
-     public static startMeasure(type: MeasureType, map: Map, callback: (result: number, tooltipCoord: number[]) => void): void { 
+    /* public static startMeasure(type: MeasureType, map: Map, callback: (result: number, tooltipCoord: number[]) => void): void { 
         const measure: Measure = new Measure(type, map, callback);
-    }
+    } */
 
     /**
      * Creates an overlay and adds it to map
@@ -462,9 +489,9 @@ export default class MapManager {
      * @param {Array} position - the overlay position in map projection
      * @param {Array} offset - offset in pixels used when positioning the overlay 
      */
-    public static createOverlay(map: Map, element: HTMLElement, position: number[], offset: number[]): void { 
+    /* public static createOverlay(map: Map, element: HTMLElement, position: number[], offset: number[]): void { 
         map.createOverlay(element, position, offset);
-    }
+    } */
 
     /**
      * Returns map's selected features

@@ -35,9 +35,13 @@ import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
-import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
+import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction/* , MeasureCallbackFunction */ } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
 import CursorType from "./CursorType";
+import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
+import MeasureType from "../Interaction/MeasureType";
+import LayerBuilder from "../Layer/LayerBuilder";
+import VectorLayer from "../Layer/Impl/VectorLayer";
 
 /* import CursorZoomInUrl from "../../../../assets/cursor-zoom-in.svg"
 import CursorZoomOutUrl from "../../../../assets/cursor-zoom-out.svg"
@@ -55,6 +59,8 @@ export default class Map {
     private projection: string;
     private cursor: string;
     private activeLayer: LayerInterface;
+    private measureLayer: LayerInterface;
+    private measureOverlays: OlOverlay[];
     private selectedFeatures: FeatureCollection;
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
@@ -130,6 +136,9 @@ export default class Map {
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
+
+        this.measureOverlays = [];
+
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
             if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
@@ -394,6 +403,20 @@ export default class Map {
     }
 
     /**
+     * Sets map transform interaction
+     *
+     * @function setMeasureInteraction
+     * @memberof Map
+     * @param {String} type - measure type
+     * @param {Object} units - units
+     */
+     public setMeasureInteraction(type: MeasureType, units: unknown/* , callback: MeasureCallbackFunction */): void {
+        this.clearInteractions();
+        this.interaction = new MeasureInteraction(type, units, this/* , callback */);
+        this.addInteraction(this.interaction);  
+    }
+
+    /**
      * Clears modify and transform interactions
      *
      * @function clearModifyAndTransformInteractions
@@ -464,6 +487,28 @@ export default class Map {
      */
     public setActiveLayer(layer: LayerInterface): void {
         this.activeLayer = layer;
+    }
+
+    /**
+     * Gets measure layer
+     *
+     * @function getMeasureLayer
+     * @memberof Map
+     * @return {Object} measure layer instance
+     */
+     public getMeasureLayer(): LayerInterface {
+        return this.measureLayer;
+    }
+
+    /**
+     * Sets measure layer
+     *
+     * @function setMeasureLayer
+     * @memberof Map
+     * @param {Object} layer - layer instance
+     */
+    public setMeasureLayer(layer: LayerInterface): void {
+        this.measureLayer = layer;
     }
 
     /**
@@ -554,15 +599,43 @@ export default class Map {
     }
 
     /**
-     * Creates an overlay and adds it to map
+     * Creates a measure layer and adds it to map
      *
-     * @function createOverlay
+     * @function createMeasureLayer
+     * @memberof Map
+     * @return {Object} measure layer instance 
+     */
+    public createMeasureLayer(): LayerInterface {
+        if (!this.measureLayer) {
+            const builder: LayerBuilder = new LayerBuilder(new VectorLayer());
+            builder.setSource(SourceType.Vector);
+            this.measureLayer = builder.build();
+            this.addLayer(this.measureLayer);
+        }
+        return this.measureLayer;
+    }
+
+    /**
+     * Clears measure layer
+     *
+     * @function clearMeasureLayer
+     * @memberof Map
+     */
+     public clearMeasureLayer(): void {
+        this.removeLayer(this.measureLayer);
+        this.measureLayer = null;
+    }
+
+    /**
+     * Creates a measure overlay and adds it to map
+     *
+     * @function createMeasureOverlay
      * @memberof Map
      * @param {Object} element - DOM element to create overlay upon
      * @param {Array} position - the overlay position in map projection
      * @param {Array} offset - offset in pixels used when positioning the overlay 
      */
-    public createOverlay(element: HTMLElement, position: number[], offset: number[]): void {
+    public createMeasureOverlay(element: HTMLElement, position: number[], offset: number[]): void {
         const overlay: OlOverlay = new OlOverlay({
             element: element,
             offset: offset,
@@ -570,6 +643,20 @@ export default class Map {
             positioning: OlOverlayPositioning.BOTTOM_CENTER
         });
         this.map.addOverlay(overlay);
+        this.measureOverlays.push(overlay);
+    }
+
+    /**
+     * Clears measure overlays
+     *
+     * @function clearMeasureOverlays
+     * @memberof Map
+     */
+    public clearMeasureOverlays(): void {
+        this.measureOverlays.forEach((overlay: OlOverlay): void => {
+            this.map.removeOverlay(overlay);
+        });
+        this.measureOverlays = [];
     }
 
     /**

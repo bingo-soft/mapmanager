@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.html",
     "scripts": {
-        "serve": "mkdirp dist && copyfiles -f assets/* dist && parcel serve index.html --host 172.24.64.91 --port 8081",
+        "serve": "mkdirp dist && copyfiles -f assets/* dist && parcel serve index.html --host localhost --port 8081",
         "build": "parcel build --public-url . index.html && copyfiles -f assets/* dist"
     },
     "author": "Bingo-Soft",
