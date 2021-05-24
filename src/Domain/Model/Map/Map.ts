@@ -410,9 +410,9 @@ export default class Map {
      * @param {String} type - measure type
      * @param {Object} units - units
      */
-     public setMeasureInteraction(type: MeasureType, units: unknown/* , callback: MeasureCallbackFunction */): void {
+     public setMeasureInteraction(type: MeasureType, units: unknown): void {
         this.clearInteractions();
-        this.interaction = new MeasureInteraction(type, units, this/* , callback */);
+        this.interaction = new MeasureInteraction(type, units, this);
         this.addInteraction(this.interaction);  
     }
 
