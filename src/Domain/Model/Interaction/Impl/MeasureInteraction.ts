@@ -37,9 +37,20 @@ export default class MeasureInteraction extends BaseInteraction {
      */
     constructor(type: MeasureType, units: unknown, map: Map/* , callback: MeasureCallbackFunction */) {
         super();
+
+        let realType: string;
+        switch (type) {
+            case MeasureType.Distance:
+                realType = "LineString";
+                break;
+            case MeasureType.Area:
+                realType = "Polygon";
+                break;
+            default:
+        }
     
         const layer: LayerInterface = map.createMeasureLayer();
-        map.setDrawInteraction(layer, type);
+        map.setDrawInteraction(layer, realType);
         const interaction: InteractionInterface = map.getInteraction();
         let geomChangelistener: OlEventsKey;
         let result: string;
