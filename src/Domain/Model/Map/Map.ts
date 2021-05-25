@@ -58,9 +58,10 @@ export default class Map {
     private map: OlMap;
     private projection: string;
     private cursor: string;
+    private layers: Set<LayerInterface> = new Set();
     private activeLayer: LayerInterface;
     private measureLayer: LayerInterface;
-    private measureOverlays: OlOverlay[];
+    private measureOverlays: OlOverlay[] = [];
     private selectedFeatures: FeatureCollection;
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
@@ -136,8 +137,6 @@ export default class Map {
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
-
-        this.measureOverlays = [];
 
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
@@ -521,6 +520,7 @@ export default class Map {
      */
     public addLayer(layer: LayerInterface): void {
         this.map.addLayer(layer.getLayer());
+        this.layers.add(layer);
     }
 
     /**
@@ -532,6 +532,21 @@ export default class Map {
      */
     public removeLayer(layer: LayerInterface): void {
         this.map.removeLayer(layer.getLayer());
+        this.layers.delete(layer);
+    }
+
+    /**
+     * Returns map layers.
+     *
+     * @function getLayers
+     * @memberof Map
+     * @param {String} type - type
+     * @return {Array} map layers
+     */
+    public getLayers(type?: SourceType): LayerInterface[] {
+        return Array.from(this.layers).filter((layer: LayerInterface): boolean => {
+            return ((type && layer.getType() == type) || !type);
+        });
     }
 
     /**

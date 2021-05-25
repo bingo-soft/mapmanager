@@ -381,6 +381,19 @@ export default class MapManager {
         map.removeLayer(layer);
     }
 
+     /**
+     * Returns map layers.
+     *
+     * @function getLayers
+     * @memberof Map
+     * @param {Object} map - map instance
+     * @param {String} type - type
+     * @return {Array} map layers
+     */
+    public static getLayers(map: Map, type?: SourceType): LayerInterface[] {
+        return map.getLayers(type);
+    }
+
     /**
      * Returns active layer of the map.
      *
