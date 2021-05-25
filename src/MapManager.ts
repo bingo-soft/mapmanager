@@ -148,7 +148,7 @@ export default class MapManager {
      * @param {Object} opts - options
      */
      public static setZoomInteraction(map: Map, opts: unknown): void {
-        map.setZoomInteraction(opts["type"]);
+        map.setZoomInteraction(opts["zoom_type"]);
     }
 
     /**

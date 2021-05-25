@@ -1,6 +1,6 @@
 enum MeasureType {
-    Distance = "LineString",
-    Area = "Polygon"
+    Distance = "distance",
+    Area = "area"
 }
 
 export default MeasureType;

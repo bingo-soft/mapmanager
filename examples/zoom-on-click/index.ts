@@ -32,6 +32,6 @@ btZoomOutClick.onclick = function(e: any) {
 /* Select handler */
 const zoom = function(e: any, zoomType: string) {
     MapManager.setZoomInteraction(map, {
-        "type": zoomType
+        "zoom_type": zoomType
     });
 }
