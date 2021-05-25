@@ -60,7 +60,7 @@ const doSelect = function(e: any, selectionType: string) {
         MapManager.setSelectInteraction(map, {
             "selection_type": selectionType,
             "layers": [layer],
-            "is_mass": true,
+            "multiple": true,
             "select_callback": (features: FeatureCollection) => {
                 console.log(features);
             }
