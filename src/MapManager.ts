@@ -11,8 +11,6 @@ import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
-import CursorType from "./Domain/Model/Map/CursorType"
-import MeasureInteraction from "./Domain/Model/Interaction/Impl/MeasureInteraction"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -78,9 +76,6 @@ export default class MapManager {
      * @param {Map} map - map instance
      * @param {String} cursor - cursor type
      */
-    /* public static setCursor(map: Map, cursor: CursorType): void {
-        map.setCursor(cursor);
-    } */
     public static setCursor(map: Map, cursor: string): void {
         map.setCursor(cursor);
     }
@@ -135,7 +130,7 @@ export default class MapManager {
      * @param {Object} opts - options
      */
     public static setSelectInteraction(map: Map, opts: unknown): void {
-        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["select_callback"]);
+        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["is_mass"], opts["select_callback"]);
     }
 
     /**
@@ -463,35 +458,6 @@ export default class MapManager {
     public static setOpacity(layer: LayerInterface, opacity: number): void { 
         layer.setOpacity(opacity);
     }
-
-    /**
-     * Measures distance and area
-     *
-     * @function startMeasure
-     * @memberof MapManager
-     * @static
-     * @param {Object} map - map instance
-     * @param {String} type - measure type
-     * @param {Function} callback - callback function to call after measure is done, measure result and coordinates of tooltip point (in map projection) are passed as parameters
-     */
-    /* public static startMeasure(type: MeasureType, map: Map, callback: (result: number, tooltipCoord: number[]) => void): void { 
-        const measure: Measure = new Measure(type, map, callback);
-    } */
-
-    /**
-     * Creates an overlay and adds it to map
-     *
-     * @function createOverlay
-     * @memberof MapManager
-     * @static
-     * @param {Object} map - map instance
-     * @param {Object} element - element to create the overlay on
-     * @param {Array} position - the overlay position in map projection
-     * @param {Array} offset - offset in pixels used when positioning the overlay 
-     */
-    /* public static createOverlay(map: Map, element: HTMLElement, position: number[], offset: number[]): void { 
-        map.createOverlay(element, position, offset);
-    } */
 
     /**
      * Returns map's selected features
