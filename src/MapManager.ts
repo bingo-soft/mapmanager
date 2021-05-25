@@ -130,7 +130,7 @@ export default class MapManager {
      * @param {Object} opts - options
      */
     public static setSelectInteraction(map: Map, opts: unknown): void {
-        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["is_mass"], opts["select_callback"]);
+        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["multiple"], opts["select_callback"]);
     }
 
     /**

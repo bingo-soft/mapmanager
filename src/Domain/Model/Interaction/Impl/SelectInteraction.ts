@@ -26,9 +26,10 @@ export default class SelectInteraction extends BaseInteraction {
      * @param {Object} type - selection type
      * @param {Object} map - map object to select on
      * @param {Array} layers - layers to select on
+     * @param {Boolean} multiple - flag indicating multiple selection
      * @param {Function} callback - callback function to call after selection is done
      */
-    constructor(type: SelectionType, map: Map, layers: LayerInterface[], isMass: boolean = false, callback?: SelectCallbackFunction) {
+    constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction) {
         super();
         const olMap: OlMap = map.getMap(); 
         this.type = InteractionType.Select;
@@ -42,7 +43,7 @@ export default class SelectInteraction extends BaseInteraction {
         switch(type) {
             case SelectionType.SingleClick:
                 this.interaction = new OlSelect({
-                    toggleCondition: isMass ? OlEventConditionAlways : OlEventConditionShiftKeyOnly,
+                    toggleCondition: multiple ? OlEventConditionAlways : OlEventConditionShiftKeyOnly,
                     layers: OlLayersToSelectOn.length ? OlLayersToSelectOn : null,
                     multi: true
                 });
