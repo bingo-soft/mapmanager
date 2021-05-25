@@ -4,6 +4,7 @@ import { Layer as OlLayer } from "ol/layer";
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
 import {DragBox as OlDragBox, Select as OlSelect} from 'ol/interaction';
+import { always as OlEventConditionAlways, shiftKeyOnly as OlEventConditionShiftKeyOnly } from "ol/events/condition"
 import OlBaseEvent from "ol/events/Event";
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
@@ -27,7 +28,7 @@ export default class SelectInteraction extends BaseInteraction {
      * @param {Array} layers - layers to select on
      * @param {Function} callback - callback function to call after selection is done
      */
-    constructor(type: SelectionType, map: Map, layers: LayerInterface[], callback?: SelectCallbackFunction) {
+    constructor(type: SelectionType, map: Map, layers: LayerInterface[], isMass: boolean = false, callback?: SelectCallbackFunction) {
         super();
         const olMap: OlMap = map.getMap(); 
         this.type = InteractionType.Select;
@@ -41,6 +42,7 @@ export default class SelectInteraction extends BaseInteraction {
         switch(type) {
             case SelectionType.SingleClick:
                 this.interaction = new OlSelect({
+                    toggleCondition: isMass ? OlEventConditionAlways : OlEventConditionShiftKeyOnly,
                     layers: OlLayersToSelectOn.length ? OlLayersToSelectOn : null,
                     multi: true
                 });

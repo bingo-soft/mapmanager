@@ -59,7 +59,8 @@ const doSelect = function(e: any, selectionType: string) {
     if (regime == InteractionType.Normal) {
         MapManager.setSelectInteraction(map, {
             "selection_type": selectionType,
-            "layers": null,
+            "layers": [layer],
+            "is_mass": true,
             "select_callback": (features: FeatureCollection) => {
                 console.log(features);
             }

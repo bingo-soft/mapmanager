@@ -362,7 +362,7 @@ export default class Map {
      * @param {Array} layers - array of layers which selection applies to
      * @param {Function} callback - callback function to call after geometry is selected
      */
-    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], callback?: SelectCallbackFunction): void {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], isMass: boolean = false, callback?: SelectCallbackFunction): void {
         if (layers) {
             layers.forEach((layer: LayerInterface) => {
                 if (layer.getType() != SourceType.Vector) {
@@ -371,7 +371,7 @@ export default class Map {
             });
         }
         this.clearInteractions();
-        this.interaction = new SelectInteraction(type, this, layers, callback);
+        this.interaction = new SelectInteraction(type, this, layers, isMass, callback);
         this.addInteraction(this.interaction);  
     }
 
