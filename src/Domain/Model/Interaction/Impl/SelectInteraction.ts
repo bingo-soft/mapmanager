@@ -20,6 +20,8 @@ import { SelectCallbackFunction } from "../InteractionCallbackType";
 /** @class SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
 
+    private highlightSelect: OlSelect;
+
     /**
      * @constructor
      * @memberof SelectInteraction
@@ -64,9 +66,9 @@ export default class SelectInteraction extends BaseInteraction {
                 break;
             case SelectionType.Rectangle:
                 // selected features are added to the feature overlay of a Select interaction for highlighting only
-                const select = new OlSelect();
-                olMap.addInteraction(select);
-                const selectedFeatures = select.getFeatures();
+                this.highlightSelect = new OlSelect();
+                olMap.addInteraction(this.highlightSelect);
+                const selectedFeatures = this.highlightSelect.getFeatures();
 
                 this.interaction = new OlDragBox();
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
@@ -94,6 +96,10 @@ export default class SelectInteraction extends BaseInteraction {
             default:
                 break;
         }
+    }
+
+    public getHighlightSelect(): OlSelect {
+        return this.highlightSelect;
     }
 
 }
