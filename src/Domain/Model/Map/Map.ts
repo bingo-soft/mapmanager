@@ -17,6 +17,7 @@ import OlInteraction from "ol/interaction/Interaction";
 import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
+import {Select as OlSelect} from 'ol/interaction';
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -284,7 +285,23 @@ export default class Map {
      * @memberof Map
      */
      public clearSelectedFeatures(): void {
-        // TODO: deselect features physically ?
+        const type: InteractionType = this.interaction.getType();
+        if (type != InteractionType.Select) {
+            return;
+        }
+        // clear an ordinary select interaction's features 
+        const olSelect: OlSelect = <OlSelect> this.interaction.getInteraction();
+        if (olSelect && olSelect instanceof OlSelect) {
+            olSelect.getFeatures().clear();
+        }
+        // if it's a DragBox interaction we must clear its highlighting select features
+        const select: SelectInteraction = <SelectInteraction> this.interaction;
+        if (select) {
+            const highlightSelect = select.getHighlightSelect();
+            if (highlightSelect) {
+                highlightSelect.getFeatures().clear();
+            }
+        }
         this.selectedFeatures = null;
     }
 
@@ -459,7 +476,7 @@ export default class Map {
                 }
                 this.map.removeInteraction(interaction.getInteraction());
            }
-        }
+       }
        if (typeof type !=="undefined") {
             this.interactions = this.interactions.filter((interaction: InteractionInterface) => interaction.getType() !== type);
         } else {
