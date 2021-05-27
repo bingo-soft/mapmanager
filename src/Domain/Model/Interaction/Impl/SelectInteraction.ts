@@ -53,12 +53,16 @@ export default class SelectInteraction extends BaseInteraction {
                 this.eventHandlers.add(EventType.SelectSingleFeature, "SelectSingleFeatureEventHandler", (e: OlBaseEvent): void => {
                     const selectedFeatures: OlFeature[] = e.target.getFeatures().getArray();
                     const features: Feature[] = [];
+                    const layers: Set<OlLayer> = new Set();
                     selectedFeatures.forEach((feature: OlFeature): void => {
+                        const layer: OlLayer = e.target.getLayer(feature);
+                        layers.add(layer);
                         features.push(new Feature(feature, e.target.getLayer(feature)));
                     });
                     const srs: string = olMap.getView().getProjection().getCode();
                     fc = new FeatureCollection(features, srs);
                     map.setSelectedFeatures(fc);
+                    map.setSelectedLayers(layers);
                     if (typeof callback === "function") {
                         callback(fc);
                     }
@@ -75,12 +79,14 @@ export default class SelectInteraction extends BaseInteraction {
                 this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHandler", (e: OlBaseEvent): void => {
                     var extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
                     const features: Feature[] = [];
+                    const layers: Set<OlLayer> = new Set();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
                                     const feature: Feature = new Feature(olFeature, olLayer); 
                                     features.push(feature);
+                                    layers.add(olLayer);
                                     selectedFeatures.push(olFeature); // just to highlight the selection
                                 });
                             }
@@ -88,6 +94,7 @@ export default class SelectInteraction extends BaseInteraction {
                     });
                     fc = new FeatureCollection(features, olMap.getView().getProjection().getCode());
                     map.setSelectedFeatures(fc);
+                    map.setSelectedLayers(layers);
                     if (typeof callback === "function") {
                         callback(fc);
                     }

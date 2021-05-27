@@ -71,6 +71,24 @@ export default interface LayerInterface
      * @param {Object} source - layer's Openlayers source instance
      */
     setSource(source: SourceInterface): void;
+
+    /**
+     * Returns layer's properties
+     *
+     * @function getProperties
+     * @memberof LayerInterface
+     * @return {Object} layer's properties
+     */
+    getProperties(): unknown;
+    
+    /**
+     * Sets layer's properties
+     *
+     * @function setProperties
+     * @memberof LayerInterface
+     * @return {Object} layer's properties
+     */
+    setProperties(source: unknown): void;
     
     /**
      * Sets layer's loader

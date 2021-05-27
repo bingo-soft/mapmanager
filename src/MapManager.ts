@@ -186,15 +186,15 @@ export default class MapManager {
     }
 
     /**
-     * Clears map modify and transform interactions
+     * Clears interactions
      *
-     * @function clearModifyAndTransformInteractions
-     * @memberof MapManager
+     * @function clearInteractions
      * @param {Object} map - map instance
-     * @static
-     */
-    public static clearModifyAndTransformInteractions(map: Map): void {
-        map.clearModifyAndTransformInteractions();
+     * @param {Array} types - types of interaction to clear, all if not set
+     * @memberof Map
+     */ 
+    public static clearInteractions(map: Map, types?: InteractionType[]): void {
+        map.clearInteractions(types);
     }
 
     /**
@@ -245,9 +245,9 @@ export default class MapManager {
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
-            /* if (typeof opts["properties"] !== "undefined") { 
+            if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
-            } */
+            }
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
                     builder.setLoader(async (): Promise<string> => {
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
@@ -403,7 +403,7 @@ export default class MapManager {
      * @param {Object} map - map instance
      * @return {Object} active layer instance
      */
-    public static getActiveLayer(map: Map): LayerInterface {
+    public static getActiveLayer(map: Map): LayerInterface | null {
         return map.getActiveLayer();
     }
 
@@ -416,7 +416,7 @@ export default class MapManager {
      * @param {Object} map - map instance
      * @param {Object} layer - layer instance
      */
-    public static setActiveLayer(map: Map, layer: LayerInterface): void {
+    public static setActiveLayer(map: Map, layer: LayerInterface | null): void {
         map.setActiveLayer(layer);
     }
 

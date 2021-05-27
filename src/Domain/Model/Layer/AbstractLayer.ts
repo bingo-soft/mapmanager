@@ -11,6 +11,7 @@ import StyleFunction from "../Style/StyleFunctionType";
 export default abstract class AbstractLayer implements LayerInterface
 {
     protected layer: OlLayer;
+    protected properties: unknown;
     protected eventHandlers: EventHandlerCollection;
     protected srs: string;
 
@@ -43,6 +44,28 @@ export default abstract class AbstractLayer implements LayerInterface
      */
     public setType(type: SourceType): void {
         throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns layer's properties
+     *
+     * @function getProperties
+     * @memberof AbstractLayer
+     * @return {Object} layer's properties
+     */
+    public getProperties(): unknown {
+        return this.properties;
+    }
+
+    /**
+     * Sets layer's properties
+     *
+     * @function setProperties
+     * @memberof AbstractLayer
+     * @return {Object} layer's properties
+     */
+     public setProperties(properties: unknown): void {
+        this.properties = properties;
     }
 
     /**

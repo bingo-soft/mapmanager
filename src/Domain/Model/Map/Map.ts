@@ -7,7 +7,7 @@ import { OverviewMap as OlOverviewMap, defaults as OlDefaultControls } from "ol/
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
-import { Tile as OlTileLayer } from "ol/layer";
+import { Layer as OlLayer, Tile as OlTileLayer } from "ol/layer";
 import OlGeometry from "ol/geom/Geometry";
 import OlBaseEvent from "ol/events/Event";
 import { GeometryCollection } from "ol/geom";
@@ -64,6 +64,7 @@ export default class Map {
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
     private selectedFeatures: FeatureCollection;
+    private selectedLayers: Set<LayerInterface> = new Set();
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
     private eventHandlers: EventHandlerCollection; 
@@ -279,6 +280,35 @@ export default class Map {
     }
 
     /**
+     * Returns map's selected layers
+     *
+     * @function getSelectedLayers
+     * @memberof Map
+     * @return {Array} selected layers
+     */
+     public getSelectedLayers(): LayerInterface[] {
+        return Array.from(this.selectedLayers);
+    }
+
+    /**
+     * Sets map's selected layers
+     *
+     * @function setSelectedFeatures
+     * @memberof Map
+     * @param {Object} layers - selected layers
+     */
+    public setSelectedLayers(layers: Set<OlLayer>): void {
+        //this.selectedLayers.clear();
+        let mapLayers: LayerInterface[] = Array.from(this.layers);
+        Array.from(layers).forEach((layer: OlLayer): void => {
+            const filtered: LayerInterface[] = mapLayers.filter(mapLayer => mapLayer.getLayer() === layer);
+            if (filtered.length) {
+                this.selectedLayers.add(filtered[0]);
+            }
+        });
+    }
+
+    /**
      * Clears map's selected features
      *
      * @function clearSelectedFeatures
@@ -303,6 +333,7 @@ export default class Map {
             }
         }
         this.selectedFeatures = null;
+        this.selectedLayers.clear();
     }
 
     /**
@@ -401,7 +432,7 @@ export default class Map {
      * @param {Function} callback - callback function to call after geometry is modified
      */
     public setModifyInteraction(features: FeatureCollection, callback?: ModifyCallbackFunction): void {
-        this.clearModifyAndTransformInteractions();
+        this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
         this.interaction = new ModifyInteraction(features, callback);
         this.addInteraction(this.interaction);  
     }
@@ -414,7 +445,7 @@ export default class Map {
      * @param {Function} callback - callback function to call after geometry is transformed
      */
      public setTransformInteraction(callback?: TransformCallbackFunction): void {
-        this.clearModifyAndTransformInteractions();
+        this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
         this.interaction = new TransformInteraction(callback);
         this.addInteraction(this.interaction);  
     }
@@ -433,18 +464,7 @@ export default class Map {
         this.addInteraction(this.interaction);  
     }
 
-    /**
-     * Clears modify and transform interactions
-     *
-     * @function clearModifyAndTransformInteractions
-     * @memberof Map
-     */
-     public clearModifyAndTransformInteractions(): void {
-        this.clearInteractions(InteractionType.Modify);
-        this.clearInteractions(InteractionType.Transform);
-    }
- 
-    /**
+     /**
      * Adds interaction
      *
      * @function addInteraction
@@ -463,25 +483,28 @@ export default class Map {
      * Clears interactions
      *
      * @function clearInteractions
-     * @param {String} type - type of interaction to clear, all if not set
+     * @param {Array} types - types of interaction to clear, all if not set
      * @memberof Map
      */ 
-    public clearInteractions(type?: InteractionType): void {
-        for (const i in this.interactions) { 
-            const interaction: InteractionInterface = this.interactions[i];
-            if ((typeof type !== "undefined" && interaction.getType() == type) || typeof type === "undefined") {
+    public clearInteractions(types?: InteractionType[]): void {
+        this.interactions.forEach((interaction: InteractionInterface): void => {
+            if ((typeof types !== "undefined" && types.includes(interaction.getType())) || typeof types === "undefined") {
                 const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
                 if (interactionHandlers) {
                     interactionHandlers.clear();
                 }
                 this.map.removeInteraction(interaction.getInteraction());
            }
-       }
-       if (typeof type !=="undefined") {
-            this.interactions = this.interactions.filter((interaction: InteractionInterface) => interaction.getType() !== type);
+        });
+        if (typeof types !=="undefined") {
+            types.forEach((type: InteractionType): void => {
+                this.interactions = this.interactions.filter((interaction: InteractionInterface) => interaction.getType() !== type);
+            });
         } else {
             this.interactions = [];
         }
+        this.selectedFeatures = null;
+        this.selectedLayers.clear();
     }
 
     /**
@@ -491,7 +514,7 @@ export default class Map {
      * @memberof Map
      * @return {Object} active layer instance
      */
-    public getActiveLayer(): LayerInterface {
+    public getActiveLayer(): LayerInterface | null {
         return this.activeLayer;
     }
 
@@ -502,7 +525,7 @@ export default class Map {
      * @memberof Map
      * @param {Object} layer - layer instance
      */
-    public setActiveLayer(layer: LayerInterface): void {
+    public setActiveLayer(layer: LayerInterface | null): void {
         this.activeLayer = layer;
     }
 
