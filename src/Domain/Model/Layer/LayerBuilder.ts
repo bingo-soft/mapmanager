@@ -54,6 +54,18 @@ export default class LayerBuilder {
     }
 
     /**
+     * Sets layer's properties
+     *
+     * @function setProperties
+     * @memberof AbstractLayer
+     * @return {Object} layer's properties
+     */
+     public setProperties(properties: unknown): LayerBuilder {
+        this.layer.setProperties(properties);
+        return this;
+    }
+
+    /**
      * Sets layer's loader
      *
      * @function setLoader
@@ -102,12 +114,13 @@ export default class LayerBuilder {
      */
     public setLoadCallback(callback: () => void): LayerBuilder {
         if (typeof callback === "function") {
-            this.layer.getEventHandlers().add(EventType.Change, "LayerLoadEventHanler", (e: OlBaseEvent): void => {
+            const listener = (e: OlBaseEvent): void => {
                 if (e.target.getState() == "ready") {
                     callback();
-                    //e.target.un("change", listener);                
+                    e.target.un("change", listener);                
                 }
-            });
+            }
+            this.layer.getEventHandlers().add(EventType.Change, "LayerLoadEventHanler", listener);
         }
         return this;
     }

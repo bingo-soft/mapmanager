@@ -49,7 +49,6 @@ btFeatureModify.onclick = function(e: any) {
         regime = "edit";
         MapManager.setModifyInteraction(map, {
             "selection_type": "singleclick",
-            "layers": null,
             "source": layer,
             "modify_callback": function(features: FeatureCollection): void {
                 console.log(features);
@@ -59,6 +58,6 @@ btFeatureModify.onclick = function(e: any) {
         e.target.style.backgroundColor = "initial";
         e.target.style.color = "initial";
         regime = "normal";
-        MapManager.clearModifyAndTransformInteractions(map);
+        MapManager.setNormalInteraction(map);
     }
 }
