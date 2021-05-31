@@ -90,6 +90,19 @@ export default class FeatureCollection {
     }
 
     /**
+     * Sets the flag indicating whether the features in collection are dirty (newly added or modified)
+     *
+     * @function setDirty
+     * @memberof FeatureCollection
+     * @param {boolean} dirty - flag indicating whether the features in collection are dirty
+     */
+    public setDirty(dirty: boolean): void {
+        this.features.forEach((feature: Feature): void => {
+            feature.setDirty(dirty);
+        });
+    }
+
+    /**
      * Iterates the collection
      *
      * @function forEach

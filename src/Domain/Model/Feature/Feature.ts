@@ -6,6 +6,7 @@ export default class Feature {
     
     private feature: OlFeature;
     private layer: OlLayer;
+    private dirty: boolean;
 
     /**
      * @constructor
@@ -62,6 +63,28 @@ export default class Feature {
      */
     public setLayer(layer: OlLayer): void {
         this.layer = layer;
+    }
+
+    /**
+     * Returns the flag indicating whether the feature is dirty (newly added or modified)
+     *
+     * @function isDirty
+     * @memberof Feature
+     * @return {boolean} flag indicating whether the feature is dirty
+     */
+    public isDirty(): boolean {
+        return this.dirty;
+    }
+
+    /**
+     * Sets the flag indicating whether the feature is dirty (newly added or modified)
+     *
+     * @function setDirty
+     * @memberof Feature
+     * @param {boolean} dirty - flag indicating whether the feature is dirty 
+     */
+    public setDirty(dirty: boolean): void {
+        this.dirty = dirty;
     }
 
 }
