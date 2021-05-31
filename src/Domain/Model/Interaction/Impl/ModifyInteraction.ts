@@ -36,8 +36,10 @@ export default class ModifyInteraction extends BaseInteraction {
             if (typeof callback === "function") {
                 const olMap: OlMap = this.interaction.getMap(); 
                 const srs: string = olMap.getView().getProjection().getCode();
-                const selectedFeatures: OlFeature[] = (<OlModifyEvent> e).features.getArray();
-                callback(new FeatureCollection(selectedFeatures, srs));
+                const modifiedFeatures: OlFeature[] = (<OlModifyEvent> e).features.getArray();
+                const fc: FeatureCollection = new FeatureCollection(modifiedFeatures, srs);
+                fc.setDirty(true);
+                callback(fc);
             }
         });
     }

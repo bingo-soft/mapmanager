@@ -51,8 +51,10 @@ export default class TransformInteraction extends BaseInteraction {
         if (typeof this.callback === "function") {
             const olMap: OlMap = this.interaction.getMap(); 
             const srs: string = olMap.getView().getProjection().getCode();
-            const selectedFeatures: OlFeature[] = (<OlTransformEvent> e).features.getArray();
-            this.callback(new FeatureCollection(selectedFeatures, srs));
+            const transformedFeatures: OlFeature[] = (<OlTransformEvent> e).features.getArray();
+            const fc: FeatureCollection = new FeatureCollection(transformedFeatures, srs);
+            fc.setDirty(true);
+            this.callback(fc);
         }
     }
 

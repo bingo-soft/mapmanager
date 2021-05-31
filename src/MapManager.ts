@@ -286,22 +286,10 @@ export default class MapManager {
         return layer;
     }
 
+    // TODO: выяснить, что это и зачем
     public static getFeatureCollection(layer: VectorLayer): FeatureCollection {
         return layer.getFeatureCollection();
     }
-
-    /**
-     * Returns features of the layer as FeatureCollection GeoJSON
-     *
-     * @function getFeaturesAsFeatureCollection
-     * @memberof MapManager
-     * @static
-     * @param {Object} layer - layer instance
-     * @return {String} GeoJSON representing features as FeatureCollection
-     */
-    /* public static getFeaturesAsFeatureCollection(layer: VectorLayer): string {
-        return layer.getFeaturesAsFeatureCollection();
-    } */
 
     /**
      * Returns features of the layer as single geometry GeoJSON
@@ -522,6 +510,31 @@ export default class MapManager {
      */
     public static getEventHandlers(map: Map): EventHandlerCollection {
         return map.getEventHandlers();
+    }
+
+    /**
+     * Returns map's dirty (added or modified) features
+     *
+     * @function getDirtyFeatures
+     * @memberof Map
+     * @return {Object} dirty features
+     */
+    public getDirtyFeatures(map: Map): FeatureCollection {
+        return map.getDirtyFeatures();
+    }
+
+    /**
+     * Sets map's dirty (added or modified) features
+     *
+     * @function setDirtyFeatures
+     * @memberof Map
+     * @param {Object} map - map instance
+     * @param {Object} features - features to be set
+     * @param {Boolean} dirty - dirty flag
+     * @return {Object} feature collection with given dirty flag set
+     */
+    public setDirtyFeatures(map: Map, features: FeatureCollection, dirty: boolean): FeatureCollection {
+        return map.setDirtyFeatures(features, dirty);
     }
 
 }

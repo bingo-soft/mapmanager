@@ -44,16 +44,6 @@ import MeasureType from "../Interaction/MeasureType";
 import LayerBuilder from "../Layer/LayerBuilder";
 import VectorLayer from "../Layer/Impl/VectorLayer";
 
-/* import CursorZoomInUrl from "../../../../assets/cursor-zoom-in.svg"
-import CursorZoomOutUrl from "../../../../assets/cursor-zoom-out.svg"
-import CursorAttributeByAreaUrl from "../../../../assets/cursor-attribute-by-area.svg"
-import CursorAttributeByClickUrl from "../../../../assets/cursor-attribute-by-click.svg"
-import CursorSelectByAreaUrl from "../../../../assets/cursor-select-by-area.svg"
-import CursorSelectByClickUrl from "../../../../assets/cursor-select-by-click.svg"
-import CursoSelectMultipleFeaturesUrl from "../../../../assets/cursor-select-multiple-features.svg"
-import CursorSelectOnMultipleLayersUrl from "../../../../assets/cursor-select-on-multiple-layers.svg" */
-
-
 /** @class Map */
 export default class Map { 
     private map: OlMap;
@@ -64,6 +54,7 @@ export default class Map {
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
     private selectedFeatures: FeatureCollection;
+    private dirtyFeatures: FeatureCollection;
     private selectedLayers: Set<LayerInterface> = new Set();
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
@@ -220,38 +211,6 @@ export default class Map {
      * @memberof Map
      * @param {String} cursor - cursor type
      */ 
-    /* public setCursor(cursor: CursorType): void {
-        let realCursor: string = cursor;
-        switch (cursor) {
-            case CursorType.ZoomIn:
-                realCursor = "url(" + CursorZoomInUrl + "), auto";
-                break;
-            case CursorType.ZoomOut:
-                realCursor = "url(" + CursorZoomOutUrl + "), auto";
-                break;
-            case CursorType.AttributeByArea:
-                realCursor = "url(" + CursorAttributeByAreaUrl + "), auto";
-                break;
-            case CursorType.AttributeByClick:
-                realCursor = "url(" + CursorAttributeByClickUrl + "), auto";
-                break;
-            case CursorType.SelectByArea:
-                realCursor = "url(" + CursorSelectByAreaUrl + "), auto";
-                break;
-            case CursorType.SelectByClick:
-                realCursor = "url(" + CursorSelectByClickUrl + "), auto";
-                break;
-            case CursorType.SelectMultipleFeatures:
-                realCursor = "url(" + CursoSelectMultipleFeaturesUrl + "), auto";
-                break;
-            case CursorType.SelectOnMultipleLayers:
-                realCursor = "url(" + CursorSelectOnMultipleLayersUrl + "), auto";
-                break;            
-            default:
-        }
-        this.map.getViewport().style.cursor = realCursor;
-        this.cursor = realCursor;
-    } */
     public setCursor(cursor: string): void {
         this.map.getViewport().style.cursor = cursor;
         this.cursor = cursor;
@@ -280,6 +239,32 @@ export default class Map {
     }
 
     /**
+     * Returns map's dirty (added or modified) features
+     *
+     * @function getDirtyFeatures
+     * @memberof Map
+     * @return {Object} dirty features
+     */
+     public getDirtyFeatures(): FeatureCollection {
+        return this.dirtyFeatures;
+    }
+
+    /**
+     * Sets map's dirty (added or modified) features
+     *
+     * @function setDirtyFeatures
+     * @memberof Map
+     * @param {Object} features - features to be set
+     * @param {Boolean} dirty - dirty flag
+     * @return {Object} feature collection with given dirty flag set
+     */
+    public setDirtyFeatures(features: FeatureCollection, dirty: boolean): FeatureCollection {
+        features.setDirty(dirty);
+        this.dirtyFeatures = dirty ? features : null;
+        return features;
+    }
+
+    /**
      * Returns map's selected layers
      *
      * @function getSelectedLayers
@@ -298,7 +283,6 @@ export default class Map {
      * @param {Object} layers - selected layers
      */
     public setSelectedLayers(layers: Set<OlLayer>): void {
-        //this.selectedLayers.clear();
         let mapLayers: LayerInterface[] = Array.from(this.layers);
         Array.from(layers).forEach((layer: OlLayer): void => {
             const filtered: LayerInterface[] = mapLayers.filter(mapLayer => mapLayer.getLayer() === layer);
