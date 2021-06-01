@@ -415,7 +415,7 @@ export default class Map {
      * @param {Object} features - features to modify
      * @param {Function} callback - callback function to call after geometry is modified
      */
-    public setModifyInteraction(features: FeatureCollection, callback?: ModifyCallbackFunction): void {
+    public setModifyInteraction(features: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
         this.interaction = new ModifyInteraction(features, callback);
         this.addInteraction(this.interaction);  

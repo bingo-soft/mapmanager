@@ -48,7 +48,6 @@ btFeatureModify.onclick = function(e: any) {
         e.target.style.color = "#fff";
         regime = "edit";
         MapManager.setModifyInteraction(map, {
-            "selection_type": "singleclick",
             "source": layer,
             "modify_callback": function(features: FeatureCollection): void {
                 console.log(features);
