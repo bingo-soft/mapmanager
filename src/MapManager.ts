@@ -11,6 +11,7 @@ import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
+import Feature from "./Domain/Model/Feature/Feature"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -117,6 +118,7 @@ export default class MapManager {
      */
     public static setDrawInteraction(map: Map, layer: LayerInterface, opts: unknown): void {
         map.setDrawInteraction(layer, opts["geometry_type"], opts["draw_callback"]);
+        map.setModifyInteraction(layer);
     }
 
     /**
@@ -504,7 +506,7 @@ export default class MapManager {
      * Returns map's event handlers
      *
      * @function getEventHandlers
-     * @memberof Map
+     * @memberof MapManager
      * @param {Object} map - map instance
      * @return {Object} event handlers collection
      */
@@ -516,10 +518,11 @@ export default class MapManager {
      * Returns map's dirty (added or modified) features
      *
      * @function getDirtyFeatures
-     * @memberof Map
+     * @memberof MapManager
+     * @param {Object} map - map instance
      * @return {Object} dirty features
      */
-    public getDirtyFeatures(map: Map): FeatureCollection {
+    public static getDirtyFeatures(map: Map): FeatureCollection {
         return map.getDirtyFeatures();
     }
 
@@ -527,14 +530,51 @@ export default class MapManager {
      * Sets map's dirty (added or modified) features
      *
      * @function setDirtyFeatures
-     * @memberof Map
+     * @memberof MapManager
      * @param {Object} map - map instance
      * @param {Object} features - features to be set
      * @param {Boolean} dirty - dirty flag
      * @return {Object} feature collection with given dirty flag set
      */
-    public setDirtyFeatures(map: Map, features: FeatureCollection, dirty: boolean): FeatureCollection {
+    public static setDirtyFeatures(map: Map, features: FeatureCollection, dirty: boolean): FeatureCollection {
         return map.setDirtyFeatures(features, dirty);
+    }
+
+    /**
+     * Returns feature vertices' coordinates along with their indices
+     *
+     * @function getVertexCoordinates
+     * @memberof MapManager
+     * @param {Object} feature - feature
+     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ [idx1, x1, y1], [idx2, x2, y2] ]
+     */
+    public static getVertexCoordinates(feature: Feature): number[][] {
+        return feature.getCoordinates();
+    }
+
+    /**
+     * Edits feature vertex coordinate at given index
+     *
+     * @function editVertexCoordinate
+     * @memberof MapManager
+     * @param {Object} feature - feature
+     * @param {Number} index - vertice index to edit
+     * @param {Array} coordinate - feature vertex coordinate
+     */
+    public static editVertexCoordinate(feature: Feature, index: number, coordinate: number[]): void {
+        feature.modifyCoordinate("edit", [index, coordinate[0], coordinate[1]]);
+    }
+
+    /**
+     * Deletes feature vertex coordinate at given index
+     *
+     * @function deleteVertexCoordinate
+     * @memberof MapManager
+     * @param {Object} feature - feature
+     * @param {Number} index - vertex index to delete
+     */
+     public static deleteVertexCoordinate(feature: Feature, index: number): void {
+        feature.modifyCoordinate("delete", [index]);
     }
 
 }
