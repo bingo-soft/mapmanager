@@ -12,6 +12,7 @@ import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 import Feature from "./Domain/Model/Feature/Feature"
+import GeometryFormat from "./Domain/Model/GeometryFormat/GeometryFormat"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -333,6 +334,19 @@ export default class MapManager {
     }
 
     /**
+     * Adds features to map
+     *
+     * @function addFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to add
+     */
+    public static addFeatures(map: Map, features: FeatureCollection): void {
+        map.addFeatures(features);
+    }
+
+    /**
      * Removes features from map
      *
      * @function removeFeatures
@@ -573,8 +587,22 @@ export default class MapManager {
      * @param {Object} feature - feature
      * @param {Number} index - vertex index to delete
      */
-     public static deleteVertexCoordinate(feature: Feature, index: number): void {
+    public static deleteVertexCoordinate(feature: Feature, index: number): void {
         feature.modifyCoordinate("delete", [index]);
+    }
+
+    /**
+     * Returns feature geometry as text
+     *
+     * @function getGeometryAsText
+     * @memberof MapManager
+     * @param {Object} feature - feature
+     * @param {String} format - format to return in
+     * @param {Number} srsId - SRS Id of returned feature text representation
+     * @return {String} text representing feature
+     */
+    public static getGeometryAsText(feature: Feature, format: GeometryFormat, srsId: number): string {
+       return feature.getGeometryAsText(format, srsId);
     }
 
 }

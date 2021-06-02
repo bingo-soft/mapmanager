@@ -103,6 +103,31 @@ export default class FeatureCollection {
     }
 
     /**
+     * Adds feature to the collection
+     *
+     * @function add
+     * @memberof FeatureCollection
+     * @param {Object} feature - feature to add
+     */
+    public add(feature: Feature): void {
+        this.features.push(feature);
+    }
+
+    /**
+     * Removes feature from the collection
+     *
+     * @function remove
+     * @memberof FeatureCollection
+     * @param {Object} feature - feature to remove
+     */
+    public remove(feature: Feature): void {
+        const index: number = this.features.indexOf(feature);
+        if (index > -1) {
+            this.features.splice(index, 1);
+        }
+    }
+
+    /**
      * Iterates the collection
      *
      * @function forEach
