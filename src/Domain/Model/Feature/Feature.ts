@@ -1,8 +1,11 @@
-import { Coordinate } from "ol/coordinate";
+import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
 import {Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
     Polygon as OlPolygon, MultiPolygon as OlMultiPolygon} from "ol/geom"
 import { Layer as OlLayer } from "ol/layer";
+import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
+import GeometryFormat from "../GeometryFormat/GeometryFormat";
+
 
 /** @class Feature */
 export default class Feature { 
@@ -99,10 +102,10 @@ export default class Feature {
      */
      public getCoordinates(): number[][] {
         const returnCoordinates: number[][] = [];
-        let coordinatesFlat: Coordinate = [];
-        let coordinatesOneDim: Coordinate[] = [];
-        let coordinatesTwoDim: Coordinate[][] = [];
-        let coordinatesThreeDim: Coordinate[][][] = [];
+        let coordinatesFlat: OlCoordinate = [];
+        let coordinatesOneDim: OlCoordinate[] = [];
+        let coordinatesTwoDim: OlCoordinate[][] = [];
+        let coordinatesThreeDim: OlCoordinate[][][] = [];
         const geometry = this.feature.getGeometry();
         if (geometry instanceof OlPoint) {
             coordinatesFlat = (<OlPoint> geometry).getCoordinates();
@@ -124,23 +127,23 @@ export default class Feature {
             returnCoordinates.push([index, coordinatesFlat[0], coordinatesFlat[1]]);
         } 
         if (coordinatesOneDim.length) {
-            coordinatesOneDim.forEach((coordinate1: Coordinate): void => {
+            coordinatesOneDim.forEach((coordinate1: OlCoordinate): void => {
                 returnCoordinates.push([index, coordinate1[0], coordinate1[1]]);
                 index++;
             });
         }
         if (coordinatesTwoDim.length) {
-            coordinatesTwoDim.forEach((coordinate1: Coordinate[]): void => {
-                coordinate1.forEach((coordinate2: Coordinate): void => {
+            coordinatesTwoDim.forEach((coordinate1: OlCoordinate[]): void => {
+                coordinate1.forEach((coordinate2: OlCoordinate): void => {
                     returnCoordinates.push([index, coordinate2[0], coordinate2[1]]);
                     index++;
                 });
             });
         }
         if (coordinatesThreeDim.length) {
-            coordinatesThreeDim.forEach((coordinate1: Coordinate[][]): void => {
-                coordinate1.forEach((coordinate2: Coordinate[]): void => {
-                    coordinate2.forEach((coordinate3: Coordinate): void => {
+            coordinatesThreeDim.forEach((coordinate1: OlCoordinate[][]): void => {
+                coordinate1.forEach((coordinate2: OlCoordinate[]): void => {
+                    coordinate2.forEach((coordinate3: OlCoordinate): void => {
                         returnCoordinates.push([index, coordinate3[0], coordinate3[1]]);
                         index++;
                     });
@@ -161,10 +164,10 @@ export default class Feature {
      */
     public modifyCoordinate(action: string, coordinate: number[]): void {
         const geometry = this.feature.getGeometry();
-        let coordinatesFlat: Coordinate = [];
-        let coordinatesOneDim: Coordinate[] = [];
-        let coordinatesTwoDim: Coordinate[][] = [];
-        let coordinatesThreeDim: Coordinate[][][] = [];
+        let coordinatesFlat: OlCoordinate = [];
+        let coordinatesOneDim: OlCoordinate[] = [];
+        let coordinatesTwoDim: OlCoordinate[][] = [];
+        let coordinatesThreeDim: OlCoordinate[][][] = [];
         if (geometry instanceof OlPoint) {
             coordinatesFlat = (<OlPoint> geometry).getCoordinates();
         } else if (geometry instanceof OlMultiPoint) {
@@ -241,5 +244,29 @@ export default class Feature {
                 }
             }
         }
+    }
+
+    /**
+     * Returns feature geometry as text
+     *
+     * @function getGeometryAsText
+     * @memberof Feature
+     * @param {String} format - format to return in
+     * @param {Number} srsId - SRS Id of returned feature text representation
+     * @return {String} text representing feature
+     */
+    public getGeometryAsText(format: GeometryFormat, srsId: number): string {
+        let formatInstance: OlWKT | OlGeoJSON = null;
+        if (format == GeometryFormat.WKT) {
+            formatInstance = new OlWKT();
+        } else if (format == GeometryFormat.GeoJSON) {
+            formatInstance = new OlGeoJSON();
+        } else {
+            return "";
+        }
+        return formatInstance.writeFeature(this.feature, {
+            dataProjection: "EPSG:" + srsId.toString(),
+            featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+        });
     }
 }

@@ -127,7 +127,7 @@ export default class VectorLayer extends AbstractLayer{
      * @return {Object} FeatureCollection of features
      */
     public getFeatureCollection(): FeatureCollection {
-        return new FeatureCollection(this.getFeatures(), this.srs);
+        return new FeatureCollection(this.getFeatures(), this.srs, this.layer);
     }
     
 }

@@ -574,6 +574,22 @@ export default class Map {
     }
 
     /**
+     * Adds features to map
+     *
+     * @function addFeatures
+     * @memberof Map
+     * @param {Object} features - features to add
+     */
+    public addFeatures(features: FeatureCollection): void {
+        features.forEach((feature: Feature): void => {
+            const source: OlVectorSource = <OlVectorSource> feature.getLayer().getSource();
+            source.addFeature(feature.getFeature());
+            feature.setDirty(true);
+            this.dirtyFeatures.add(feature);
+        });
+    }
+
+    /**
      * Removes features from map
      *
      * @function removeFeatures
