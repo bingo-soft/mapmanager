@@ -131,6 +131,17 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Sets layer's params
+     *
+     * @function setParams
+     * @memberof LayerInterface
+     * @param {Object} params - source url
+     */
+    public setParams(params: unknown): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Sets layer's zIndex
      *
      * @function setZIndex

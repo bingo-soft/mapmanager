@@ -12,7 +12,9 @@ export default class XYZSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new OlXYZSource();
+        this.source = new OlXYZSource({
+            crossOrigin: "anonymous"
+        });
     }
 
     /**

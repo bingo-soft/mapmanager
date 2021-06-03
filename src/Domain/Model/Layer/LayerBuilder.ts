@@ -7,7 +7,6 @@ import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
 import TileWMSSource from "../Source/Impl/TileWMSSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventType from "../EventHandlerCollection/EventType";
-import VectorLayer from "ol/layer/Vector";
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
@@ -89,6 +88,17 @@ export default class LayerBuilder {
     public setUrl(url: string): LayerBuilder {
         this.layer.setUrl(url);
         return this;
+    }
+
+    /**
+     * Sets layer's source params
+     *
+     * @function setParams
+     * @memberof LayerBuilder
+     * @param {Object} = params
+     */
+    public setParams(params: unknown): void {
+        this.layer.setParams(params);
     }
 
     /**

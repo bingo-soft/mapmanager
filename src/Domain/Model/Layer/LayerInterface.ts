@@ -107,6 +107,15 @@ export default interface LayerInterface
      * @param {String} url - source url
      */
     setUrl(url: string): void;
+
+    /**
+     * Sets layer's source params
+     *
+     * @function setParams
+     * @memberof LayerInterface
+     * @param {Object} = params
+     */
+    setParams(params: unknown): void;
     
     /**
      * Sets layer's zIndex

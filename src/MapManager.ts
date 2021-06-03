@@ -255,13 +255,16 @@ export default class MapManager {
                     builder.setLoader(async (): Promise<string> => {
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(opts["request"]);
-                    }/* , opts */);
+                    });
             }
-            if (type == SourceType.Vector) {
+            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }
-            if ((/* type == SourceType.Vector ||  */type == SourceType.XYZ || type == SourceType.TileArcGISRest || type == SourceType.TileWMS) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
+            if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
+            }
+            if (type == SourceType.TileWMS && Object.prototype.hasOwnProperty.call(opts, "params")) { 
+                builder.setParams(opts["params"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
