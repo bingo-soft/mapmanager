@@ -47,7 +47,7 @@ import VectorLayer from "../Layer/Impl/VectorLayer";
 /** @class Map */
 export default class Map { 
     private map: OlMap;
-    private projection: string;
+    private srsId: number;
     private cursor: string;
     private layers: Set<LayerInterface> = new Set();
     private activeLayer: LayerInterface;
@@ -97,7 +97,7 @@ export default class Map {
         }
         let center: OlCoordinate.Coordinate = [centerX, centerY];
         if (centerSRSId != srsId) {
-            center = OlProj.transform(center, "EPSG:" + centerSRSId, "EPSG:" + srsId);
+            center = OlProj.transform(center, "EPSG:" + centerSRSId.toString(), "EPSG:" + srsId.toString());
         }
         let source: OlTileSource = null;
         if (baseLayer == BaseLayer.OSM) {
@@ -112,7 +112,7 @@ export default class Map {
                 })
             ],
         });
-        this.projection = "EPSG:" + srsId;
+        this.srsId = srsId;
         this.map = new OlMap({
             controls: OlDefaultControls().extend([overviewMapControl]),
             layers: [
@@ -122,14 +122,14 @@ export default class Map {
             ],
             target: targetDOMId,
             view: new OlView({
-                projection: this.projection,
+                projection: "EPSG:" + this.srsId.toString(),
                 center: center,
                 zoom: zoom
             })
         });
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
-        this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId);
+        this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
 
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
@@ -188,7 +188,7 @@ export default class Map {
         const mapProj: string = this.map.getView().getProjection().getCode();
         let coordinate: OlCoordinate.Coordinate = [centerX, centerY];
         if (mapProj != "EPSG:" + centerSRSId) {
-            coordinate = OlProj.transform(coordinate, "EPSG:" + centerSRSId, mapProj);
+            coordinate = OlProj.transform(coordinate, "EPSG:" + centerSRSId.toString(), mapProj);
         }
         this.map.getView().setCenter(coordinate);
     }
@@ -235,7 +235,11 @@ export default class Map {
      * @param {Object} features - selected features
      */
     public setSelectedFeatures(features: FeatureCollection): void {
-        this.selectedFeatures = features;
+        if (features) {
+            this.selectedFeatures = features;
+        } else {
+            this.selectedFeatures = new FeatureCollection([], "EPSG:" + this.srsId.toString());
+        }
     }
 
     /**
@@ -278,7 +282,7 @@ export default class Map {
     /**
      * Sets map's selected layers
      *
-     * @function setSelectedFeatures
+     * @function setSelectedLayers
      * @memberof Map
      * @param {Object} layers - selected layers
      */
@@ -316,7 +320,7 @@ export default class Map {
                 highlightSelect.getFeatures().clear();
             }
         }
-        this.selectedFeatures = null;
+        this.selectedFeatures = new FeatureCollection([], "EPSG:" + this.srsId.toString());
         this.selectedLayers.clear();
     }
 
@@ -394,7 +398,7 @@ export default class Map {
      * @param {Boolean} multiple - flag indicating multiple selection
      * @param {Function} callback - callback function to call after geometry is selected
      */
-    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction): void {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction): InteractionInterface {
         if (layers) {
             layers.forEach((layer: LayerInterface) => {
                 if (layer.getType() != SourceType.Vector) {
@@ -404,7 +408,8 @@ export default class Map {
         }
         this.clearInteractions();
         this.interaction = new SelectInteraction(type, this, layers, multiple, callback);
-        this.addInteraction(this.interaction);  
+        this.addInteraction(this.interaction);
+        return this.interaction;
     }
 
     /**
@@ -487,8 +492,6 @@ export default class Map {
         } else {
             this.interactions = [];
         }
-        this.selectedFeatures = null;
-        this.selectedLayers.clear();
     }
 
     /**
@@ -578,12 +581,14 @@ export default class Map {
      *
      * @function addFeatures
      * @memberof Map
+     * @param {Object} layer - layer to add to
      * @param {Object} features - features to add
      */
-    public addFeatures(features: FeatureCollection): void {
+    public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
+        const source: OlVectorSource = <OlVectorSource> layer.getSource();
         features.forEach((feature: Feature): void => {
-            const source: OlVectorSource = <OlVectorSource> feature.getLayer().getSource();
             source.addFeature(feature.getFeature());
+            feature.setLayer(layer.getLayer());
             feature.setDirty(true);
             this.dirtyFeatures.add(feature);
         });
@@ -645,11 +650,13 @@ export default class Map {
      * @param {Number} zoom - zoom to set after fit
      */
     public fitFeatures(features: FeatureCollection, zoom?: number): void {
-         const geometries: OlGeometry[] = features.getFeatureGeometries();
-         const gc: GeometryCollection = new GeometryCollection(geometries);
-         const view: OlView = this.map.getView();
-         view.fit(gc.getExtent());
-         if (typeof zoom !== "undefined") {
+        const geometries: OlGeometry[] = features.getFeatureGeometries();
+        const gc: GeometryCollection = new GeometryCollection(geometries);
+        const view: OlView = this.map.getView();
+        if (!gc.isEmpty) {
+        view.fit(gc.getExtent());
+        }
+        if (typeof zoom !== "undefined") {
             view.setZoom(zoom);
         }
     }
@@ -761,6 +768,6 @@ export default class Map {
      * @return {Array} transformed coordinates
      */
     public transformCoordinates(coordinates: number[], srsId: number): number[] {
-        return OlProj.transform(coordinates, this.projection, "EPSG:" + srsId);
+        return OlProj.transform(coordinates, "EPSG:" + this.srsId.toString(), "EPSG:" + srsId.toString());
     }
 }

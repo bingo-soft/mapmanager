@@ -17,7 +17,7 @@ export default abstract class BaseInteraction implements InteractionInterface
      * @memberof BaseInteraction
      * @return {Object} interaction object
      */
-    getInteraction(): OLInteraction {
+    public getInteraction(): OLInteraction {
         return this.interaction;
     }
 
@@ -28,7 +28,7 @@ export default abstract class BaseInteraction implements InteractionInterface
      * @memberof BaseInteraction
      * @return {Object} interaction type
      */
-    getType(): InteractionType {
+    public  getType(): InteractionType {
         return this.type;
     }
 
@@ -39,7 +39,18 @@ export default abstract class BaseInteraction implements InteractionInterface
      * @memberof BaseInteraction
      * @return {Object} collection of event hadlers
      */
-    getEventHandlers(): EventHandlerCollection {
+    public getEventHandlers(): EventHandlerCollection {
         return this.eventHandlers;
+    }
+
+    /**
+     * Sets or unsets interaction active
+     *
+     * @function setActive
+     * @memberof BaseInteraction
+     * @param {Boolean} active - activity flag
+     */
+    public setActive(active: boolean): void {
+        this.interaction.setActive(active);
     }
 }

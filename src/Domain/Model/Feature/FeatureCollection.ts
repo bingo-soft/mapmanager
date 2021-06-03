@@ -44,7 +44,7 @@ export default class FeatureCollection {
                     this.features.push(el);
                 });
             }
-        }
+        } 
         this.srs = srs;
     }
 

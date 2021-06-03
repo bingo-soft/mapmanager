@@ -5,6 +5,7 @@ import ZoomType from "./ZoomType";
 import Map from "../../Map/Map";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
+import MethodNotImplemented from "../../../Exception/MethodNotImplemented";
 
 /** @class ZoomInteraction */
 export default class ZoomInteraction extends BaseInteraction {
@@ -27,6 +28,16 @@ export default class ZoomInteraction extends BaseInteraction {
                 map.getMap().getView().setZoom(zoom - 1);
             }
         });
+    }
 
+    /**
+     * Sets or unsets interaction active
+     *
+     * @function setActive
+     * @memberof BaseInteraction
+     * @param {Boolean} active - activity flag
+     */
+    public setActive(active: boolean): void {
+        throw new MethodNotImplemented();
     }
 }
