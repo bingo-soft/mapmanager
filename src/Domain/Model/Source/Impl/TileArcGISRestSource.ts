@@ -11,7 +11,9 @@ export default class TileArcGISRestSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new OlTileArcGISRestSource();
+        this.source = new OlTileArcGISRestSource({
+            crossOrigin: "anonymous"
+        });
     }
 
     /**

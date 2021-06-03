@@ -20,7 +20,10 @@ export default class Feature {
      * @param {Object} feature - OpenLayers' feature object
      * @param {Object} layer - OpenLayers' layer object
      */
-    constructor(feature: OlFeature, layer?: OlLayer) {
+    constructor(feature?: OlFeature, layer?: OlLayer) {
+        if (!feature) {
+            feature = new OlFeature();
+        }
         this.feature = feature;
         if (layer) {
             this.layer = layer;
@@ -256,17 +259,72 @@ export default class Feature {
      * @return {String} text representing feature
      */
     public getGeometryAsText(format: GeometryFormat, srsId: number): string {
-        let formatInstance: OlWKT | OlGeoJSON = null;
-        if (format == GeometryFormat.WKT) {
-            formatInstance = new OlWKT();
-        } else if (format == GeometryFormat.GeoJSON) {
-            formatInstance = new OlGeoJSON();
-        } else {
-            return "";
+        const formatInstance: OlWKT | OlGeoJSON = this.getFormatInstance(format);
+        if (formatInstance) {
+            return formatInstance.writeFeature(this.feature, {
+                dataProjection: "EPSG:" + srsId.toString(),
+                featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+            });
         }
-        return formatInstance.writeFeature(this.feature, {
-            dataProjection: "EPSG:" + srsId.toString(),
-            featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
-        });
+        return "";
     }
+
+    /**
+     * Updates feature geometry from text
+     *
+     * @function updateGeometryFromText
+     * @memberof Feature
+     * @param {String} text - feature text representation
+     * @param {String} format - format of feature text representation
+     * @param {Number} srsId - SRS Id of feature text representation
+     */
+     public updateGeometryFromText(text: string, format: GeometryFormat, srsId: number): void {
+        const formatInstance: OlWKT | OlGeoJSON = this.getFormatInstance(format);
+        if (formatInstance) {
+            this.feature = formatInstance.readFeature(text, {
+                dataProjection: "EPSG:" + srsId.toString(),
+                featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+            });
+        }
+    }
+
+    /**
+     * Creates feature geometry from text
+     *
+     * @function updateGeometryFromText
+     * @memberof Feature
+     * @param {String} text - feature text representation
+     * @param {String} format - format of feature text representation
+     * @param {Number} srsId - SRS Id of feature text representation
+     */
+    public createGeometryFromText(text: string, format: GeometryFormat, srsId: number): Feature {
+        const formatInstance: OlWKT | OlGeoJSON = this.getFormatInstance(format);
+        if (formatInstance) {
+            this.feature = formatInstance.readFeature(text, {
+                dataProjection: "EPSG:" + srsId.toString(),
+                featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+            });
+            return this;
+        }
+        return null;
+    }
+
+    /**
+     * Returns format instance based on format type
+     *
+     * @function getFormatInstance
+     * @memberof Feature
+     * @param {String} format - format
+     * @return {Object} format instance
+     */
+    private getFormatInstance(format: GeometryFormat): OlWKT | OlGeoJSON {
+        if (format == GeometryFormat.WKT) {
+            return new OlWKT();
+        } else if (format == GeometryFormat.GeoJSON) {
+            return new OlGeoJSON();
+        } else {
+            return null;
+        }
+    }
+
 }

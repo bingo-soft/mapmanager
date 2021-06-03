@@ -24,11 +24,20 @@ export default interface InteractionInterface {
     getType(): InteractionType;
     
     /**
-     * Returns collection of event hadтlers for the interaction
+     * Returns collection of event handlers for the interaction
      *
      * @function getEventHandlers
      * @memberof InteractionInterface
      * @return {Object} collection of event hadlers
      */
     getEventHandlers(): EventHandlerCollection;
+
+    /**
+     * Sets or unsets interaction active
+     *
+     * @function setActive
+     * @memberof InteractionInterface
+     * @param {Boolean} active - activity flag
+     */
+    setActive(active: boolean): void;
 }

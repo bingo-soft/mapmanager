@@ -13,6 +13,7 @@ import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 import Feature from "./Domain/Model/Feature/Feature"
 import GeometryFormat from "./Domain/Model/GeometryFormat/GeometryFormat"
+import InteractionInterface from "./Domain/Model/Interaction/InteractionInterface"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -132,8 +133,8 @@ export default class MapManager {
      * @param {Object} layer - layer instance
      * @param {Object} opts - options
      */
-    public static setSelectInteraction(map: Map, opts: unknown): void {
-        map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["multiple"], opts["select_callback"]);
+    public static setSelectInteraction(map: Map, opts: unknown): InteractionInterface {
+        return map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["multiple"], opts["select_callback"]);
     }
 
     /**
@@ -255,13 +256,16 @@ export default class MapManager {
                     builder.setLoader(async (): Promise<string> => {
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(opts["request"]);
-                    }/* , opts */);
+                    });
             }
-            if (type == SourceType.Vector) {
+            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }
-            if ((/* type == SourceType.Vector ||  */type == SourceType.XYZ || type == SourceType.TileArcGISRest || type == SourceType.TileWMS) && Object.prototype.hasOwnProperty.call(opts, "url")) { 
+            if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
+            }
+            if (type == SourceType.TileWMS && Object.prototype.hasOwnProperty.call(opts, "params")) { 
+                builder.setParams(opts["params"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
@@ -340,10 +344,11 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} map - map instance
+     * @param {Object} layer - layer to add to
      * @param {Object} features - features to add
      */
-    public static addFeatures(map: Map, features: FeatureCollection): void {
-        map.addFeatures(features);
+    public static addFeatures(map: Map, layer: LayerInterface, features: FeatureCollection): void {
+        map.addFeatures(layer, features);
     }
 
     /**
@@ -603,6 +608,36 @@ export default class MapManager {
      */
     public static getGeometryAsText(feature: Feature, format: GeometryFormat, srsId: number): string {
        return feature.getGeometryAsText(format, srsId);
+    }
+
+    /**
+     * Updates feature geometry from text
+     *
+     * @function updateGeometryFromText
+     * @memberof MapManager
+     * @param {Object} feature - feature
+     * @param {String} text - feature text representation
+     * @param {String} format - format of feature text representation
+     * @param {Number} srsId - SRS Id of feature text representation
+     */
+    public updateGeometryFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
+        feature.updateGeometryFromText(text, format, srsId);
+        feature.setDirty(true);
+    }
+
+    /**
+     * Updates feature geometry from text
+     *
+     * @function updateGeometryFromText
+     * @memberof MapManager
+     * @param {String} text - feature text representation
+     * @param {String} format - format of feature text representation
+     * @param {Number} srsId - SRS Id of feature text representation
+     */
+    public createGeometryFromText(text: string, format: GeometryFormat, srsId: number): Feature {
+        const feature: Feature = new Feature();
+        feature.setDirty(true);
+        return feature.createGeometryFromText(text, format, srsId);
     }
 
 }

@@ -12,7 +12,10 @@ export default class TileWMSSource extends BaseSource {
      */
     constructor() {
         super();
-        this.source = new OlTileWMSSource();
+        this.source = new OlTileWMSSource({
+            params: {},
+            crossOrigin: "anonymous"
+        });
     }
 
     /**
@@ -25,6 +28,5 @@ export default class TileWMSSource extends BaseSource {
     public getType(): SourceType {
         return SourceType.TileWMS;
     }
-
-    
+   
 }

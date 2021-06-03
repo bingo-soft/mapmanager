@@ -1,6 +1,7 @@
 import { Tile as OlTileLayer } from "ol/layer";
 import { Source as OlSource } from "ol/source";
 import { TileImage as OlTileImage } from "ol/source";
+import OlTileWMSSource from "ol/source/TileWMS";
 import AbstractLayer from "../AbstractLayer";
 import SourceType from "../../Source/SourceType";
 import SourceInterface from "../../Source/SourceInterface";
@@ -74,6 +75,19 @@ export default class TileLayer extends AbstractLayer {
      */
     public setUrl(url: string): void {
         (<OlTileImage> this.layer.getSource()).setUrl(url);
+    }
+
+    /**
+     * Sets layer's source params
+     *
+     * @function setParams
+     * @memberof TileLayer
+     * @param {Object} = params
+     */
+    public setParams(params: unknown): void {
+        if (this.type == SourceType.TileWMS) {
+            (<OlTileWMSSource> this.layer.getSource()).updateParams(params);
+        }
     }
 
     
