@@ -130,6 +130,7 @@ export default class Map {
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
+        this.dirtyFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
 
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
@@ -585,13 +586,15 @@ export default class Map {
      * @param {Object} features - features to add
      */
     public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
-        const source: OlVectorSource = <OlVectorSource> layer.getSource();
-        features.forEach((feature: Feature): void => {
-            source.addFeature(feature.getFeature());
-            feature.setLayer(layer.getLayer());
-            feature.setDirty(true);
-            this.dirtyFeatures.add(feature);
-        });
+        if (features) {
+            const source: OlVectorSource = <OlVectorSource> layer.getSource();
+            features.forEach((feature: Feature): void => {
+                source.addFeature(feature.getFeature());
+                feature.setLayer(layer.getLayer());
+                feature.setDirty(true);
+                this.dirtyFeatures.add(feature);
+            });
+        }
     }
 
     /**
@@ -602,10 +605,13 @@ export default class Map {
      * @param {Object} features - features to remove
      */
     public removeFeatures(features: FeatureCollection): void {
-        features.forEach((feature: Feature): void => {
-            const source: OlVectorSource = <OlVectorSource> feature.getLayer().getSource();
-            source.removeFeature(feature.getFeature());
-        });
+        if (features) {
+            features.forEach((feature: Feature): void => {
+                const source: OlVectorSource = <OlVectorSource> feature.getLayer().getSource();
+                source.removeFeature(feature.getFeature());
+                this.clearSelectedFeatures();
+            });
+        }
     }
 
     /**
