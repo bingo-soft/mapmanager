@@ -64,7 +64,7 @@ export default class StyleBuilder {
                 this.style["Polygon"] = DefaultStyle["Polygon"];
                 this.style["MultiPolygon"] = DefaultStyle["MultiPolygon"];
             }
-/*             if (Object.prototype.hasOwnProperty.call(opts, "geometrycollection") && Object.keys(opts["geometrycollection"]).length) {
+            /* if (Object.prototype.hasOwnProperty.call(opts, "geometrycollection") && Object.keys(opts["geometrycollection"]).length) {
                 this.setGeometryCollectionStyle(opts["geometrycollection"]);
             } else {
                 this.style["GeometryCollection"] = DefaultStyle["GeometryCollection"];
@@ -153,6 +153,7 @@ export default class StyleBuilder {
         });
         this.style["Polygon"] = style;
         this.style["MultiPolygon"] = style;
+        this.style["GeometryCollection"]= style;
         return this;
     }
 
@@ -174,7 +175,7 @@ export default class StyleBuilder {
                 color: opts["background_color"],
             }),
         });
-        this.style[OlGeometryType.GEOMETRY_COLLECTION] = style;
+        this.style["GeometryCollection"] = style;
         return this;
     } */
 

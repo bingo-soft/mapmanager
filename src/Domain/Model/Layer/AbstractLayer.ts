@@ -6,6 +6,7 @@ import SourceInterface from "../Source/SourceInterface";
 import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
+import FeatureCollection from "../Feature/FeatureCollection";
 
 /** @class AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
@@ -171,6 +172,39 @@ export default abstract class AbstractLayer implements LayerInterface
      * @param {Function} style - style function
      */
     public setStyle(style: StyleFunction): void { 
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns collection of dirty features
+     *
+     * @function getDirtyFeatures
+     * @memberof AbstractLayer
+     * @return {Object} collection of dirty features
+     */
+    public getDirtyFeatures(): FeatureCollection {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets collection of dirty features
+     *
+     * @function setDirtyFeatures
+     * @memberof AbstractLayer
+     * @param {Object} features - collection of dirty features
+     */
+    public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Checks if layer is dirty
+     *
+     * @function isDirty
+     * @memberof AbstractLayer
+     * @return {Boolean} flag if layer is dirty
+     */
+    public isDirty(): boolean {
         throw new MethodNotImplemented();
     }
 

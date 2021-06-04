@@ -538,11 +538,11 @@ export default class MapManager {
      *
      * @function getDirtyFeatures
      * @memberof MapManager
-     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
      * @return {Object} dirty features
      */
-    public static getDirtyFeatures(map: Map): FeatureCollection {
-        return map.getDirtyFeatures();
+    public static getDirtyFeatures(layer: LayerInterface): FeatureCollection {
+        return layer.getDirtyFeatures();
     }
 
     /**
@@ -550,13 +550,12 @@ export default class MapManager {
      *
      * @function setDirtyFeatures
      * @memberof MapManager
-     * @param {Object} map - map instance
+     * @param {Object} layer - layer instance
      * @param {Object} features - features to be set
-     * @param {Boolean} dirty - dirty flag
-     * @return {Object} feature collection with given dirty flag set
+     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
-    public static setDirtyFeatures(map: Map, features: FeatureCollection, dirty: boolean): FeatureCollection {
-        return map.setDirtyFeatures(features, dirty);
+    public static setDirtyFeatures(layer: LayerInterface, features: FeatureCollection, dirty: boolean): void {
+        layer.setDirtyFeatures(features, dirty);
     }
 
     /**

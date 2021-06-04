@@ -29,7 +29,7 @@ export default class FeatureCollection {
      * @param {String} srs - SRS of features
      * @param {Object} layer - layer of features
      */
-    constructor(features: OlFeature[] | Feature[], srs: string, layer?: OlLayer) {
+    constructor(features: OlFeature[] | Feature[], srs?: string, layer?: OlLayer) {
         if (features[0]) {
             if (features[0] instanceof OlFeature) {
                 (<OlFeature[]> features).forEach((el: OlFeature): void => {
@@ -125,6 +125,16 @@ export default class FeatureCollection {
         if (index > -1) {
             this.features.splice(index, 1);
         }
+    }
+
+    /**
+     * Clears the collection
+     *
+     * @function clear
+     * @memberof FeatureCollection
+     */
+    public clear(): void {
+        this.features = [];
     }
 
     /**
