@@ -57,7 +57,7 @@ export default class SelectInteraction extends BaseInteraction {
                     selectedFeatures.forEach((feature: OlFeature): void => {
                         const layer: OlLayer = e.target.getLayer(feature);
                         layers.add(layer);
-                        features.push(new Feature(feature, e.target.getLayer(feature)));
+                        features.push(new Feature(feature, layer));
                     });
                     const srs: string = olMap.getView().getProjection().getCode();
                     fc = new FeatureCollection(features, srs);

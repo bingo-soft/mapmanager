@@ -54,8 +54,8 @@ export default class Map {
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
     private selectedFeatures: FeatureCollection;
-    private dirtyFeatures: FeatureCollection;
     private selectedLayers: Set<LayerInterface> = new Set();
+    //private dirtyFeatures: FeatureCollection;
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
     private eventHandlers: EventHandlerCollection; 
@@ -130,7 +130,7 @@ export default class Map {
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
-        this.dirtyFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
+        //this.dirtyFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
 
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
@@ -250,9 +250,9 @@ export default class Map {
      * @memberof Map
      * @return {Object} dirty features
      */
-     public getDirtyFeatures(): FeatureCollection {
+    /* public getDirtyFeatures(): FeatureCollection {
         return this.dirtyFeatures;
-    }
+    } */
 
     /**
      * Sets map's dirty (added or modified) features
@@ -263,11 +263,11 @@ export default class Map {
      * @param {Boolean} dirty - dirty flag
      * @return {Object} feature collection with given dirty flag set
      */
-    public setDirtyFeatures(features: FeatureCollection, dirty: boolean): FeatureCollection {
+    /* public setDirtyFeatures(features: FeatureCollection, dirty: boolean): FeatureCollection {
         features.setDirty(dirty);
         this.dirtyFeatures = dirty ? features : null;
         return features;
-    }
+    } */
 
     /**
      * Returns map's selected layers
@@ -418,12 +418,12 @@ export default class Map {
      *
      * @function setModifyInteraction
      * @memberof Map
-     * @param {Object} features - features to modify
+     * @param {Object} source - features to modify
      * @param {Function} callback - callback function to call after geometry is modified
      */
-    public setModifyInteraction(features: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction): void {
+    public setModifyInteraction(source: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
-        this.interaction = new ModifyInteraction(features, callback);
+        this.interaction = new ModifyInteraction(source, callback);
         this.addInteraction(this.interaction);  
     }
 
@@ -592,7 +592,7 @@ export default class Map {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer.getLayer());
                 feature.setDirty(true);
-                this.dirtyFeatures.add(feature);
+                layer.setDirtyFeatures(new FeatureCollection([feature]), true);
             });
         }
     }

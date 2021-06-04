@@ -4,6 +4,7 @@ import SourceType from "../Source/SourceType";
 import SourceInterface from "../Source/SourceInterface";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
+import FeatureCollection from "../Feature/FeatureCollection";
 
 /** @interface LayerInterface */
 export default interface LayerInterface
@@ -143,4 +144,32 @@ export default interface LayerInterface
      * @param {Function} style - style function
      */
     setStyle(style: StyleFunction): void;
+
+    /**
+     * Returns collection of dirty features
+     *
+     * @function getDirtyFeatures
+     * @memberof LayerInterface
+     * @return {Object} collection of dirty features
+     */
+    getDirtyFeatures(): FeatureCollection;
+
+    /**
+     * Adds or removes dirty features
+     *
+     * @function setDirtyFeatures
+     * @memberof VectorLayer
+     * @param {Object} features - features to be set
+     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
+     */
+    setDirtyFeatures(features: FeatureCollection, dirty: boolean): void;
+
+    /**
+     * Checks if layer is dirty
+     *
+     * @function isDirty
+     * @memberof LayerInterface
+     * @return {Boolean} flag if layer is dirty
+     */
+    isDirty(): boolean;
 }

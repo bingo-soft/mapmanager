@@ -10,10 +10,13 @@ import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../../Style/StyleFunctionType";
+import Feature from "../../Feature/Feature";
 
 
 /** @class VectorLayer */
 export default class VectorLayer extends AbstractLayer{
+
+    private dirtyFeatures: FeatureCollection = new FeatureCollection([]);
     
     /**
      * @constructor
@@ -128,6 +131,43 @@ export default class VectorLayer extends AbstractLayer{
      */
     public getFeatureCollection(): FeatureCollection {
         return new FeatureCollection(this.getFeatures(), this.srs, this.layer);
+    }
+
+    /**
+     * Returns collection of dirty features
+     *
+     * @function getDirtyFeatures
+     * @memberof VectorLayer
+     * @return {Object} collection of dirty features
+     */
+    public getDirtyFeatures(): FeatureCollection {
+        return this.dirtyFeatures;
+    }
+
+    /**
+     * Adds or removes dirty features
+     *
+     * @function setDirtyFeatures
+     * @memberof VectorLayer
+     * @param {Object} features - collection of dirty features
+     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
+     */
+    public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
+        features.setDirty(dirty);
+        features.forEach((feature: Feature): void => {
+            dirty ? this.dirtyFeatures.add(feature) : this.dirtyFeatures.remove(feature);
+        });
+    }
+
+    /**
+     * Checks if layer is dirty
+     *
+     * @function isDirty
+     * @memberof VectorLayer
+     * @return {Boolean} flag if layer is dirty
+     */
+    public isDirty(): boolean {
+        return this.dirtyFeatures.getLength() != 0;
     }
     
 }
