@@ -87,6 +87,17 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
+     * Sets layer's source url
+     *
+     * @function setUrl
+     * @memberof VectorLayer
+     * @param {String} url - source url
+     */
+    public setUrl(url: string): void {
+        (<OlVectorSource> this.layer.getSource()).setUrl(url);
+    }
+
+    /**
      * Sets layer's style
      *
      * @function setStyle
