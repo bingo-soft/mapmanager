@@ -662,8 +662,8 @@ export default class Map {
         const geometries: OlGeometry[] = features.getFeatureGeometries();
         const gc: GeometryCollection = new GeometryCollection(geometries);
         const view: OlView = this.map.getView();
-        if (!gc.isEmpty) {
-        view.fit(gc.getExtent());
+        if (geometries.length) {
+            view.fit(gc.getExtent());
         }
         if (typeof zoom !== "undefined") {
             view.setZoom(zoom);
