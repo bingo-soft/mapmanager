@@ -1,4 +1,4 @@
-import "../assets/style"
+import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
 import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
