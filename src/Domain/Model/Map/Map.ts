@@ -3,7 +3,7 @@ import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import { Extent as OlExtent } from "ol/extent";
-import { OverviewMap as OlOverviewMap, defaults as OlDefaultControls } from "ol/control";
+import { Zoom as OlZoomControl, OverviewMap as OlOverviewMapControl, defaults as OlDefaultControls } from "ol/control";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
@@ -105,7 +105,10 @@ export default class Map {
         } /* else if (...) {
             TODO
         } */
-        const overviewMapControl: OlOverviewMap = new OlOverviewMap({
+        const zoomControl: OlZoomControl = new OlZoomControl({
+            className: "ol-zoom"
+        });
+        const overviewMapControl: OlOverviewMapControl = new OlOverviewMapControl({
             layers: [
                 new OlTileLayer({
                     source: source,
@@ -432,11 +435,11 @@ export default class Map {
      *
      * @function setTransformInteraction
      * @memberof Map
-     * @param {Function} callback - callback function to call after geometry is transformed
+     * @param {Object} opts - options
      */
-     public setTransformInteraction(callback?: TransformCallbackFunction): void {
+     public setTransformInteraction(opts: unknown): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
-        this.interaction = new TransformInteraction(callback);
+        this.interaction = new TransformInteraction(opts);
         this.addInteraction(this.interaction);  
     }
 
