@@ -49,6 +49,10 @@ btFeatureTransform.onclick = function(e: any) {
         e.target.style.color = "#fff";
         regime = "edit";
         MapManager.setTransformInteraction(map, {
+            "scale": true,
+            "stretch": false,
+            "rotate": true,
+            "translate": true,
             "transform_callback": function(features: FeatureCollection): void {
                 console.log(features);
             }

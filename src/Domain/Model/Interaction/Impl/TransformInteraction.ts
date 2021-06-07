@@ -20,25 +20,25 @@ export default class TransformInteraction extends BaseInteraction {
     /**
      * @constructor
      * @memberof TransformInteraction
-     * @param {Function} callback - callback function (features: FeatureCollection): void to call after feature is modified
+     * @param {Object} opts - options
      */
-    constructor(callback?: TransformCallbackFunction) {
+    constructor(opts: unknown) { // callback?: TransformCallbackFunction
         super();
         this.handler = this.handler.bind(this);
-        const opts: unknown = {
+        const optsTransform: unknown = {
             enableRotatedTransform: false,
             addCondition: OlEventConditionShiftKeyOnly,
             // layers: [vector],
             hitTolerance: 2,
             translateFeature: false,
-            scale: true,
-            rotate: true,
-            keepAspectRatio: false,
-            translate: true,
-            stretch: true
+            scale: opts["scale"] || false,
+            rotate: opts["rotate"] || false,
+            translate: opts["translate"] || false,
+            stretch: opts["stretch"] || false,
+            keepAspectRatio: false
         };
-        this.callback = callback;
-        this.interaction = new OlTransform(opts);
+        this.callback = opts["transform_callback"];
+        this.interaction = new OlTransform(optsTransform);
         (<OlTransform> this.interaction).Cursors["rotate"] = TransformInteraction.ROTATE_CURSOR;
         this.type = InteractionType.Transform;
         this.eventHandlers = new EventHandlerCollection(this.interaction);

@@ -1,3 +1,4 @@
+import "../assets/style"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
 import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
@@ -173,7 +174,7 @@ export default class MapManager {
      * @param {Object} opts - options
      */
      public static setTransformInteraction(map: Map, opts: unknown): void {
-        map.setTransformInteraction(opts["transform_callback"]);
+        map.setTransformInteraction(opts);
     }
 
     /**
