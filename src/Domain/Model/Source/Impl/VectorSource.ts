@@ -15,7 +15,10 @@ export default class VectorSource extends BaseSource {
     constructor() {
         super();
         this.source = new OlVectorSource({
-            format: new OlGeoJSON()/* ,
+            format: new OlGeoJSON(/* {
+                dataProjection: "EPSG:4326",
+                featureProjection: "EPSG:3857"
+            } */)/* ,
             strategy: OlLoadingstrategy.bbox */
         });
     }
