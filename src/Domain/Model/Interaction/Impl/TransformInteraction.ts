@@ -3,12 +3,14 @@ import {shiftKeyOnly as OlEventConditionShiftKeyOnly} from "ol/events/condition"
 import OlMap from "ol/Map";
 import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
+import { Layer as OlLayer } from "ol/layer";
 import BaseInteraction from "./BaseInteraction";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import { TransformCallbackFunction } from "../InteractionCallbackType";
+import LayerInterface from "../../Layer/LayerInterface";
 
 
 /** @class TransformInteraction */
@@ -20,24 +22,27 @@ export default class TransformInteraction extends BaseInteraction {
     /**
      * @constructor
      * @memberof TransformInteraction
-     * @param {Object} opts - options
+     * @param {Array} source - target layers for interaction
+     * @param {Function} callback - callback function after geometry is transformed
      */
-    constructor(opts: unknown) { // callback?: TransformCallbackFunction
+    constructor(source: LayerInterface[], callback?: TransformCallbackFunction) { 
         super();
         this.handler = this.handler.bind(this);
+        const olLayers: OlLayer[] = [];
+        source.forEach(layer => olLayers.push(layer.getLayer()));
         const optsTransform: unknown = {
             enableRotatedTransform: false,
             addCondition: OlEventConditionShiftKeyOnly,
-            // layers: [vector],
+            layers: olLayers,
             hitTolerance: 2,
             translateFeature: false,
-            scale: opts["scale"] || false,
-            rotate: opts["rotate"] || false,
-            translate: opts["translate"] || false,
-            stretch: opts["stretch"] || false,
+            scale: true,
+            rotate: true,
+            translate: true,
+            stretch: true,
             keepAspectRatio: false
         };
-        this.callback = opts["transform_callback"];
+        this.callback = callback;
         this.interaction = new OlTransform(optsTransform);
         (<OlTransform> this.interaction).Cursors["rotate"] = TransformInteraction.ROTATE_CURSOR;
         this.type = InteractionType.Transform;

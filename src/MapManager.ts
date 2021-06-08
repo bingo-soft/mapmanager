@@ -15,6 +15,7 @@ import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventH
 import Feature from "./Domain/Model/Feature/Feature"
 import GeometryFormat from "./Domain/Model/GeometryFormat/GeometryFormat"
 import InteractionInterface from "./Domain/Model/Interaction/InteractionInterface"
+import { TransformCallbackFunction } from "./Domain/Model/Interaction/InteractionCallbackType"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -174,7 +175,7 @@ export default class MapManager {
      * @param {Object} opts - options
      */
      public static setTransformInteraction(map: Map, opts: unknown): void {
-        map.setTransformInteraction(opts);
+        map.setTransformInteraction(opts["source"], opts["transform_callback"]);
     }
 
     /**
