@@ -435,11 +435,12 @@ export default class Map {
      *
      * @function setTransformInteraction
      * @memberof Map
-     * @param {Object} opts - options
+     * @param {Object} source - target layer for interaction
+     * @param {Function} callback - callback function after geometry is transformed
      */
-     public setTransformInteraction(opts: unknown): void {
+     public setTransformInteraction(source: LayerInterface, callback?: TransformCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
-        this.interaction = new TransformInteraction(opts);
+        this.interaction = new TransformInteraction(source, callback);
         this.addInteraction(this.interaction);  
     }
 
