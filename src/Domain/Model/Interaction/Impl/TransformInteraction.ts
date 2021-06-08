@@ -22,18 +22,16 @@ export default class TransformInteraction extends BaseInteraction {
     /**
      * @constructor
      * @memberof TransformInteraction
-     * @param {Array} source - target layers for interaction
+     * @param {Object} source - target layer for interaction
      * @param {Function} callback - callback function after geometry is transformed
      */
-    constructor(source: LayerInterface[], callback?: TransformCallbackFunction) { 
+    constructor(source: LayerInterface, callback?: TransformCallbackFunction) { 
         super();
         this.handler = this.handler.bind(this);
-        const olLayers: OlLayer[] = [];
-        source.forEach(layer => olLayers.push(layer.getLayer()));
         const optsTransform: unknown = {
             enableRotatedTransform: false,
             addCondition: OlEventConditionShiftKeyOnly,
-            layers: olLayers,
+            layers: [source.getLayer()],
             hitTolerance: 2,
             translateFeature: false,
             scale: true,
