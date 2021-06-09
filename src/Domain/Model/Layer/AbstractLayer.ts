@@ -7,6 +7,7 @@ import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
+import Feature from "../Feature/Feature";
 
 /** @class AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
@@ -192,6 +193,7 @@ export default abstract class AbstractLayer implements LayerInterface
      * @function setDirtyFeatures
      * @memberof AbstractLayer
      * @param {Object} features - collection of dirty features
+     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
     public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
         throw new MethodNotImplemented();
@@ -205,6 +207,28 @@ export default abstract class AbstractLayer implements LayerInterface
      * @return {Boolean} flag if layer is dirty
      */
     public isDirty(): boolean {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns collection of removed features
+     *
+     * @function getRemovedFeatures
+     * @memberof AbstractLayer
+     * @return {Object} collection of removed features
+     */
+     public getRemovedFeatures(): FeatureCollection {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Adds features to removed
+     *
+     * @function setRemovedFeatures
+     * @memberof AbstractLayer
+     * @param {Object} features - single feature or collection
+     */
+    public setRemovedFeatures(features: Feature | FeatureCollection): void  {
         throw new MethodNotImplemented();
     }
 

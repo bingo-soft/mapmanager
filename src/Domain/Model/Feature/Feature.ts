@@ -5,13 +5,16 @@ import {Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString
 import { Layer as OlLayer } from "ol/layer";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
 import GeometryFormat from "../GeometryFormat/GeometryFormat";
-
+import LayerInterface from "../Layer/LayerInterface";
+import VectorLayer from "../Layer/Impl/VectorLayer";
+import StyleFunction from "../Style/StyleFunctionType";
+import { VertexCoordinate } from "./VertexCoordinate";
 
 /** @class Feature */
 export default class Feature { 
     
     private feature: OlFeature;
-    private layer: OlLayer;
+    private layer: LayerInterface;
     private dirty: boolean;
 
     /**
@@ -25,8 +28,8 @@ export default class Feature {
             feature = new OlFeature();
         }
         this.feature = feature;
-        if (layer) {
-            this.layer = layer;
+        if (layer) { 
+            this.layer = new VectorLayer(layer);
         }
     }
 
@@ -57,9 +60,9 @@ export default class Feature {
      *
      * @function getLayer
      * @memberof Feature
-     * @return {Object} layer object
+     * @return {Object} layer instance
      */
-    public getLayer(): OlLayer {
+    public getLayer(): LayerInterface {
         return this.layer;
     }
 
@@ -70,8 +73,19 @@ export default class Feature {
      * @memberof Feature
      * @param {Object} layer - layer instance
      */
-    public setLayer(layer: OlLayer): void {
+    public setLayer(layer: LayerInterface): void {
         this.layer = layer;
+    }
+
+    /**
+     * Sets style of the feature
+     *
+     * @function setStyle
+     * @memberof Feature
+     * @param {Object} style - style
+     */
+    public setStyle(style: StyleFunction): void {
+        this.feature.setStyle(style);
     }
 
     /**
@@ -103,8 +117,8 @@ export default class Feature {
      * @memberof Feature
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ [idx1, x1, y1], [idx2, x2, y2] ]
      */
-     public getCoordinates(): number[][] {
-        const returnCoordinates: number[][] = [];
+     public getCoordinates(): VertexCoordinate[] {
+        const returnCoordinates: VertexCoordinate[] = [];
         let coordinatesFlat: OlCoordinate = [];
         let coordinatesOneDim: OlCoordinate[] = [];
         let coordinatesTwoDim: OlCoordinate[][] = [];
@@ -127,18 +141,18 @@ export default class Feature {
         }
         let index: number = 0;
         if (coordinatesFlat.length) {
-            returnCoordinates.push([index, coordinatesFlat[0], coordinatesFlat[1]]);
+            returnCoordinates.push({"id": index, "x": coordinatesFlat[0], "y": coordinatesFlat[1]});
         } 
         if (coordinatesOneDim.length) {
             coordinatesOneDim.forEach((coordinate1: OlCoordinate): void => {
-                returnCoordinates.push([index, coordinate1[0], coordinate1[1]]);
+                returnCoordinates.push({"id": index, "x": coordinate1[0], "y": coordinate1[1]});
                 index++;
             });
         }
         if (coordinatesTwoDim.length) {
             coordinatesTwoDim.forEach((coordinate1: OlCoordinate[]): void => {
                 coordinate1.forEach((coordinate2: OlCoordinate): void => {
-                    returnCoordinates.push([index, coordinate2[0], coordinate2[1]]);
+                    returnCoordinates.push({"id": index, "x": coordinate2[0], "y": coordinate2[1]});
                     index++;
                 });
             });
@@ -147,7 +161,7 @@ export default class Feature {
             coordinatesThreeDim.forEach((coordinate1: OlCoordinate[][]): void => {
                 coordinate1.forEach((coordinate2: OlCoordinate[]): void => {
                     coordinate2.forEach((coordinate3: OlCoordinate): void => {
-                        returnCoordinates.push([index, coordinate3[0], coordinate3[1]]);
+                        returnCoordinates.push({"id": index, "x": coordinate3[0], "y": coordinate3[1]});
                         index++;
                     });
                 });
@@ -283,7 +297,7 @@ export default class Feature {
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+                featureProjection: this.layer ? this.layer.getSource().getProjection() || "EPSG:3857" : "EPSG:3857"
             });
         }
     }
@@ -302,7 +316,7 @@ export default class Feature {
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+                featureProjection: this.layer ? this.layer.getSource().getProjection() || "EPSG:3857" : "EPSG:3857"
             });
             return this;
         }

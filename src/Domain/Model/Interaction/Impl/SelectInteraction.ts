@@ -16,6 +16,7 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
+import VectorLayer from "../../Layer/Impl/VectorLayer";
 
 /** @class SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {

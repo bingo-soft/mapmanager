@@ -10,6 +10,7 @@ import EventType from "../EventHandlerCollection/EventType";
 
 /** @class LayerBuilder */
 export default class LayerBuilder {
+    
     private layer: LayerInterface;
 
     /**

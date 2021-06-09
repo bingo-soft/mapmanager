@@ -12,6 +12,7 @@ import OlMultiPoint from "ol/geom/MultiPoint";
 import OlMultiLineString from "ol/geom/MultiLineString";
 import OlMultiPolygon from "ol/geom/MultiPolygon";
 import Feature from "./Feature";
+import VectorLayer from "../Layer/Impl/VectorLayer";
 
 
 /** @class FeatureCollection */
@@ -39,7 +40,7 @@ export default class FeatureCollection {
             if (features[0] instanceof Feature) {
                 (<Feature[]> features).forEach((el: Feature): void => {
                     if (layer) {
-                        el.setLayer(layer);
+                        el.setLayer(new VectorLayer(layer));
                     }
                     this.features.push(el);
                 });
@@ -100,6 +101,21 @@ export default class FeatureCollection {
         this.features.forEach((feature: Feature): void => {
             feature.setDirty(dirty);
         });
+    }
+
+
+    /**
+     * Returns feature at index
+     *
+     * @function getAt
+     * @memberof FeatureCollection
+     * @param {Number} index - index
+     */
+     public getAt(index: number): Feature {
+        if (typeof this.features[index] === "undefined") {
+            return null;
+        }
+        return this.features[index];
     }
 
     /**

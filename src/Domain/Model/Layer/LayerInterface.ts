@@ -5,6 +5,7 @@ import SourceInterface from "../Source/SourceInterface";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
+import Feature from "../Feature/Feature";
 
 /** @interface LayerInterface */
 export default interface LayerInterface
@@ -172,4 +173,22 @@ export default interface LayerInterface
      * @return {Boolean} flag if layer is dirty
      */
     isDirty(): boolean;
+
+    /**
+     * Returns collection of removed features
+     *
+     * @function getRemovedFeatures
+     * @memberof LayerInterface
+     * @return {Object} collection of removed features
+     */
+    getRemovedFeatures(): FeatureCollection;
+
+    /**
+     * Adds features to removed
+     *
+     * @function setRemovedFeatures
+     * @memberof LayerInterface
+     * @param {Object} features - single feature or collection
+     */
+    setRemovedFeatures(features: Feature | FeatureCollection): void;
 }
