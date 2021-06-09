@@ -55,7 +55,7 @@ export default class Map {
     private measureOverlays: OlOverlay[] = [];
     private selectedFeatures: FeatureCollection;
     private selectedLayers: Set<LayerInterface> = new Set();
-    //private dirtyFeatures: FeatureCollection;
+    private clipboard: unknown;
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
     private eventHandlers: EventHandlerCollection; 
@@ -105,9 +105,6 @@ export default class Map {
         } /* else if (...) {
             TODO
         } */
-        const zoomControl: OlZoomControl = new OlZoomControl({
-            className: "ol-zoom"
-        });
         const overviewMapControl: OlOverviewMapControl = new OlOverviewMapControl({
             layers: [
                 new OlTileLayer({
@@ -133,8 +130,10 @@ export default class Map {
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
         this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
-        //this.dirtyFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
-
+        this.clipboard = {
+            "features": new FeatureCollection([], "EPSG:" + srsId.toString()),
+            "remove": false
+        }
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
             if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
@@ -594,7 +593,7 @@ export default class Map {
             const source: OlVectorSource = <OlVectorSource> layer.getSource();
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
-                feature.setLayer(layer.getLayer());
+                feature.setLayer(layer);
                 feature.setDirty(true);
                 layer.setDirtyFeatures(new FeatureCollection([feature]), true);
             });
@@ -611,10 +610,12 @@ export default class Map {
     public removeFeatures(features: FeatureCollection): void {
         if (features) {
             features.forEach((feature: Feature): void => {
-                const source: OlVectorSource = <OlVectorSource> feature.getLayer().getSource();
+                const layer: LayerInterface = feature.getLayer(); 
+                layer.setRemovedFeatures(feature);
+                const source: OlVectorSource = <OlVectorSource> (layer.getLayer().getSource());
                 source.removeFeature(feature.getFeature());
-                this.clearSelectedFeatures();
             });
+            this.clearSelectedFeatures();
         }
     }
 
@@ -779,5 +780,45 @@ export default class Map {
      */
     public transformCoordinates(coordinates: number[], srsId: number): number[] {
         return OlProj.transform(coordinates, "EPSG:" + this.srsId.toString(), "EPSG:" + srsId.toString());
+    }
+
+    /**
+     * Copies features into clipboard
+     *
+     * @function copyToClipBoard
+     * @memberof Map
+     * @param {Object} features - features to copy
+     */
+    public copyToClipBoard(features: FeatureCollection): void {
+        this.clipboard["features"] = features;
+        this.clipboard["remove"] = false;
+    }
+
+    /**
+     * Cuts features into clipboard
+     *
+     * @function cutToClipBoard
+     * @memberof Map
+     * @param {Object} features - features to copy
+     */
+     public cutToClipBoard(features: FeatureCollection): void {
+        this.clipboard["features"] = features;
+        this.clipboard["remove"] = true;
+    }
+
+    /**
+     * Pastes features from clipboard
+     *
+     * @function pasteFromClipboard
+     * @memberof Map
+     * @param {Object} layer - layer instance to paste to
+     */
+    public pasteFromClipboard(layer: LayerInterface): void {
+        if (this.clipboard["remove"]) {
+            this.removeFeatures(this.clipboard["features"]);
+        }
+        this.addFeatures(layer, this.clipboard["features"]);
+        this.clipboard["features"].clear();
+        this.clearSelectedFeatures();
     }
 }

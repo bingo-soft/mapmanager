@@ -15,7 +15,9 @@ import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventH
 import Feature from "./Domain/Model/Feature/Feature"
 import GeometryFormat from "./Domain/Model/GeometryFormat/GeometryFormat"
 import InteractionInterface from "./Domain/Model/Interaction/InteractionInterface"
-import { TransformCallbackFunction } from "./Domain/Model/Interaction/InteractionCallbackType"
+import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
+import StyleFunction from "./Domain/Model/Style/StyleFunctionType"
+import { VertexCoordinate } from "./Domain/Model/Feature/VertexCoordinate"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -78,6 +80,7 @@ export default class MapManager {
      *
      * @function setCursor
      * @memberof Map
+     * @static
      * @param {Map} map - map instance
      * @param {String} cursor - cursor type
      */
@@ -174,7 +177,7 @@ export default class MapManager {
      * @param {Object} map - map instance
      * @param {Object} opts - options
      */
-     public static setTransformInteraction(map: Map, opts: unknown): void {
+    public static setTransformInteraction(map: Map, opts: unknown): void {
         map.setTransformInteraction(opts["source"], opts["transform_callback"]);
     }
 
@@ -195,9 +198,10 @@ export default class MapManager {
      * Clears interactions
      *
      * @function clearInteractions
+     * @memberof Map
+     * @static
      * @param {Object} map - map instance
      * @param {Array} types - types of interaction to clear, all if not set
-     * @memberof Map
      */ 
     public static clearInteractions(map: Map, types?: InteractionType[]): void {
         map.clearInteractions(types);
@@ -208,8 +212,8 @@ export default class MapManager {
      *
      * @function clearMeasureResult
      * @memberof MapManager
-     * @param {Object} map - map instance
      * @static
+     * @param {Object} map - map instance
      */
     public static clearMeasureResult(map: Map): void {
         map.clearMeasureLayer();
@@ -232,7 +236,7 @@ export default class MapManager {
         let builder: LayerBuilder;
         switch (type) {
             case SourceType.Vector:
-                builder = new LayerBuilder(new VectorLayer(opts));
+                builder = new LayerBuilder(new VectorLayer(null, opts));
                 builder.setSource(SourceType.Vector);       
                 break;
             case SourceType.TileWMS:
@@ -295,7 +299,15 @@ export default class MapManager {
         return layer;
     }
 
-    // TODO: выяснить, что это и зачем
+    /**
+     * Returns features of the layer as FeatureCollection
+     *
+     * @function getFeatureCollection
+     * @memberof MapManager
+     * @static
+     * @param {Object} layer - layer instance
+     * @return {Object} feature collection 
+     */
     public static getFeatureCollection(layer: VectorLayer): FeatureCollection {
         return layer.getFeatureCollection();
     }
@@ -397,6 +409,7 @@ export default class MapManager {
      *
      * @function getLayers
      * @memberof Map
+     * @static
      * @param {Object} map - map instance
      * @param {String} type - type
      * @return {Array} map layers
@@ -436,6 +449,7 @@ export default class MapManager {
      *
      * @function fitLayer
      * @memberof Map
+     * @static
      * @param {Object} map - map instance
      * @param {Object} layer - layer instance
      * @param {Number} zoom - zoom after fit
@@ -449,6 +463,7 @@ export default class MapManager {
      *
      * @function fitFeatures
      * @memberof Map
+     * @static
      * @param {Object} map - map instance
      * @param {Object} features - features
      * @param {Number} zoom - zoom after fit
@@ -481,6 +496,19 @@ export default class MapManager {
      */
     public static setOpacity(layer: LayerInterface, opacity: number): void { 
         layer.setOpacity(opacity);
+    }
+
+    /**
+     * Sets opacity of layer
+     *
+     * @function setOpacity
+     * @memberof MapManager
+     * @static
+     * @param {Object} layer - layer instance
+     * @param {Number} opacity - opacity to set (from 0 to 100)
+     */
+    public static getSRSId(layer: LayerInterface): string { 
+        return layer.getSRS();
     }
 
     /**
@@ -528,6 +556,7 @@ export default class MapManager {
      *
      * @function getEventHandlers
      * @memberof MapManager
+     * @static
      * @param {Object} map - map instance
      * @return {Object} event handlers collection
      */
@@ -540,6 +569,7 @@ export default class MapManager {
      *
      * @function getDirtyFeatures
      * @memberof MapManager
+     * @static
      * @param {Object} layer - layer instance
      * @return {Object} dirty features
      */
@@ -552,6 +582,7 @@ export default class MapManager {
      *
      * @function setDirtyFeatures
      * @memberof MapManager
+     * @static
      * @param {Object} layer - layer instance
      * @param {Object} features - features to be set
      * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
@@ -565,23 +596,25 @@ export default class MapManager {
      *
      * @function getVertexCoordinates
      * @memberof MapManager
+     * @static
      * @param {Object} feature - feature
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ [idx1, x1, y1], [idx2, x2, y2] ]
      */
-    public static getVertexCoordinates(feature: Feature): number[][] {
+    public static getVertexCoordinates(feature: Feature): VertexCoordinate[] {
         return feature.getCoordinates();
     }
 
     /**
      * Edits feature vertex coordinate at given index
      *
-     * @function editVertexCoordinate
+     * @function updateVertexCoordinate
      * @memberof MapManager
+     * @static
      * @param {Object} feature - feature
      * @param {Number} index - vertice index to edit
      * @param {Array} coordinate - feature vertex coordinate
      */
-    public static editVertexCoordinate(feature: Feature, index: number, coordinate: number[]): void {
+    public static updateVertexCoordinate(feature: Feature, index: number, coordinate: number[]): void {
         feature.modifyCoordinate("edit", [index, coordinate[0], coordinate[1]]);
     }
 
@@ -590,6 +623,7 @@ export default class MapManager {
      *
      * @function deleteVertexCoordinate
      * @memberof MapManager
+     * @static
      * @param {Object} feature - feature
      * @param {Number} index - vertex index to delete
      */
@@ -602,6 +636,7 @@ export default class MapManager {
      *
      * @function getGeometryAsText
      * @memberof MapManager
+     * @static
      * @param {Object} feature - feature
      * @param {String} format - format to return in
      * @param {Number} srsId - SRS Id of returned feature text representation
@@ -616,12 +651,13 @@ export default class MapManager {
      *
      * @function updateGeometryFromText
      * @memberof MapManager
+     * @static
      * @param {Object} feature - feature
      * @param {String} text - feature text representation
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation
      */
-    public updateGeometryFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
+    public static updateGeometryFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
         feature.updateGeometryFromText(text, format, srsId);
         feature.setDirty(true);
     }
@@ -631,14 +667,70 @@ export default class MapManager {
      *
      * @function updateGeometryFromText
      * @memberof MapManager
+     * @static
      * @param {String} text - feature text representation
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation
      */
-    public createGeometryFromText(text: string, format: GeometryFormat, srsId: number): Feature {
+    public static createGeometryFromText(text: string, format: GeometryFormat, srsId: number): Feature {
         const feature: Feature = new Feature();
         feature.setDirty(true);
         return feature.createGeometryFromText(text, format, srsId);
     }
+
+    /**
+     * Copies features into clipboard
+     *
+     * @function copyFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to cut
+     */
+    public static copyFeatures(map: Map, features: FeatureCollection): void {
+        map.copyToClipBoard(features);
+    }
+
+    /**
+     * Cuts features into clipboard
+     *
+     * @function cutFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} features - features to cut
+     */
+    public static cutFeatures(map: Map, features: FeatureCollection): void {
+        map.cutToClipBoard(features);
+    }
+
+    /**
+     * Pastes features from clipboard
+     *
+     * @function pasteFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} map - map instance
+     * @param {Object} map - layer instance to paste to
+     */
+    public static pasteFeatures(map: Map, layer: LayerInterface): void {
+        map.pasteFromClipboard(layer);
+    }
+
+    /**
+     * Sets style of features 
+     *
+     * @function pasteFeatures
+     * @memberof MapManager
+     * @static
+     * @param {Object} features - features
+     * @param {Object} style - style
+     */
+    public static setStyle(features: FeatureCollection, style: unknown) {
+        const styleFunc: StyleFunction = new StyleBuilder(style).build();
+        features.forEach((feature: Feature): void => {
+            feature.setStyle(styleFunc);
+        });
+     }
 
 }

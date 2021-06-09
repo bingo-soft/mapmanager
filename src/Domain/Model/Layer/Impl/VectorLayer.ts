@@ -1,3 +1,4 @@
+import { Layer as OlLayer } from "ol/layer";
 import { Vector as OlVectorLayer } from "ol/layer";
 import { Source as OlSource } from "ol/source";
 import { Vector as OlVectorSource } from "ol/source";
@@ -17,20 +18,21 @@ import Feature from "../../Feature/Feature";
 export default class VectorLayer extends AbstractLayer{
 
     private dirtyFeatures: FeatureCollection = new FeatureCollection([]);
+    private removedFeatures: FeatureCollection = new FeatureCollection([]);
     
     /**
      * @constructor
      * @memberof VectorLayer
      * @param {Object} opts - options
      */
-    constructor(opts?: unknown) {
+    constructor(layer?: OlLayer, opts?: unknown) { 
         super();
+        this.layer = layer ? layer : new OlVectorLayer();
         this.srs = "EPSG:3857";
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
             this.srs = "EPSG:" + (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
         }
-        this.layer = new OlVectorLayer();
     }
 
     /**
@@ -178,7 +180,40 @@ export default class VectorLayer extends AbstractLayer{
      * @return {Boolean} flag if layer is dirty
      */
     public isDirty(): boolean {
-        return this.dirtyFeatures.getLength() != 0;
+        return (this.dirtyFeatures.getLength() != 0) || (this.removedFeatures.getLength() != 0);
+    }
+
+    /**
+     * Returns collection of removed features
+     *
+     * @function getRemovedFeatures
+     * @memberof VectorLayer
+     * @return {Object} collection of removed features
+     */
+    public getRemovedFeatures(): FeatureCollection {
+        return this.removedFeatures;
+    }
+
+    /**
+     * Adds features to removed
+     *
+     * @function setRemovedFeatures
+     * @memberof VectorLayer
+     * @param {Object} features - single feature or collection
+     */
+    public setRemovedFeatures(features: Feature | FeatureCollection): void  {
+        if (typeof features === "undefined") {
+            return;
+        }
+        if (features instanceof Feature) {
+            this.removedFeatures.add(features);
+        } else if (features instanceof FeatureCollection) {
+            features.forEach((feature: Feature): void => {
+                this.removedFeatures.add(feature);
+            });
+        } else {
+
+        }
     }
     
 }
