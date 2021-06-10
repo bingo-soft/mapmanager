@@ -18,6 +18,7 @@ import InteractionInterface from "./Domain/Model/Interaction/InteractionInterfac
 import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
 import StyleFunction from "./Domain/Model/Style/StyleFunctionType"
 import { VertexCoordinate } from "./Domain/Model/Feature/VertexCoordinate"
+import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
 
 /** @class MapManager */
 export default class MapManager { 
@@ -688,6 +689,7 @@ export default class MapManager {
      * @param {Object} features - features to cut
      */
     public static copyFeatures(map: Map, features: FeatureCollection): void {
+        MapManager.setStyle(features, CopyStyle);
         map.copyToClipBoard(features);
     }
 
@@ -701,6 +703,7 @@ export default class MapManager {
      * @param {Object} features - features to cut
      */
     public static cutFeatures(map: Map, features: FeatureCollection): void {
+        MapManager.setStyle(features, CutStyle);
         map.cutToClipBoard(features);
     }
 
@@ -720,17 +723,21 @@ export default class MapManager {
     /**
      * Sets style of features 
      *
-     * @function pasteFeatures
+     * @function setStyle
      * @memberof MapManager
      * @static
      * @param {Object} features - features
      * @param {Object} style - style
      */
     public static setStyle(features: FeatureCollection, style: unknown) {
-        const styleFunc: StyleFunction = new StyleBuilder(style).build();
-        features.forEach((feature: Feature): void => {
-            feature.setStyle(styleFunc);
-        });
-     }
+        if (features && features.getLength()) {
+            const styleFunc: StyleFunction = new StyleBuilder(style).build();
+            features.forEach((feature: Feature): void => {
+                feature.setStyle(styleFunc);
+            });
+        }
+    }
+
+
 
 }

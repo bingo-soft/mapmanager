@@ -550,8 +550,10 @@ export default class Map {
      * @param {Object} layer - layer instance
      */
     public addLayer(layer: LayerInterface): void {
-        this.map.addLayer(layer.getLayer());
-        this.layers.add(layer);
+        if (layer) {
+            this.map.addLayer(layer.getLayer());
+            this.layers.add(layer);
+        }
     }
 
     /**
@@ -562,8 +564,10 @@ export default class Map {
      * @param {Object} layer - layer instance
      */
     public removeLayer(layer: LayerInterface): void {
-        this.map.removeLayer(layer.getLayer());
-        this.layers.delete(layer);
+        if (layer) {
+            this.map.removeLayer(layer.getLayer());
+            this.layers.delete(layer);
+        }
     }
 
     /**
@@ -814,11 +818,13 @@ export default class Map {
      * @param {Object} layer - layer instance to paste to
      */
     public pasteFromClipboard(layer: LayerInterface): void {
-        if (this.clipboard["remove"]) {
-            this.removeFeatures(this.clipboard["features"]);
+        if (this.clipboard["features"]) {
+            if (this.clipboard["remove"]) {
+                this.removeFeatures(this.clipboard["features"]);
+            }
+            this.addFeatures(layer, this.clipboard["features"]);
+            this.clipboard["features"].clear();
+            this.clearSelectedFeatures();
         }
-        this.addFeatures(layer, this.clipboard["features"]);
-        this.clipboard["features"].clear();
-        this.clearSelectedFeatures();
     }
 }

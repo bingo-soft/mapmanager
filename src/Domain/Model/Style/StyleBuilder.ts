@@ -44,7 +44,7 @@ export default class StyleBuilder {
      * @memberof StyleBuilder
      * @param {Object} opts - options
      */
-    private applyOptions(opts?: unknown): void { debugger
+    private applyOptions(opts?: unknown): void {
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length) {
                 this.setPointStyle(opts["point"]);
