@@ -115,7 +115,7 @@ export default class Feature {
      *
      * @function getCoordinates
      * @memberof Feature
-     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ [idx1, x1, y1], [idx2, x2, y2] ]
+     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
      public getCoordinates(): VertexCoordinate[] {
         const returnCoordinates: VertexCoordinate[] = [];
