@@ -598,7 +598,7 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} feature - feature
-     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ [idx1, x1, y1], [idx2, x2, y2] ]
+     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     public static getVertexCoordinates(feature: Feature): VertexCoordinate[] {
         return feature.getCoordinates();

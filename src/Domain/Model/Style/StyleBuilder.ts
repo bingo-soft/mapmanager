@@ -1,7 +1,7 @@
+import OlVectorLayer from "ol/layer/Vector";
 import OlGeometryType from "ol/geom/GeometryType"
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
-import { DefaultStyle } from "./Impl/DefaultStyle"
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 
@@ -44,38 +44,20 @@ export default class StyleBuilder {
      * @memberof StyleBuilder
      * @param {Object} opts - options
      */
-    private applyOptions(opts?: unknown): void {
+    private applyOptions(opts?: unknown): void { debugger
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length) {
                 this.setPointStyle(opts["point"]);
-            } else {
-                this.style["Point"] = DefaultStyle["Point"];
-                this.style["MultiPoint"] = DefaultStyle["MultiPoint"];
             }
             if (Object.prototype.hasOwnProperty.call(opts, "linestring") && Object.keys(opts["linestring"]).length) {
                 this.setLinestringStyle(opts["linestring"]);
-            } else {
-                this.style["LineString"] = DefaultStyle["LineString"];
-                this.style["MultiLineString"] = DefaultStyle["MultiLineString"];
             }
             if (Object.prototype.hasOwnProperty.call(opts, "polygon") && Object.keys(opts["polygon"]).length) {
                 this.setPolygonStyle(opts["polygon"]);
-            } else {
-                this.style["Polygon"] = DefaultStyle["Polygon"];
-                this.style["MultiPolygon"] = DefaultStyle["MultiPolygon"];
             }
-            /* if (Object.prototype.hasOwnProperty.call(opts, "geometrycollection") && Object.keys(opts["geometrycollection"]).length) {
-                this.setGeometryCollectionStyle(opts["geometrycollection"]);
-            } else {
-                this.style["GeometryCollection"] = DefaultStyle["GeometryCollection"];
-            } */
             if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length) {
                 this.setTextStyle(opts["label"]);
-            }/*  else { // не имеет смысла, т.к. label не задан
-                this.style["Text"] = DefaultStyle["Text"];
-            } */
-        } else {
-            this.style = DefaultStyle;
+            }
         }
     }
 
@@ -90,10 +72,9 @@ export default class StyleBuilder {
     private setPointStyle(opts: unknown): StyleBuilder {
         let style: OlStyle = null;
         if (opts["marker_type"] == "simple_point") {
-            const defaultImage: OlCircleStyle = <OlCircleStyle> DefaultStyle["Point"].getImage();
             style = new OlStyle({
                 image: new OlCircleStyle({
-                    radius: opts["size"] ? opts["size"] : defaultImage.getRadius(),
+                    radius: opts["size"] || 2,
                     fill: new OlFill({
                         color: opts["color"]
                     }),
@@ -106,10 +87,10 @@ export default class StyleBuilder {
         } else if (opts["marker_type"] == "image") {
             style = new OlStyle({
                 image: new OlIconStyle({
-                    opacity: opts["opacity"] / 100,
-                    rotation: opts["rotation"] * Math.PI / 180,
+                    opacity: opts["opacity"] ? opts["opacity"] / 100 : 1,
+                    rotation: opts["rotation"] ? opts["rotation"] * Math.PI / 180 : 0,
                     offset: opts["offset"],
-                    anchor: [StyleBuilder.POSITIONS[opts["anchor"][0]], StyleBuilder.POSITIONS[opts["anchor"][1]]],
+                    anchor: opts["anchor"][0] && opts["anchor"][1] ? [StyleBuilder.POSITIONS[opts["anchor"][0]], StyleBuilder.POSITIONS[opts["anchor"][1]]] : [0.5, 0.5],
                     src: opts["image_path"],
                 })
             });
@@ -158,28 +139,6 @@ export default class StyleBuilder {
     }
 
     /**
-     * Sets geometry collection style
-     *
-     * @function setGeometryCollectionStyle
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
-     * @return {Object} style builder instance
-     */
-    /* private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
-        const style: OlStyle = new OlStyle({
-            stroke: new OlStroke({
-                color: opts["color"], 
-                width: opts["stroke_width"]
-            }),
-            fill: new OlFill({
-                color: opts["background_color"],
-            }),
-        });
-        this.style["GeometryCollection"] = style;
-        return this;
-    } */
-
-    /**
      * Sets text style
      *
      * @function setTextStyle
@@ -188,24 +147,52 @@ export default class StyleBuilder {
      * @return {Object} style builder instance
      */
     private setTextStyle(opts: unknown): StyleBuilder {
-        if (typeof opts["style"] !== "undefined") {
-            const style: OlTextStyle = new OlTextStyle({
-                stroke: new OlStroke({
-                    color: typeof opts["style"]["stroke"] !== "undefined" ? opts["style"]["stroke"]["color"] : DefaultStyle["Text"].getStroke().getColor(), 
-                    width: typeof opts["style"]["stroke"] !== "undefined" ? opts["style"]["stroke"]["stroke_width"] : DefaultStyle["Text"].getStroke().getWidth()
-                }),
-                fill: new OlFill({
-                    color: typeof opts["style"]["fill"] !== "undefined" ? opts["style"]["fill"]["background_color"] : DefaultStyle["Text"].getFill().getColor()
-                }),
-                font: opts["style"]["font"],
-                text: opts["field"]
-            });
-            this.style["Text"] = style;
-        }  else {
-            this.style["Text"] = DefaultStyle["Text"];
-            this.style["Text"].setText(opts["field"]);
-        }
+        const style: OlTextStyle = new OlTextStyle({
+            stroke: new OlStroke({
+                color: opts["style"]["stroke"]["color"], 
+                width: opts["style"]["stroke"]["stroke_width"]
+            }),
+            fill: new OlFill({
+                color: opts["style"]["fill"]["background_color"]
+            }),
+            font: opts["style"]["font"],
+            text: opts["field"]
+        });
+        this.style["Text"] = style;
         return this;
+    }
+
+    /**
+     * Builds style
+     *
+     * @function build
+     * @memberof StyleBuilder
+     * @return {Function} style function
+     */
+    public build(): StyleFunction {
+        return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
+            const geomType: OlGeometryType = feature.getGeometry().getType();
+            const style: OlStyle = this.style[geomType];
+            const textStyle: OlTextStyle = this.style["Text"];
+            if (style && textStyle) {
+                const textValue: string = feature.getProperties()[textStyle.getText()];
+                if (textValue) {
+                    const newTextStyle: OlTextStyle = new OlTextStyle({
+                        stroke: new OlStroke({
+                            color: textStyle.getStroke().getColor(),
+                            width: textStyle.getStroke().getWidth()
+                        }),
+                        fill: new OlFill({
+                            color: textStyle.getFill().getColor()
+                        }),
+                        font: textStyle.getFont()
+                    });
+                    newTextStyle.setText(textValue);
+                    style.setText(newTextStyle);
+                }
+            }
+            return style ? style : new OlVectorLayer().getStyleFunction()(feature, resolution); // default OL style
+        }
     }
 
     /**
@@ -229,38 +216,5 @@ export default class StyleBuilder {
         }
         opacity = Math.round(opacity * 2.55);
         return color + opacity.toString(16).toUpperCase().padStart(2, "0");
-    }
-
-    /**
-     * Builds style
-     *
-     * @function build
-     * @memberof StyleBuilder
-     * @return {Function>} style function
-     */
-    public build(): StyleFunction {
-        return (feature: OlFeature): OlStyle => {
-            const geomType: OlGeometryType = feature.getGeometry().getType();
-            const style: OlStyle = this.style[geomType];
-            const textStyle: OlTextStyle = this.style["Text"];
-            if (style && textStyle) {
-                const textValue: string = feature.getProperties()[textStyle.getText()];
-                if (textValue) {
-                    const newTextStyle: OlTextStyle = new OlTextStyle({
-                        stroke: new OlStroke({
-                            color: textStyle.getStroke().getColor(),
-                            width: textStyle.getStroke().getWidth()
-                        }),
-                        fill: new OlFill({
-                            color: textStyle.getFill().getColor()
-                        }),
-                        font: textStyle.getFont()
-                    });
-                    newTextStyle.setText(textValue);
-                    style.setText(newTextStyle);
-                }
-            }
-            return style;
-        }
     }
 }
