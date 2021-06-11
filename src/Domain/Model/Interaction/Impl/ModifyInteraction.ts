@@ -9,8 +9,8 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import LayerInterface from "../../Layer/LayerInterface";
-import VectorLayer from "../../Layer/Impl/VectorLayer"
 import { ModifyCallbackFunction } from "../InteractionCallbackType";
+import Feature from "../../Feature/Feature";
 
 /** @class ModifyInteraction */
 export default class ModifyInteraction extends BaseInteraction {
@@ -25,9 +25,13 @@ export default class ModifyInteraction extends BaseInteraction {
         super();
         const opts: unknown = {};
         if (source instanceof FeatureCollection) {
-            opts["features"] = new Collection((<FeatureCollection> source).getFeatures());
+            const olFeatures: OlFeature[] = [];
+            source.getFeatures().forEach((feature: Feature): void => {
+                olFeatures.push(feature.getFeature());
+            });
+            opts["features"] = new Collection(olFeatures);
         } else {
-            opts["source"] = (<VectorLayer> source).getSource();            
+            opts["source"] = source.getSource();            
         }
         this.interaction = new OlModify(opts);
         this.type = InteractionType.Modify;

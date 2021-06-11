@@ -309,8 +309,8 @@ export default class MapManager {
      * @param {Object} layer - layer instance
      * @return {Object} feature collection 
      */
-    public static getFeatureCollection(layer: VectorLayer): FeatureCollection {
-        return layer.getFeatureCollection();
+    public static getFeatures(layer: VectorLayer): FeatureCollection {
+        return layer.getFeatures();
     }
 
     /**
@@ -729,7 +729,7 @@ export default class MapManager {
      * @param {Object} features - features
      * @param {Object} style - style
      */
-    public static setStyle(features: FeatureCollection, style: unknown) {
+    public static setStyle(features: FeatureCollection, style: unknown): void {
         if (features && features.getLength()) {
             const styleFunc: StyleFunction = new StyleBuilder(style).build();
             features.forEach((feature: Feature): void => {

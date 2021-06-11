@@ -129,21 +129,10 @@ export default class VectorLayer extends AbstractLayer{
      *
      * @function getFeatures
      * @memberof VectorLayer
-     * @return {Array} features of the layer
+     * @return {Object} features of the layer
      */
-    private getFeatures(): OlFeature[] {
-        return (<OlVectorLayer> this.layer).getSource().getFeatures();
-    }
-
-    /**
-     * Returns FeatureCollection of features
-     *
-     * @function getFeatureCollection
-     * @memberof VectorLayer
-     * @return {Object} FeatureCollection of features
-     */
-    public getFeatureCollection(): FeatureCollection {
-        return new FeatureCollection(this.getFeatures(), this.srs, this.layer);
+    public getFeatures(): FeatureCollection {
+        return new FeatureCollection((<OlVectorLayer> this.layer).getSource().getFeatures(), this.srs, this.layer);
     }
 
     /**
