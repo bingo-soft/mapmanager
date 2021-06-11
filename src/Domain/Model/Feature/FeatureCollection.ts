@@ -61,18 +61,14 @@ export default class FeatureCollection {
     }
 
     /**
-     * Returns an array of OL feature instances
+     * Returns an array of feature instances
      *
      * @function getFeatures
      * @memberof FeatureCollection
-     * @return {Array} array of OL feature instances
+     * @return {Array} features of the  collection
      */
-    public getFeatures(): OlFeature[] {
-        const ret: OlFeature[] = [];
-        this.features.forEach((feature: Feature): void => {
-            ret.push(feature.getFeature());
-        });
-        return ret;
+    public getFeatures(): Feature[] {
+        return this.features;
     }
 
     /**
@@ -164,7 +160,7 @@ export default class FeatureCollection {
         if (typeof callbackfn != "function") {
             throw new TypeError();
         }
-        for (var i = 0; i < this.features.length; i++) {
+        for (let i: number = 0; i < this.features.length; i++) {
             if (i in this.features) {
                 callbackfn.call(thisArg, this.features[i], i, this.features);
             }
