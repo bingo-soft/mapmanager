@@ -3,8 +3,9 @@ import OlFeature from "ol/Feature";
 import {Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
     Polygon as OlPolygon, MultiPolygon as OlMultiPolygon} from "ol/geom"
 import { Layer as OlLayer } from "ol/layer";
+import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
-import GeometryFormat from "../GeometryFormat/GeometryFormat";
+import GeometryFormat from "./GeometryFormat/GeometryFormat";
 import LayerInterface from "../Layer/LayerInterface";
 import VectorLayer from "../Layer/Impl/VectorLayer";
 import StyleFunction from "../Style/StyleFunctionType";
@@ -16,6 +17,8 @@ export default class Feature {
     private feature: OlFeature;
     private layer: LayerInterface;
     private dirty: boolean;
+
+    private static readonly DEFAULT_SRS = "EPSG:3857";
 
     /**
      * @constructor
@@ -277,7 +280,7 @@ export default class Feature {
         if (formatInstance) {
             return formatInstance.writeFeature(this.feature, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer.getSource().getProjection() || "EPSG:3857"
+                featureProjection: this.layer.getSource().getProjection() || Feature.DEFAULT_SRS
             });
         }
         return "";
@@ -297,7 +300,7 @@ export default class Feature {
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer ? this.layer.getSource().getProjection() || "EPSG:3857" : "EPSG:3857"
+                featureProjection: this.layer ? this.layer.getSource().getProjection() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
             });
         }
     }
@@ -311,13 +314,14 @@ export default class Feature {
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation
      */
-    public createGeometryFromText(text: string, format: GeometryFormat, srsId: number): Feature {
+    public createGeometryFromText(layer:LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
         const formatInstance: OlWKT | OlGeoJSON = this.getFormatInstance(format);
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer ? this.layer.getSource().getProjection() || "EPSG:3857" : "EPSG:3857"
+                featureProjection: this.layer ? this.layer.getSource().getProjection() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
             });
+            (<OlVectorSource> layer.getLayer().getSource()).addFeature(this.feature);
             return this;
         }
         return null;

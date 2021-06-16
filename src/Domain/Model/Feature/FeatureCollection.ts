@@ -17,11 +17,12 @@ import VectorLayer from "../Layer/Impl/VectorLayer";
 
 /** @class FeatureCollection */
 export default class FeatureCollection { 
-    
-    private features: Feature[] = [];
-    private srs: string = "EPSG:3857";
 
     private static readonly MAP_SRS_ID = 3857;
+    
+    private features: Feature[] = [];
+    private srs: string = "EPSG:" + FeatureCollection.MAP_SRS_ID;
+
     
     /**
      * @constructor
