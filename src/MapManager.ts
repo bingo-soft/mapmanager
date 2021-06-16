@@ -13,7 +13,7 @@ import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 import Feature from "./Domain/Model/Feature/Feature"
-import GeometryFormat from "./Domain/Model/GeometryFormat/GeometryFormat"
+import GeometryFormat from "./Domain/Model/Feature/GeometryFormat/GeometryFormat"
 import InteractionInterface from "./Domain/Model/Interaction/InteractionInterface"
 import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
 import StyleFunction from "./Domain/Model/Style/StyleFunctionType"
@@ -673,10 +673,10 @@ export default class MapManager {
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation
      */
-    public static createGeometryFromText(text: string, format: GeometryFormat, srsId: number): Feature {
+    public static createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
         const feature: Feature = new Feature();
         feature.setDirty(true);
-        return feature.createGeometryFromText(text, format, srsId);
+        return feature.createGeometryFromText(layer, text, format, srsId);
     }
 
     /**
