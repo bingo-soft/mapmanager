@@ -13,7 +13,7 @@ import InteractionType from "./Domain/Model/Interaction/InteractionType"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 import Feature from "./Domain/Model/Feature/Feature"
-import GeometryFormat from "./Domain/Model/Feature/GeometryFormat/GeometryFormat"
+import GeometryFormat from "./Domain/Model/Feature/GeometryFormat"
 import InteractionInterface from "./Domain/Model/Interaction/InteractionInterface"
 import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
 import StyleFunction from "./Domain/Model/Style/StyleFunctionType"
@@ -320,10 +320,11 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} layer - layer instance
+     * @param {Number} srsId - SRS Id of returned features
      * @return {String} GeoJSON representing features as single geometry
      */
-    public static getFeaturesAsSingleGeometry(features: FeatureCollection): string {
-        return features.getAsSingleGeometry();
+    public static getFeaturesAsSingleGeometry(features: FeatureCollection, srsId: number): string {
+        return features.getAsSingleGeometry(srsId);
     }
 
     /**
@@ -333,10 +334,11 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} layer - layer instance
+     * @param {Number} srsId - SRS Id of returned features
      * @return {String} GeoJSON representing features as multi geometry
      */
-    public static getFeaturesAsMultiGeometry(features: FeatureCollection): string {
-        return features.getAsMultiGeometry();
+    public static getFeaturesAsMultiGeometry(features: FeatureCollection, srsId: number): string {
+        return features.getAsMultiGeometry(srsId);
     }
 
     /**
@@ -346,10 +348,11 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} layer - layer instance
+     * @param {Number} srsId - SRS Id of returned features
      * @return {String} GeoJSON representing features as GeometryCollection
      */
-    public static getFeaturesAsGeometryCollection(features: FeatureCollection): string {
-        return features.getAsGeometryCollection();
+    public static getFeaturesAsGeometryCollection(features: FeatureCollection, srsId: number): string {
+        return features.getAsGeometryCollection(srsId);
     }
 
     /**
@@ -500,16 +503,16 @@ export default class MapManager {
     }
 
     /**
-     * Sets opacity of layer
+     * Return layer's SRS Id
      *
-     * @function setOpacity
+     * @function getSRSId
      * @memberof MapManager
      * @static
      * @param {Object} layer - layer instance
-     * @param {Number} opacity - opacity to set (from 0 to 100)
+     * @return {Number} SRS Id
      */
-    public static getSRSId(layer: LayerInterface): string { 
-        return layer.getSRS();
+    public static getSRSId(layer: LayerInterface): number { 
+        return layer.getSRSId();
     }
 
     /**

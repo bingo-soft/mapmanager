@@ -3,7 +3,8 @@ import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import { Extent as OlExtent } from "ol/extent";
-import { Zoom as OlZoomControl, OverviewMap as OlOverviewMapControl, defaults as OlDefaultControls } from "ol/control";
+import { OverviewMap as OlOverviewMapControl, defaults as OlDefaultControls } from "ol/control";
+import OlVectorLayer from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
@@ -129,9 +130,9 @@ export default class Map {
         });
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
-        this.selectedFeatures = new FeatureCollection([], "EPSG:" + srsId.toString());
+        this.selectedFeatures = new FeatureCollection([]/* , "EPSG:" + srsId.toString() */);
         this.clipboard = {
-            "features": new FeatureCollection([], "EPSG:" + srsId.toString()),
+            "features": new FeatureCollection([]/* , "EPSG:" + srsId.toString() */),
             "remove": false
         }
         this.eventHandlers = new EventHandlerCollection(this.map);
@@ -241,7 +242,7 @@ export default class Map {
         if (features) {
             this.selectedFeatures = features;
         } else {
-            this.selectedFeatures = new FeatureCollection([], "EPSG:" + this.srsId.toString());
+            this.selectedFeatures = new FeatureCollection([]/* , "EPSG:" + this.srsId.toString() */);
         }
     }
 
@@ -323,7 +324,7 @@ export default class Map {
                 highlightSelect.getFeatures().clear();
             }
         }
-        this.selectedFeatures = new FeatureCollection([], "EPSG:" + this.srsId.toString());
+        this.selectedFeatures = new FeatureCollection([]/* , "EPSG:" + this.srsId.toString() */);
         this.selectedLayers.clear();
     }
 

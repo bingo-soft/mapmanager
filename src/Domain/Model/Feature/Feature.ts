@@ -5,7 +5,7 @@ import {Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString
 import { Layer as OlLayer } from "ol/layer";
 import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
-import GeometryFormat from "./GeometryFormat/GeometryFormat";
+import GeometryFormat from "./GeometryFormat";
 import LayerInterface from "../Layer/LayerInterface";
 import VectorLayer from "../Layer/Impl/VectorLayer";
 import StyleFunction from "../Style/StyleFunctionType";

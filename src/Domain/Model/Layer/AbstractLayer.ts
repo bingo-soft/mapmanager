@@ -15,7 +15,7 @@ export default abstract class AbstractLayer implements LayerInterface
     protected layer: OlLayer;
     protected properties: unknown;
     protected eventHandlers: EventHandlerCollection;
-    protected srs: string;
+    protected srsId: number;
 
     /**
      * Returns Openlayers layer instance
@@ -82,14 +82,14 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Returns layer's SRS
+     * Returns layer's SRS Id
      *
-     * @function getSRS
+     * @function getSRSId
      * @memberof AbstractLayer
-     * @return {String} layer's SRS
+     * @return {Number} layer's SRS
      */
-    public getSRS(): string {
-        return this.srs;
+    public getSRSId(): number {
+        return this.srsId;
     }
 
     /**
