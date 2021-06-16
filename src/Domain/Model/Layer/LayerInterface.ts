@@ -51,9 +51,9 @@ export default interface LayerInterface
      *
      * @function getSRS
      * @memberof LayerInterface
-     * @return {String} layer's SRS
+     * @return {Number} layer's SRS Id
      */
-    getSRS(): string;
+    getSRSId(): number;
     
     /**
      * Returns layer's Openlayers source instance

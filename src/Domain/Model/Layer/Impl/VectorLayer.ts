@@ -20,7 +20,7 @@ export default class VectorLayer extends AbstractLayer{
     private dirtyFeatures: FeatureCollection = new FeatureCollection([]);
     private removedFeatures: FeatureCollection = new FeatureCollection([]);
     
-    private static readonly DEFAULT_SRS = "EPSG:3857";
+    private static readonly DEFAULT_SRS_ID = 3857;
     
     /**
      * @constructor
@@ -30,10 +30,10 @@ export default class VectorLayer extends AbstractLayer{
     constructor(layer?: OlLayer, opts?: unknown) { 
         super();
         this.layer = layer ? layer : new OlVectorLayer();
-        this.srs = VectorLayer.DEFAULT_SRS;
+        this.srsId = VectorLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
-            this.srs = "EPSG:" + (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
+            this.srsId = (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
         }
     }
 
@@ -84,8 +84,8 @@ export default class VectorLayer extends AbstractLayer{
         source.setLoader(async () => {
             const data = await loader(); 
             source.addFeatures(new OlGeoJSON().readFeatures(data, {
-                dataProjection: this.srs,
-                featureProjection: VectorLayer.DEFAULT_SRS
+                dataProjection: "EPSG:" + this.srsId.toString(),
+                featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
             }));
         });
     }
@@ -121,8 +121,8 @@ export default class VectorLayer extends AbstractLayer{
      */
     public addFeatures(features: string): void {
         (<OlVectorLayer> this.layer).getSource().addFeatures(new OlGeoJSON().readFeatures(features, {
-            dataProjection: this.srs,
-            featureProjection: VectorLayer.DEFAULT_SRS
+            dataProjection: "EPSG:" + this.srsId,
+            featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
         }));
     }
 
@@ -134,7 +134,7 @@ export default class VectorLayer extends AbstractLayer{
      * @return {Object} features of the layer
      */
     public getFeatures(): FeatureCollection {
-        return new FeatureCollection((<OlVectorLayer> this.layer).getSource().getFeatures(), this.srs, this.layer);
+        return new FeatureCollection((<OlVectorLayer> this.layer).getSource().getFeatures(), /* "EPSG:" + this.srsId.toString(), */ this.layer);
     }
 
     /**

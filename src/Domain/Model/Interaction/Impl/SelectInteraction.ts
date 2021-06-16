@@ -60,8 +60,8 @@ export default class SelectInteraction extends BaseInteraction {
                         layers.add(layer);
                         features.push(new Feature(feature, layer));
                     });
-                    const srs: string = olMap.getView().getProjection().getCode();
-                    fc = new FeatureCollection(features, srs);
+                    //const srs: string = olMap.getView().getProjection().getCode();
+                    fc = new FeatureCollection(features/* , srs */);
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(layers);
                     if (typeof callback === "function") {
@@ -93,7 +93,7 @@ export default class SelectInteraction extends BaseInteraction {
                             }
                         }
                     });
-                    fc = new FeatureCollection(features, olMap.getView().getProjection().getCode());
+                    fc = new FeatureCollection(features/* , olMap.getView().getProjection().getCode() */);
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(layers);
                     if (typeof callback === "function") {
