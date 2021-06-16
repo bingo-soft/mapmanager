@@ -129,7 +129,7 @@ export default class StyleBuilder {
                 width: opts["stroke_width"]
             }),
             fill: new OlFill({
-                color: this.applyOpacity(opts["background_color"], opts["opacity"]),
+                color: opts["opacity"] ? this.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
             }),
         });
         this.style["Polygon"] = style;
@@ -149,13 +149,13 @@ export default class StyleBuilder {
     private setTextStyle(opts: unknown): StyleBuilder {
         const style: OlTextStyle = new OlTextStyle({
             stroke: new OlStroke({
-                color: opts["style"]["stroke"]["color"], 
-                width: opts["style"]["stroke"]["stroke_width"]
+                color: opts["style"] && opts["style"]["stroke"] && opts["style"]["stroke"]["color"] ? opts["style"]["stroke"]["color"] : null, 
+                width: opts["style"] && opts["style"]["stroke"] && opts["style"]["stroke"]["stroke_width"] ? opts["style"]["stroke"]["stroke_width"] : null
             }),
             fill: new OlFill({
-                color: opts["style"]["fill"]["background_color"]
+                color: opts["style"] && opts["style"]["fill"] && opts["style"]["fill"]["background_color"] ? opts["style"]["fill"]["background_color"] : null
             }),
-            font: opts["style"]["font"],
+            font: opts["style"] && opts["style"]["font"] ? opts["style"]["font"] : null,
             text: opts["field"]
         });
         this.style["Text"] = style;
