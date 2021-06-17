@@ -295,13 +295,14 @@ export default class Feature {
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation
      */
-     public updateGeometryFromText(text: string, format: GeometryFormat, srsId: number): void {
+    public updateGeometryFromText(text: string, format: GeometryFormat, srsId: number): void {
         const formatInstance: OlWKT | OlGeoJSON = this.getFormatInstance(format);
         if (formatInstance) {
-            this.feature = formatInstance.readFeature(text, {
+            const tempFeature: OlFeature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
                 featureProjection: this.layer ? this.layer.getSource().getProjection() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
             });
+            this.feature.setGeometry(tempFeature.getGeometry());
         }
     }
 
@@ -310,6 +311,7 @@ export default class Feature {
      *
      * @function updateGeometryFromText
      * @memberof Feature
+     * @param {Object} layer - layer to put a feature into
      * @param {String} text - feature text representation
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation

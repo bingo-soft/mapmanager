@@ -667,11 +667,12 @@ export default class MapManager {
     }
 
     /**
-     * Updates feature geometry from text
+     * Creates feature geometry from text
      *
-     * @function updateGeometryFromText
+     * @function createGeometryFromText
      * @memberof MapManager
      * @static
+     * @param {Object} layer - layer to put a feature into
      * @param {String} text - feature text representation
      * @param {String} format - format of feature text representation
      * @param {Number} srsId - SRS Id of feature text representation
