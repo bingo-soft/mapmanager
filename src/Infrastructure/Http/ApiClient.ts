@@ -13,7 +13,6 @@ export class ApiClient {
      * @memberof ApiClient
      * @static
      * @param {ApiRequest} request - request params
-     * @param {Number} opacity - opacity to set (from 0 to 1)
      * @return {Promise<string>} result of API request
      */
     public static request(request: ApiRequest): Promise<string> {
