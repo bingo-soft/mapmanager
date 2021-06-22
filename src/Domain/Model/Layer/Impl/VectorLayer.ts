@@ -134,7 +134,7 @@ export default class VectorLayer extends AbstractLayer{
      * @return {Object} features of the layer
      */
     public getFeatures(): FeatureCollection {
-        return new FeatureCollection((<OlVectorLayer> this.layer).getSource().getFeatures(), /* "EPSG:" + this.srsId.toString(), */ this.layer);
+        return new FeatureCollection((<OlVectorLayer> this.layer).getSource().getFeatures(), this);
     }
 
     /**

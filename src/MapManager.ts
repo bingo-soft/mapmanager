@@ -17,7 +17,7 @@ import GeometryFormat from "./Domain/Model/Feature/GeometryFormat"
 import InteractionInterface from "./Domain/Model/Interaction/InteractionInterface"
 import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
 import StyleFunction from "./Domain/Model/Style/StyleFunctionType"
-import { VertexCoordinate } from "./Domain/Model/Feature/VertexCoordinate"
+import GeometryItem from "./Domain/Model/Feature/GeometryItem"
 import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
 
 /** @class MapManager */
@@ -548,7 +548,7 @@ export default class MapManager {
      * @static
      * @param {Object} map - map instance
      * @param {String} eventType - event type
-     * @param {String} handlerName - handler id
+     * @param {String} handlerId - handler id
      * @param {Function} callback - callback function to call when an event is triggered
      */
     public static setEventHandler(map: Map, eventType: EventType, handlerId: string, callback: (data: unknown) => void): void {
@@ -591,9 +591,9 @@ export default class MapManager {
      * @param {Object} features - features to be set
      * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
-    public static setDirtyFeatures(layer: LayerInterface, features: FeatureCollection, dirty: boolean): void {
+    /* public static setDirtyFeatures(layer: LayerInterface, features: FeatureCollection, dirty: boolean): void {
         layer.setDirtyFeatures(features, dirty);
-    }
+    } */
 
     /**
      * Returns feature vertices' coordinates along with their indices
@@ -604,7 +604,7 @@ export default class MapManager {
      * @param {Object} feature - feature
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
-    public static getVertexCoordinates(feature: Feature): VertexCoordinate[] {
+    public static getVertexCoordinates(feature: Feature): GeometryItem[] {
         return feature.getCoordinates();
     }
 
@@ -663,7 +663,6 @@ export default class MapManager {
      */
     public static updateGeometryFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
         feature.updateGeometryFromText(text, format, srsId);
-        feature.setDirty(true);
     }
 
     /**
@@ -679,7 +678,6 @@ export default class MapManager {
      */
     public static createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
         const feature: Feature = new Feature();
-        feature.setDirty(true);
         return feature.createGeometryFromText(layer, text, format, srsId);
     }
 
@@ -740,6 +738,42 @@ export default class MapManager {
                 feature.setStyle(styleFunc);
             });
         }
+    }
+
+    /**
+     * Checks whether feature is valid
+     *
+     * @function isValid
+     * @memberof Feature
+     * @param {Object} feature - representing a line
+     * @return {Boolean} boolean indicating whether feature is valid
+     */
+     public static isValid(feature: Feature): boolean {
+        return feature.isValid();
+    }
+
+    /**
+     * Converts line to polygon
+     *
+     * @function lineToPolygon
+     * @memberof Feature
+     * @param {Object} feature - representing a line
+     * @return {Object} feature representing a polygon
+     */
+    public static lineToPolygon(feature: Feature): Feature {
+        return feature.lineToPolygon();
+    }
+
+    /**
+     * Converts polygon to line
+     *
+     * @function polygonToLine
+     * @memberof Feature
+     * @param {Object} feature - representing a polygon
+     * @return {Object} feature representing a line
+     */
+     public static polygonToLine(feature: Feature): Feature {
+        return feature.polygonToLine();
     }
 
 

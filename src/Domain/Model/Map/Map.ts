@@ -130,9 +130,9 @@ export default class Map {
         });
         this.cursor = CursorType.Default;
         this.setNormalInteraction();
-        this.selectedFeatures = new FeatureCollection([]/* , "EPSG:" + srsId.toString() */);
+        this.selectedFeatures = new FeatureCollection([]);
         this.clipboard = {
-            "features": new FeatureCollection([]/* , "EPSG:" + srsId.toString() */),
+            "features": new FeatureCollection([]),
             "remove": false
         }
         this.eventHandlers = new EventHandlerCollection(this.map);
@@ -242,7 +242,7 @@ export default class Map {
         if (features) {
             this.selectedFeatures = features;
         } else {
-            this.selectedFeatures = new FeatureCollection([]/* , "EPSG:" + this.srsId.toString() */);
+            this.selectedFeatures = new FeatureCollection([]);
         }
     }
 
@@ -324,7 +324,7 @@ export default class Map {
                 highlightSelect.getFeatures().clear();
             }
         }
-        this.selectedFeatures = new FeatureCollection([]/* , "EPSG:" + this.srsId.toString() */);
+        this.selectedFeatures = new FeatureCollection([]);
         this.selectedLayers.clear();
     }
 
@@ -583,6 +583,21 @@ export default class Map {
         return Array.from(this.layers).filter((layer: LayerInterface): boolean => {
             return ((type && layer.getType() == type) || !type);
         });
+    }
+
+    /**
+     * Returns corresponding layer of LayerInterface type by OlLayer.
+     *
+     * @function getLayer
+     * @memberof Map
+     * @param {String} olLayer - OL layer instance
+     * @return {Object} layer of LayerInterface type
+     */
+     public getLayer(olLayer: OlLayer): LayerInterface {
+        const layers: LayerInterface[] = Array.from(this.layers).filter((layer: LayerInterface): boolean => {
+            return layer.getLayer() == olLayer;
+        });
+        return layers[0];
     }
 
     /**

@@ -13,6 +13,7 @@ import OlMultiLineString from "ol/geom/MultiLineString";
 import OlMultiPolygon from "ol/geom/MultiPolygon";
 import Feature from "./Feature";
 import VectorLayer from "../Layer/Impl/VectorLayer";
+import LayerInterface from "../Layer/LayerInterface";
 
 
 /** @class FeatureCollection */
@@ -21,17 +22,14 @@ export default class FeatureCollection {
     private static readonly MAP_SRS_ID = 3857;
     
     private features: Feature[] = [];
-    //private srs: string = "EPSG:" + FeatureCollection.MAP_SRS_ID;
-
     
     /**
      * @constructor
      * @memberof FeatureCollection
      * @param {Array} features - array of features
-     * @param {String} srs - SRS of features
      * @param {Object} layer - layer of features
      */
-    constructor(features: OlFeature[] | Feature[], /* srs?: string, */ layer?: OlLayer) {
+    constructor(features: OlFeature[] | Feature[], layer?: LayerInterface) {
         if (features[0]) {
             if (features[0] instanceof OlFeature) {
                 (<OlFeature[]> features).forEach((el: OlFeature): void => {
@@ -41,13 +39,12 @@ export default class FeatureCollection {
             if (features[0] instanceof Feature) {
                 (<Feature[]> features).forEach((el: Feature): void => {
                     if (layer) {
-                        el.setLayer(new VectorLayer(layer));
+                        el.setLayer(layer);
                     }
                     this.features.push(el);
                 });
             }
         } 
-        //this.srs = srs;
     }
 
     /**
@@ -108,7 +105,7 @@ export default class FeatureCollection {
      * @memberof FeatureCollection
      * @param {Number} index - index
      */
-     public getAt(index: number): Feature {
+    public getAt(index: number): Feature {
         if (typeof this.features[index] === "undefined") {
             return null;
         }

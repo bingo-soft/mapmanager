@@ -56,12 +56,11 @@ export default class SelectInteraction extends BaseInteraction {
                     const features: Feature[] = [];
                     const layers: Set<OlLayer> = new Set();
                     selectedFeatures.forEach((feature: OlFeature): void => {
-                        const layer: OlLayer = e.target.getLayer(feature);
-                        layers.add(layer);
-                        features.push(new Feature(feature, layer));
+                        const olLayer: OlLayer = e.target.getLayer(feature);
+                        layers.add(olLayer);
+                        features.push(new Feature(feature, map.getLayer(olLayer)));
                     });
-                    //const srs: string = olMap.getView().getProjection().getCode();
-                    fc = new FeatureCollection(features/* , srs */);
+                    fc = new FeatureCollection(features);
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(layers);
                     if (typeof callback === "function") {
@@ -85,7 +84,7 @@ export default class SelectInteraction extends BaseInteraction {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
-                                    const feature: Feature = new Feature(olFeature, olLayer); 
+                                    const feature: Feature = new Feature(olFeature, map.getLayer(olLayer)); 
                                     features.push(feature);
                                     layers.add(olLayer);
                                     selectedFeatures.push(olFeature); // just to highlight the selection
@@ -93,7 +92,7 @@ export default class SelectInteraction extends BaseInteraction {
                             }
                         }
                     });
-                    fc = new FeatureCollection(features/* , olMap.getView().getProjection().getCode() */);
+                    fc = new FeatureCollection(features);
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(layers);
                     if (typeof callback === "function") {

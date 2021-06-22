@@ -38,10 +38,8 @@ export default class ModifyInteraction extends BaseInteraction {
         this.eventHandlers = new EventHandlerCollection(this.interaction);
         this.eventHandlers.add(EventType.ModifyFeature, "ModifyEventHandler", (e: OlBaseEvent): void => {
             if (typeof callback === "function") {
-                const olMap: OlMap = this.interaction.getMap(); 
-                //const srs: string = olMap.getView().getProjection().getCode();
                 const modifiedFeatures: OlFeature[] = (<OlModifyEvent> e).features.getArray();
-                const fc: FeatureCollection = new FeatureCollection(modifiedFeatures/* , srs */);
+                const fc: FeatureCollection = new FeatureCollection(modifiedFeatures);
                 fc.setDirty(true);
                 callback(fc);
             }
