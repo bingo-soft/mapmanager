@@ -130,59 +130,66 @@ export default class Feature {
         let index: number = 0;
         const geometry = this.feature.getGeometry();
         if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
-            return [{
-                "uuid": uuidv4(),
-                "id": 0,
-                "type": "item",
-                "name": geometry instanceof OlPoint ? "Point" : geometry instanceof OlLineString ? "LineString" : "Polygon",
-                "children": this.getCoordinatesDo(geometry, srs)
-            }];
+            const geometryItems: GeometryItem[] = [];
+            const coordsArr: VertexCoordinate[][] = this.getCoordinatesDo(geometry, srs);
+            coordsArr.forEach((coords: VertexCoordinate[]): void => {
+                const geometryItem: GeometryItem = {
+                    "uuid": uuidv4(),
+                    "id": index,
+                    "type": "item",
+                    "name": geometry instanceof OlPoint ? "Point" : geometry instanceof OlLineString ? "LineString" : "Polygon",
+                    "children": coords
+                };
+                geometryItems.push(geometryItem);
+                index++;
+            });
+            return geometryItems;
         }
         if (geometry instanceof OlMultiPoint || geometry instanceof OlMultiLineString || geometry instanceof OlMultiPolygon) {
-            const geometryItem: GeometryItem[] = [{
+            const geometryItems: GeometryItem[] = [{
                 "uuid": uuidv4(),
                 "id": 0,
                 "type": "item",
                 "name": geometry instanceof OlMultiPoint ? "MultiPoint" : geometry instanceof OlMultiLineString ? "MultiLineString" : "MultiPolygon",
                 "children": []
             }];
-            if (geometry instanceof OlMultiPoint) { console.log( (<OlMultiPoint> geometry).getPoints());
+            if (geometry instanceof OlMultiPoint) {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
-                    geometryItem[0].children[index] = {
+                    geometryItems[0].children[index] = {
                         "uuid": uuidv4(),
                         "id": index,
                         "type": "item",
                         "name": "Point",
-                        "children": this.getCoordinatesDo(point, srs)
+                        "children": this.getCoordinatesDo(point, srs)[0]
                     };
                     index++;
                 });
             }
             if (geometry instanceof OlMultiLineString) {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
-                    geometryItem[0].children[index] = {
+                    geometryItems[0].children[index] = {
                         "uuid": uuidv4(),
                         "id": index,
                         "type": "item",
                         "name": "LineString",
-                        "children": this.getCoordinatesDo(linestring, srs)
+                        "children": this.getCoordinatesDo(linestring, srs)[0]
                     };
                     index++;
                 });
             }
             if (geometry instanceof OlMultiPolygon) {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
-                    geometryItem[0].children[index] = {
+                    geometryItems[0].children[index] = {
                         "uuid": uuidv4(),
                         "id": index,
                         "type": "item",
                         "name": "Polygon",
-                        "children": this.getCoordinatesDo(polygon, srs)
+                        "children": this.getCoordinatesDo(polygon, srs)[0]
                     };
                     index++;
                 });
             }
-            return geometryItem;
+            return geometryItems;
         }
     }
 
@@ -195,8 +202,8 @@ export default class Feature {
      * @param {Object} srs - srs to return coordinates in
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
-    private getCoordinatesDo(geometry: OlGeometry, srs: string): VertexCoordinate[] {
-        let returnCoordinates: VertexCoordinate[] = [];
+    private getCoordinatesDo(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
+        let returnCoordinates: VertexCoordinate[][] = [];
         let coordinatesFlat: OlCoordinate = [];
         let coordinatesOneDim: OlCoordinate[] = [];
         let coordinatesTwoDim: OlCoordinate[][] = [];
@@ -218,20 +225,20 @@ export default class Feature {
         }
         let index: number = 0;
         if (coordinatesFlat.length) {
-            returnCoordinates.push({"uuid": uuidv4(), "id": index, "type": "vertex", "x": coordinatesFlat[0], "y": coordinatesFlat[1]});
+            returnCoordinates.push([{"uuid": uuidv4(), "id": index, "type": "vertex", "x": coordinatesFlat[0], "y": coordinatesFlat[1]}]);
         } 
         if (coordinatesOneDim.length) {
-            returnCoordinates = this.iterateCoordinates(coordinatesOneDim, srs);
+            returnCoordinates.push(this.iterateCoordinates(coordinatesOneDim, srs));
         }
         if (coordinatesTwoDim.length) {
             coordinatesTwoDim.forEach((coordinate1: OlCoordinate[]): void => {
-                returnCoordinates = this.iterateCoordinates(coordinate1, srs);
+                returnCoordinates.push(this.iterateCoordinates(coordinate1, srs));
             });
         }
         if (coordinatesThreeDim.length) {
             coordinatesThreeDim.forEach((coordinate1: OlCoordinate[][]): void => {
                 coordinate1.forEach((coordinate2: OlCoordinate[]): void => {
-                    returnCoordinates = this.iterateCoordinates(coordinate2, srs);
+                    returnCoordinates.push(this.iterateCoordinates(coordinate2, srs));
                 });
             });
         }
@@ -288,7 +295,7 @@ export default class Feature {
         } else {
 
         }
-        const srs = "EPSG:" + this.getLayer().getSRSId().toString(); console.log(srs)
+        const srs = "EPSG:" + this.getLayer().getSRSId().toString();
         let index: number = 0;
         const indexToFind: number = coordinate[0];
         const coordinateToReplace: OlCoordinate = OlProj.transform([coordinate[1], coordinate[2]], srs, Feature.DEFAULT_SRS);
