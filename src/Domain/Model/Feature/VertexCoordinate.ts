@@ -1,6 +1,6 @@
 type VertexCoordinate = {
-    "uuid": string,
-    "id": number,
+    "id": string,
+    "row_number": number,
     "type": string,
     "x": number,
     "y": number

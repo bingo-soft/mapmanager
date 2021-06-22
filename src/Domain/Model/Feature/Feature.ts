@@ -134,8 +134,8 @@ export default class Feature {
             const coordsArr: VertexCoordinate[][] = this.getCoordinatesDo(geometry, srs);
             coordsArr.forEach((coords: VertexCoordinate[]): void => {
                 const geometryItem: GeometryItem = {
-                    "uuid": uuidv4(),
-                    "id": index,
+                    "id": uuidv4(),
+                    "row_number": index,
                     "type": "item",
                     "name": geometry instanceof OlPoint ? "Point" : geometry instanceof OlLineString ? "LineString" : "Polygon",
                     "children": coords
@@ -147,8 +147,8 @@ export default class Feature {
         }
         if (geometry instanceof OlMultiPoint || geometry instanceof OlMultiLineString || geometry instanceof OlMultiPolygon) {
             const geometryItems: GeometryItem[] = [{
-                "uuid": uuidv4(),
-                "id": 0,
+                "id": uuidv4(),
+                "row_number": 0,
                 "type": "item",
                 "name": geometry instanceof OlMultiPoint ? "MultiPoint" : geometry instanceof OlMultiLineString ? "MultiLineString" : "MultiPolygon",
                 "children": []
@@ -156,8 +156,8 @@ export default class Feature {
             if (geometry instanceof OlMultiPoint) {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
                     geometryItems[0].children[index] = {
-                        "uuid": uuidv4(),
-                        "id": index,
+                        "id": uuidv4(),
+                        "row_number": index,
                         "type": "item",
                         "name": "Point",
                         "children": this.getCoordinatesDo(point, srs)[0]
@@ -168,8 +168,8 @@ export default class Feature {
             if (geometry instanceof OlMultiLineString) {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
                     geometryItems[0].children[index] = {
-                        "uuid": uuidv4(),
-                        "id": index,
+                        "id": uuidv4(),
+                        "row_number": index,
                         "type": "item",
                         "name": "LineString",
                         "children": this.getCoordinatesDo(linestring, srs)[0]
@@ -180,8 +180,8 @@ export default class Feature {
             if (geometry instanceof OlMultiPolygon) {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
                     geometryItems[0].children[index] = {
-                        "uuid": uuidv4(),
-                        "id": index,
+                        "id": uuidv4(),
+                        "row_number": index,
                         "type": "item",
                         "name": "Polygon",
                         "children": this.getCoordinatesDo(polygon, srs)[0]
@@ -225,7 +225,7 @@ export default class Feature {
         }
         let index: number = 0;
         if (coordinatesFlat.length) {
-            returnCoordinates.push([{"uuid": uuidv4(), "id": index, "type": "vertex", "x": coordinatesFlat[0], "y": coordinatesFlat[1]}]);
+            returnCoordinates.push([{"id": uuidv4(), "row_number": index, "type": "vertex", "x": coordinatesFlat[0], "y": coordinatesFlat[1]}]);
         } 
         if (coordinatesOneDim.length) {
             returnCoordinates.push(this.iterateCoordinates(coordinatesOneDim, srs));
@@ -259,7 +259,7 @@ export default class Feature {
         const returnCoordinates: VertexCoordinate[] = [];
         coordinates.forEach((coordinate: OlCoordinate): void => {
             coordinate = OlProj.transform(coordinate, Feature.DEFAULT_SRS, srs);
-            returnCoordinates.push({"uuid": uuidv4(), "id": index, "type": "vertex", "x": coordinate[0], "y": coordinate[1]});
+            returnCoordinates.push({"id": uuidv4(), "row_number": index, "type": "vertex", "x": coordinate[0], "y": coordinate[1]});
             index++;
         });
         return returnCoordinates;
