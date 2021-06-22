@@ -1,8 +1,8 @@
 import VertexCoordinate from "./VertexCoordinate";
 
 type GeometryItem = {
-    "uuid": string,
-    "id": number,
+    "id": string,
+    "row_number": number,
     "type": string,
     "name": string,
     "children": GeometryItem[] | VertexCoordinate[]
