@@ -118,6 +118,14 @@ export default class Feature {
         this.dirty = dirty;
     }
 
+    public getCoordinates(): GeometryItem[] {
+        return <GeometryItem[]> this.iterateGeometryItems();
+    }
+    
+    public setCoordinates(geometryItem: GeometryItem): void {
+        this.iterateGeometryItems(geometryItem);
+    }
+
     /**
      * Returns feature vertices' coordinates along with their indices
      *
@@ -125,13 +133,13 @@ export default class Feature {
      * @memberof Feature
      * @return {Array} array of geometry parts of feature along with their coordinates
      */
-    public getCoordinates(): GeometryItem[] {
+    private iterateGeometryItems(geometryItem?: GeometryItem): GeometryItem[] | void {
         const srs = "EPSG:" + this.getLayer().getSRSId().toString();
-        this.treeId = 0;
+        this.treeId = 1;
         const geometry = this.feature.getGeometry();
         if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
             const geometryItems: GeometryItem[] = [];
-            const coordsArr: VertexCoordinate[][] = this.getCoordinatesDo(geometry, srs);
+            const coordsArr: VertexCoordinate[][] = this.getGeometryItemCoordinates(geometry, srs);
             coordsArr.forEach((coords: VertexCoordinate[]): void => {
                 const geometryItem: GeometryItem = {
                     "id": this.treeId,
@@ -152,7 +160,7 @@ export default class Feature {
             this.treeId++;
             if (geometry instanceof OlMultiPoint) {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
-                    const coords: VertexCoordinate[] = this.getCoordinatesDo(point, srs)[0];
+                    const coords: VertexCoordinate[] = this.getGeometryItemCoordinates(point, srs)[0];
                     geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
                         "id": this.treeId,
                         "name": "Point",
@@ -163,7 +171,7 @@ export default class Feature {
             }
             if (geometry instanceof OlMultiLineString) {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
-                    const coords: VertexCoordinate[] = this.getCoordinatesDo(linestring, srs)[0];
+                    const coords: VertexCoordinate[] = this.getGeometryItemCoordinates(linestring, srs)[0];
                     geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
                         "id": this.treeId,
                         "name": "LineString",
@@ -174,7 +182,7 @@ export default class Feature {
             }
             if (geometry instanceof OlMultiPolygon) {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
-                    const coords: VertexCoordinate[] = this.getCoordinatesDo(polygon, srs)[0];
+                    const coords: VertexCoordinate[] = this.getGeometryItemCoordinates(polygon, srs)[0];
                     geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
                         "id": this.treeId,
                         "name": "Polygon",
@@ -197,7 +205,7 @@ export default class Feature {
      * @param {Object} index - index for unique id generation
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
-    private getCoordinatesDo(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
+    private getGeometryItemCoordinates(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
         let returnCoordinates: VertexCoordinate[][] = [];
         let coordinatesFlat: OlCoordinate = [];
         let coordinatesOneDim: OlCoordinate[] = [];
@@ -253,7 +261,7 @@ export default class Feature {
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private iterateCoordinates(coordinates: OlCoordinate[], srs: string): VertexCoordinate[] {
-        let indexCoord: number = 0;
+        let indexCoord: number = 1;
         const returnCoordinates: VertexCoordinate[] = [];
         coordinates.forEach((coordinate: OlCoordinate): void => {
             coordinate = OlProj.transform(coordinate, Feature.DEFAULT_SRS, srs);
@@ -265,6 +273,9 @@ export default class Feature {
     }
 
     private findGeometryItem(items: GeometryItem[], geomId: number): GeometryItem {
+        if (!items) {
+            return null;
+        }
         for (let i: number = 0; i < items.length; i++) {
             if (items[i].id == geomId) {
                 return items[i];
@@ -287,12 +298,20 @@ export default class Feature {
     public modifyCoordinate(action: string, geomId: number, coordId: number, coordValue?: number[]): void {
         const geometryItems: GeometryItem[] = this.getCoordinates();
         const geometryItem: GeometryItem = this.findGeometryItem(geometryItems, geomId);
+        if (!geometryItem) {
+            return;
+        }
         if (action == "edit") {
-            (<VertexCoordinate> geometryItem.children[coordId]).x = coordValue[0];
-            (<VertexCoordinate> geometryItem.children[coordId]).y = coordValue[1];
+            const child: VertexCoordinate = <VertexCoordinate> geometryItem.children[coordId];
+            if (child && child.name == "Coordinate") {
+                child.x = coordValue[0];
+                child.y = coordValue[1];
+            }
         }
         if (action == "delete") {
-            geometryItem.children.splice(coordId, 1);
+            if (geometryItem.children && geometryItem.children[0] && geometryItem.children[0].name == "Coordinate") {
+                geometryItem.children.splice(coordId, 1);
+            }
         }
 
         console.log(geometryItems);
