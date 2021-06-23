@@ -615,11 +615,12 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} feature - feature
-     * @param {Number} index - vertice index to edit
-     * @param {Array} coordinate - feature vertex coordinate
+     * @param {Number} geomId - id of geometry item to delete
+     * @param {Number} coordId - id of coordinate to delete
+     * @param {Array} coordValue - new coordinates
      */
-    public static updateVertexCoordinate(feature: Feature, index: number, coordinate: number[]): void {
-        feature.modifyCoordinate("edit", [index, coordinate[0], coordinate[1]]);
+    public static updateVertexCoordinate(feature: Feature, geomId: number, coordId: number, coordValue: number[]): void {
+        feature.modifyCoordinate("edit", geomId, coordId, coordValue);
     }
 
     /**
@@ -629,10 +630,11 @@ export default class MapManager {
      * @memberof MapManager
      * @static
      * @param {Object} feature - feature
-     * @param {Number} index - vertex index to delete
+     * @param {Number} geomId - id of geometry item to delete
+     * @param {Number} coordId - id of coordinate to delete
      */
-    public static deleteVertexCoordinate(feature: Feature, index: number): void {
-        feature.modifyCoordinate("delete", [index]);
+    public static deleteVertexCoordinate(feature: Feature, geomId: number, coordId): void {
+        feature.modifyCoordinate("delete", geomId, coordId);
     }
 
     /**

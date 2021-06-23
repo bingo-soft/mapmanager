@@ -1,7 +1,7 @@
 type VertexCoordinate = {
-    "id": string,
-    "row_number": number,
-    "type": string,
+    "id": number,
+    "coordinate_id": number,
+    "name": string,
     "x": number,
     "y": number
 }
