@@ -1,9 +1,7 @@
 import VertexCoordinate from "./VertexCoordinate";
 
 type GeometryItem = {
-    "id": string,
-    "row_number": number,
-    "type": string,
+    "id": number,
     "name": string,
     "children": GeometryItem[] | VertexCoordinate[]
 }

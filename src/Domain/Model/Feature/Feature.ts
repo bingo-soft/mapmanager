@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import * as turf from "@turf/turf"
 import booleanValid from '@turf/boolean-valid'
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
@@ -22,6 +21,7 @@ export default class Feature {
     private feature: OlFeature;
     private layer: LayerInterface;
     private dirty: boolean;
+    private treeId: number;
 
     private static readonly DEFAULT_SRS = "EPSG:3857";
 
@@ -127,66 +127,60 @@ export default class Feature {
      */
     public getCoordinates(): GeometryItem[] {
         const srs = "EPSG:" + this.getLayer().getSRSId().toString();
-        let index: number = 0;
+        this.treeId = 0;
         const geometry = this.feature.getGeometry();
         if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
             const geometryItems: GeometryItem[] = [];
             const coordsArr: VertexCoordinate[][] = this.getCoordinatesDo(geometry, srs);
             coordsArr.forEach((coords: VertexCoordinate[]): void => {
                 const geometryItem: GeometryItem = {
-                    "id": uuidv4(),
-                    "row_number": index,
-                    "type": "item",
+                    "id": this.treeId,
                     "name": geometry instanceof OlPoint ? "Point" : geometry instanceof OlLineString ? "LineString" : "Polygon",
                     "children": coords
                 };
                 geometryItems.push(geometryItem);
-                index++;
+                this.treeId++;
             });
             return geometryItems;
         }
         if (geometry instanceof OlMultiPoint || geometry instanceof OlMultiLineString || geometry instanceof OlMultiPolygon) {
             const geometryItems: GeometryItem[] = [{
-                "id": uuidv4(),
-                "row_number": 0,
-                "type": "item",
+                "id": this.treeId,
                 "name": geometry instanceof OlMultiPoint ? "MultiPoint" : geometry instanceof OlMultiLineString ? "MultiLineString" : "MultiPolygon",
                 "children": []
             }];
+            this.treeId++;
             if (geometry instanceof OlMultiPoint) {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
-                    geometryItems[0].children[index] = {
-                        "id": uuidv4(),
-                        "row_number": index,
-                        "type": "item",
+                    const coords: VertexCoordinate[] = this.getCoordinatesDo(point, srs)[0];
+                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
+                        "id": this.treeId,
                         "name": "Point",
-                        "children": this.getCoordinatesDo(point, srs)[0]
-                    };
-                    index++;
+                        "children": coords
+                    });
+                    this.treeId++;
                 });
             }
             if (geometry instanceof OlMultiLineString) {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
-                    geometryItems[0].children[index] = {
-                        "id": uuidv4(),
-                        "row_number": index,
-                        "type": "item",
+                    const coords: VertexCoordinate[] = this.getCoordinatesDo(linestring, srs)[0];
+                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
+                        "id": this.treeId,
                         "name": "LineString",
-                        "children": this.getCoordinatesDo(linestring, srs)[0]
-                    };
-                    index++;
+                        "children": coords
+                    });
+                    this.treeId++;
                 });
             }
             if (geometry instanceof OlMultiPolygon) {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
-                    geometryItems[0].children[index] = {
-                        "id": uuidv4(),
-                        "row_number": index,
-                        "type": "item",
+                    const coords: VertexCoordinate[] = this.getCoordinatesDo(polygon, srs)[0];
+                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
+                        "id": this.treeId,
                         "name": "Polygon",
-                        "children": this.getCoordinatesDo(polygon, srs)[0]
-                    };
-                    index++;
+                        "children": coords
+                    });
+                    this.treeId++;
                 });
             }
             return geometryItems;
@@ -199,7 +193,8 @@ export default class Feature {
      * @function getCoordinatesDo
      * @memberof Feature
      * @param {Object} geometry - geometry
-     * @param {Object} srs - srs to return coordinates in
+     * @param {String} srs - srs to return coordinates in
+     * @param {Object} index - index for unique id generation
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private getCoordinatesDo(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
@@ -210,22 +205,24 @@ export default class Feature {
         let coordinatesThreeDim: OlCoordinate[][][] = [];
         if (geometry instanceof OlPoint) {
             coordinatesFlat = (<OlPoint> geometry).getCoordinates();
-        } else if (geometry instanceof OlMultiPoint) {
+        } 
+        if (geometry instanceof OlMultiPoint) {
             coordinatesOneDim = (<OlMultiPoint> geometry).getCoordinates();
-        } else if (geometry instanceof OlLineString) {
+        } 
+        if (geometry instanceof OlLineString) {
             coordinatesOneDim = (<OlLineString> geometry).getCoordinates();
-        } else if (geometry instanceof OlMultiLineString) {
+        } 
+        if (geometry instanceof OlMultiLineString) {
             coordinatesTwoDim = (<OlMultiLineString> geometry).getCoordinates();
-        } else if (geometry instanceof OlPolygon) {
+        } 
+        if (geometry instanceof OlPolygon) {
             coordinatesTwoDim = (<OlPolygon> geometry).getCoordinates();
-        } else if (geometry instanceof OlMultiPolygon) {
+        } 
+        if (geometry instanceof OlMultiPolygon) {
             coordinatesThreeDim = (<OlMultiPolygon> geometry).getCoordinates();
-        } else {
-
-        }
-        let index: number = 0;
+        } 
         if (coordinatesFlat.length) {
-            returnCoordinates.push([{"id": uuidv4(), "row_number": index, "type": "vertex", "x": coordinatesFlat[0], "y": coordinatesFlat[1]}]);
+            returnCoordinates.push(this.iterateCoordinates([coordinatesFlat], srs));
         } 
         if (coordinatesOneDim.length) {
             returnCoordinates.push(this.iterateCoordinates(coordinatesOneDim, srs));
@@ -251,18 +248,29 @@ export default class Feature {
      * @function iterateCoordinates
      * @memberof Feature
      * @param {Object} coordinates - array of coordinates
-     * @param {Object} srs - srs to return coordinates in
+     * @param {String} srs - srs to return coordinates in
+     * @param {Object} index - index for unique id generation
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private iterateCoordinates(coordinates: OlCoordinate[], srs: string): VertexCoordinate[] {
-        let index: number = 0;
+        let indexCoord: number = 0;
         const returnCoordinates: VertexCoordinate[] = [];
         coordinates.forEach((coordinate: OlCoordinate): void => {
             coordinate = OlProj.transform(coordinate, Feature.DEFAULT_SRS, srs);
-            returnCoordinates.push({"id": uuidv4(), "row_number": index, "type": "vertex", "x": coordinate[0], "y": coordinate[1]});
-            index++;
+            returnCoordinates.push({"id": this.treeId, "coordinate_id": indexCoord, "name": "Coordinate", "x": coordinate[0], "y": coordinate[1]});
+            this.treeId++;
+            indexCoord++;
         });
         return returnCoordinates;
+    }
+
+    private findGeometryItem(items: GeometryItem[], geomId: number): GeometryItem {
+        for (let i: number = 0; i < items.length; i++) {
+            if (items[i].id == geomId) {
+                return items[i];
+            }
+            return this.findGeometryItem(<GeometryItem[]> items[i].children, geomId);
+        }
     }
 
 
@@ -272,10 +280,26 @@ export default class Feature {
      * @function modifyCoordinate
      * @memberof Feature
      * @param {String} action - modify action: "edit" or "delete"
-     * @param {Array} coordinate - new coordinate along with index in case of edit e.g. [idx, x, y], index in case of delete e.g. [idx]
+     * @param {Number} geomId - id of geometry item to delete
+     * @param {Number} coordId - id of coordinate to delete
+     * @param {Array} coordValue - new coordinates
      */
-    public modifyCoordinate(action: string, coordinate: number[]): void {
-        const geometry = this.feature.getGeometry();
+    public modifyCoordinate(action: string, geomId: number, coordId: number, coordValue?: number[]): void {
+        const geometryItems: GeometryItem[] = this.getCoordinates();
+        const geometryItem: GeometryItem = this.findGeometryItem(geometryItems, geomId);
+        if (action == "edit") {
+            (<VertexCoordinate> geometryItem.children[coordId]).x = coordValue[0];
+            (<VertexCoordinate> geometryItem.children[coordId]).y = coordValue[1];
+        }
+        if (action == "delete") {
+            geometryItem.children.splice(coordId, 1);
+        }
+
+        console.log(geometryItems);
+
+
+
+        /* const geometry = this.feature.getGeometry();
         let coordinatesFlat: OlCoordinate = [];
         let coordinatesOneDim: OlCoordinate[] = [];
         let coordinatesTwoDim: OlCoordinate[][] = [];
@@ -356,7 +380,7 @@ export default class Feature {
                     }
                 }
             }
-        }
+        } */
     }
 
     /**
