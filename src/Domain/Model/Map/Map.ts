@@ -9,7 +9,8 @@ import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
 import { Layer as OlLayer, Tile as OlTileLayer } from "ol/layer";
-import OlGeometry from "ol/geom/Geometry";
+import OlFeature from "ol/Feature";
+import { Geometry as OlGeometry, Point as OlPoint } from "ol/geom"
 import OlBaseEvent from "ol/events/Event";
 import { GeometryCollection } from "ol/geom";
 import * as OlCoordinate from "ol/coordinate";
@@ -18,6 +19,7 @@ import OlInteraction from "ol/interaction/Interaction";
 import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
+import {Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
 import {Select as OlSelect} from 'ol/interaction';
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
@@ -44,6 +46,7 @@ import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
 import MeasureType from "../Interaction/MeasureType";
 import LayerBuilder from "../Layer/LayerBuilder";
 import VectorLayer from "../Layer/Impl/VectorLayer";
+import { METERS_PER_UNIT } from "ol/proj/Units";
 
 /** @class Map */
 export default class Map { 
@@ -54,6 +57,7 @@ export default class Map {
     private activeLayer: LayerInterface;
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
+    private vertexHighlightLayer: OlVectorLayer;
     private selectedFeatures: FeatureCollection;
     private selectedLayers: Set<LayerInterface> = new Set();
     private clipboard: unknown;
@@ -247,30 +251,21 @@ export default class Map {
     }
 
     /**
-     * Returns map's dirty (added or modified) features
+     * Returns map's dirty (containing added or modified features) layers
      *
-     * @function getDirtyFeatures
+     * @function getDirtyLayers
      * @memberof Map
-     * @return {Object} dirty features
+     * @return {Array} dirty layers
      */
-    /* public getDirtyFeatures(): FeatureCollection {
-        return this.dirtyFeatures;
-    } */
-
-    /**
-     * Sets map's dirty (added or modified) features
-     *
-     * @function setDirtyFeatures
-     * @memberof Map
-     * @param {Object} features - features to be set
-     * @param {Boolean} dirty - dirty flag
-     * @return {Object} feature collection with given dirty flag set
-     */
-    /* public setDirtyFeatures(features: FeatureCollection, dirty: boolean): FeatureCollection {
-        features.setDirty(dirty);
-        this.dirtyFeatures = dirty ? features : null;
-        return features;
-    } */
+    public getDirtyLayers(): LayerInterface[] {
+        const dirtyLayers: LayerInterface[] = [];
+        Array.from(this.layers).forEach((layer: LayerInterface): void => {
+            if (layer.getDirtyFeatures().getLength()) {
+                dirtyLayers.push(layer);
+            }
+        });
+        return dirtyLayers;
+    }
 
     /**
      * Returns map's selected layers
@@ -751,6 +746,55 @@ export default class Map {
             this.map.removeOverlay(overlay);
         });
         this.measureOverlays = [];
+    }
+
+    /**
+     * Highlights vertex
+     *
+     * @function highlightVertex
+     * @memberof Map
+     * @param {Object} layer - layer
+     * @param {Array} coordinate - coordinate
+     */
+    public highlightVertex(layer: LayerInterface, coordinate: OlCoordinate.Coordinate): void { debugger
+        if (!this.vertexHighlightLayer) {
+            this.vertexHighlightLayer = new OlVectorLayer({
+                source: new OlVectorSource(),
+                style: new OlStyle({
+                    image: new OlCircleStyle({
+                        radius: 3,
+                        fill: new OlFill({
+                            color: "magenta"
+                        }),
+                        stroke: new OlStroke({
+                            color: "magenta",
+                            width: 2
+                        }),
+                    }),
+                }),
+                zIndex: 100
+            });
+            this.map.addLayer(this.vertexHighlightLayer);
+        }
+        const source: OlVectorSource = this.vertexHighlightLayer.getSource();
+        source.clear();
+        const feature: OlFeature = new OlFeature({
+            geometry: new OlPoint(OlProj.transform(coordinate, "EPSG:" + layer.getSRSId(), "EPSG:" + this.srsId))
+        });
+        source.addFeature(feature);
+    }
+
+    /**
+     * Clears vertex highlight
+     *
+     * @function unHighlightVertex
+     * @memberof Map
+     */
+    public clearVertexHighlight(): void {
+        if (this.vertexHighlightLayer) {
+            this.map.removeLayer(this.vertexHighlightLayer);
+            this.vertexHighlightLayer = null;
+        }
     }
 
     /**
