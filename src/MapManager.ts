@@ -582,60 +582,41 @@ export default class MapManager {
     }
 
     /**
-     * Sets map's dirty (added or modified) features
+     * Returns map's dirty (containing added or modified features) layers
      *
-     * @function setDirtyFeatures
+     * @function getDirtyLayers
      * @memberof MapManager
-     * @static
-     * @param {Object} layer - layer instance
-     * @param {Object} features - features to be set
-     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
+     * @return {Array} dirty layers
      */
-    /* public static setDirtyFeatures(layer: LayerInterface, features: FeatureCollection, dirty: boolean): void {
-        layer.setDirtyFeatures(features, dirty);
-    } */
+    public getDirtyLayers(map: Map): LayerInterface[] {
+        return map.getDirtyLayers();
+    }
 
     /**
      * Returns feature vertices' coordinates along with their indices
      *
-     * @function getVertexCoordinates
+     * @function getCoordinates
      * @memberof MapManager
      * @static
      * @param {Object} feature - feature
-     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
+     * @return {Array} array of feature vertices' along with their ids and coordinates
      */
-    public static getVertexCoordinates(feature: Feature): GeometryItem[] {
+    public static getCoordinates(feature: Feature): GeometryItem[] {
         return feature.getCoordinates();
     }
 
     /**
      * Edits feature vertex coordinate at given index
      *
-     * @function updateVertexCoordinate
+     * @function setCoordinates
      * @memberof MapManager
      * @static
      * @param {Object} feature - feature
-     * @param {Number} geomId - id of geometry item to delete
-     * @param {Number} coordId - id of coordinate to delete
-     * @param {Array} coordValue - new coordinates
+     * @param {Array} array of feature vertices' along with their ids and coordinates
      */
-    public static updateVertexCoordinate(feature: Feature, geomId: number, coordId: number, coordValue: number[]): void {
-        feature.modifyCoordinate("edit", geomId, coordId, coordValue);
-    }
-
-    /**
-     * Deletes feature vertex coordinate at given index
-     *
-     * @function deleteVertexCoordinate
-     * @memberof MapManager
-     * @static
-     * @param {Object} feature - feature
-     * @param {Number} geomId - id of geometry item to delete
-     * @param {Number} coordId - id of coordinate to delete
-     */
-    public static deleteVertexCoordinate(feature: Feature, geomId: number, coordId): void {
-        feature.modifyCoordinate("delete", geomId, coordId);
-    }
+    /* public static setCoordinates(feature: Feature, geometryItems: GeometryItem[]): void {
+        feature.setCoordinates(geometryItems);
+    } */
 
     /**
      * Returns feature geometry as text
@@ -743,10 +724,32 @@ export default class MapManager {
     }
 
     /**
+     * Highlights vertex
+     *
+     * @function highlightVertex
+     * @memberof MapManager
+     * @param {Object} layer - layer
+     * @param {Array} coordinate - coordinate
+     */
+     public static highlightVertex(map: Map, layer: LayerInterface, coordinate: number[]): void {
+        map.highlightVertex(layer, coordinate);
+    }
+
+    /**
+     * Clears vertex highlight
+     *
+     * @function unHighlightVertex
+     * @memberof MapManager
+     */
+    public static clearVertexHighlight(map: Map): void {
+        map.clearVertexHighlight();
+    }
+
+    /**
      * Checks whether feature is valid
      *
      * @function isValid
-     * @memberof Feature
+     * @memberof MapManager
      * @param {Object} feature - representing a line
      * @return {Boolean} boolean indicating whether feature is valid
      */
@@ -758,7 +761,7 @@ export default class MapManager {
      * Converts line to polygon
      *
      * @function lineToPolygon
-     * @memberof Feature
+     * @memberof MapManager
      * @param {Object} feature - representing a line
      * @return {Object} feature representing a polygon
      */
@@ -770,7 +773,7 @@ export default class MapManager {
      * Converts polygon to line
      *
      * @function polygonToLine
-     * @memberof Feature
+     * @memberof MapManager
      * @param {Object} feature - representing a polygon
      * @return {Object} feature representing a line
      */

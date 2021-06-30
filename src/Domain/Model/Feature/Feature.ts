@@ -22,6 +22,7 @@ export default class Feature {
     private layer: LayerInterface;
     private dirty: boolean;
     private treeId: number;
+    private featureParts: Map<number, OlGeometry> = new Map();
 
     private static readonly DEFAULT_SRS = "EPSG:3857";
 
@@ -118,13 +119,30 @@ export default class Feature {
         this.dirty = dirty;
     }
 
-    public getCoordinates(): GeometryItem[] {
-        return <GeometryItem[]> this.iterateGeometryItems();
-    }
-    
-    public setCoordinates(geometryItem: GeometryItem): void {
-        this.iterateGeometryItems(geometryItem);
-    }
+     /**
+     * Modifies feature vertex at given index
+     *
+     * @function setCoordinates
+     * @memberof Feature
+     * @param {String} action - modify action: "edit" or "delete"
+     * @param {Number} geomId - id of geometry item to delete
+     * @param {Number} coordId - id of coordinate to delete
+     * @param {Array} coordValue - new coordinates
+     */
+    /* public setCoordinates(geometryItems: GeometryItem[]): void { 
+        this.featureParts.forEach((value: OlGeometry, key: number): void => {// console.log(geometryItems);
+            const geometryItem: GeometryItem = this.findGeometryItem(geometryItems, key);
+            if (geometryItem) {
+                geometryItem.children.forEach((coordinate: VertexCoordinate): void => {
+                    
+                });
+                this.featureParts.get(item.id).setCoordinates();
+            }
+            console.log(key);
+            console.log(item.children);
+            //console.log(value);
+        });
+    } */
 
     /**
      * Returns feature vertices' coordinates along with their indices
@@ -133,7 +151,7 @@ export default class Feature {
      * @memberof Feature
      * @return {Array} array of geometry parts of feature along with their coordinates
      */
-    private iterateGeometryItems(geometryItem?: GeometryItem): GeometryItem[] | void {
+     public getCoordinates(): GeometryItem[] {
         const srs = "EPSG:" + this.getLayer().getSRSId().toString();
         this.treeId = 1;
         const geometry = this.feature.getGeometry();
@@ -147,8 +165,10 @@ export default class Feature {
                     "children": coords
                 };
                 geometryItems.push(geometryItem);
+                this.featureParts.set(this.treeId, geometry);
                 this.treeId++;
             });
+            console.log(this.featureParts);
             return geometryItems;
         }
         if (geometry instanceof OlMultiPoint || geometry instanceof OlMultiLineString || geometry instanceof OlMultiPolygon) {
@@ -161,36 +181,43 @@ export default class Feature {
             if (geometry instanceof OlMultiPoint) {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
                     const coords: VertexCoordinate[] = this.getGeometryItemCoordinates(point, srs)[0];
-                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
+                    const item: GeometryItem = {
                         "id": this.treeId,
                         "name": "Point",
                         "children": coords
-                    });
+                    };
+                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> item);
+                    this.featureParts.set(this.treeId, point);
                     this.treeId++;
                 });
             }
             if (geometry instanceof OlMultiLineString) {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
                     const coords: VertexCoordinate[] = this.getGeometryItemCoordinates(linestring, srs)[0];
-                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
+                    const item: GeometryItem = {
                         "id": this.treeId,
                         "name": "LineString",
                         "children": coords
-                    });
+                    };
+                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> item);
+                    this.featureParts.set(this.treeId, linestring);
                     this.treeId++;
                 });
             }
             if (geometry instanceof OlMultiPolygon) {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
                     const coords: VertexCoordinate[] = this.getGeometryItemCoordinates(polygon, srs)[0];
-                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> {
+                    const item: GeometryItem = {
                         "id": this.treeId,
                         "name": "Polygon",
                         "children": coords
-                    });
+                    };
+                    geometryItems[0].children.push(<GeometryItem & VertexCoordinate> item);
+                    this.featureParts.set(this.treeId, polygon);
                     this.treeId++;
                 });
             }
+            console.log(this.featureParts);
             return geometryItems;
         }
     }
@@ -198,11 +225,10 @@ export default class Feature {
     /**
      * Returns feature vertices' coordinates along with their indices
      *
-     * @function getCoordinatesDo
+     * @function getGeometryItemCoordinates
      * @memberof Feature
      * @param {Object} geometry - geometry
      * @param {String} srs - srs to return coordinates in
-     * @param {Object} index - index for unique id generation
      * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private getGeometryItemCoordinates(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
@@ -272,7 +298,16 @@ export default class Feature {
         return returnCoordinates;
     }
 
-    private findGeometryItem(items: GeometryItem[], geomId: number): GeometryItem {
+    /**
+     * Searches a geometry item by id
+     *
+     * @function findGeometryItem
+     * @memberof Feature
+     * @param {Array} items - items to search in
+     * @param {Number} geomId - id to search
+     * @return {Object} found item
+     */
+    /* private findGeometryItem(items: GeometryItem[], geomId: number): GeometryItem {
         if (!items) {
             return null;
         }
@@ -280,127 +315,11 @@ export default class Feature {
             if (items[i].id == geomId) {
                 return items[i];
             }
+        }
+        for (let i: number = 0; i < items.length; i++) {
             return this.findGeometryItem(<GeometryItem[]> items[i].children, geomId);
         }
-    }
-
-
-    /**
-     * Modifies feature vertex at given index
-     *
-     * @function modifyCoordinate
-     * @memberof Feature
-     * @param {String} action - modify action: "edit" or "delete"
-     * @param {Number} geomId - id of geometry item to delete
-     * @param {Number} coordId - id of coordinate to delete
-     * @param {Array} coordValue - new coordinates
-     */
-    public modifyCoordinate(action: string, geomId: number, coordId: number, coordValue?: number[]): void {
-        const geometryItems: GeometryItem[] = this.getCoordinates();
-        const geometryItem: GeometryItem = this.findGeometryItem(geometryItems, geomId);
-        if (!geometryItem) {
-            return;
-        }
-        if (action == "edit") {
-            const child: VertexCoordinate = <VertexCoordinate> geometryItem.children[coordId];
-            if (child && child.name == "Coordinate") {
-                child.x = coordValue[0];
-                child.y = coordValue[1];
-            }
-        }
-        if (action == "delete") {
-            if (geometryItem.children && geometryItem.children[0] && geometryItem.children[0].name == "Coordinate") {
-                geometryItem.children.splice(coordId, 1);
-            }
-        }
-
-        console.log(geometryItems);
-
-
-
-        /* const geometry = this.feature.getGeometry();
-        let coordinatesFlat: OlCoordinate = [];
-        let coordinatesOneDim: OlCoordinate[] = [];
-        let coordinatesTwoDim: OlCoordinate[][] = [];
-        let coordinatesThreeDim: OlCoordinate[][][] = [];
-        if (geometry instanceof OlPoint) {
-            coordinatesFlat = (<OlPoint> geometry).getCoordinates();
-        } else if (geometry instanceof OlMultiPoint) {
-            coordinatesOneDim = (<OlMultiPoint> geometry).getCoordinates();
-        } else if (geometry instanceof OlLineString) {
-            coordinatesOneDim = (<OlLineString> geometry).getCoordinates();
-        } else if (geometry instanceof OlMultiLineString) {
-            coordinatesTwoDim = (<OlMultiLineString> geometry).getCoordinates();
-        } else if (geometry instanceof OlPolygon) {
-            coordinatesTwoDim = (<OlPolygon> geometry).getCoordinates();
-        } else if (geometry instanceof OlMultiPolygon) {
-            coordinatesThreeDim = (<OlMultiPolygon> geometry).getCoordinates();
-        } else {
-
-        }
-        const srs = "EPSG:" + this.getLayer().getSRSId().toString();
-        let index: number = 0;
-        const indexToFind: number = coordinate[0];
-        const coordinateToReplace: OlCoordinate = OlProj.transform([coordinate[1], coordinate[2]], srs, Feature.DEFAULT_SRS);
-        let i:number, j: number, k: number;
-        if (coordinatesFlat.length) {
-            if (indexToFind == 0) {
-                if (action == "delete") {
-                    return; 
-                } else {
-                    coordinatesFlat = coordinateToReplace;
-                }
-                (<OlPoint> this.feature.getGeometry()).setCoordinates(coordinatesFlat);
-            }
-            return;
-        } 
-        if (coordinatesOneDim.length) {
-            for (i = 0; i < coordinatesOneDim.length; i++) {
-                if (index == indexToFind) {
-                    action == "delete" ? coordinatesOneDim.splice(i, 1) : coordinatesOneDim[i] = coordinateToReplace;
-                    if (geometry instanceof OlMultiPoint) {
-                        (<OlMultiPoint> this.feature.getGeometry()).setCoordinates(coordinatesOneDim);
-                    }
-                    if (geometry instanceof OlLineString) {
-                        (<OlLineString> this.feature.getGeometry()).setCoordinates(coordinatesOneDim);
-                    }
-                    return;
-                }
-                index++;
-            }
-        } 
-        if (coordinatesTwoDim.length) {
-            for (i = 0; i < coordinatesTwoDim.length; i++) {
-                for (j = 0; j < coordinatesTwoDim[i].length; j++) {
-                    if (index == indexToFind) {
-                        action == "delete" ? coordinatesTwoDim[i].splice(j, 1) : coordinatesTwoDim[i][j] = coordinateToReplace;
-                        if (geometry instanceof OlMultiLineString) {
-                            (<OlMultiLineString> this.feature.getGeometry()).setCoordinates(coordinatesTwoDim);
-                        }
-                        if (geometry instanceof OlPolygon) {
-                            (<OlPolygon> this.feature.getGeometry()).setCoordinates(coordinatesTwoDim);
-                        }
-                        return;
-                    }
-                    index++;
-                }
-            }
-        } 
-        if (coordinatesThreeDim.length) {
-            for (i = 0; i < coordinatesThreeDim.length; i++) {
-                for (j = 0; j < coordinatesThreeDim[i].length; j++) {
-                    for (k = 0; k < coordinatesThreeDim[i][j].length; k++) {
-                        if (index == indexToFind) {
-                            action == "delete" ? coordinatesThreeDim[i][j].splice(j, 1) : coordinatesThreeDim[i][j][k] = coordinateToReplace;
-                            (<OlMultiPolygon> this.feature.getGeometry()).setCoordinates(coordinatesThreeDim);
-                            return;
-                        }
-                        index++;
-                    }
-                }
-            }
-        } */
-    }
+    } */
 
     /**
      * Returns feature geometry as text
