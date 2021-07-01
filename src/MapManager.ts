@@ -728,11 +728,11 @@ export default class MapManager {
      *
      * @function highlightVertex
      * @memberof MapManager
-     * @param {Object} layer - layer
      * @param {Array} coordinate - coordinate
+     * @param {Number} srsId - SRS Id of coordinate
      */
-     public static highlightVertex(map: Map, layer: LayerInterface, coordinate: number[]): void {
-        map.highlightVertex(layer, coordinate);
+     public static highlightVertex(map: Map, coordinate: number[], srsId: number): void {
+        map.highlightVertex(coordinate, srsId);
     }
 
     /**

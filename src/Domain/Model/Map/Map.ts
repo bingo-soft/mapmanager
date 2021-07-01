@@ -753,10 +753,10 @@ export default class Map {
      *
      * @function highlightVertex
      * @memberof Map
-     * @param {Object} layer - layer
      * @param {Array} coordinate - coordinate
+     * @param {Number} srsId - SRS Id of coordinate
      */
-    public highlightVertex(layer: LayerInterface, coordinate: OlCoordinate.Coordinate): void { debugger
+    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number): void {
         if (!this.vertexHighlightLayer) {
             this.vertexHighlightLayer = new OlVectorLayer({
                 source: new OlVectorSource(),
@@ -771,15 +771,14 @@ export default class Map {
                             width: 2
                         }),
                     }),
-                }),
-                zIndex: 100
+                })
             });
-            this.map.addLayer(this.vertexHighlightLayer);
+            this.vertexHighlightLayer.setMap(this.map);
         }
         const source: OlVectorSource = this.vertexHighlightLayer.getSource();
         source.clear();
         const feature: OlFeature = new OlFeature({
-            geometry: new OlPoint(OlProj.transform(coordinate, "EPSG:" + layer.getSRSId(), "EPSG:" + this.srsId))
+            geometry: new OlPoint(OlProj.transform(coordinate, "EPSG:" + srsId.toString(), "EPSG:" + this.srsId.toString()))
         });
         source.addFeature(feature);
     }
@@ -787,12 +786,12 @@ export default class Map {
     /**
      * Clears vertex highlight
      *
-     * @function unHighlightVertex
+     * @function clearVertexHighlight
      * @memberof Map
      */
     public clearVertexHighlight(): void {
         if (this.vertexHighlightLayer) {
-            this.map.removeLayer(this.vertexHighlightLayer);
+            this.vertexHighlightLayer.setMap(null);
             this.vertexHighlightLayer = null;
         }
     }
