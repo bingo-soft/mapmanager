@@ -54,6 +54,7 @@ export default class StyleBuilder {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "polygon") && Object.keys(opts["polygon"]).length) {
                 this.setPolygonStyle(opts["polygon"]);
+                this.setGeometryCollectionStyle(opts["polygon"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length) {
                 this.setTextStyle(opts["label"]);
@@ -122,6 +123,14 @@ export default class StyleBuilder {
         return this;
     }
 
+    /**
+     * Sets polygon style
+     *
+     * @function setPolygonStyle
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     * @return {Object} style builder instance
+     */
     private setPolygonStyle(opts: unknown): StyleBuilder {
         const style: OlStyle = new OlStyle({
             stroke: new OlStroke({
@@ -134,7 +143,6 @@ export default class StyleBuilder {
         });
         this.style["Polygon"] = style;
         this.style["MultiPolygon"] = style;
-        this.style["GeometryCollection"]= style;
         return this;
     }
 
@@ -159,6 +167,39 @@ export default class StyleBuilder {
             text: opts["field"]
         });
         this.style["Text"] = style;
+        return this;
+    }
+
+    /**
+     * Sets geometry collection style
+     *
+     * @function setGeometryCollectionStyle
+     * @memberof StyleBuilder
+     * @param {Object} opts - options
+     * @return {Object} style builder instance
+     */
+     private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
+        const opacity: string = this.applyOpacity(opts["background_color"], opts["opacity"]);
+        const style: OlStyle = new OlStyle({
+            image: new OlCircleStyle({
+                radius: opts["size"] || 2,
+                fill: new OlFill({
+                    color: opts["opacity"] ? opacity : opts["background_color"],
+                }),
+                stroke: new OlStroke({
+                    color: opts["color"], 
+                    width: opts["stroke_width"]
+                }),
+            }),
+            stroke: new OlStroke({
+                color: opts["color"], 
+                width: opts["stroke_width"]
+            }),
+            fill: new OlFill({
+                color: opts["opacity"] ? opacity : opts["background_color"],
+            }),
+        });
+        this.style["GeometryCollection"] = style;
         return this;
     }
 

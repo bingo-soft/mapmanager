@@ -595,28 +595,28 @@ export default class MapManager {
     /**
      * Returns feature vertices' coordinates along with their indices
      *
-     * @function getCoordinates
+     * @function getVertices
      * @memberof MapManager
      * @static
      * @param {Object} feature - feature
      * @return {Array} array of feature vertices' along with their ids and coordinates
      */
-    public static getCoordinates(feature: Feature): GeometryItem[] {
-        return feature.getCoordinates();
+    public static getVertices(feature: Feature): GeometryItem[] {
+        return feature.getVertices();
     }
 
     /**
      * Edits feature vertex coordinate at given index
      *
-     * @function setCoordinates
+     * @function setVertices
      * @memberof MapManager
      * @static
-     * @param {Object} feature - feature
      * @param {Array} array of feature vertices' along with their ids and coordinates
+     * @param {Object} feature - feature to set vertices to. If not specified, a new feature will be created and added to map
      */
-    /* public static setCoordinates(feature: Feature, geometryItems: GeometryItem[]): void {
-        feature.setCoordinates(geometryItems);
-    } */
+    public static setVertices(geometryItems: GeometryItem[], feature?: Feature): void {
+        feature.setVertices(geometryItems);
+    }
 
     /**
      * Returns feature geometry as text

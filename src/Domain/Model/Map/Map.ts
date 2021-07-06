@@ -258,13 +258,9 @@ export default class Map {
      * @return {Array} dirty layers
      */
     public getDirtyLayers(): LayerInterface[] {
-        const dirtyLayers: LayerInterface[] = [];
-        Array.from(this.layers).forEach((layer: LayerInterface): void => {
-            if (layer.getDirtyFeatures().getLength()) {
-                dirtyLayers.push(layer);
-            }
+        return Array.from(this.layers).filter((layer: LayerInterface): boolean => {
+            return layer.getDirtyFeatures().getLength() != 0;
         });
-        return dirtyLayers;
     }
 
     /**
