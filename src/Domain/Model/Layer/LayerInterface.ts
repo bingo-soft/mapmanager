@@ -6,6 +6,7 @@ import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollec
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
+import EventType from "../EventHandlerCollection/EventType";
 
 /** @interface LayerInterface */
 export default interface LayerInterface
@@ -26,7 +27,18 @@ export default interface LayerInterface
      * @memberof LayerInterface
      * @return {Object} layer's event handlers
      */
-    getEventHandlers(): EventHandlerCollection; 
+    getEventHandlers(): EventHandlerCollection;
+
+    /**
+     * Sets layer's event handler
+     *
+     * @function setEventHandler
+     * @memberof AbstractLayer
+     * @param {String} eventType - event type
+     * @param {String} handlerName - handler id
+     * @param {Function} callback - callback function to call when an event is triggered
+     */
+    setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void;
     
     /**
      * Returns layer's source type

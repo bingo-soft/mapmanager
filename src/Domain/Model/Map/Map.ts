@@ -2,7 +2,7 @@
 import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
-import { Extent as OlExtent } from "ol/extent";
+import * as OlExtent from "ol/extent";
 import { OverviewMap as OlOverviewMapControl, defaults as OlDefaultControls } from "ol/control";
 import OlVectorLayer from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
@@ -20,7 +20,8 @@ import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import {Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
-import {Select as OlSelect} from 'ol/interaction';
+import {Select as OlSelect} from "ol/interaction";
+import OlSource from "ol/source/Source";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -638,7 +639,7 @@ export default class Map {
      * @param {Array} extent - extent to fit to
      */
     public fitExtent(extent: number[]): void {
-        this.map.getView().fit(<OlExtent> extent);
+        this.map.getView().fit(<OlExtent.Extent> extent);
     }
 
     /**
@@ -653,8 +654,11 @@ export default class Map {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
-        const extent: OlExtent = (<OlVectorSource>layer.getSource()).getExtent();
+        //let extent: OlExtent.Extent = [4886017.23450751, 7626066.771955345, 4886666.949247934, 7626525.394125056];
+        let extent: OlExtent.Extent = (<OlVectorSource> layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
+            //extent = this.addExtentBufferZone(extent, 10);
+            extent = OlExtent.buffer(extent, 0);
             const view: OlView = this.map.getView();
             view.fit(extent);
             if (typeof zoom !== "undefined") {
@@ -676,12 +680,36 @@ export default class Map {
         const gc: GeometryCollection = new GeometryCollection(geometries);
         const view: OlView = this.map.getView();
         if (geometries.length) {
-            view.fit(gc.getExtent());
+            //const extent: OlExtent = this.addExtentBufferZone(gc.getExtent(), 10);
+            //const extent: OlExtent.Extent = gc.getExtent();
+            const extent = OlExtent.buffer(gc.getExtent(), 10);
+            view.fit(extent);
         }
         if (typeof zoom !== "undefined") {
             view.setZoom(zoom);
         }
     }
+
+    /**
+     * Adds a buffer zone to given extent with specified width in pixels
+     *
+     * @function addExtentBufferZone
+     * @memberof Map
+     * @param {Array} extent - extent to get buffered
+     * @param {Number} width - buffer zone width
+     * @return {Array} new extent
+     */
+    /* private addExtentBufferZone(extent: OlExtent, width: number): OlExtent {
+        const pixelLeftBottom: OlPixel.Pixel = this.map.getPixelFromCoordinate([extent[0], extent[1]]);
+        const pixelRightTop: OlPixel.Pixel = this.map.getPixelFromCoordinate([extent[2], extent[3]]);
+        pixelLeftBottom[0] = pixelLeftBottom[0] - width;
+        pixelLeftBottom[1] = pixelLeftBottom[1] - width;
+        pixelRightTop[0] = pixelRightTop[0] + width;
+        pixelRightTop[1] = pixelRightTop[1] + width;
+        const coordLeftBottom: OlCoordinate.Coordinate = this.map.getCoordinateFromPixel(pixelLeftBottom);
+        const coordRightTop: OlCoordinate.Coordinate = this.map.getCoordinateFromPixel(pixelRightTop);
+        return [coordLeftBottom[0], coordLeftBottom[1], coordRightTop[0], coordRightTop[1]];
+    } */
 
     /**
      * Creates a measure layer and adds it to map
@@ -882,4 +910,22 @@ export default class Map {
             this.clearSelectedFeatures();
         }
     }
+
+    /**
+     * Adds change handler to all layer's sources
+     *
+     * @function addAllSourcesHandler
+     * @memberof Map
+     * @param {Function} callback - callback function
+     */
+    public addAllSourcesChangeHandler(callback: () => void): void {
+        if (typeof callback !== "function") {
+            return;
+        }
+        const layers = this.getLayers();
+        for (let i: number = 0; i < layers.length; i++) {
+            layers[i].setEventHandler(EventType.Change, "SourceChangeEventHandler" + i.toString(), callback);
+        }
+    }
+
 }

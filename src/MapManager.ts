@@ -781,6 +781,17 @@ export default class MapManager {
         return feature.polygonToLine();
     }
 
+    /**
+     * Adds change handler to all layer's sources
+     *
+     * @function addAllSourcesHandler
+     * @memberof MapManager
+     * @param {Object} map - map instance
+     * @param {Function} callback - callback function
+     */
+    public static addAllSourcesChangeHandler(map: Map, callback: () => void): void {
+        map.addAllSourcesChangeHandler(callback);
+    }
 
 
 }

@@ -49,30 +49,6 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
-     * Returns layer's source
-     *
-     * @function getSource
-     * @memberof VectorLayer
-     * @return {Object} layer's source
-     */
-    public getSource(): OlSource {
-        return this.layer.getSource();
-    }
-
-    /**
-     * Sets layer's source
-     *
-     * @function setSource
-     * @memberof VectorLayer
-     * @param {Object} source - layer's source
-     */
-    public setSource(source: SourceInterface): void {
-        const olSource: OlVectorSource = <OlVectorSource> source.getSource();
-        this.layer.setSource(olSource);
-        this.eventHandlers = new EventHandlerCollection(olSource);
-    }
-
-    /**
      * Sets layer's loader
      *
      * @function setLoader

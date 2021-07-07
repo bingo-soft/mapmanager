@@ -8,6 +8,7 @@ import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollec
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
+import EventType from "../EventHandlerCollection/EventType";
 
 /** @class AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
@@ -82,6 +83,19 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Sets layer's event handler
+     *
+     * @function setEventHandler
+     * @memberof AbstractLayer
+     * @param {String} eventType - event type
+     * @param {String} handlerName - handler id
+     * @param {Function} callback - callback function to call when an event is triggered
+     */
+    public setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void {
+        this.eventHandlers.add(eventType, handlerId, callback);
+    }
+
+    /**
      * Returns layer's SRS Id
      *
      * @function getSRSId
@@ -93,22 +107,28 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Returns layer's Openlayers source instance
+     * Returns layer's source
      *
      * @function getSource
      * @memberof AbstractLayer
-     * @return {Object} layer's Openlayers source instance
+     * @return {Object} layer's source
      */
-    public abstract getSource(): OlSource;
+     public getSource(): OlSource {
+        return this.layer.getSource();
+    }
 
     /**
-     * Sets layer's Openlayers source instance
+     * Sets layer's source
      *
      * @function setSource
      * @memberof AbstractLayer
-     * @param {Object} source - layer's Openlayers source instance
+     * @param {Object} source - layer's source
      */
-    public abstract setSource(source: SourceInterface): void;    
+    public setSource(source: SourceInterface): void {
+        const olSource = source.getSource();
+        this.layer.setSource(olSource);
+        this.eventHandlers = new EventHandlerCollection(olSource);
+    }
 
     /**
      * Sets layer's loader
