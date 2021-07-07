@@ -43,30 +43,6 @@ export default class TileLayer extends AbstractLayer {
     } 
 
     /**
-     * Returns layer's source
-     *
-     * @function getSource
-     * @memberof TileLayer
-     * @return {Object} layer source
-     */
-    public getSource(): OlSource {
-        return this.layer.getSource();
-    }
-
-    /**
-     * Sets layer's source
-     *
-     * @function setSource
-     * @memberof TileLayer
-     * @param {Object} source - source instance
-     */
-    public setSource(source: SourceInterface): void {
-        const olSource: OlTileImage = <OlTileImage> source.getSource()
-        this.layer.setSource(olSource);
-        this.eventHandlers = new EventHandlerCollection(olSource);
-    }
-
-    /**
      * Sets layer's source url
      *
      * @function setUrl
