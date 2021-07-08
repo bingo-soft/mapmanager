@@ -911,21 +911,4 @@ export default class Map {
         }
     }
 
-    /**
-     * Adds change handler to all layer's sources
-     *
-     * @function addAllSourcesHandler
-     * @memberof Map
-     * @param {Function} callback - callback function
-     */
-    public addAllSourcesChangeHandler(callback: () => void): void {
-        if (typeof callback !== "function") {
-            return;
-        }
-        const layers = this.getLayers();
-        for (let i: number = 0; i < layers.length; i++) {
-            layers[i].setEventHandler(EventType.Change, "SourceChangeEventHandler" + i.toString(), callback);
-        }
-    }
-
 }

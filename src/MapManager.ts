@@ -277,6 +277,9 @@ export default class MapManager {
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
             }
+            if (Object.prototype.hasOwnProperty.call(opts, "source_change_callback")) {
+                builder.setSourceChangeCallback(opts["source_change_callback"]);
+            }
         }
         return builder.build();
     }
@@ -780,18 +783,5 @@ export default class MapManager {
      public static polygonToLine(feature: Feature): Feature {
         return feature.polygonToLine();
     }
-
-    /**
-     * Adds change handler to all layer's sources
-     *
-     * @function addAllSourcesHandler
-     * @memberof MapManager
-     * @param {Object} map - map instance
-     * @param {Function} callback - callback function
-     */
-    public static addAllSourcesChangeHandler(map: Map, callback: () => void): void {
-        map.addAllSourcesChangeHandler(callback);
-    }
-
 
 }

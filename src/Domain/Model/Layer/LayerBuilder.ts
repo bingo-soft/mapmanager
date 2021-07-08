@@ -120,7 +120,7 @@ export default class LayerBuilder {
      *
      * @function setLoadCallback
      * @memberof LayerBuilder
-     * @param {Function} callback - load callback
+     * @param {Function} callback - callback
      * @return {Object} layer builder instance
      */
     public setLoadCallback(callback: () => void): LayerBuilder {
@@ -128,10 +128,25 @@ export default class LayerBuilder {
             const listener = (e: OlBaseEvent): void => {
                 if (e.target.getState() == "ready") {
                     callback();
-                    e.target.un("change", listener);                
+                    e.target.un("change", listener);
                 }
             }
-            this.layer.getEventHandlers().add(EventType.Change, "LayerLoadEventHanler", listener);
+            this.layer.setEventHandler(EventType.Change, "LayerLoadEventHanler", listener);
+        }
+        return this;
+    }
+
+    /**
+     * Sets layer's source change callback
+     *
+     * @function setSourceChangeCallback
+     * @memberof LayerBuilder
+     * @param {Function} callback - callback
+     * @return {Object} layer builder instance
+     */
+    public setSourceChangeCallback(callback: () => void): LayerBuilder {
+        if (typeof callback === "function") {
+            this.layer.setEventHandler(EventType.Change, "SourceChangeEventHandler", callback);
         }
         return this;
     }
