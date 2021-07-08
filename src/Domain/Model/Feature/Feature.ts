@@ -509,6 +509,57 @@ export default class Feature {
     }
 
     /**
+     * Splits geometry into simple geometries
+     *
+     * @function splitGeometry
+     * @memberof Feature
+     * @param {Object} geometry - geometry
+     * @return {Array} simple geometries
+     */
+    public splitGeometry(geometry: OlGeometry): OlGeometry[] {
+        const simpleGeometries: OlGeometry[] = [];
+        if (geometry instanceof OlMultiPoint) {
+            (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
+                simpleGeometries.push(point);
+            });
+        } else if (geometry instanceof OlMultiLineString) {
+            (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
+                simpleGeometries.push(linestring);
+            });
+        } else if (geometry instanceof OlMultiPolygon) {
+            (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
+                simpleGeometries.push(polygon);
+            });
+        } else if (geometry instanceof OlGeometryCollection) {
+            return [];
+        } else { // geometry itself is a simple one
+            simpleGeometries.push(geometry);
+        }
+        return simpleGeometries;
+    }
+
+    /**
+     * Splits geometry collection into simple geometries
+     *
+     * @function splitGeometryCollection
+     * @memberof Feature
+     * @param {Object} geometryCollection - geometry collection
+     * @return {Array} simple geometries
+     */
+     public splitGeometryCollection(geometryCollection: OlGeometryCollection): OlGeometry[] {
+        let simpleGeometries: OlGeometry[] = [];
+        if (geometryCollection instanceof OlGeometryCollection) {
+            geometryCollection.getGeometries().forEach((geometry: OlGeometry): void => {
+                const subgeometries: OlGeometry[] = this.splitGeometry(geometry);
+                if (subgeometries.length) {
+                    simpleGeometries = simpleGeometries.concat(subgeometries);
+                }
+            });
+        }
+        return simpleGeometries;
+    }
+
+    /**
      * Returns format instance based on format type
      *
      * @function getFormatInstance
