@@ -2,6 +2,10 @@ import OlVectorLayer from "ol/layer/Vector";
 import OlGeometryType from "ol/geom/GeometryType"
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
+// temp
+/* import * as OlColor from "ol/color";
+import * as OlColorLike from "ol/colorlike"; */
+// temp
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 
@@ -9,6 +13,10 @@ import StyleFunction from "./StyleFunctionType";
 export default class StyleBuilder {
     
     private style: StyleType;
+    // temp
+    /* private uniqueStyles: Map<number, OlStyle>;
+    private lastColor: number; */
+    // temp
     private static readonly POSITIONS = {
         "top": 0,
         "bottom": 1,
@@ -34,6 +42,10 @@ export default class StyleBuilder {
             "GeometryCollection": null,
             "Text": null
         };
+        // temp
+        /* this.uniqueStyles = new Map();
+        this.lastColor = 10; */
+        // temp
         this.applyOptions(opts);
     }
 
@@ -214,6 +226,30 @@ export default class StyleBuilder {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
             const geomType: OlGeometryType = feature.getGeometry().getType();
             const style: OlStyle = this.style[geomType];
+
+            // temp
+            /* const valueToPaintOn: number = feature.getProperties()["attr_939_id"];
+            let savedStyle: OlStyle = this.uniqueStyles.get(valueToPaintOn);
+            if (!savedStyle) {
+                // create style
+                const color: OlColor.Color | OlColorLike.ColorLike = [this.lastColor, 0, 0, 0.5];
+                savedStyle = new OlStyle({
+                    stroke: new OlStroke({
+                        color: color, 
+                        width: 1
+                    }),
+                    fill: new OlFill({
+                        color: color,
+                    }),
+                });
+                this.lastColor += 10;
+                this.uniqueStyles.set(valueToPaintOn, savedStyle);
+            }
+            return savedStyle; */
+            // temp
+            
+
+
             const textStyle: OlTextStyle = this.style["Text"];
             if (style && textStyle) {
                 const textValue: string = feature.getProperties()[textStyle.getText()];

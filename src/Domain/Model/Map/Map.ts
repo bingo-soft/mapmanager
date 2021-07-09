@@ -40,7 +40,7 @@ import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
-import { DrawCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction/* , MeasureCallbackFunction */ } from "../Interaction/InteractionCallbackType";
+import { DrawCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction/* , MeasureCallbackFunction */ } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
 import CursorType from "./CursorType";
 import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
@@ -430,7 +430,7 @@ export default class Map {
      * @param {Object} source - target layer for interaction
      * @param {Function} callback - callback function after geometry is transformed
      */
-     public setTransformInteraction(source: LayerInterface, callback?: TransformCallbackFunction): void {
+    public setTransformInteraction(source: LayerInterface, callback?: TransformCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
         this.interaction = new TransformInteraction(source, callback);
         this.addInteraction(this.interaction);  
@@ -444,9 +444,9 @@ export default class Map {
      * @param {String} type - measure type
      * @param {Object} units - units
      */
-     public setMeasureInteraction(type: MeasureType, units: unknown): void {
+    public setMeasureInteraction(type: MeasureType, units: unknown, callback?: MeasureCallbackFunction): void {
         this.clearInteractions();
-        this.interaction = new MeasureInteraction(type, units, this);
+        this.interaction = new MeasureInteraction(type, units, this, callback);
         this.addInteraction(this.interaction);  
     }
 
