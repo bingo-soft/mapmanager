@@ -21,7 +21,7 @@ import InteractionInterface from "../InteractionInterface";
 import * as OlObservable from "ol/Observable";
 import VectorLayer from "../../Layer/Impl/VectorLayer";
 import Map from "../../Map/Map";
-//import { MeasureCallbackFunction } from "../InteractionCallbackType";
+import { MeasureCallbackFunction } from "../InteractionCallbackType";
 
 /** @class MeasureInteraction */
 export default class MeasureInteraction extends BaseInteraction {
@@ -34,8 +34,9 @@ export default class MeasureInteraction extends BaseInteraction {
      * @param {Object} type - measure type
      * @param {Object} units - units
      * @param {Object} map - map object
+     * @param {Function} callback - callback function to call after measurement is done
      */
-    constructor(type: MeasureType, units: unknown, map: Map/* , callback: MeasureCallbackFunction */) {
+    constructor(type: MeasureType, units: unknown, map: Map , callback: MeasureCallbackFunction) {
         super();
 
         let realType: string;
@@ -77,10 +78,9 @@ export default class MeasureInteraction extends BaseInteraction {
             tooltip.className = "tooltip tooltip-static";
             tooltip.innerHTML = result;
             map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]);
-
-            /* if (typeof callback === "function") {
-                callback(result, tooltipCoord);
-            } */
+            if (typeof callback === "function") {
+                callback(result);
+            }
         });
     }
 
