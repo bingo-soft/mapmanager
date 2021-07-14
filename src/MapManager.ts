@@ -20,7 +20,9 @@ import StyleFunction from "./Domain/Model/Style/StyleFunctionType"
 import GeometryItem from "./Domain/Model/Feature/GeometryItem"
 import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
 
-/** @class MapManager */
+/** 
+ * @class MapManager 
+*/
 export default class MapManager { 
 
     /**
@@ -29,9 +31,9 @@ export default class MapManager {
      * @function createMap
      * @memberof MapManager
      * @static
-     * @param {String} targetDOMId - id of target DOM element
-     * @param {Object} opts - options
-     * @return {Map} map instance
+     * @param targetDOMId - id of target DOM element
+     * @param opts - options
+     * @return map instance
      */
     public static createMap(targetDOMId: string, opts?: unknown): Map {
         const map : Map = new Map(targetDOMId, opts); 
@@ -44,7 +46,7 @@ export default class MapManager {
      * @function updateSize
      * @memberof MapManager
      * @static
-     * @param {Map} map - map instance
+     * @param map - map instance
      */
     public static updateSize(map: Map): void {
         map.updateSize();
@@ -589,9 +591,10 @@ export default class MapManager {
      *
      * @function getDirtyLayers
      * @memberof MapManager
+     * @static
      * @return {Array} dirty layers
      */
-    public getDirtyLayers(map: Map): LayerInterface[] {
+    public static getDirtyLayers(map: Map): LayerInterface[] {
         return map.getDirtyLayers();
     }
 
