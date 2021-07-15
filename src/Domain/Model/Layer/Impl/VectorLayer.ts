@@ -12,6 +12,7 @@ import AbstractLayer from "../AbstractLayer";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
+import GeometryItem from "../../Feature/GeometryItem";
 
 
 /** @class VectorLayer */
@@ -56,7 +57,7 @@ export default class VectorLayer extends AbstractLayer{
      * @param {Function} loader - loader function
      */
     public setLoader(loader: () => Promise<string>): void {   
-        const source : OlVectorSource = <OlVectorSource> this.layer.getSource();
+        const source = <OlVectorSource> this.layer.getSource();
         source.setLoader(async () => {
             const data = await loader(); 
             source.addFeatures(new OlGeoJSON().readFeatures(data, {
@@ -93,13 +94,19 @@ export default class VectorLayer extends AbstractLayer{
      *
      * @function addFeatures
      * @memberof VectorLayer
-     * @param {String} features - features as GeoJSON string
+     * @param {Array | string} features - features as OL feature instance or GeoJSON string
      */
-    public addFeatures(features: string): void {
-        (<OlVectorLayer> this.layer).getSource().addFeatures(new OlGeoJSON().readFeatures(features, {
-            dataProjection: "EPSG:" + this.srsId,
-            featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
-        }));
+    public addFeatures(features: OlFeature[] | string): void {
+        let addingFeatures: OlFeature[] = [];
+        if (typeof features === "string") {
+            addingFeatures = new OlGeoJSON().readFeatures(features, {
+                dataProjection: "EPSG:" + this.srsId,
+                featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
+            });
+        } else {
+            addingFeatures = <OlFeature[]> features;            
+        }
+        (<OlVectorLayer> this.layer).getSource().addFeatures(addingFeatures);
     }
 
     /**
@@ -181,6 +188,21 @@ export default class VectorLayer extends AbstractLayer{
         } else {
 
         }
+    }
+
+    /**
+     * Creates feature from vertices
+     *
+     * @function createFeatureFromVertices
+     * @memberof VectorLayer
+     * @param {Array} array of feature vertices' along with their ids and coordinates
+     * @return {Object} resulting feature
+     */
+    public createFeatureFromVertices(items: GeometryItem[]): Feature {
+        const feature = new Feature(new OlFeature(), this);
+        this.addFeatures([feature.getFeature()]);
+        feature.updateFromVertices(items);
+        return feature;
     }
     
 }

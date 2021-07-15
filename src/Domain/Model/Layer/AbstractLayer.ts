@@ -9,6 +9,7 @@ import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
+import GeometryItem from "../Feature/GeometryItem";
 
 /** @class AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
@@ -251,5 +252,19 @@ export default abstract class AbstractLayer implements LayerInterface
     public setRemovedFeatures(features: Feature | FeatureCollection): void  {
         throw new MethodNotImplemented();
     }
+
+    /**
+     * Creates feature from vertices
+     *
+     * @function createFeatureFromVertices
+     * @memberof VectorLayer
+     * @param {Array} array of feature vertices' along with their ids and coordinates
+     * @return {Object} resulting feature
+     */
+    public createFeatureFromVertices(items: GeometryItem[]): Feature {
+        throw new MethodNotImplemented();
+    }
+
+
 
 }

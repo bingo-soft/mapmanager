@@ -34,7 +34,7 @@ export default class SelectInteraction extends BaseInteraction {
      */
     constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction) {
         super();
-        const olMap: OlMap = map.getMap(); 
+        const olMap = map.getMap(); 
         this.type = InteractionType.Select;
         let fc: FeatureCollection;
         const OlLayersToSelectOn: OlLayer[] = [];
@@ -84,7 +84,7 @@ export default class SelectInteraction extends BaseInteraction {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
-                                    const feature: Feature = new Feature(olFeature, map.getLayer(olLayer)); 
+                                    const feature = new Feature(olFeature, map.getLayer(olLayer)); 
                                     features.push(feature);
                                     layers.add(olLayer);
                                     selectedFeatures.push(olFeature); // just to highlight the selection

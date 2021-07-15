@@ -52,8 +52,8 @@ export default class EventHandlerCollection {
      * @param {String} id - id of handler
      */
     public remove(id: string): void {
-        const type: string = this.handlers.get(id).type;
-        const handler: Handler = this.handlers.get(id).handler;
+        const type = this.handlers.get(id).type;
+        const handler = this.handlers.get(id).handler;
         this.target.un(type, handler);
         this.handlers.delete(id);
     }

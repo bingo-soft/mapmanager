@@ -50,9 +50,9 @@ export default class MeasureInteraction extends BaseInteraction {
             default:
         }
     
-        const layer: LayerInterface = map.createMeasureLayer();
+        const layer = map.createMeasureLayer();
         map.setDrawInteraction(layer, realType);
-        const interaction: InteractionInterface = map.getInteraction();
+        const interaction = map.getInteraction();
         let geomChangelistener: OlEventsKey;
         let result: string;
         let tooltipCoord: number[];
@@ -93,7 +93,7 @@ export default class MeasureInteraction extends BaseInteraction {
      * @return {Number} the length of linestring
      */
     private getLength(line: OlLineString): number {
-        const length: number = OlSphere.getLength(line);
+        const length = OlSphere.getLength(line);
         return Math.round(length * 100) / 100;
     }
 
@@ -106,7 +106,7 @@ export default class MeasureInteraction extends BaseInteraction {
      * @return {Number} the area of polygon
      */
     private getArea(polygon: OlPolygon): number {
-        const area: number = OlSphere.getArea(polygon);
+        const area = OlSphere.getArea(polygon);
         return Math.round(area * 100) / 100;
     }
 
