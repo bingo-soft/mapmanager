@@ -1,6 +1,6 @@
 {
   "name": "@bingo_soft/mapmanager",
-  "version": "1.30.3",
+  "version": "1.30.4",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "repository": {
@@ -14,7 +14,7 @@
   "author": "Bingo-Soft",
   "license": "MIT",
   "dependencies": {
-    "@turf/boolean-valid": "^6.4.0",
+    "@turf/boolean-intersects": "^6.5.0",
     "@turf/turf": "^6.4.0",
     "@types/ol": "^6.4.2",
     "assets": "^3.0.1",

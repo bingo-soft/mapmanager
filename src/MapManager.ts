@@ -619,9 +619,10 @@ export default class MapManager {
      * @static
      * @param {Array} array of feature vertices' along with their ids and coordinates
      * @param {Object} feature - feature to set vertices to. If not specified, a new feature will be created and added to map
+     * @return {Object} resulting feature
      */
-    public static setVertices(geometryItems: GeometryItem[], feature?: Feature): void {
-        feature.setVertices(geometryItems);
+    public static setVertices(geometryItems: GeometryItem[], feature?: Feature): Feature {
+        return feature.setVertices(geometryItems);
     }
 
     /**

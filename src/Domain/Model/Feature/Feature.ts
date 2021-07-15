@@ -7,6 +7,7 @@ import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, Li
 import { Layer as OlLayer } from "ol/layer";
 import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
+import writeFeatureObject  from "ol/format/GeoJSON";
 import * as OlProj from 'ol/proj';
 import GeometryFormat from "./GeometryFormat";
 import LayerInterface from "../Layer/LayerInterface";
@@ -126,8 +127,9 @@ export default class Feature {
      * @memberof Feature
      * @param {Array} array of feature vertices' along with their ids and coordinates
      * @param {Object} feature - feature to set vertices to. If not specified, a new feature will be created and added to map
+     * @return {Object} resulting feature
      */
-    public setVertices(items: GeometryItem[]): void {
+    public setVertices(items: GeometryItem[]): Feature {
         let feature: OlFeature;
         if (items[0].name == "GeometryCollection") {
             const geometries: OlGeometry[] = [];
@@ -150,6 +152,7 @@ export default class Feature {
         }
         this.feature = feature;
         source.addFeature(this.feature);
+        return this;
     }
 
     /**
@@ -465,7 +468,26 @@ export default class Feature {
      * @return {Boolean} boolean indicating whether feature is valid
      */
     public isValid(): boolean {
-        return booleanValid(new OlGeoJSON().writeFeatureObject(this.feature));
+        const feature = this.getFeature();
+        const geometry = feature.getGeometry();
+        let coordinates: OlCoordinate | OlCoordinate[] | OlCoordinate[][];
+        if (geometry instanceof OlPoint) {
+            coordinates = (<OlPoint> geometry).getCoordinates();
+            return coordinates.length == 2;
+        }
+        if (geometry instanceof OlLineString) {
+            coordinates = (<OlLineString> geometry).getCoordinates();
+            return !!coordinates.length;
+        }
+        if (geometry instanceof OlPolygon) {
+            const linesFeature = this.polygonToLine();
+            const coordinates = (<OlMultiLineString> linesFeature.getFeature().getGeometry()).getCoordinates();
+            console.log(coordinates);
+        }
+
+
+
+        //return booleanValid(new OlGeoJSON().writeFeatureObject(this.feature));
     }
 
     /**
