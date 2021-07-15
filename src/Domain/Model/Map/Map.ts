@@ -10,18 +10,16 @@ import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
 import { Layer as OlLayer, Tile as OlTileLayer } from "ol/layer";
 import OlFeature from "ol/Feature";
-import { Geometry as OlGeometry, Point as OlPoint } from "ol/geom"
+import { Point as OlPoint } from "ol/geom"
 import OlBaseEvent from "ol/events/Event";
 import { GeometryCollection } from "ol/geom";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
-import OlInteraction from "ol/interaction/Interaction";
 import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
-import {Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
-import {Select as OlSelect} from "ol/interaction";
-import OlSource from "ol/source/Source";
+import { Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle } from "ol/style";
+import { Select as OlSelect } from "ol/interaction";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -40,14 +38,14 @@ import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
-import { DrawCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction/* , MeasureCallbackFunction */ } from "../Interaction/InteractionCallbackType";
+import { DrawCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
 import CursorType from "./CursorType";
 import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
 import MeasureType from "../Interaction/MeasureType";
 import LayerBuilder from "../Layer/LayerBuilder";
 import VectorLayer from "../Layer/Impl/VectorLayer";
-import { METERS_PER_UNIT } from "ol/proj/Units";
+
 
 /** @class Map */
 export default class Map { 
@@ -111,7 +109,7 @@ export default class Map {
         } /* else if (...) {
             TODO
         } */
-        const overviewMapControl: OlOverviewMapControl = new OlOverviewMapControl({
+        const overviewMapControl = new OlOverviewMapControl({
             layers: [
                 new OlTileLayer({
                     source: source,
@@ -194,7 +192,7 @@ export default class Map {
                 centerSRSId = opts["declared_coordinate_system_id"];
             }
         }
-        const mapProj: string = this.map.getView().getProjection().getCode();
+        const mapProj = this.map.getView().getProjection().getCode();
         let coordinate: OlCoordinate.Coordinate = [centerX, centerY];
         if (mapProj != "EPSG:" + centerSRSId) {
             coordinate = OlProj.transform(coordinate, "EPSG:" + centerSRSId.toString(), mapProj);
@@ -299,17 +297,17 @@ export default class Map {
      * @memberof Map
      */
      public clearSelectedFeatures(): void {
-        const type: InteractionType = this.interaction.getType();
+        const type = this.interaction.getType();
         if (type != InteractionType.Select) {
             return;
         }
         // clear an ordinary select interaction's features 
-        const olSelect: OlSelect = <OlSelect> this.interaction.getInteraction();
+        const olSelect = <OlSelect> this.interaction.getInteraction();
         if (olSelect && olSelect instanceof OlSelect) {
             olSelect.getFeatures().clear();
         }
         // if it's a DragBox interaction we must clear its highlighting select features
-        const select: SelectInteraction = <SelectInteraction> this.interaction;
+        const select = <SelectInteraction> this.interaction;
         if (select) {
             const highlightSelect = select.getHighlightSelect();
             if (highlightSelect) {
@@ -458,7 +456,7 @@ export default class Map {
      * @param {Object} interaction - interaction to add
      */
     private addInteraction(interaction: InteractionInterface): void {
-        const olInteraction: OlInteraction = interaction.getInteraction();
+        const olInteraction = interaction.getInteraction();
         if (typeof olInteraction !== "undefined") {
             this.map.addInteraction(interaction.getInteraction());
         }
@@ -475,7 +473,7 @@ export default class Map {
     public clearInteractions(types?: InteractionType[]): void {
         this.interactions.forEach((interaction: InteractionInterface): void => {
             if ((typeof types !== "undefined" && types.includes(interaction.getType())) || typeof types === "undefined") {
-                const interactionHandlers: EventHandlerCollection = interaction.getEventHandlers();
+                const interactionHandlers = interaction.getEventHandlers();
                 if (interactionHandlers) {
                     interactionHandlers.clear();
                 }
@@ -602,7 +600,7 @@ export default class Map {
      */
     public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
         if (features) {
-            const source: OlVectorSource = <OlVectorSource> layer.getSource();
+            const source = <OlVectorSource> layer.getSource();
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer);
@@ -622,9 +620,9 @@ export default class Map {
     public removeFeatures(features: FeatureCollection): void {
         if (features) {
             features.forEach((feature: Feature): void => {
-                const layer: LayerInterface = feature.getLayer(); 
+                const layer = feature.getLayer(); 
                 layer.setRemovedFeatures(feature);
-                const source: OlVectorSource = <OlVectorSource> (layer.getLayer().getSource());
+                const source = <OlVectorSource> (layer.getLayer().getSource());
                 source.removeFeature(feature.getFeature());
             });
             this.clearSelectedFeatures();
@@ -654,12 +652,10 @@ export default class Map {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
-        //let extent: OlExtent.Extent = [4886017.23450751, 7626066.771955345, 4886666.949247934, 7626525.394125056];
-        let extent: OlExtent.Extent = (<OlVectorSource> layer.getSource()).getExtent();
+        let extent = (<OlVectorSource> layer.getSource()).getExtent();
         if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
-            //extent = this.addExtentBufferZone(extent, 10);
             extent = OlExtent.buffer(extent, 0);
-            const view: OlView = this.map.getView();
+            const view = this.map.getView();
             view.fit(extent);
             if (typeof zoom !== "undefined") {
                 view.setZoom(zoom);
@@ -676,12 +672,10 @@ export default class Map {
      * @param {Number} zoom - zoom to set after fit
      */
     public fitFeatures(features: FeatureCollection, zoom?: number): void {
-        const geometries: OlGeometry[] = features.getFeatureGeometries();
-        const gc: GeometryCollection = new GeometryCollection(geometries);
-        const view: OlView = this.map.getView();
+        const geometries = features.getFeatureGeometries();
+        const gc = new GeometryCollection(geometries);
+        const view = this.map.getView();
         if (geometries.length) {
-            //const extent: OlExtent = this.addExtentBufferZone(gc.getExtent(), 10);
-            //const extent: OlExtent.Extent = gc.getExtent();
             const extent = OlExtent.buffer(gc.getExtent(), 10);
             view.fit(extent);
         }
@@ -689,27 +683,6 @@ export default class Map {
             view.setZoom(zoom);
         }
     }
-
-    /**
-     * Adds a buffer zone to given extent with specified width in pixels
-     *
-     * @function addExtentBufferZone
-     * @memberof Map
-     * @param {Array} extent - extent to get buffered
-     * @param {Number} width - buffer zone width
-     * @return {Array} new extent
-     */
-    /* private addExtentBufferZone(extent: OlExtent, width: number): OlExtent {
-        const pixelLeftBottom: OlPixel.Pixel = this.map.getPixelFromCoordinate([extent[0], extent[1]]);
-        const pixelRightTop: OlPixel.Pixel = this.map.getPixelFromCoordinate([extent[2], extent[3]]);
-        pixelLeftBottom[0] = pixelLeftBottom[0] - width;
-        pixelLeftBottom[1] = pixelLeftBottom[1] - width;
-        pixelRightTop[0] = pixelRightTop[0] + width;
-        pixelRightTop[1] = pixelRightTop[1] + width;
-        const coordLeftBottom: OlCoordinate.Coordinate = this.map.getCoordinateFromPixel(pixelLeftBottom);
-        const coordRightTop: OlCoordinate.Coordinate = this.map.getCoordinateFromPixel(pixelRightTop);
-        return [coordLeftBottom[0], coordLeftBottom[1], coordRightTop[0], coordRightTop[1]];
-    } */
 
     /**
      * Creates a measure layer and adds it to map
@@ -720,7 +693,7 @@ export default class Map {
      */
     public createMeasureLayer(): LayerInterface {
         if (!this.measureLayer) {
-            const builder: LayerBuilder = new LayerBuilder(new VectorLayer());
+            const builder = new LayerBuilder(new VectorLayer());
             builder.setSource(SourceType.Vector);
             this.measureLayer = builder.build();
             this.addLayer(this.measureLayer);
@@ -749,7 +722,7 @@ export default class Map {
      * @param {Array} offset - offset in pixels used when positioning the overlay 
      */
     public createMeasureOverlay(element: HTMLElement, position: number[], offset: number[]): void {
-        const overlay: OlOverlay = new OlOverlay({
+        const overlay = new OlOverlay({
             element: element,
             offset: offset,
             position: position,
@@ -799,9 +772,9 @@ export default class Map {
             });
             this.vertexHighlightLayer.setMap(this.map);
         }
-        const source: OlVectorSource = this.vertexHighlightLayer.getSource();
+        const source = this.vertexHighlightLayer.getSource();
         source.clear();
-        const feature: OlFeature = new OlFeature({
+        const feature = new OlFeature({
             geometry: new OlPoint(OlProj.transform(coordinate, "EPSG:" + srsId.toString(), "EPSG:" + this.srsId.toString()))
         });
         source.addFeature(feature);

@@ -13,7 +13,7 @@ class Cookie {
     public static set(name: string, value: string, lifetime: number): void {
         let expires = "";
         if (lifetime) {
-            const date: Date = new Date();
+            const date = new Date();
             date.setTime(date.getTime() + lifetime * 1000);
             expires = "; expires=" + date.toUTCString();
         }
@@ -32,9 +32,9 @@ class Cookie {
     */
     public static get(name: string): string {
         let ret = "";
-        const ca: string[] = document.cookie.split(";");
+        const ca = document.cookie.split(";");
         ca.forEach(function(val) {
-            const pair: string[] = val.split("=");
+            const pair = val.split("=");
             if (pair[0].trim() == name) {
                 ret = pair[1];
                 return;

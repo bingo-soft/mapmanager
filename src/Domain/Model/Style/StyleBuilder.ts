@@ -124,7 +124,7 @@ export default class StyleBuilder {
      * @return {Object} style builder instance
      */
     private setLinestringStyle(opts: unknown): StyleBuilder {
-        const style: OlStyle = new OlStyle({
+        const style = new OlStyle({
             stroke: new OlStroke({
                 color: opts["color"], 
                 width: opts["stroke_width"]
@@ -144,7 +144,7 @@ export default class StyleBuilder {
      * @return {Object} style builder instance
      */
     private setPolygonStyle(opts: unknown): StyleBuilder {
-        const style: OlStyle = new OlStyle({
+        const style = new OlStyle({
             stroke: new OlStroke({
                 color: opts["color"], 
                 width: opts["stroke_width"]
@@ -167,7 +167,7 @@ export default class StyleBuilder {
      * @return {Object} style builder instance
      */
     private setTextStyle(opts: unknown): StyleBuilder {
-        const style: OlTextStyle = new OlTextStyle({
+        const style = new OlTextStyle({
             stroke: new OlStroke({
                 color: opts["style"] && opts["style"]["stroke"] && opts["style"]["stroke"]["color"] ? opts["style"]["stroke"]["color"] : null, 
                 width: opts["style"] && opts["style"]["stroke"] && opts["style"]["stroke"]["stroke_width"] ? opts["style"]["stroke"]["stroke_width"] : null
@@ -191,8 +191,8 @@ export default class StyleBuilder {
      * @return {Object} style builder instance
      */
      private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
-        const opacity: string = this.applyOpacity(opts["background_color"], opts["opacity"]);
-        const style: OlStyle = new OlStyle({
+        const opacity = this.applyOpacity(opts["background_color"], opts["opacity"]);
+        const style = new OlStyle({
             image: new OlCircleStyle({
                 radius: opts["size"] || 2,
                 fill: new OlFill({
@@ -224,8 +224,8 @@ export default class StyleBuilder {
      */
     public build(): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
-            const geomType: OlGeometryType = feature.getGeometry().getType();
-            const style: OlStyle = this.style[geomType];
+            const geomType = feature.getGeometry().getType();
+            const style = this.style[geomType];
 
             // temp
             /* const valueToPaintOn: number = feature.getProperties()["attr_939_id"];
@@ -254,7 +254,7 @@ export default class StyleBuilder {
             if (style && textStyle) {
                 const textValue: string = feature.getProperties()[textStyle.getText()];
                 if (textValue) {
-                    const newTextStyle: OlTextStyle = new OlTextStyle({
+                    const newTextStyle = new OlTextStyle({
                         stroke: new OlStroke({
                             color: textStyle.getStroke().getColor(),
                             width: textStyle.getStroke().getWidth()

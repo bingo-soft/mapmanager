@@ -131,7 +131,7 @@ export default class FeatureCollection {
      * @param {Object} feature - feature to remove
      */
     public remove(feature: Feature): void {
-        const index: number = this.features.indexOf(feature);
+        const index = this.features.indexOf(feature);
         if (index > -1) {
             this.features.splice(index, 1);
         }
@@ -158,7 +158,7 @@ export default class FeatureCollection {
         if (typeof callbackfn != "function") {
             throw new TypeError();
         }
-        for (let i: number = 0; i < this.features.length; i++) {
+        for (let i = 0; i < this.features.length; i++) {
             if (i in this.features) {
                 callbackfn.call(thisArg, this.features[i], i, this.features);
             }
@@ -198,7 +198,7 @@ export default class FeatureCollection {
      */
      public getAsSingleGeometry(srsId: number): string {
         if (this.features.length) {
-            const geom: OlGeometry = this.features[0].getFeature().getGeometry();
+            const geom = this.features[0].getFeature().getGeometry();
             return new OlGeoJSON().writeGeometry(geom, {
                 dataProjection: "EPSG:" + srsId.toString()/* this.srs */,
                 featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
@@ -222,7 +222,7 @@ export default class FeatureCollection {
             const coordsLineString: OlCoordinate[][] = [];
             const coordsPolygon: OlCoordinate[][][] = [];
             this.features.forEach((el): void => {
-                const geom: OlGeometry = el.getFeature().getGeometry();
+                const geom = el.getFeature().getGeometry();
                 geomType = geom.getType();
                 if (geomType == OlGeometryType.POINT) {
                     coordsPoint.push((<OlPoint> geom).getCoordinates());

@@ -7,6 +7,7 @@ import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
+import GeometryItem from "../Feature/GeometryItem";
 
 /** @interface LayerInterface */
 export default interface LayerInterface
@@ -203,4 +204,14 @@ export default interface LayerInterface
      * @param {Object} features - single feature or collection
      */
     setRemovedFeatures(features: Feature | FeatureCollection): void;
+
+    /**
+     * Creates feature from vertices
+     *
+     * @function createFeatureFromVertices
+     * @memberof VectorLayer
+     * @param {Array} array of feature vertices' along with their ids and coordinates
+     * @return {Object} resulting feature
+     */
+    createFeatureFromVertices(items: GeometryItem[]): Feature;
 }

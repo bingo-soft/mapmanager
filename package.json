@@ -1,6 +1,6 @@
 {
   "name": "@bingo_soft/mapmanager",
-  "version": "1.30.4",
+  "version": "1.31.0",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "repository": {
@@ -27,7 +27,6 @@
     "@typescript-eslint/parser": "^4.14.1",
     "eslint": "^7.18.0",
     "parcel-bundler": "^1.12.4",
-    "typedoc": "^0.21.2",
     "typescript": "^4.2.4"
   }
 }

@@ -36,7 +36,7 @@ export default class MapManager {
      * @return map instance
      */
     public static createMap(targetDOMId: string, opts?: unknown): Map {
-        const map : Map = new Map(targetDOMId, opts); 
+        const map = new Map(targetDOMId, opts); 
         return map;
     }
 
@@ -297,7 +297,7 @@ export default class MapManager {
      * @return {Object} created layer instance
      */
     public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
-        const layer: VectorLayer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
+        const layer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
         if (geoJSON) {
             geoJSON = Geometry.flattenGeometry(geoJSON);
             layer.addFeatures(geoJSON);
@@ -612,17 +612,31 @@ export default class MapManager {
     }
 
     /**
-     * Edits feature vertex coordinate at given index
+     * Updates feature from vertices
      *
-     * @function setVertices
+     * @function createFeatureFromVertices
      * @memberof MapManager
      * @static
      * @param {Array} array of feature vertices' along with their ids and coordinates
      * @param {Object} feature - feature to set vertices to. If not specified, a new feature will be created and added to map
      * @return {Object} resulting feature
      */
-    public static setVertices(geometryItems: GeometryItem[], feature?: Feature): Feature {
-        return feature.setVertices(geometryItems);
+     public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface): Feature {
+        return layer.createFeatureFromVertices(geometryItems);
+    }
+
+    /**
+     * Updates feature vertices
+     *
+     * @function updateFeatureFromVertices
+     * @memberof MapManager
+     * @static
+     * @param {Array} array of feature vertices' along with their ids and coordinates
+     * @param {Object} feature - feature to set vertices to.
+     * @return {Object} resulting feature
+     */
+    public static updateFeatureFromVertices(geometryItems: GeometryItem[], feature: Feature): Feature {
+        return feature.updateFromVertices(geometryItems);
     }
 
     /**
@@ -667,7 +681,7 @@ export default class MapManager {
      * @param {Number} srsId - SRS Id of feature text representation
      */
     public static createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
-        const feature: Feature = new Feature();
+        const feature = new Feature();
         return feature.createGeometryFromText(layer, text, format, srsId);
     }
 
@@ -723,7 +737,7 @@ export default class MapManager {
      */
     public static setStyle(features: FeatureCollection, style: unknown): void {
         if (features && features.getLength()) {
-            const styleFunc: StyleFunction = new StyleBuilder(style).build();
+            const styleFunc = new StyleBuilder(style).build();
             features.forEach((feature: Feature): void => {
                 feature.setStyle(styleFunc);
             });
