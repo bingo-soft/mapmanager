@@ -1,21 +1,18 @@
 import { Layer as OlLayer } from "ol/layer";
 import { Vector as OlVectorLayer } from "ol/layer";
-import { Source as OlSource } from "ol/source";
 import { Vector as OlVectorSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import BaseVectorLayer from "ol/layer/BaseVector";
 import SourceType from "../../Source/SourceType";
-import SourceInterface from "../../Source/SourceInterface";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
-import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
 import GeometryItem from "../../Feature/GeometryItem";
 
 
-/** @class VectorLayer */
+/** VectorLayer */
 export default class VectorLayer extends AbstractLayer{
 
     private dirtyFeatures: FeatureCollection = new FeatureCollection([]);
@@ -24,9 +21,7 @@ export default class VectorLayer extends AbstractLayer{
     private static readonly DEFAULT_SRS_ID = 3857;
     
     /**
-     * @constructor
-     * @memberof VectorLayer
-     * @param {Object} opts - options
+     * @param opts - options
      */
     constructor(layer?: OlLayer, opts?: unknown) { 
         super();
@@ -40,10 +35,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Returns layer type
-     *
-     * @function getType
-     * @memberof VectorLayer
-     * @return {String} layer type
+     * @return layer type
      */
     public getType(): SourceType {
         return SourceType.Vector;
@@ -51,10 +43,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Sets layer's loader
-     *
-     * @function setLoader
-     * @memberof VectorLayer
-     * @param {Function} loader - loader function
+     * @param loader - loader function
      */
     public setLoader(loader: () => Promise<string>): void {   
         const source = <OlVectorSource> this.layer.getSource();
@@ -69,10 +58,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Sets layer's source url
-     *
-     * @function setUrl
-     * @memberof VectorLayer
-     * @param {String} url - source url
+     * @param url - source url
      */
     public setUrl(url: string): void {
         (<OlVectorSource> this.layer.getSource()).setUrl(url);
@@ -80,10 +66,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Sets layer's style
-     *
-     * @function setStyle
-     * @memberof VectorLayer
-     * @param {Function} style - style function
+     * @param style - style function
      */
     public setStyle(style: StyleFunction): void {
         (<BaseVectorLayer> this.layer).setStyle(style);
@@ -91,10 +74,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Adds features to layer
-     *
-     * @function addFeatures
-     * @memberof VectorLayer
-     * @param {Array | string} features - features as OL feature instance or GeoJSON string
+     * @param features - features as an array of OL feature instances or GeoJSON string
      */
     public addFeatures(features: OlFeature[] | string): void {
         let addingFeatures: OlFeature[] = [];
@@ -111,10 +91,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Returns features of layer
-     *
-     * @function getFeatures
-     * @memberof VectorLayer
-     * @return {Object} features of the layer
+     * @return features of the layer
      */
     public getFeatures(): FeatureCollection {
         return new FeatureCollection((<OlVectorLayer> this.layer).getSource().getFeatures(), this);
@@ -122,10 +99,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Returns collection of dirty features
-     *
-     * @function getDirtyFeatures
-     * @memberof VectorLayer
-     * @return {Object} collection of dirty features
+     * @return collection of dirty features
      */
     public getDirtyFeatures(): FeatureCollection {
         return this.dirtyFeatures;
@@ -133,11 +107,8 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Adds or removes dirty features
-     *
-     * @function setDirtyFeatures
-     * @memberof VectorLayer
-     * @param {Object} features - collection of dirty features
-     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
+     * @param features - collection of dirty features
+     * @param dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
     public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
         features.setDirty(dirty);
@@ -148,10 +119,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Checks if layer is dirty
-     *
-     * @function isDirty
-     * @memberof VectorLayer
-     * @return {Boolean} flag if layer is dirty
+     * @return flag indicating that the layer is dirty
      */
     public isDirty(): boolean {
         return (this.dirtyFeatures.getLength() != 0) || (this.removedFeatures.getLength() != 0);
@@ -159,10 +127,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Returns collection of removed features
-     *
-     * @function getRemovedFeatures
-     * @memberof VectorLayer
-     * @return {Object} collection of removed features
+     * @return collection of removed features
      */
     public getRemovedFeatures(): FeatureCollection {
         return this.removedFeatures;
@@ -170,10 +135,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Adds features to removed
-     *
-     * @function setRemovedFeatures
-     * @memberof VectorLayer
-     * @param {Object} features - single feature or collection
+     * @param features - single feature or collection
      */
     public setRemovedFeatures(features: Feature | FeatureCollection): void  {
         if (typeof features === "undefined") {
@@ -191,16 +153,14 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
-     * Creates feature from vertices
-     *
-     * @function createFeatureFromVertices
-     * @memberof VectorLayer
-     * @param {Array} array of feature vertices' along with their ids and coordinates
-     * @return {Object} resulting feature
+     * Creates feature from vertices and puts it into layer
+     * @param array - array of feature vertices' along with their ids and coordinates
+     * @return resulting feature
      */
     public createFeatureFromVertices(items: GeometryItem[]): Feature {
         const feature = new Feature(new OlFeature(), this);
         this.addFeatures([feature.getFeature()]);
+        this.setDirtyFeatures(new FeatureCollection([feature]), true);
         feature.updateFromVertices(items);
         return feature;
     }

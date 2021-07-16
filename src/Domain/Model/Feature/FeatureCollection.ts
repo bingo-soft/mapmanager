@@ -1,4 +1,3 @@
-import { Layer as OlLayer } from "ol/layer";
 import OlFeature from "ol/Feature";
 import OlGeometry from "ol/geom/Geometry";
 import OlGeometryCollection from "ol/geom/GeometryCollection";
@@ -12,11 +11,10 @@ import OlMultiPoint from "ol/geom/MultiPoint";
 import OlMultiLineString from "ol/geom/MultiLineString";
 import OlMultiPolygon from "ol/geom/MultiPolygon";
 import Feature from "./Feature";
-import VectorLayer from "../Layer/Impl/VectorLayer";
 import LayerInterface from "../Layer/LayerInterface";
 
 
-/** @class FeatureCollection */
+/** FeatureCollection */
 export default class FeatureCollection { 
 
     private static readonly MAP_SRS_ID = 3857;
@@ -24,10 +22,8 @@ export default class FeatureCollection {
     private features: Feature[] = [];
     
     /**
-     * @constructor
-     * @memberof FeatureCollection
-     * @param {Array} features - array of features
-     * @param {Object} layer - layer of features
+     * @param features - array of features
+     * @param layer - layer of features
      */
     constructor(features: OlFeature[] | Feature[], layer?: LayerInterface) {
         if (features[0]) {
@@ -49,10 +45,7 @@ export default class FeatureCollection {
 
     /**
      * Returns the length of collection
-     *
-     * @function getLength
-     * @memberof FeatureCollection
-     * @return {Number} length of collection
+     * @return length of collection
      */
     public getLength(): number {
         return this.features.length;
@@ -60,10 +53,7 @@ export default class FeatureCollection {
 
     /**
      * Returns an array of feature instances
-     *
-     * @function getFeatures
-     * @memberof FeatureCollection
-     * @return {Array} features of the  collection
+     * @return features of the collection
      */
     public getFeatures(): Feature[] {
         return this.features;
@@ -71,10 +61,7 @@ export default class FeatureCollection {
 
     /**
      * Returns an array of OL feature geometries
-     *
-     * @function getFeatureGeometries
-     * @memberof FeatureCollection
-     * @return {Array} array of OL feature geometries
+     * @return array of OL feature geometries
      */
     public getFeatureGeometries(): OlGeometry[] {
         const ret: OlGeometry[] = [];
@@ -86,10 +73,7 @@ export default class FeatureCollection {
 
     /**
      * Sets the flag indicating whether the features in collection are dirty (newly added or modified)
-     *
-     * @function setDirty
-     * @memberof FeatureCollection
-     * @param {boolean} dirty - flag indicating whether the features in collection are dirty
+     * @param dirty - flag indicating whether the features in collection are dirty
      */
     public setDirty(dirty: boolean): void {
         this.features.forEach((feature: Feature): void => {
@@ -100,10 +84,7 @@ export default class FeatureCollection {
 
     /**
      * Returns feature at index
-     *
-     * @function getAt
-     * @memberof FeatureCollection
-     * @param {Number} index - index
+     * @param index - index
      */
     public getAt(index: number): Feature {
         if (typeof this.features[index] === "undefined") {
@@ -114,10 +95,7 @@ export default class FeatureCollection {
 
     /**
      * Adds feature to the collection
-     *
-     * @function add
-     * @memberof FeatureCollection
-     * @param {Object} feature - feature to add
+     * @param feature - feature to add
      */
     public add(feature: Feature): void {
         this.features.push(feature);
@@ -125,10 +103,7 @@ export default class FeatureCollection {
 
     /**
      * Removes feature from the collection
-     *
-     * @function remove
-     * @memberof FeatureCollection
-     * @param {Object} feature - feature to remove
+     * @param feature - feature to remove
      */
     public remove(feature: Feature): void {
         const index = this.features.indexOf(feature);
@@ -139,9 +114,6 @@ export default class FeatureCollection {
 
     /**
      * Clears the collection
-     *
-     * @function clear
-     * @memberof FeatureCollection
      */
     public clear(): void {
         this.features = [];
@@ -149,10 +121,7 @@ export default class FeatureCollection {
 
     /**
      * Iterates the collection
-     *
-     * @function forEach
-     * @memberof FeatureCollection
-     * @param {Function} callbackfn - callback function to call for each element
+     * @param callbackfn - callback function to call for each element
      */
     public forEach(callbackfn: (value: Feature, key: string, arr: Feature[]) => void, thisArg?: any) {
         if (typeof callbackfn != "function") {
@@ -167,21 +136,15 @@ export default class FeatureCollection {
 
     /**
      * Returns true if feature collection consists of a singe feature, otherwise returns false
-     *
-     * @function isSingle
-     * @memberof FeatureCollection
-     * @return {Boolean} is feature collection single
+     * @return is feature collection single
      */
     public isSingle(): boolean {
         return this.features.length == 1;
     }
 
     /**
-     * Returns true if feature collection consists of multiple features of different types, otherwise returns false
-     *
-     * @function isMixed
-     * @memberof FeatureCollection
-     * @return {Boolean} is feature collection consists of multiple features of different type
+     * Returns true if feature collection consists of multiple features of different types, false otherwise
+     * @return is feature collection consists of multiple features of different type
      */
     public isMixed(): boolean {
         const isEqual = this.features.every((val: Feature, i, arr) => val.getType().replace("Multi", "") === arr[0].getType().replace("Multi", ""));
@@ -189,12 +152,9 @@ export default class FeatureCollection {
     }
 
     /**
-     * Returns features of the collection as single geometry GeoJSON
-     *
-     * @function getAsSingleGeometry
-     * @memberof FeatureCollection
-     * @param {Number} srsId - SRS Id returned features
-     * @return {String} - GeoJSON
+     * Returns features of the collection as single geometry GeoJSON string
+     * @param srsId - SRS Id returned features
+     * @return GeoJSON string
      */
      public getAsSingleGeometry(srsId: number): string {
         if (this.features.length) {
@@ -208,12 +168,9 @@ export default class FeatureCollection {
     }
 
     /**
-     * Returns features of the collection as multi geometry GeoJSON
-     *
-     * @function getAsMultiGeometry
-     * @memberof FeatureCollection
-     * @param {Number} srsId - SRS Id returned features
-     * @return {String} - GeoJSON
+     * Returns features of the collection as multi geometry GeoJSON string
+     * @param srsId - SRS Id returned features
+     * @return GeoJSON string
      */
     public getAsMultiGeometry(srsId: number): string {
         let geomType: OlGeometryType; 
@@ -272,12 +229,9 @@ export default class FeatureCollection {
     }
 
     /**
-     * Returns features of the collection as GeometryCollection GeoJSON
-     *
-     * @function getAsGeometryCollection
-     * @memberof FeatureCollection
-     * @param {Number} srsId - SRS Id returned features
-     * @return {String} - GeoJSON
+     * Returns features of the collection as GeometryCollection GeoJSON string
+     * @param srsId - SRS Id returned features
+     * @return GeoJSON string
      */
     public getAsGeometryCollection(srsId: number): string {
         if (this.features.length) {

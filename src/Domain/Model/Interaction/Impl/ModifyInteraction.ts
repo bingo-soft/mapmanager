@@ -1,5 +1,4 @@
 import OlModify, { ModifyEvent as OlModifyEvent } from "ol/interaction/Modify";
-import OlMap from "ol/Map";
 import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
 import Collection from 'ol/Collection';
@@ -16,10 +15,8 @@ import Feature from "../../Feature/Feature";
 export default class ModifyInteraction extends BaseInteraction {
 
     /**
-     * @constructor
-     * @memberof ModifyInteraction
-     * @param {Object} source - layer or features to modify
-     * @param {Function} callback - callback function to call after geometry is modified
+     * @param source - layer or features to modify
+     * @param callback - callback function to call after geometry is modified
      */
     constructor(source: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction) {
         super();

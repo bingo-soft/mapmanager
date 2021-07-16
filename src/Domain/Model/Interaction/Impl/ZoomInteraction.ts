@@ -7,14 +7,12 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import MethodNotImplemented from "../../../Exception/MethodNotImplemented";
 
-/** @class ZoomInteraction */
+/** ZoomInteraction */
 export default class ZoomInteraction extends BaseInteraction {
 
     /**
-     * @constructor
-     * @memberof ZoomInteraction
-     * @param {Object} type - zoom type
-     * @param {Object} map - map object to zoom
+     * @param type - zoom type
+     * @param map - map object to zoom
      */
     constructor(type: ZoomType, map: Map) {
         super();
@@ -32,10 +30,7 @@ export default class ZoomInteraction extends BaseInteraction {
 
     /**
      * Sets or unsets interaction active
-     *
-     * @function setActive
-     * @memberof BaseInteraction
-     * @param {Boolean} active - activity flag
+     * @param active - activity flag
      */
     public setActive(active: boolean): void {
         throw new MethodNotImplemented();
