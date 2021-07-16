@@ -1,16 +1,12 @@
 import FillPattern from "ol-ext/style/FillPattern";
 import { Fill as OlFill, Icon as OlIcon } from "ol/style";
 
-/** @class Pattern */
+/** Pattern */
 export default class Pattern { 
 
     /**
      * Returns data URIs containing a representation of the images of default fill patterns.
-     * 
-     * @function getDefaultFillPatterns
-     * @static
-     * @memberof Pattern
-     * @return {Object} objects representing URIs of default fill patterns
+     * @return objects representing URIs of default fill patterns
      */
     public static getDefaultFillPatterns(): Map<string, string> {
         const ret: Map<string, string> = new Map();
@@ -24,14 +20,10 @@ export default class Pattern {
 
 
     /**
-     * Returns a data URI containing a representation of the image of pattern with specified parameters.
-     * 
-     * @function getPatternDataURL
-     * @static
-     * @memberof MapManager
-     * @param {String} patternName - pattern name.
-     * @param {Object} opts - pattern options.
-     * @return {String} data URI containing a representation of the image
+     * Returns a data URI containing a representation of pattern image with specified parameters.
+     * @param patternName - pattern name.
+     * @param opts - pattern options.
+     * @return data URI containing a representation of the image
      */
     public static getPatternDataURI(patternName: string, opts?: unknown): string | null {
         if (typeof opts === "undefined") {

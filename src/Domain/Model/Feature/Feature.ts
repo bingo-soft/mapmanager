@@ -95,7 +95,7 @@ export default class Feature {
     }
 
     /**
-     * Updates feature vertices
+     * Updates feature from  vertices
      * @param array - array of feature vertices' along with their ids and coordinates
      * @return resulting feature
      */

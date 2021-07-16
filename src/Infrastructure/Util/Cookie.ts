@@ -1,14 +1,10 @@
-/** @class Cookie */
-class Cookie {
+/** Cookie */
+export default class Cookie {
     /**
     * Sets a cookie.
-    *
-    * @function set
-    * @memberof Cookie
-    * @static
-    * @param {String} name - name of cookie.
-    * @param {String} value - value of cookie.
-    * @param {Number} lifetime - lifetime of cookie in seconds.
+    * @param name - name of cookie.
+    * @param value - value of cookie.
+    * @param lifetime - lifetime of cookie in seconds.
     */
     public static set(name: string, value: string, lifetime: number): void {
         let expires = "";
@@ -22,13 +18,9 @@ class Cookie {
 
 
     /**
-    * Gets a cookie.
-    *
-    * @function get
-    * @memberof Cookie
-    * @static
-    * @param {String} name - name of cookie to get.
-    * @return {String} value of cookie
+    * Returns a cookie.
+    * @param name - name of cookie to get.
+    * @return value of cookie
     */
     public static get(name: string): string {
         let ret = "";
@@ -46,15 +38,9 @@ class Cookie {
 
     /**
     * Deletes a cookie.
-    *
-    * @function delete
-    * @memberof Cookie
-    * @static
-    * @param {String} name - name of cookie to delete.
+    * @param name - name of cookie to delete.
     */
     public static delete(name: string): void {
         document.cookie = name + "='' ; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
     }
 }
-
-export default Cookie;

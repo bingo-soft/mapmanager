@@ -3,13 +3,9 @@ import OlXYZSource from "ol/source/XYZ";
 import BaseSource from "../BaseSource";
 import SourceType from "../SourceType";
 
-/** @class XYZSource */
+/** XYZSource */
 export default class XYZSource extends BaseSource {
     
-    /**
-     * @constructor
-     * @memberof XYZSource
-     */
     constructor() {
         super();
         this.source = new OlXYZSource({
@@ -19,10 +15,7 @@ export default class XYZSource extends BaseSource {
 
     /**
      * Returns type of source
-     *
-     * @function getType
-     * @memberof XYZSource
-     * @return {String} type of source
+     * @return type of source
      */
     public getType(): SourceType {
         return SourceType.XYZ;

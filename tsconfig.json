@@ -31,6 +31,8 @@
         }
     },
     "typedocOptions": {
+        "entryPoints": ["src/MapManager.ts", "src/Domain/Model/Feature.ts", "src/Domain/Model/FeatureCollection.ts"],
+        "out": "docs",
         "excludePrivate": true,
         "excludeProtected": true,
         "excludeInternal": true

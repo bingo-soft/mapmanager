@@ -192,7 +192,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Creates feature from vertices
-     * @param items - of feature vertices' along with their ids and coordinates
+     * @param items - of feature vertices along with their ids and coordinates
      * @return resulting feature
      */
     public createFeatureFromVertices(items: GeometryItem[]): Feature {

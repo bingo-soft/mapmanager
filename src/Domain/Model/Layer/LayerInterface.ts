@@ -9,209 +9,142 @@ import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
 import GeometryItem from "../Feature/GeometryItem";
 
-/** @interface LayerInterface */
+/** LayerInterface */
 export default interface LayerInterface
 {
     /**
      * Returns Openlayers layer instance
-     *
-     * @function getLayer
-     * @memberof LayerInterface
-     * @return {Object} layer instance
+     * @return layer instance
      */
     getLayer(): OlLayer;
 
     /**
-     * Returns layer's event handlers
-     *
-     * @function getEventHandlers
-     * @memberof LayerInterface
-     * @return {Object} layer's event handlers
+     * Returns layer event handlers
+     * @return layer event handlers
      */
     getEventHandlers(): EventHandlerCollection;
 
     /**
-     * Sets layer's event handler
-     *
-     * @function setEventHandler
-     * @memberof AbstractLayer
-     * @param {String} eventType - event type
-     * @param {String} handlerName - handler id
-     * @param {Function} callback - callback function to call when an event is triggered
+     * Sets layer event handler
+     * @param eventType - event type
+     * @param handlerName - handler id
+     * @param callback - callback function to call when an event is triggered
      */
     setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void;
     
     /**
-     * Returns layer's source type
-     *
-     * @function getType
-     * @memberof LayerInterface
-     * @return {String} layer's source type
+     * Returns layer source type
+     * @return layer source type
      */
     getType(): SourceType;
     
     /**
-     * Sets layer's source type
-     *
-     * @function setType
-     * @memberof LayerInterface
-     * @param {String} - layer's source type
+     * Sets layer source type
+     * @param - layer source type
      */
     setType(type: SourceType): void;
     
     /**
-     * Returns layer's SRS
-     *
-     * @function getSRS
-     * @memberof LayerInterface
-     * @return {Number} layer's SRS Id
+     * Returns layer SRS
+     * @return layer SRS Id
      */
     getSRSId(): number;
     
     /**
-     * Returns layer's Openlayers source instance
-     *
-     * @function getSource
-     * @memberof 
-     * @memberof LayerInterface
-     * @return {Object} layer's Openlayers source instance
+     * Returns layer Openlayers source instance
+     * @return layer Openlayers source instance
      */
     getSource(): OlSource;
     
     /**
-     * Sets layer's Openlayers source instance
-     *
-     * @function setSource
-     * @memberof LayerInterface
-     * @param {Object} source - layer's Openlayers source instance
+     * Sets layer Openlayers source instance
+     * @param source - layer Openlayers source instance
      */
     setSource(source: SourceInterface): void;
 
     /**
-     * Returns layer's properties
-     *
-     * @function getProperties
-     * @memberof LayerInterface
-     * @return {Object} layer's properties
+     * Returns layer properties
+     * @return layer properties
      */
     getProperties(): unknown;
     
     /**
-     * Sets layer's properties
-     *
-     * @function setProperties
-     * @memberof LayerInterface
-     * @return {Object} layer's properties
+     * Sets layer properties
+     * @return layer properties
      */
     setProperties(source: unknown): void;
     
     /**
-     * Sets layer's loader
-     *
-     * @function setLoader
-     * @memberof LayerInterface
-     * @param {Function} loader - loader function
+     * Sets layer loader
+     * @param loader - loader function
      */
     setLoader(loader: () => Promise<string>): void;
     
     /**
-     * Sets layer's source url
-     *
-     * @function setUrl
-     * @memberof LayerInterface
-     * @param {String} url - source url
+     * Sets layer source url
+     * @param url - source url
      */
     setUrl(url: string): void;
 
     /**
-     * Sets layer's source params
-     *
-     * @function setParams
-     * @memberof LayerInterface
-     * @param {Object} = params
+     * Sets layer source params
+     * @param params - params
      */
     setParams(params: unknown): void;
     
     /**
-     * Sets layer's zIndex
-     *
-     * @function setZIndex
-     * @memberof LayerInterface
-     * @param {Number} zIndex - zIndex
+     * Sets layer zIndex
+     * @param zIndex - zIndex
      */
     setZIndex(zIndex: number): void;
     
     /**
-     * Sets layer's opacity
-     *
-     * @function setOpacity
-     * @memberof LayerInterface
-     * @param {Number} opacity - opacity
+     * Sets layer opacity
+     * @param opacity - opacity
      */
     setOpacity(opacity: number): void;
     
     /**
-     * Sets layer's style
-     *
-     * @function setStyle
-     * @memberof LayerInterface
-     * @param {Function} style - style function
+     * Sets layer style
+     * @param style - style function
      */
     setStyle(style: StyleFunction): void;
 
     /**
      * Returns collection of dirty features
-     *
-     * @function getDirtyFeatures
-     * @memberof LayerInterface
-     * @return {Object} collection of dirty features
+     * @return collection of dirty features
      */
     getDirtyFeatures(): FeatureCollection;
 
     /**
      * Adds or removes dirty features
-     *
-     * @function setDirtyFeatures
-     * @memberof VectorLayer
-     * @param {Object} features - features to be set
-     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
+     * @param features - features to be set
+     * @param dirty - dirty flag. If true, features are added to layer dirty features collection, removed otherwise
      */
     setDirtyFeatures(features: FeatureCollection, dirty: boolean): void;
 
     /**
      * Checks if layer is dirty
-     *
-     * @function isDirty
-     * @memberof LayerInterface
-     * @return {Boolean} flag if layer is dirty
+     * @return flag indicating if layer is dirty
      */
     isDirty(): boolean;
 
     /**
      * Returns collection of removed features
-     *
-     * @function getRemovedFeatures
-     * @memberof LayerInterface
-     * @return {Object} collection of removed features
+     * @return collection of removed features
      */
     getRemovedFeatures(): FeatureCollection;
 
     /**
      * Adds features to removed
-     *
-     * @function setRemovedFeatures
-     * @memberof LayerInterface
-     * @param {Object} features - single feature or collection
+     * @param features - single feature or collection
      */
     setRemovedFeatures(features: Feature | FeatureCollection): void;
 
     /**
      * Creates feature from vertices
-     *
-     * @function createFeatureFromVertices
-     * @memberof VectorLayer
-     * @param {Array} array of feature vertices' along with their ids and coordinates
-     * @return {Object} resulting feature
+     * @param  array - array of feature vertices along with their ids and coordinates
+     * @return resulting feature
      */
     createFeatureFromVertices(items: GeometryItem[]): Feature;
 }
