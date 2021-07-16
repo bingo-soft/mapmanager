@@ -1,13 +1,9 @@
-/** @class Geometry */
+/** Geometry */
 export default class Geometry { 
     /**
      * Flattens geometry from GeometryCollection to FeatureCollection
-     *
-     * @function flattenGeometry
-     * @memberof Geometry
-     * @static
-     * @param {String} features - features to flatten
-     * @return {String} flattened features
+     * @param features - features to flatten
+     * @return flattened features
      */
     public static flattenGeometry(features: string): string {
         const objFeatures: unknown = JSON.parse(features);  

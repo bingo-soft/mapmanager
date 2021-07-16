@@ -1,4 +1,4 @@
-/** @interface ApiError */
+/**  ApiError */
 export interface ApiError {
     message: string;
     code: string;

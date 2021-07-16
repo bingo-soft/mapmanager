@@ -1,6 +1,7 @@
 node_modules
 dist
 .cache
+docs
 
 .env
 package-lock.json

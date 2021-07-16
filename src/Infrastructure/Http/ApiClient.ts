@@ -3,17 +3,13 @@ import { AxiosError } from "axios"
 import { ApiRequest } from "./ApiRequest"
 import { ApiError } from "./ApiError"
 
-/** @class ApiClient */
+/** ApiClient */
 export class ApiClient {
 
     /**
      * Performs API request
-     *
-     * @function request
-     * @memberof ApiClient
-     * @static
-     * @param {ApiRequest} request - request params
-     * @return {Promise<string>} result of API request
+     * @param request - request params
+     * @return result of API request
      */
     public static request(request: ApiRequest): Promise<string> {
         const payload = {
@@ -38,12 +34,8 @@ export class ApiClient {
 
     /**
      * Normalizes error message
-     *
-     * @function normalizeError
-     * @memberof ApiClient
-     * @static
-     * @param {AxiosError} error - request params
-     * @return {ApiError} object representing normalized error
+     * @param error - request params
+     * @return object representing normalized error
      */
     private static normalizeError(error: AxiosError): ApiError {
         const data = error.response && error.response.data;

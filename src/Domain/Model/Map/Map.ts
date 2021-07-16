@@ -47,7 +47,7 @@ import LayerBuilder from "../Layer/LayerBuilder";
 import VectorLayer from "../Layer/Impl/VectorLayer";
 
 
-/** @class Map */
+/** Map */
 export default class Map { 
     private map: OlMap;
     private srsId: number;
@@ -71,10 +71,8 @@ export default class Map {
     private static readonly ZOOM = 14;
 
     /**
-     * @constructor
-     * @memberof Map
-     * @param {String} targetDOMId - id of target DOM element 
-     * @param {Object} opts - options 
+     * @param targetDOMId - id of target DOM element 
+     * @param opts - options 
      */
     constructor(targetDOMId: string, opts?: unknown) {
         let baseLayer = Map.BASE_LAYER, 
@@ -151,10 +149,7 @@ export default class Map {
 
     /**
      * Returns Openlayers map instance
-     *
-     * @function getMap
-     * @memberof Map
-     * @return {Object} Openlayers map instance
+     * @return Openlayers map instance
      */
     public getMap(): OlMap {
         return this.map;
@@ -162,9 +157,6 @@ export default class Map {
 
     /**
      * Updates map size
-     *
-     * @function updateSize
-     * @memberof Map
      */
     public updateSize(): void {
         this.map.updateSize();
@@ -172,10 +164,7 @@ export default class Map {
 
     /**
      * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
-     *
-     * @function setCenter
-     * @memberof Map
-     * @param {Object} opts - options
+     * @param opts - options
      */
     public setCenter(opts?: unknown): void {
         let centerX = Map.CENTER_X,
@@ -202,10 +191,7 @@ export default class Map {
 
     /**
      * Sets zoom of the map.
-     *
-     * @function setZoom
-     * @memberof Map
-     * @param {Number} zoom - zoom value
+     * @param zoom - zoom value
      */
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
@@ -213,10 +199,7 @@ export default class Map {
 
     /**
      * Sets cursor of the map.
-     *
-     * @function setCursor
-     * @memberof Map
-     * @param {String} cursor - cursor type
+     * @param cursor - cursor type
      */ 
     public setCursor(cursor: string): void {
         this.map.getViewport().style.cursor = cursor;
@@ -225,10 +208,7 @@ export default class Map {
 
     /**
      * Returns map's selected features
-     *
-     * @function getSelectedFeatures
-     * @memberof Map
-     * @return {Object} selected features
+     * @return selected features
      */
     public getSelectedFeatures(): FeatureCollection {
         return this.selectedFeatures;
@@ -236,10 +216,7 @@ export default class Map {
 
     /**
      * Sets map's selected features
-     *
-     * @function setSelectedFeatures
-     * @memberof Map
-     * @param {Object} features - selected features
+     * @param features - selected features
      */
     public setSelectedFeatures(features: FeatureCollection): void {
         if (features) {
@@ -251,10 +228,7 @@ export default class Map {
 
     /**
      * Returns map's dirty (containing added or modified features) layers
-     *
-     * @function getDirtyLayers
-     * @memberof Map
-     * @return {Array} dirty layers
+     * @return dirty layers
      */
     public getDirtyLayers(): LayerInterface[] {
         return Array.from(this.layers).filter((layer: LayerInterface): boolean => {
@@ -264,10 +238,7 @@ export default class Map {
 
     /**
      * Returns map's selected layers
-     *
-     * @function getSelectedLayers
-     * @memberof Map
-     * @return {Array} selected layers
+     * @return selected layers
      */
      public getSelectedLayers(): LayerInterface[] {
         return Array.from(this.selectedLayers);
@@ -275,10 +246,7 @@ export default class Map {
 
     /**
      * Sets map's selected layers
-     *
-     * @function setSelectedLayers
-     * @memberof Map
-     * @param {Object} layers - selected layers
+     * @param layers - selected layers
      */
     public setSelectedLayers(layers: Set<OlLayer>): void {
         let mapLayers: LayerInterface[] = Array.from(this.layers);
@@ -292,9 +260,6 @@ export default class Map {
 
     /**
      * Clears map's selected features
-     *
-     * @function clearSelectedFeatures
-     * @memberof Map
      */
      public clearSelectedFeatures(): void {
         const type = this.interaction.getType();
@@ -320,10 +285,7 @@ export default class Map {
 
     /**
      * Returns map current interaction instance
-     *
-     * @function getInteraction
-     * @memberof Map
-     * @return {Object} interaction instance
+     * @return interaction instance
      */
     public getInteraction(): InteractionInterface {
         return this.interaction;
@@ -331,10 +293,7 @@ export default class Map {
 
     /**
      * Returns map current interaction type
-     *
-     * @function getInteractionType
-     * @memberof Map
-     * @return {String} interaction type
+     * @return interaction type
      */
     public getInteractionType(): InteractionType {
         return this.interaction.getType();
@@ -342,9 +301,6 @@ export default class Map {
     
     /**
      * Sets map normal interaction
-     *
-     * @function setNormalInteractionType
-     * @memberof Map
      */
     public setNormalInteraction(): void {
         this.clearInteractions(); 
@@ -353,12 +309,9 @@ export default class Map {
 
     /**
      * Sets map draw interaction
-     *
-     * @function setDrawInteraction
-     * @memberof Map
-     * @param {Object} layer - layer to draw on
-     * @param {String} geometryType - type of geometry to draw
-     * @param {Function} callback - callback function to call after geometry is drawn
+     * @param layer - layer to draw on
+     * @param geometryType - type of geometry to draw
+     * @param callback - callback function to call after geometry is drawn
      */
     public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
         if (layer.getType() != SourceType.Vector) {
@@ -371,10 +324,7 @@ export default class Map {
 
     /**
      * Sets map zoom interaction
-     *
-     * @function setZoomInteraction
-     * @memberof Map
-     * @param {String} type - zoom type
+     * @param type - zoom type
      */
     public setZoomInteraction(type: ZoomType): void {
         this.clearInteractions(); 
@@ -384,13 +334,10 @@ export default class Map {
     
     /**
      * Sets map selection interaction
-     *
-     * @function setSelectionInteractionType
-     * @memberof Map
-     * @param {String} type - selection type
-     * @param {Array} layers - array of layers which selection applies to
-     * @param {Boolean} multiple - flag indicating multiple selection
-     * @param {Function} callback - callback function to call after geometry is selected
+     * @param type - selection type
+     * @param layers - array of layers which selection applies to
+     * @param multiple - flag indicating multiple selection
+     * @param callback - callback function to call after geometry is selected
      */
     public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction): InteractionInterface {
         if (layers) {
@@ -408,11 +355,8 @@ export default class Map {
 
     /**
      * Sets map modify interaction
-     *
-     * @function setModifyInteraction
-     * @memberof Map
-     * @param {Object} source - features to modify
-     * @param {Function} callback - callback function to call after geometry is modified
+     * @param source - features to modify
+     * @param callback - callback function to call after geometry is modified
      */
     public setModifyInteraction(source: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
@@ -422,11 +366,8 @@ export default class Map {
 
     /**
      * Sets map transform interaction
-     *
-     * @function setTransformInteraction
-     * @memberof Map
-     * @param {Object} source - target layer for interaction
-     * @param {Function} callback - callback function after geometry is transformed
+     * @param source - target layer for interaction
+     * @param callback - callback function after geometry is transformed
      */
     public setTransformInteraction(source: LayerInterface, callback?: TransformCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
@@ -436,11 +377,8 @@ export default class Map {
 
     /**
      * Sets map transform interaction
-     *
-     * @function setMeasureInteraction
-     * @memberof Map
-     * @param {String} type - measure type
-     * @param {Object} units - units
+     * @param type - measure type
+     * @param units - units
      */
     public setMeasureInteraction(type: MeasureType, units: unknown, callback?: MeasureCallbackFunction): void {
         this.clearInteractions();
@@ -450,10 +388,7 @@ export default class Map {
 
      /**
      * Adds interaction
-     *
-     * @function addInteraction
-     * @memberof Map
-     * @param {Object} interaction - interaction to add
+     * @param interaction - interaction to add
      */
     private addInteraction(interaction: InteractionInterface): void {
         const olInteraction = interaction.getInteraction();
@@ -465,10 +400,7 @@ export default class Map {
 
     /**
      * Clears interactions
-     *
-     * @function clearInteractions
-     * @param {Array} types - types of interaction to clear, all if not set
-     * @memberof Map
+     * @param  types - types of interaction to clear, all if not set
      */ 
     public clearInteractions(types?: InteractionType[]): void {
         this.interactions.forEach((interaction: InteractionInterface): void => {
@@ -491,10 +423,7 @@ export default class Map {
 
     /**
      * Gets active layer
-     *
-     * @function getActiveLayer
-     * @memberof Map
-     * @return {Object} active layer instance
+     * @return active layer instance
      */
     public getActiveLayer(): LayerInterface | null {
         return this.activeLayer;
@@ -502,10 +431,7 @@ export default class Map {
 
     /**
      * Sets active layer
-     *
-     * @function setActiveLayer
-     * @memberof Map
-     * @param {Object} layer - layer instance
+     * @param layer - layer instance
      */
     public setActiveLayer(layer: LayerInterface | null): void {
         this.activeLayer = layer;
@@ -513,21 +439,15 @@ export default class Map {
 
     /**
      * Gets measure layer
-     *
-     * @function getMeasureLayer
-     * @memberof Map
-     * @return {Object} measure layer instance
+     * @return measure layer instance
      */
-     public getMeasureLayer(): LayerInterface {
+    public getMeasureLayer(): LayerInterface {
         return this.measureLayer;
     }
 
     /**
      * Sets measure layer
-     *
-     * @function setMeasureLayer
-     * @memberof Map
-     * @param {Object} layer - layer instance
+     * @param layer - layer instance
      */
     public setMeasureLayer(layer: LayerInterface): void {
         this.measureLayer = layer;
@@ -535,10 +455,7 @@ export default class Map {
 
     /**
      * Adds layer to the map.
-     *
-     * @function addLayer
-     * @memberof Map
-     * @param {Object} layer - layer instance
+     * @param layer - layer instance
      */
     public addLayer(layer: LayerInterface): void {
         if (layer) {
@@ -549,10 +466,7 @@ export default class Map {
 
     /**
      * Removes layer from the map.
-     *
-     * @function removeLayer
-     * @memberof Map
-     * @param {Object} layer - layer instance
+     * @param layer - layer instance
      */
     public removeLayer(layer: LayerInterface): void {
         if (layer) {
@@ -563,11 +477,8 @@ export default class Map {
 
     /**
      * Returns map layers.
-     *
-     * @function getLayers
-     * @memberof Map
-     * @param {String} type - type
-     * @return {Array} map layers
+     * @param type - type
+     * @return map layers
      */
     public getLayers(type?: SourceType): LayerInterface[] {
         return Array.from(this.layers).filter((layer: LayerInterface): boolean => {
@@ -577,11 +488,8 @@ export default class Map {
 
     /**
      * Returns corresponding layer of LayerInterface type by OlLayer.
-     *
-     * @function getLayer
-     * @memberof Map
-     * @param {String} olLayer - OL layer instance
-     * @return {Object} layer of LayerInterface type
+     * @param olLayer - OL layer instance
+     * @returnlayer of LayerInterface type
      */
      public getLayer(olLayer: OlLayer): LayerInterface {
         const layers: LayerInterface[] = Array.from(this.layers).filter((layer: LayerInterface): boolean => {
@@ -590,13 +498,10 @@ export default class Map {
         return layers[0];
     }
 
-    /**
+    /** 
      * Adds features to map
-     *
-     * @function addFeatures
-     * @memberof Map
-     * @param {Object} layer - layer to add to
-     * @param {Object} features - features to add
+     * @param layer - layer to add to
+     * @param features - features to add
      */
     public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
         if (features) {
@@ -610,12 +515,9 @@ export default class Map {
         }
     }
 
-    /**
+    /** 
      * Removes features from map
-     *
-     * @function removeFeatures
-     * @memberof Map
-     * @param {Object} features - features to remove
+     * @param features - features to remove
      */
     public removeFeatures(features: FeatureCollection): void {
         if (features) {
@@ -629,12 +531,9 @@ export default class Map {
         }
     }
 
-    /**
+    /** 
      * Fits map to given extent
-     *
-     * @function fitExtent
-     * @memberof Map
-     * @param {Array} extent - extent to fit to
+     * @param extent - extent to fit to
      */
     public fitExtent(extent: number[]): void {
         this.map.getView().fit(<OlExtent.Extent> extent);
@@ -642,11 +541,8 @@ export default class Map {
 
     /**
      * Fits map to all layer's features extent
-     *
-     * @function fitLayer
-     * @memberof Map
-     * @param {Object} layer - layer instance
-     * @param {Number} zoom - zoom to set after fit
+     * @param layer - layer instance
+     * @param zoom - zoom to set after fit
      */
     public fitLayer(layer: LayerInterface, zoom?: number): void {
         if (layer.getType() != SourceType.Vector) {
@@ -665,11 +561,8 @@ export default class Map {
 
     /**
      * Fits map to given features extent
-     *
-     * @function fitFeatures
-     * @memberof Map
-     * @param {Object} features - features
-     * @param {Number} zoom - zoom to set after fit
+     * @param features - features
+     * @param zoom - zoom to set after fit
      */
     public fitFeatures(features: FeatureCollection, zoom?: number): void {
         const geometries = features.getFeatureGeometries();
@@ -686,10 +579,8 @@ export default class Map {
 
     /**
      * Creates a measure layer and adds it to map
-     *
-     * @function createMeasureLayer
      * @memberof Map
-     * @return {Object} measure layer instance 
+     * @return measure layer instance 
      */
     public createMeasureLayer(): LayerInterface {
         if (!this.measureLayer) {
@@ -703,23 +594,17 @@ export default class Map {
 
     /**
      * Clears measure layer
-     *
-     * @function clearMeasureLayer
-     * @memberof Map
      */
-     public clearMeasureLayer(): void {
+    public clearMeasureLayer(): void {
         this.removeLayer(this.measureLayer);
         this.measureLayer = null;
     }
 
     /**
      * Creates a measure overlay and adds it to map
-     *
-     * @function createMeasureOverlay
-     * @memberof Map
-     * @param {Object} element - DOM element to create overlay upon
-     * @param {Array} position - the overlay position in map projection
-     * @param {Array} offset - offset in pixels used when positioning the overlay 
+     * @param element - DOM element to create overlay upon
+     * @param position - the overlay position in map projection
+     * @param offset - offset in pixels used when positioning the overlay 
      */
     public createMeasureOverlay(element: HTMLElement, position: number[], offset: number[]): void {
         const overlay = new OlOverlay({
@@ -734,9 +619,6 @@ export default class Map {
 
     /**
      * Clears measure overlays
-     *
-     * @function clearMeasureOverlays
-     * @memberof Map
      */
     public clearMeasureOverlays(): void {
         this.measureOverlays.forEach((overlay: OlOverlay): void => {
@@ -747,11 +629,8 @@ export default class Map {
 
     /**
      * Highlights vertex
-     *
-     * @function highlightVertex
-     * @memberof Map
-     * @param {Array} coordinate - coordinate
-     * @param {Number} srsId - SRS Id of coordinate
+     * @param coordinate - coordinate
+     * @param srsId - SRS Id of coordinate
      */
     public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number): void {
         if (!this.vertexHighlightLayer) {
@@ -782,9 +661,6 @@ export default class Map {
 
     /**
      * Clears vertex highlight
-     *
-     * @function clearVertexHighlight
-     * @memberof Map
      */
     public clearVertexHighlight(): void {
         if (this.vertexHighlightLayer) {
@@ -795,10 +671,7 @@ export default class Map {
 
     /**
      * Returns map's event handlers
-     *
-     * @function getEventHandlers
-     * @memberof Map
-     * @return {Object} event handlers collection
+     * @return event handlers collection
      */
     public getEventHandlers(): EventHandlerCollection {
         return this.eventHandlers;
@@ -806,12 +679,9 @@ export default class Map {
     
     /**
      * Sets map's event handler
-     *
-     * @function setEventHandler
-     * @memberof Map
-     * @param {String} eventType - event type
-     * @param {String} handlerName - handler id
-     * @param {Function} callback - callback function to call when an event is triggered
+     * @param eventType - event type
+     * @param handlerName - handler id
+     * @param callback - callback function to call when an event is triggered
      */
     public setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void {
         this.eventHandlers.add(eventType, handlerId, callback);
@@ -819,11 +689,8 @@ export default class Map {
 
     /**
      * Returns coordinates from pixel in map projection
-     *
-     * @function getCoordinateFromPixel
-     * @memberof Map
-     * @param {Array} pixel - pixel coordinates
-     * @return {Array} coordinates in map projection
+     * @param pixel - pixel coordinates
+     * @return coordinates in map projection
      */
     public getCoordinateFromPixel(pixel: number[]): number[] {
         return this.map.getCoordinateFromPixel(pixel);
@@ -831,12 +698,9 @@ export default class Map {
 
     /**
      * Transforms coordinates from map projection to given one
-     *
-     * @function transformCoordinates
-     * @memberof Map
-     * @param {Array} coordinates - coordinates
-     * @param {Number} srsId - SRS Id (e.g. 4326)
-     * @return {Array} transformed coordinates
+     * @param coordinates - coordinates
+     * @param srsId - SRS Id (e.g. 4326)
+     * @return transformed coordinates
      */
     public transformCoordinates(coordinates: number[], srsId: number): number[] {
         return OlProj.transform(coordinates, "EPSG:" + this.srsId.toString(), "EPSG:" + srsId.toString());
@@ -844,10 +708,7 @@ export default class Map {
 
     /**
      * Copies features into clipboard
-     *
-     * @function copyToClipBoard
-     * @memberof Map
-     * @param {Object} features - features to copy
+     * @param features - features to copy
      */
     public copyToClipBoard(features: FeatureCollection): void {
         this.clipboard["features"] = features;
@@ -856,10 +717,7 @@ export default class Map {
 
     /**
      * Cuts features into clipboard
-     *
-     * @function cutToClipBoard
-     * @memberof Map
-     * @param {Object} features - features to copy
+     * @param features - features to copy
      */
      public cutToClipBoard(features: FeatureCollection): void {
         this.clipboard["features"] = features;
@@ -868,10 +726,7 @@ export default class Map {
 
     /**
      * Pastes features from clipboard
-     *
-     * @function pasteFromClipboard
-     * @memberof Map
-     * @param {Object} layer - layer instance to paste to
+     * @param layer - layer instance to paste to
      */
     public pasteFromClipboard(layer: LayerInterface): void {
         if (this.clipboard["features"]) {

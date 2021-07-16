@@ -8,15 +8,13 @@ import TileWMSSource from "../Source/Impl/TileWMSSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventType from "../EventHandlerCollection/EventType";
 
-/** @class LayerBuilder */
+/** LayerBuilder */
 export default class LayerBuilder {
     
     private layer: LayerInterface;
 
     /**
-     * @constructor
-     * @memberof LayerBuilder
-     * @param {Object} layer - layer
+     * @param layer - layer to build
      */
     constructor(layer: LayerInterface) {
         this.layer = layer;
@@ -24,11 +22,8 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's source type
-     *
-     * @function setSource
-     * @memberof LayerBuilder
-     * @param {String} type - source type
-     * @return {Object} layer builder instance
+     * @param type - source type
+     * @return layer builder instance
      */
     public setSource(type: SourceType): LayerBuilder {
         switch (type) {
@@ -55,10 +50,7 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's properties
-     *
-     * @function setProperties
-     * @memberof AbstractLayer
-     * @return {Object} layer's properties
+     * @return layer's properties
      */
      public setProperties(properties: unknown): LayerBuilder {
         this.layer.setProperties(properties);
@@ -67,11 +59,8 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's loader
-     *
-     * @function setLoader
-     * @memberof LayerBuilder
-     * @param {Function} loader - loader function
-     * @return {Object} layer builder instance
+     * @param loader - loader function
+     * @return layer builder instance
      */
     public setLoader(loader: () => Promise<string>): LayerBuilder {
         this.layer.setLoader(loader);
@@ -80,11 +69,8 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's source url
-     *
-     * @function setUrl
-     * @memberof LayerBuilder
-     * @param {String} url - source url
-     * @return {Object} layer builder instance
+     * @param url - source url
+     * @return layer builder instance
      */
     public setUrl(url: string): LayerBuilder {
         this.layer.setUrl(url);
@@ -93,10 +79,7 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's source params
-     *
-     * @function setParams
-     * @memberof LayerBuilder
-     * @param {Object} = params
+     * @param params - params
      */
     public setParams(params: unknown): void {
         this.layer.setParams(params);
@@ -104,11 +87,8 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's style
-     *
-     * @function setStyle
-     * @memberof LayerBuilder
-     * @param {Object} opts - options
-     * @return {Object} layer builder instance
+     * @param opts - options
+     * @return layer builder instance
      */
     public setStyle(opts?: unknown): LayerBuilder {
         this.layer.setStyle((new StyleBuilder(opts)).build());
@@ -117,11 +97,8 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's load callback
-     *
-     * @function setLoadCallback
-     * @memberof LayerBuilder
-     * @param {Function} callback - callback
-     * @return {Object} layer builder instance
+     * @param callback - callback
+     * @return layer builder instance
      */
     public setLoadCallback(callback: () => void): LayerBuilder {
         if (typeof callback === "function") {
@@ -138,11 +115,8 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's source change callback
-     *
-     * @function setSourceChangeCallback
-     * @memberof LayerBuilder
-     * @param {Function} callback - callback
-     * @return {Object} layer builder instance
+     * @param callback - callback
+     * @return layer builder instance
      */
     public setSourceChangeCallback(callback: () => void): LayerBuilder {
         if (typeof callback === "function") {
@@ -153,10 +127,7 @@ export default class LayerBuilder {
 
     /**
      * Builds layer
-     *
-     * @function build
-     * @memberof LayerBuilder
-     * @return {Object} - layer instance
+     * @return layer instance
      */
     public build(): LayerInterface {
         return this.layer;

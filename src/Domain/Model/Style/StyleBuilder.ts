@@ -1,5 +1,4 @@
 import OlVectorLayer from "ol/layer/Vector";
-import OlGeometryType from "ol/geom/GeometryType"
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
 // temp
@@ -9,7 +8,7 @@ import * as OlColorLike from "ol/colorlike"; */
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 
-/** @class StyleBuilder */
+/** StyleBuilder */
 export default class StyleBuilder {
     
     private style: StyleType;
@@ -26,9 +25,7 @@ export default class StyleBuilder {
     }
 
     /**
-     * @constructor
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
+     * @param opts - options
      */ 
     constructor(opts?: unknown) {
         this.style = {
@@ -51,10 +48,7 @@ export default class StyleBuilder {
 
     /**
      * Applies options to style
-     *
-     * @function applyOptions
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
+     * @param opts - options
      */
     private applyOptions(opts?: unknown): void {
         if (typeof opts !== "undefined") {
@@ -76,11 +70,8 @@ export default class StyleBuilder {
 
     /**
      * Sets point style
-     *
-     * @function setPointStyle
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
-     * @return {Object} style builder instance
+     * @param opts - options
+     * @return style builder instance
      */
     private setPointStyle(opts: unknown): StyleBuilder {
         let style: OlStyle = null;
@@ -117,11 +108,8 @@ export default class StyleBuilder {
 
     /**
      * Sets linestring style
-     *
-     * @function setLinestringStyle
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
-     * @return {Object} style builder instance
+     * @param opts - options
+     * @return style builder instance
      */
     private setLinestringStyle(opts: unknown): StyleBuilder {
         const style = new OlStyle({
@@ -137,11 +125,8 @@ export default class StyleBuilder {
 
     /**
      * Sets polygon style
-     *
-     * @function setPolygonStyle
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
-     * @return {Object} style builder instance
+     * @param opts - options
+     * @return style builder instance
      */
     private setPolygonStyle(opts: unknown): StyleBuilder {
         const style = new OlStyle({
@@ -160,11 +145,8 @@ export default class StyleBuilder {
 
     /**
      * Sets text style
-     *
-     * @function setTextStyle
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
-     * @return {Object} style builder instance
+     * @param opts - options
+     * @return style builder instance
      */
     private setTextStyle(opts: unknown): StyleBuilder {
         const style = new OlTextStyle({
@@ -184,11 +166,8 @@ export default class StyleBuilder {
 
     /**
      * Sets geometry collection style
-     *
-     * @function setGeometryCollectionStyle
-     * @memberof StyleBuilder
-     * @param {Object} opts - options
-     * @return {Object} style builder instance
+     * @param opts - options
+     * @return style builder instance
      */
      private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
         const opacity = this.applyOpacity(opts["background_color"], opts["opacity"]);
@@ -217,10 +196,7 @@ export default class StyleBuilder {
 
     /**
      * Builds style
-     *
-     * @function build
-     * @memberof StyleBuilder
-     * @return {Function} style function
+     * @return style function
      */
     public build(): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
@@ -274,12 +250,9 @@ export default class StyleBuilder {
 
     /**
      * Applies opacity to hex color code
-     *
-     * @function applyOpacity
-     * @memberof StyleBuilder
-     * @param {String} color - hex color code
-     * @param {Number} opacity - opacity value from 1 to 100
-     * @return {String} hex code representing color and opacity
+     * @param color - hex color code
+     * @param opacity - opacity value from 1 to 100
+     * @return hex code representing color and opacity
      */
     private applyOpacity(color: string, opacity: number): string {
         if (color.length == 4) { // short color like #333

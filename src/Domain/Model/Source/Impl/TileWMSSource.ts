@@ -3,13 +3,9 @@ import OlTileWMSSource from "ol/source/TileWMS";
 import BaseSource from "../BaseSource";
 import SourceType from "../SourceType";
 
-/** @class XYZSource */
+/** XYZSource */
 export default class TileWMSSource extends BaseSource {
     
-    /**
-     * @constructor
-     * @memberof TileWMSSource
-     */
     constructor() {
         super();
         this.source = new OlTileWMSSource({
@@ -20,10 +16,7 @@ export default class TileWMSSource extends BaseSource {
 
     /**
      * Returns type of source
-     *
-     * @function getType
-     * @memberof TileWMSSource
-     * @return {String} type of source
+     * @return type of source
      */
     public getType(): SourceType {
         return SourceType.TileWMS;

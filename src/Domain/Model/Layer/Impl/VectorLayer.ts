@@ -154,7 +154,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Creates feature from vertices and puts it into layer
-     * @param array - array of feature vertices' along with their ids and coordinates
+     * @param array - array of feature vertices along with their ids and coordinates
      * @return resulting feature
      */
     public createFeatureFromVertices(items: GeometryItem[]): Feature {
