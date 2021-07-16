@@ -5,15 +5,13 @@ import Handler from "./HandlerType";
 type K = string;
 type V = { type: string, handler: Handler };
 
-/** @class EventHandlerCollection */
+/** EventHandlerCollection */
 export default class EventHandlerCollection { 
     private target: OlBaseObject;
     private handlers: Map<K, V> = new Map<K, V>();
 
     /**
-     * @constructor
-     * @memberof EventHandlerCollection
-     * @param {Object} target - handler target
+     * @param target - handler target
      */
     constructor(target: OlBaseObject) {
         this.target = target;
@@ -21,10 +19,7 @@ export default class EventHandlerCollection {
 
     /**
      * Returns size of collection
-     *
-     * @function getSize
-     * @memberof EventHandlerCollection
-     * @return {Number} collection size
+     * @return collection size
      */
     public getSize(): number {
         return this.handlers.size;
@@ -32,12 +27,9 @@ export default class EventHandlerCollection {
  
     /**
      * Adds an event handler
-     *
-     * @function add
-     * @memberof EventHandlerCollection
-     * @param {String} type - event type
-     * @param {String} id - id of handler
-     * @param {Function} handler - handler
+     * @param type - event type
+     * @param id - id of handler
+     * @param handler - handler
      */
     public add(type: EventType, id: string, handler: Handler): void {
         this.target.on(type, handler);
@@ -46,10 +38,7 @@ export default class EventHandlerCollection {
 
     /**
      * Removes an event handler
-     *
-     * @function remove
-     * @memberof EventHandlerCollection
-     * @param {String} id - id of handler
+     * @param id - id of handler
      */
     public remove(id: string): void {
         const type = this.handlers.get(id).type;
@@ -60,9 +49,6 @@ export default class EventHandlerCollection {
 
     /**
      * Clears all event handlers
-     *
-     * @function clear
-     * @memberof EventHandlerCollection
      */
     public clear(): void {
         this.handlers.forEach(el => {
@@ -73,10 +59,7 @@ export default class EventHandlerCollection {
 
     /**
      * Iterates the collection
-     *
-     * @function forEach
-     * @memberof EventHandlerCollection
-     * @param {Function} callbackfn - callback function to call for each element
+     * @param callbackfn - callback function to call for each element
      */
     public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any) {
         if (typeof callbackfn !== "function") {

@@ -3,7 +3,7 @@ import InteractionInterface from "../InteractionInterface";
 import InteractionType from "../InteractionType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 
-/** @class BaseInteraction */
+/** BaseInteraction */
 export default abstract class BaseInteraction implements InteractionInterface
 {
     protected interaction: OLInteraction;
@@ -12,10 +12,7 @@ export default abstract class BaseInteraction implements InteractionInterface
 
     /**
      * Returns OpenLayers' interaction object
-     *
-     * @function getInteraction
-     * @memberof BaseInteraction
-     * @return {Object} interaction object
+     * @return interaction object
      */
     public getInteraction(): OLInteraction {
         return this.interaction;
@@ -23,21 +20,15 @@ export default abstract class BaseInteraction implements InteractionInterface
 
     /**
      * Returns interaction type
-     *
-     * @function getType
-     * @memberof BaseInteraction
-     * @return {Object} interaction type
+     * @return interaction type
      */
     public  getType(): InteractionType {
         return this.type;
     }
 
     /**
-     * Returns collection of event hadтlers for the interaction
-     *
-     * @function getEventHandlers
-     * @memberof BaseInteraction
-     * @return {Object} collection of event hadlers
+     * Returns collection of event handlers for the interaction
+     * @return collection of event handlers
      */
     public getEventHandlers(): EventHandlerCollection {
         return this.eventHandlers;
@@ -45,10 +36,7 @@ export default abstract class BaseInteraction implements InteractionInterface
 
     /**
      * Sets or unsets interaction active
-     *
-     * @function setActive
-     * @memberof BaseInteraction
-     * @param {Boolean} active - activity flag
+     * @param active - activity flag
      */
     public setActive(active: boolean): void {
         this.interaction.setActive(active);

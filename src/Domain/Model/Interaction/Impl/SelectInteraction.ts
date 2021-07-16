@@ -18,19 +18,17 @@ import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
 import VectorLayer from "../../Layer/Impl/VectorLayer";
 
-/** @class SelectInteraction */
+/** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
 
     private highlightSelect: OlSelect;
 
     /**
-     * @constructor
-     * @memberof SelectInteraction
-     * @param {Object} type - selection type
-     * @param {Object} map - map object to select on
-     * @param {Array} layers - layers to select on
-     * @param {Boolean} multiple - flag indicating multiple selection
-     * @param {Function} callback - callback function to call after selection is done
+     * @param type - selection type
+     * @param map - map object to select on
+     * @param layers - layers to select on
+     * @param multiple - flag indicating multiple selection
+     * @param callback - callback function to call after selection is done
      */
     constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction) {
         super();
@@ -105,6 +103,9 @@ export default class SelectInteraction extends BaseInteraction {
         }
     }
 
+    /**
+     * Returns highlight select instance
+     */
     public getHighlightSelect(): OlSelect {
         return this.highlightSelect;
     }

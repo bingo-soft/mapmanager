@@ -7,14 +7,10 @@ import SourceType from "../../Source/SourceType";
 import SourceInterface from "../../Source/SourceInterface";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 
-/** @class TileLayer */
+/** TileLayer */
 export default class TileLayer extends AbstractLayer {
     private type: SourceType;
     
-    /**
-     * @constructor
-     * @memberof TileLayer
-     */
     constructor() {
         super();
         this.layer = new OlTileLayer();
@@ -22,10 +18,7 @@ export default class TileLayer extends AbstractLayer {
 
     /**
      * Returns layer type
-     *
-     * @function getType
-     * @memberof TileLayer
-     * @return {String} layer type
+     * @return layer type
      */
     public getType(): SourceType { 
         return this.type;
@@ -33,10 +26,7 @@ export default class TileLayer extends AbstractLayer {
 
     /**
      * Sets layer type
-     *
-     * @function setType
-     * @memberof TileLayer
-     * @param {String} type - layer type
+     * @param type - layer type
      */
     public setType(type: SourceType): void { 
         this.type = type;
@@ -44,10 +34,7 @@ export default class TileLayer extends AbstractLayer {
 
     /**
      * Sets layer's source url
-     *
-     * @function setUrl
-     * @memberof TileLayer
-     * @param {String} url - source url
+     * @param url - source url
      */
     public setUrl(url: string): void {
         (<OlTileImage> this.layer.getSource()).setUrl(url);
@@ -55,10 +42,7 @@ export default class TileLayer extends AbstractLayer {
 
     /**
      * Sets layer's source params
-     *
-     * @function setParams
-     * @memberof TileLayer
-     * @param {Object} = params
+     * @param - params
      */
     public setParams(params: unknown): void {
         if (this.type == SourceType.TileWMS) {

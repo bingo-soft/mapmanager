@@ -11,7 +11,7 @@ import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
 import GeometryItem from "../Feature/GeometryItem";
 
-/** @class AbstractLayer */
+/** AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
 {
     protected layer: OlLayer;
@@ -21,10 +21,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns Openlayers layer instance
-     *
-     * @function getLayer
-     * @memberof AbstractLayer
-     * @return {Object} layer instance
+     * @return layer instance
      */
     public getLayer(): OlLayer {
         return this.layer;
@@ -32,52 +29,37 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns layer's source type
-     *
-     * @function getType
-     * @memberof AbstractLayer
-     * @return {String} layer's source type
+     * @return layer's source type
      */
     public abstract getType(): SourceType;
 
     /**
      * Sets layer's source type
-     *
-     * @function setType
-     * @memberof AbstractLayer
-     * @param {String} - layer's source type
+     * @param type - layer's source type
      */
     public setType(type: SourceType): void {
         throw new MethodNotImplemented();
     }
 
     /**
-     * Returns layer's properties
-     *
-     * @function getProperties
-     * @memberof AbstractLayer
-     * @return {Object} layer's properties
+     * Returns layer properties
+     * @return layer properties
      */
     public getProperties(): unknown {
         return this.properties;
     }
 
     /**
-     * Sets layer's properties
-     *
-     * @function setProperties
-     * @memberof AbstractLayer
-     * @return {Object} layer's properties
+     * Sets layer properties
+     * @param properties - layer properties
      */
-     public setProperties(properties: unknown): void {
+    public setProperties(properties: unknown): void {
         this.properties = properties;
     }
 
     /**
      * Returns layer's event handlers
-     *
-     * @function getEventHandlers
-     * @memberof AbstractLayer
-     * @return {Object} layer's event handlers
+     * @return layer's event handlers
      */
     public getEventHandlers(): EventHandlerCollection {
         return this.eventHandlers;
@@ -85,12 +67,9 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's event handler
-     *
-     * @function setEventHandler
-     * @memberof AbstractLayer
-     * @param {String} eventType - event type
-     * @param {String} handlerName - handler id
-     * @param {Function} callback - callback function to call when an event is triggered
+     * @param eventType - event type
+     * @param handlerName - handler id
+     * @param callback - callback function to call when an event is triggered
      */
     public setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void {
         this.eventHandlers.add(eventType, handlerId, callback);
@@ -98,10 +77,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns layer's SRS Id
-     *
-     * @function getSRSId
-     * @memberof AbstractLayer
-     * @return {Number} layer's SRS
+     * @return layer's SRS
      */
     public getSRSId(): number {
         return this.srsId;
@@ -109,10 +85,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns layer's source
-     *
-     * @function getSource
-     * @memberof AbstractLayer
-     * @return {Object} layer's source
+     * @return layer's source
      */
      public getSource(): OlSource {
         return this.layer.getSource();
@@ -120,10 +93,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's source
-     *
-     * @function setSource
-     * @memberof AbstractLayer
-     * @param {Object} source - layer's source
+     * @param source - layer's source
      */
     public setSource(source: SourceInterface): void {
         const olSource = source.getSource();
@@ -133,10 +103,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's loader
-     *
-     * @function setLoader
-     * @memberof AbstractLayer
-     * @param {Function} loader - loader function
+     * @param loader - loader function
      */
     public setLoader(loader: () => Promise<string>): void {
         throw new MethodNotImplemented();
@@ -144,10 +111,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's source url
-     *
-     * @function setUrl
-     * @memberof AbstractLayer
-     * @param {String} url - source url
+     * @param url - source url
      */
     public setUrl(url: string): void {
         throw new MethodNotImplemented();
@@ -155,10 +119,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's params
-     *
-     * @function setParams
-     * @memberof LayerInterface
-     * @param {Object} params - source url
+     * @param params - source url
      */
     public setParams(params: unknown): void {
         throw new MethodNotImplemented();
@@ -166,10 +127,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's zIndex
-     *
-     * @function setZIndex
-     * @memberof AbstractLayer
-     * @param {Number} zIndex - zIndex
+     * @param zIndex - zIndex
      */
     public setZIndex(zIndex: number): void {
         this.layer.setZIndex(zIndex);
@@ -177,10 +135,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's opacity
-     *
-     * @function setOpacity
-     * @memberof AbstractLayer
-     * @param {Number} opacity - opacity
+     * @param opacity - opacity
      */
     public setOpacity(opacity: number): void { 
         this.layer.setOpacity(opacity / 100);
@@ -188,10 +143,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's style
-     *
-     * @function setStyle
-     * @memberof AbstractLayer
-     * @param {Function} style - style function
+     * @param style - style function
      */
     public setStyle(style: StyleFunction): void { 
         throw new MethodNotImplemented();
@@ -199,10 +151,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns collection of dirty features
-     *
-     * @function getDirtyFeatures
-     * @memberof AbstractLayer
-     * @return {Object} collection of dirty features
+     * @return collection of dirty features
      */
     public getDirtyFeatures(): FeatureCollection {
         throw new MethodNotImplemented();
@@ -210,11 +159,8 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets collection of dirty features
-     *
-     * @function setDirtyFeatures
-     * @memberof AbstractLayer
-     * @param {Object} features - collection of dirty features
-     * @param {Boolean} dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
+     * @param features - collection of dirty features
+     * @param dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
     public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
         throw new MethodNotImplemented();
@@ -222,10 +168,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Checks if layer is dirty
-     *
-     * @function isDirty
-     * @memberof AbstractLayer
-     * @return {Boolean} flag if layer is dirty
+     * @return flag indicating that the layer is dirty
      */
     public isDirty(): boolean {
         throw new MethodNotImplemented();
@@ -233,10 +176,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns collection of removed features
-     *
-     * @function getRemovedFeatures
-     * @memberof AbstractLayer
-     * @return {Object} collection of removed features
+     * @return collection of removed features
      */
      public getRemovedFeatures(): FeatureCollection {
         throw new MethodNotImplemented();
@@ -244,10 +184,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Adds features to removed
-     *
-     * @function setRemovedFeatures
-     * @memberof AbstractLayer
-     * @param {Object} features - single feature or collection
+     * @param features - single feature or collection
      */
     public setRemovedFeatures(features: Feature | FeatureCollection): void  {
         throw new MethodNotImplemented();
@@ -255,11 +192,8 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Creates feature from vertices
-     *
-     * @function createFeatureFromVertices
-     * @memberof VectorLayer
-     * @param {Array} array of feature vertices' along with their ids and coordinates
-     * @return {Object} resulting feature
+     * @param items - of feature vertices' along with their ids and coordinates
+     * @return resulting feature
      */
     public createFeatureFromVertices(items: GeometryItem[]): Feature {
         throw new MethodNotImplemented();

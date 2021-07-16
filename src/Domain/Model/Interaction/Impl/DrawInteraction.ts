@@ -11,15 +11,13 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import { DrawCallbackFunction } from "../InteractionCallbackType";
 
-/** @class DrawInteraction */
+/** DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
 
     /**
-     * @constructor
-     * @memberof DrawInteraction
-     * @param {Object} layer - layer to draw on
-     * @param {String} geometryType - type of geometry to draw
-     * @param {Function} callback - callback function to call after geometry is drawn
+     * @param layer - layer to draw on
+     * @param geometryType - type of geometry to draw
+     * @param callback - callback function to call after geometry is drawn
      */
     constructor(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction) {
         super();

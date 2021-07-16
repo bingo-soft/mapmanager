@@ -4,19 +4,16 @@ import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
 import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
     Polygon as OlPolygon, MultiPolygon as OlMultiPolygon, GeometryCollection as OlGeometryCollection} from "ol/geom"
-import { Layer as OlLayer } from "ol/layer";
 import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
-import writeFeatureObject  from "ol/format/GeoJSON";
 import * as OlProj from 'ol/proj';
 import GeometryFormat from "./GeometryFormat";
 import LayerInterface from "../Layer/LayerInterface";
-import VectorLayer from "../Layer/Impl/VectorLayer";
 import StyleFunction from "../Style/StyleFunctionType";
 import GeometryItem from "./GeometryItem";
 import VertexCoordinate from "./VertexCoordinate";
 
-/** @class Feature */
+/** Feature */
 export default class Feature { 
     
     private feature: OlFeature;
@@ -28,10 +25,8 @@ export default class Feature {
     private static readonly DEFAULT_SRS = "EPSG:3857";
 
     /**
-     * @constructor
-     * @memberof Feature
-     * @param {Object} feature - OpenLayers' feature object
-     * @param {Object} layer - OpenLayers' layer object
+     * @param feature - OpenLayers' feature object
+     * @param layer - OpenLayers' layer object
      */
     constructor(feature?: OlFeature, layer?: LayerInterface) {
         if (!feature) {
@@ -45,10 +40,7 @@ export default class Feature {
 
     /**
      * Returns OpenLayers' feature object
-     *
-     * @function getFeature
-     * @memberof Feature
-     * @return {Object} feature object
+     * @return feature object
      */
     public getFeature(): OlFeature {
         return this.feature;
@@ -56,10 +48,7 @@ export default class Feature {
 
     /**
      * Returns OpenLayers' feature type
-     *
-     * @function getType
-     * @memberof Feature
-     * @return {String} feature type
+     * @return feature type
      */
     public getType(): string {
         return this.feature.getGeometry().getType();
@@ -67,10 +56,7 @@ export default class Feature {
 
     /**
      * Returns OpenLayers' layer object
-     *
-     * @function getLayer
-     * @memberof Feature
-     * @return {Object} layer instance
+     * @return layer instance
      */
     public getLayer(): LayerInterface {
         return this.layer;
@@ -78,10 +64,7 @@ export default class Feature {
 
     /**
      * Sets layer of the feature
-     *
-     * @function setLayer
-     * @memberof Feature
-     * @param {Object} layer - layer instance
+     * @param layer - layer instance
      */
     public setLayer(layer: LayerInterface): void {
         this.layer = layer;
@@ -89,10 +72,7 @@ export default class Feature {
 
     /**
      * Sets style of the feature
-     *
-     * @function setStyle
-     * @memberof Feature
-     * @param {Object} style - style
+     * @param style - style
      */
     public setStyle(style: StyleFunction): void {
         this.feature.setStyle(style);
@@ -100,10 +80,7 @@ export default class Feature {
 
     /**
      * Returns the flag indicating whether the feature is dirty (newly added or modified)
-     *
-     * @function isDirty
-     * @memberof Feature
-     * @return {boolean} flag indicating whether the feature is dirty
+     * @return flag indicating whether the feature is dirty
      */
     public isDirty(): boolean {
         return this.dirty;
@@ -111,10 +88,7 @@ export default class Feature {
 
     /**
      * Sets the flag indicating whether the feature is dirty (newly added or modified)
-     *
-     * @function setDirty
-     * @memberof Feature
-     * @param {boolean} dirty - flag indicating whether the feature is dirty 
+     * @param dirty - flag indicating whether the feature is dirty 
      */
     public setDirty(dirty: boolean): void {
         this.dirty = dirty;
@@ -122,11 +96,8 @@ export default class Feature {
 
     /**
      * Updates feature vertices
-     *
-     * @function updateFromVertices
-     * @memberof Feature
-     * @param {Array} array of feature vertices' along with their ids and coordinates
-     * @return {Object} resulting feature
+     * @param array - array of feature vertices' along with their ids and coordinates
+     * @return resulting feature
      */
     public updateFromVertices(items: GeometryItem[]): Feature {
         let feature: OlFeature;
@@ -150,17 +121,15 @@ export default class Feature {
             source.removeFeature(this.feature);
         }
         this.feature = feature;
+        this.dirty = true;
         source.addFeature(this.feature);
         return this;
     }
 
     /**
      * Creates geometry based on geometry items tree
-     *
-     * @function createGeometry
-     * @memberof Feature
-     * @param {Array} items - vertices data
-     * @return {Object} OL geometry instance
+     * @param items - vertices data
+     * @return OL geometry instance
      */
     private createGeometry(items: GeometryItem[]): OlGeometry {
         if (!items.length) {
@@ -221,10 +190,7 @@ export default class Feature {
 
     /**
      * Returns feature vertices' coordinates along with their indices
-     *
-     * @function getVertices
-     * @memberof Feature
-     * @return {Array} array of geometry parts of feature along with their coordinates
+     * @return array of geometry parts of feature along with their coordinates
      */
     public getVertices(): GeometryItem[] {
         const srs = "EPSG:" + this.getLayer().getSRSId().toString();
@@ -297,12 +263,9 @@ export default class Feature {
 
     /**
      * Returns feature vertices' coordinates along with their indices
-     *
-     * @function getGeometryItemCoordinates
-     * @memberof Feature
-     * @param {Object} geometry - geometry
-     * @param {String} srs - srs to return coordinates in
-     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
+     * @param geometry - geometry
+     * @param srs - srs to return coordinates in
+     * @return array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private getCoordinates(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
         let returnCoordinates: VertexCoordinate[][] = [];
@@ -351,13 +314,10 @@ export default class Feature {
 
     /**
      * Iterates through array of coordinates and return them as array of objects
-     *
-     * @function iterateCoordinates
-     * @memberof Feature
-     * @param {Object} coordinates - array of coordinates
-     * @param {String} srs - srs to return coordinates in
-     * @param {Object} index - index for unique id generation
-     * @return {Array} array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
+     * @param coordinates - array of coordinates
+     * @param srs - srs to return coordinates in
+     * @param index - index for unique id generation
+     * @return array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private iterateCoordinates(coordinates: OlCoordinate[], srs: string): VertexCoordinate[] {
         let indexCoord = 1;
@@ -372,36 +332,10 @@ export default class Feature {
     }
 
     /**
-     * Searches a geometry item by id
-     *
-     * @function findGeometryItem
-     * @memberof Feature
-     * @param {Array} items - items to search in
-     * @param {Number} geomId - id to search
-     * @return {Object} found item
-     */
-    /* private findGeometryItem(items: GeometryItem[], geomId: number): GeometryItem {
-        if (!items) {
-            return null;
-        }
-        for (let i: number = 0; i < items.length; i++) {
-            if (items[i].id == geomId) {
-                return items[i];
-            }
-        }
-        for (let i: number = 0; i < items.length; i++) {
-            return this.findGeometryItem(<GeometryItem[]> items[i].children, geomId);
-        }
-    } */
-
-    /**
      * Returns feature geometry as text
-     *
-     * @function getGeometryAsText
-     * @memberof Feature
-     * @param {String} format - format to return in
-     * @param {Number} srsId - SRS Id of returned feature text representation
-     * @return {String} text representing feature
+     * @param format - format to return in
+     * @param srsId - SRS Id of returned feature text representation
+     * @return text representing feature
      */
     public getGeometryAsText(format: GeometryFormat, srsId: number): string {
         const formatInstance = this.getFormatInstance(format);
@@ -416,12 +350,9 @@ export default class Feature {
 
     /**
      * Updates feature geometry from text
-     *
-     * @function updateGeometryFromText
-     * @memberof Feature
-     * @param {String} text - feature text representation
-     * @param {String} format - format of feature text representation
-     * @param {Number} srsId - SRS Id of feature text representation
+     * @param text - feature text representation
+     * @param format - format of feature text representation
+     * @param srsId - SRS Id of feature text representation
      */
     public updateGeometryFromText(text: string, format: GeometryFormat, srsId: number): void {
         const formatInstance = this.getFormatInstance(format);
@@ -437,13 +368,11 @@ export default class Feature {
 
     /**
      * Creates feature geometry from text
-     *
-     * @function updateGeometryFromText
-     * @memberof Feature
-     * @param {Object} layer - layer to put a feature into
-     * @param {String} text - feature text representation
-     * @param {String} format - format of feature text representation
-     * @param {Number} srsId - SRS Id of feature text representation
+     * @param layer - layer to put a feature into
+     * @param text - feature text representation
+     * @param format - format of feature text representation
+     * @param srsId - SRS Id of feature text representation
+     * @return feature
      */
     public createGeometryFromText(layer:LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
         const formatInstance = this.getFormatInstance(format);
@@ -461,10 +390,7 @@ export default class Feature {
 
     /**
      * Checks whether feature is valid
-     *
-     * @function isValid
-     * @memberof Feature
-     * @return {Boolean} boolean indicating whether feature is valid
+     * @return boolean indicating whether feature is valid
      */
     public isValid(): boolean {
         const feature = this.getFeature();
@@ -504,10 +430,7 @@ export default class Feature {
 
     /**
      * Converts line to polygon
-     *
-     * @function lineToPolygon
-     * @memberof Feature
-     * @return {Object} feature representing a polygon
+     * @return feature representing a polygon
      */
     public lineToPolygon(): Feature {
         const coords = (<OlLineString | OlMultiLineString> this.feature.getGeometry()).getCoordinates();
@@ -524,10 +447,7 @@ export default class Feature {
 
     /**
      * Converts polygon to line
-     *
-     * @function polygonToLine
-     * @memberof Feature
-     * @return {Object} feature representing a line
+     * @return feature representing a line
      */
     public polygonToLine(): Feature {
         const coords = (<OlPolygon | OlMultiPolygon> this.feature.getGeometry()).getCoordinates();
@@ -544,11 +464,8 @@ export default class Feature {
 
     /**
      * Splits geometry into simple geometries
-     *
-     * @function splitGeometry
-     * @memberof Feature
-     * @param {Object} geometry - geometry
-     * @return {Array} simple geometries
+     * @param geometry - geometry to split
+     * @return simple geometries
      */
     public splitGeometry(geometry: OlGeometry): OlGeometry[] {
         const simpleGeometries: OlGeometry[] = [];
@@ -574,11 +491,8 @@ export default class Feature {
 
     /**
      * Splits geometry collection into simple geometries
-     *
-     * @function splitGeometryCollection
-     * @memberof Feature
-     * @param {Object} geometryCollection - geometry collection
-     * @return {Array} simple geometries
+     * @param geometryCollection - geometry collection to split
+     * @return simple geometries
      */
      public splitGeometryCollection(geometryCollection: OlGeometryCollection): OlGeometry[] {
         let simpleGeometries: OlGeometry[] = [];
@@ -595,11 +509,8 @@ export default class Feature {
 
     /**
      * Returns format instance based on format type
-     *
-     * @function getFormatInstance
-     * @memberof Feature
-     * @param {String} format - format
-     * @return {Object} format instance
+     * @param format - format
+     * @return format instance
      */
     private getFormatInstance(format: GeometryFormat): OlWKT | OlGeoJSON {
         if (format == GeometryFormat.WKT) {
