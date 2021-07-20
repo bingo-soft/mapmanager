@@ -173,12 +173,14 @@ export default class Map {
             this.featurePopupOverlay.setPosition(null);
             this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
                 const layer = this.getLayer(olLayer);
-                const featurePopupTemplate = layer.getFeaturePopupTemplate();
-                if (featurePopupTemplate) {
-                    const properties = olFeature.getProperties();
-                    featurePopupElement.innerHTML = ObjectParser.parse(featurePopupTemplate, properties);
-                    if (featurePopupElement.innerHTML) {
-                        this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));
+                if (layer) {
+                    const featurePopupTemplate = layer.getFeaturePopupTemplate();
+                    if (featurePopupTemplate) {
+                        const properties = olFeature.getProperties();
+                        featurePopupElement.innerHTML = ObjectParser.parse(featurePopupTemplate, properties);
+                        if (featurePopupElement.innerHTML) {
+                            this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));
+                        }
                     }
                 }
             });
@@ -416,11 +418,11 @@ export default class Map {
     /**
      * Sets map transform interaction
      * @param type - measure type
-     * @param units - units
+     * @param popupSettings - popup settings
      */
-    public setMeasureInteraction(type: MeasureType, units: unknown, callback?: MeasureCallbackFunction): void {
+    public setMeasureInteraction(type: MeasureType, popupSettings: unknown, callback?: MeasureCallbackFunction): void {
         this.clearInteractions();
-        this.interaction = new MeasureInteraction(type, units, this, callback);
+        this.interaction = new MeasureInteraction(type, popupSettings, this, callback);
         this.addInteraction(this.interaction);  
     }
 

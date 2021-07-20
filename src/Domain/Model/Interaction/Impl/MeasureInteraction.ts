@@ -20,11 +20,11 @@ export default class MeasureInteraction extends BaseInteraction {
   
     /**
      * @param type - measure type
-     * @param units - units
+     * @param popupSettings - popup settings
      * @param map - map object
      * @param callback - callback function to call after measurement is done
      */
-    constructor(type: MeasureType, units: unknown, map: Map , callback: MeasureCallbackFunction) {
+    constructor(type: MeasureType, popupSettings: unknown, map: Map , callback: MeasureCallbackFunction) {
         super();
 
         let realType: string;
@@ -53,19 +53,19 @@ export default class MeasureInteraction extends BaseInteraction {
             geomChangelistener = feature.getGeometry().on("change", (evt: OlBaseEvent): void => {
                 const geom: OlFeature = evt.target;
                 if (geom instanceof OlPolygon) {
-                    result = this.getArea(geom).toString() + " " + units["area"];
+                    result = this.getArea(geom).toString() + " " + popupSettings["area_units"];
                     tooltipCoord = geom.getInteriorPoint().getCoordinates();
                     tooltip.innerHTML = result;
                 } else if (geom instanceof OlLineString) {
-                    result = this.getLength(geom).toString() + " " + units["distance"];
+                    result = this.getLength(geom).toString() + " " + popupSettings["distance_units"];
                     tooltipCoord = geom.getLastCoordinate();
                     tooltip.innerHTML = result;
                     const angles = this.getAngles(<OlLineString> geom);
                     if (angles["rotation"] != null && !isNaN(angles["rotation"])) {
-                        tooltip.innerHTML += ", " + units["rotation"] + ": " + angles["rotation"].toFixed(2).toString() + "\u00B0";
+                        tooltip.innerHTML += ", " + popupSettings["rotation_caption"] + ": " + angles["rotation"].toFixed(2).toString() + "\u00B0";
                     }
                     if (angles["angle"] != null && !isNaN(angles["angle"])) {
-                        tooltip.innerHTML += ", " + units["angle"] + ": " + angles["angle"].toFixed(2).toString() + "\u00B0";
+                        tooltip.innerHTML += ", " + popupSettings["angle_caption"] + ": " + angles["angle"].toFixed(2).toString() + "\u00B0";
                     }
                 }
                 overlay.setPosition(tooltipCoord);
