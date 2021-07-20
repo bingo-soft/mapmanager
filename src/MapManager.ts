@@ -153,7 +153,7 @@ export default class MapManager {
      * @param opts - options
      */
     public static setMeasureInteraction(map: Map, opts: unknown): void { 
-       map.setMeasureInteraction(opts["measure_type"], opts["measure_units"], opts["measure_callback"]);
+       map.setMeasureInteraction(opts["measure_type"], opts["measure_popup_settings"], opts["measure_callback"]);
     }
 
     /**
