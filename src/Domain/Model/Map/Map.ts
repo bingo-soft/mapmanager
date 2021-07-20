@@ -45,6 +45,8 @@ import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
 import MeasureType from "../Interaction/MeasureType";
 import LayerBuilder from "../Layer/LayerBuilder";
 import VectorLayer from "../Layer/Impl/VectorLayer";
+import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
+
 
 
 /** Map */
@@ -56,6 +58,7 @@ export default class Map {
     private activeLayer: LayerInterface;
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
+    private featurePopupOverlay: OlOverlay;
     private vertexHighlightLayer: OlVectorLayer;
     private selectedFeatures: FeatureCollection;
     private selectedLayers: Set<LayerInterface> = new Set();
@@ -81,6 +84,7 @@ export default class Map {
             centerY = Map.CENTER_Y,
             centerSRSId = Map.SRS_ID,
             zoom = Map.ZOOM;
+        // map init options application
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "base_layer")) {
                 baseLayer = opts["base_layer"];
@@ -97,16 +101,19 @@ export default class Map {
                 zoom = opts["zoom"];
             }
         }
+        // map center init
         let center: OlCoordinate.Coordinate = [centerX, centerY];
         if (centerSRSId != srsId) {
             center = OlProj.transform(center, "EPSG:" + centerSRSId.toString(), "EPSG:" + srsId.toString());
         }
+        // map source init
         let source: OlTileSource = null;
         if (baseLayer == BaseLayer.OSM) {
              source = new OlOSM();
         } /* else if (...) {
             TODO
         } */
+        // Ol map init
         const overviewMapControl = new OlOverviewMapControl({
             layers: [
                 new OlTileLayer({
@@ -129,21 +136,52 @@ export default class Map {
                 zoom: zoom
             })
         });
+        // cursor init
         this.cursor = CursorType.Default;
+        // interaction init
         this.setNormalInteraction();
+        // selected features init
         this.selectedFeatures = new FeatureCollection([]);
+        // clipboard init
         this.clipboard = {
             "features": new FeatureCollection([]),
             "remove": false
         }
+        // popup overlay init
+        const popupElement: HTMLElement = document.createElement("div");
+        popupElement.className = "feature-popup";
+        this.featurePopupOverlay = new OlOverlay({
+            element: popupElement,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250,
+            },
+        });
+        this.map.addOverlay(this.featurePopupOverlay);
+        // event handlers init
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
             if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
                 this.clearSelectedFeatures();
             }
         });
-        this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
-            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel) ? CursorType.Pointer : this.cursor;
+        this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler1", (e: OlBaseEvent): void => {
+            const pixel = (<OlMapBrowserEvent>e).pixel;
+            this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel(pixel) ? CursorType.Pointer : this.cursor;
+            // show popup
+            const featurePopupElement = this.featurePopupOverlay.getElement();
+            this.featurePopupOverlay.setPosition(null);
+            this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
+                const layer = this.getLayer(olLayer);
+                const featurePopupTemplate = layer.getFeaturePopupTemplate();
+                if (featurePopupTemplate) {
+                    const properties = olFeature.getProperties();
+                    featurePopupElement.innerHTML = ObjectParser.parse(featurePopupTemplate, properties);
+                    if (featurePopupElement.innerHTML) {
+                        this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));
+                    }
+                }
+            });
         });
     }
 
@@ -487,15 +525,15 @@ export default class Map {
     }
 
     /**
-     * Returns corresponding layer of LayerInterface type by OlLayer.
+     * Returns corresponding layer of LayerInterface type by OL Layer.
      * @param olLayer - OL layer instance
-     * @returnlayer of LayerInterface type
+     * @return layer of LayerInterface type
      */
-     public getLayer(olLayer: OlLayer): LayerInterface {
+    public getLayer(olLayer: OlLayer): LayerInterface | null {
         const layers: LayerInterface[] = Array.from(this.layers).filter((layer: LayerInterface): boolean => {
             return layer.getLayer() == olLayer;
         });
-        return layers[0];
+        return layers[0] ? layers[0] : null;
     }
 
     /** 
@@ -587,7 +625,8 @@ export default class Map {
             const builder = new LayerBuilder(new VectorLayer());
             builder.setSource(SourceType.Vector);
             this.measureLayer = builder.build();
-            this.addLayer(this.measureLayer);
+            //this.addLayer(this.measureLayer);
+            this.measureLayer.getLayer().setMap(this.map);
         }
         return this.measureLayer;
     }
@@ -596,7 +635,8 @@ export default class Map {
      * Clears measure layer
      */
     public clearMeasureLayer(): void {
-        this.removeLayer(this.measureLayer);
+        //this.removeLayer(this.measureLayer);
+        this.measureLayer.getLayer().setMap(null);
         this.measureLayer = null;
     }
 
@@ -605,8 +645,9 @@ export default class Map {
      * @param element - DOM element to create overlay upon
      * @param position - the overlay position in map projection
      * @param offset - offset in pixels used when positioning the overlay 
+     * @return measure overlay
      */
-    public createMeasureOverlay(element: HTMLElement, position: number[], offset: number[]): void {
+    public createMeasureOverlay(element: HTMLElement, position: number[], offset: number[]): OlOverlay {
         const overlay = new OlOverlay({
             element: element,
             offset: offset,
@@ -615,6 +656,7 @@ export default class Map {
         });
         this.map.addOverlay(overlay);
         this.measureOverlays.push(overlay);
+        return overlay;
     }
 
     /**

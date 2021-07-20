@@ -96,6 +96,14 @@ export default class LayerBuilder {
     }
 
     /**
+     * Sets feature popup template
+     * @param template - feature popup template
+     */
+    public setFeaturePopupTemplate(template: string): void  {
+        this.layer.setFeaturePopupTemplate(template);
+    }
+
+    /**
      * Sets layer's load callback
      * @param callback - callback
      * @return layer builder instance

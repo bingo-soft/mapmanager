@@ -191,6 +191,22 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Returns feature popup template
+     * @return feature popup template
+     */
+    public getFeaturePopupTemplate(): string  {
+        throw new MethodNotImplemented();
+    }
+    
+    /**
+     * Sets feature popup template
+     * @param template - feature popup template
+     */
+    public setFeaturePopupTemplate(template: string): void  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Creates feature from vertices
      * @param items - of feature vertices along with their ids and coordinates
      * @return resulting feature

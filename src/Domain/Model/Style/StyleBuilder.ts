@@ -8,10 +8,14 @@ import * as OlColorLike from "ol/colorlike"; */
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 
+
+
+
 /** StyleBuilder */
 export default class StyleBuilder {
     
     private style: StyleType;
+    private externalStyleBuilder: (featureProps: unknown) => unknown;
     // temp
     /* private uniqueStyles: Map<number, OlStyle>;
     private lastColor: number; */
@@ -64,6 +68,9 @@ export default class StyleBuilder {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length) {
                 this.setTextStyle(opts["label"]);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "style_builder")) {
+                this.externalStyleBuilder = opts["style_builder"];
             }
         }
     }
@@ -200,9 +207,13 @@ export default class StyleBuilder {
      */
     public build(): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
+            if (typeof this.externalStyleBuilder === "function") {
+                const featureProps = feature.getProperties();
+                const featureStyle = this.externalStyleBuilder(featureProps);
+                this.applyOptions(featureStyle);
+            }
             const geomType = feature.getGeometry().getType();
             const style = this.style[geomType];
-
             // temp
             /* const valueToPaintOn: number = feature.getProperties()["attr_939_id"];
             let savedStyle: OlStyle = this.uniqueStyles.get(valueToPaintOn);
