@@ -17,6 +17,7 @@ export default class VectorLayer extends AbstractLayer{
 
     private dirtyFeatures: FeatureCollection = new FeatureCollection([]);
     private removedFeatures: FeatureCollection = new FeatureCollection([]);
+    private featurePopupTemplate: string = "";
     
     private static readonly DEFAULT_SRS_ID = 3857;
     
@@ -150,6 +151,22 @@ export default class VectorLayer extends AbstractLayer{
         } else {
 
         }
+    }
+
+    /**
+     * Returns feature popup template
+     * @return feature popup template
+     */
+    public getFeaturePopupTemplate(): string  {
+        return this.featurePopupTemplate;
+    }
+    
+    /**
+     * Sets feature popup template
+     * @param template - feature popup template
+     */
+    public setFeaturePopupTemplate(template: string): void  {
+        this.featurePopupTemplate = template;
     }
 
     /**

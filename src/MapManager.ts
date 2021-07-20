@@ -226,6 +226,9 @@ export default class MapManager {
             if (type == SourceType.TileWMS && Object.prototype.hasOwnProperty.call(opts, "params")) { 
                 builder.setParams(opts["params"]);
             }
+            if (Object.prototype.hasOwnProperty.call(opts, "feature_popup_template")) {
+                builder.setFeaturePopupTemplate(opts["feature_popup_template"]);
+            }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
             }

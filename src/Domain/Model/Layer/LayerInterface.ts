@@ -142,6 +142,18 @@ export default interface LayerInterface
     setRemovedFeatures(features: Feature | FeatureCollection): void;
 
     /**
+     * Returns feature popup template
+     * @return feature popup template
+     */
+    getFeaturePopupTemplate(): string;
+    
+    /**
+     * Sets feature popup template
+     * @param template - feature popup template
+     */
+    setFeaturePopupTemplate(template: string): void;
+
+    /**
      * Creates feature from vertices
      * @param  array - array of feature vertices along with their ids and coordinates
      * @return resulting feature
