@@ -120,6 +120,7 @@ export default class Feature {
         if (this.feature.getGeometry()) {
             source.removeFeature(this.feature);
         }
+        feature.setProperties(this.feature.getProperties());
         this.feature = feature;
         this.dirty = true;
         source.addFeature(this.feature);

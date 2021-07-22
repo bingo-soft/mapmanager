@@ -16,7 +16,7 @@ export default class StyleBuilder {
     
     private style: StyleType;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
-    // temp
+    // temp - раскраска по уникальному значению
     /* private uniqueStyles: Map<number, OlStyle>;
     private lastColor: number; */
     // temp
@@ -158,14 +158,24 @@ export default class StyleBuilder {
     private setTextStyle(opts: unknown): StyleBuilder {
         const style = new OlTextStyle({
             stroke: new OlStroke({
-                color: opts["style"] && opts["style"]["stroke"] && opts["style"]["stroke"]["color"] ? opts["style"]["stroke"]["color"] : null, 
-                width: opts["style"] && opts["style"]["stroke"] && opts["style"]["stroke"]["stroke_width"] ? opts["style"]["stroke"]["stroke_width"] : null
+                color: opts["stroke"] ? opts["stroke"]["color"] : null, 
+                width: opts["stroke"] ? opts["stroke"]["stroke_width"] : null
             }),
             fill: new OlFill({
-                color: opts["style"] && opts["style"]["fill"] && opts["style"]["fill"]["background_color"] ? opts["style"]["fill"]["background_color"] : null
+                color: opts["fill"] ? opts["fill"]["background_color"] : null
             }),
-            font: opts["style"] && opts["style"]["font"] ? opts["style"]["font"] : null,
-            text: opts["field"]
+            font: opts["font"],
+            text: opts["field"],
+            textAlign: opts["text_align"],
+            textBaseline: opts["text_baseline"],
+            maxAngle: opts["max_angle"] ? opts["max_angle"] * Math.PI / 180 : 0,
+            offsetX: opts["offset"] ? opts["offset_x"] : null,
+            offsetY: opts["offset"] ? opts["offset_y"] : null,
+            overflow: opts["overflow"],
+            placement: opts["placement"],
+            scale: opts["scale"],
+            rotateWithView: opts["rotate_with_view"],
+            rotation: opts["rotation"] ? opts["rotation"] * Math.PI / 180 : 0,
         });
         this.style["Text"] = style;
         return this;
@@ -214,7 +224,7 @@ export default class StyleBuilder {
             }
             const geomType = feature.getGeometry().getType();
             const style = this.style[geomType];
-            // temp
+            // temp - раскраска по уникальному значению
             /* const valueToPaintOn: number = feature.getProperties()["attr_939_id"];
             let savedStyle: OlStyle = this.uniqueStyles.get(valueToPaintOn);
             if (!savedStyle) {
@@ -234,25 +244,25 @@ export default class StyleBuilder {
             }
             return savedStyle; */
             // temp
-            
-
-
             const textStyle: OlTextStyle = this.style["Text"];
             if (style && textStyle) {
-                const textValue: string = feature.getProperties()[textStyle.getText()];
-                if (textValue) {
-                    const newTextStyle = new OlTextStyle({
-                        stroke: new OlStroke({
-                            color: textStyle.getStroke().getColor(),
-                            width: textStyle.getStroke().getWidth()
-                        }),
-                        fill: new OlFill({
-                            color: textStyle.getFill().getColor()
-                        }),
-                        font: textStyle.getFont()
-                    });
-                    newTextStyle.setText(textValue);
-                    style.setText(newTextStyle);
+                const properties = feature.getProperties();
+                if (properties) {
+                    const textValue: string = properties[textStyle.getText()];
+                    if (textValue) {
+                        const newTextStyle = new OlTextStyle({
+                            stroke: new OlStroke({
+                                color: textStyle.getStroke().getColor(),
+                                width: textStyle.getStroke().getWidth()
+                            }),
+                            fill: new OlFill({
+                                color: textStyle.getFill().getColor()
+                            }),
+                            font: textStyle.getFont()
+                        });
+                        newTextStyle.setText(textValue);
+                        style.setText(newTextStyle);
+                    }
                 }
             }
             return style ? style : new OlVectorLayer().getStyleFunction()(feature, resolution); // default OL style
