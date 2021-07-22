@@ -1,6 +1,6 @@
 {
   "name": "@bingo_soft/mapmanager",
-  "version": "1.32.1",
+  "version": "1.32.2",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "repository": {
@@ -9,7 +9,9 @@
   },
   "scripts": {
     "serve": "parcel serve src/MapManager.ts --host localhost --port 8081",
-    "build": "parcel build --public-url . src/MapManager.ts"
+    "build": "parcel build --public-url . src/MapManager.ts",
+    "lint": "eslint --ext .ts src",
+    "test": "jest"
   },
   "author": "Bingo-Soft",
   "license": "MIT",
