@@ -2,6 +2,7 @@ export const HighlightFeatureStyle: unknown = {
     "point": {
         "marker_type": "simple_point",
         "color": "#555",
+        "opacity": 20,
         "size": 3
     },
     "linestring": {

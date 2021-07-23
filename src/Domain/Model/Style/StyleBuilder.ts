@@ -87,7 +87,8 @@ export default class StyleBuilder {
                 image: new OlCircleStyle({
                     radius: opts["size"] || 2,
                     fill: new OlFill({
-                        color: opts["color"]
+                        //color: opts["color"]
+                        color: opts["opacity"] ? this.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
                     }),
                     stroke: new OlStroke({
                         color: opts["color"],
