@@ -45,6 +45,8 @@ import MeasureType from "../Interaction/MeasureType";
 import LayerBuilder from "../Layer/LayerBuilder";
 import VectorLayer from "../Layer/Impl/VectorLayer";
 import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
+import StyleBuilder from "../Style/StyleBuilder";
+import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
 
 
 
@@ -678,20 +680,10 @@ export default class Map {
     public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number): void {
         if (!this.vertexHighlightLayer) {
             this.vertexHighlightLayer = new OlVectorLayer({
-                source: new OlVectorSource(),
-                style: new OlStyle({
-                    image: new OlCircleStyle({
-                        radius: 3,
-                        fill: new OlFill({
-                            color: "magenta"
-                        }),
-                        stroke: new OlStroke({
-                            color: "magenta",
-                            width: 2
-                        }),
-                    }),
-                })
+                source: new OlVectorSource()
             });
+            const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false);
+            this.vertexHighlightLayer.setStyle(styleFunc);
             this.vertexHighlightLayer.setMap(this.map);
         }
         const source = this.vertexHighlightLayer.getSource();

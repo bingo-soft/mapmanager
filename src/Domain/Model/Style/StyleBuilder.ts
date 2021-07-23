@@ -213,11 +213,12 @@ export default class StyleBuilder {
 
     /**
      * Builds style
+     * @param useExternalStyleBuilder - whether to use external style builder
      * @return style function
      */
-    public build(): StyleFunction {
+    public build(useExternalStyleBuilder = true): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
-            if (typeof this.externalStyleBuilder === "function") {
+            if (useExternalStyleBuilder && typeof this.externalStyleBuilder === "function") {
                 const featureProps = feature.getProperties();
                 const featureStyle = this.externalStyleBuilder(featureProps);
                 this.applyOptions(featureStyle);
