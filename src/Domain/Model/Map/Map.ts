@@ -1,4 +1,3 @@
-//import "ol-ext/dist/ol-ext.css";
 import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
@@ -289,7 +288,7 @@ export default class Map {
      * @param layers - selected layers
      */
     public setSelectedLayers(layers: Set<OlLayer>): void {
-        let mapLayers: LayerInterface[] = Array.from(this.layers);
+        const mapLayers: LayerInterface[] = Array.from(this.layers);
         Array.from(layers).forEach((layer: OlLayer): void => {
             const filtered: LayerInterface[] = mapLayers.filter(mapLayer => mapLayer.getLayer() === layer);
             if (filtered.length) {
@@ -379,7 +378,7 @@ export default class Map {
      * @param multiple - flag indicating multiple selection
      * @param callback - callback function to call after geometry is selected
      */
-    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction): InteractionInterface {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple = false, callback?: SelectCallbackFunction): InteractionInterface {
         if (layers) {
             layers.forEach((layer: LayerInterface) => {
                 if (layer.getType() != SourceType.Vector) {
