@@ -1,11 +1,25 @@
 {
   "name": "@bingo_soft/mapmanager",
-  "version": "1.32.2",
+  "version": "1.33.0",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/bingo-soft/mapmanager.git"
+  },
+  "jest": {
+    "globals": {
+      "__DEV__": true
+    },
+    "testRegex": "./test/.*.ts$",
+    "rootDir": ".",
+    "verbose": true,
+    "moduleNameMapper": {
+      "\\.(css|scss|less)$": "<rootDir>/config/CSSStub.js"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(ol)/)"
+    ]
   },
   "scripts": {
     "serve": "parcel serve src/MapManager.ts --host localhost --port 8081",
@@ -33,11 +47,10 @@
     "@types/node": "^16.3.0",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
-    "babel-jest": "^27.0.6",
     "eslint": "^7.18.0",
     "jest": "^27.0.6",
-    "ts-node": "^10.0.0",
     "parcel-bundler": "^1.12.4",
+    "ts-node": "^10.0.0",
     "typedoc": "^0.21.4",
     "typescript": "^4.2.4"
   }

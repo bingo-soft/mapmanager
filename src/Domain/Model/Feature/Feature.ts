@@ -7,6 +7,7 @@ import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, Li
 import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
 import * as OlProj from 'ol/proj';
+import {Circle as OlCircle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
 import GeometryFormat from "./GeometryFormat";
 import LayerInterface from "../Layer/LayerInterface";
 import StyleFunction from "../Style/StyleFunctionType";
@@ -21,6 +22,7 @@ export default class Feature {
     private dirty: boolean;
     private treeId: number;
     private featureParts: Map<number, OlGeometry> = new Map();
+    private featureStyle: OlStyle;
 
     private static readonly DEFAULT_SRS = "EPSG:3857";
 
@@ -92,6 +94,48 @@ export default class Feature {
      */
     public setDirty(dirty: boolean): void {
         this.dirty = dirty;
+    }
+
+    /**
+     * Highlights feature
+     */
+    public highlight(): void {
+        const selectStyleLinePolygon = new OlStyle({
+            stroke: new OlStroke({
+                color: "#555",
+                width: 3
+            }),
+            fill: new OlFill({
+                color: "rgba(128, 128, 128, 0.2)",
+            }) 
+        });
+        const selectStylePoint = new OlStyle({
+            image: new OlCircle({
+                radius: 3,
+                stroke: new OlStroke({
+                    color: "#555",
+                    width: 3
+                })
+            })
+        });
+        //debugger
+        //console.log(this.feature.getStyle());
+        this.featureStyle = (<OlStyle> this.feature.getStyle());
+        const type = this.feature.getGeometry().getType();
+        if (type == "Point" || type == "MultiPoint") {
+            this.feature.setStyle(selectStylePoint);
+        } else {
+            this.feature.setStyle(selectStyleLinePolygon);
+        }
+    }
+
+    /**
+     * Unhighlights feature
+     * @category Feature
+     * @param feature - feature to unhighlight
+     */
+    public unhighlight(): void {
+        this.feature.setStyle(this.featureStyle);
     }
 
     /**
@@ -269,7 +313,7 @@ export default class Feature {
      * @return array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
     private getCoordinates(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
-        let returnCoordinates: VertexCoordinate[][] = [];
+        const returnCoordinates: VertexCoordinate[][] = [];
         let coordinatesFlat: OlCoordinate = [];
         let coordinatesOneDim: OlCoordinate[] = [];
         let coordinatesTwoDim: OlCoordinate[][] = [];

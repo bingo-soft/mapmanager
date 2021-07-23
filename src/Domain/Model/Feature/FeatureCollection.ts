@@ -199,9 +199,7 @@ export default class FeatureCollection {
                     (<OlMultiPolygon> geom).getCoordinates().forEach((coord: OlCoordinate[][]): void => {
                         coordsPolygon.push(coord);
                     });
-                } else {
-
-                } 
+                }
             });
             let returnGeom: OlGeometry = null;
             switch(geomType) {

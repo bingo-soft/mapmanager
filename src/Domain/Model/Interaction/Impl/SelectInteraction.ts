@@ -30,7 +30,7 @@ export default class SelectInteraction extends BaseInteraction {
      * @param multiple - flag indicating multiple selection
      * @param callback - callback function to call after selection is done
      */
-    constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple: boolean = false, callback?: SelectCallbackFunction) {
+    constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple = false, callback?: SelectCallbackFunction) {
         super();
         const olMap = map.getMap(); 
         this.type = InteractionType.Select;
@@ -75,7 +75,7 @@ export default class SelectInteraction extends BaseInteraction {
                 this.interaction = new OlDragBox();
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHandler", (e: OlBaseEvent): void => {
-                    var extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
+                    const extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
                     const features: Feature[] = [];
                     const layers: Set<OlLayer> = new Set();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {

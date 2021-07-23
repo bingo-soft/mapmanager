@@ -513,6 +513,24 @@ export default class MapManager {
     }
 
     /**
+     * Highlights feature
+     * @category Feature
+     * @param feature - feature to highlight
+     */
+    public static highlightFeature(feature: Feature): void {
+        feature.highlight();
+    }
+
+    /**
+     * Unhighlights feature
+     * @category Feature
+     * @param feature - feature to unhighlight
+     */
+    public static unhighlightFeature(feature: Feature): void {
+        feature.unhighlight();
+    }
+
+    /**
      * Returns feature geometry as text
      * @category Feature
      * @param feature - feature
