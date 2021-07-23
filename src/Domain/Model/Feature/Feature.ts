@@ -13,6 +13,8 @@ import LayerInterface from "../Layer/LayerInterface";
 import StyleFunction from "../Style/StyleFunctionType";
 import GeometryItem from "./GeometryItem";
 import VertexCoordinate from "./VertexCoordinate";
+import { HighlightFeatureStyle } from "../Style/HighlightFeatureStyle";
+import StyleBuilder from "../Style/StyleBuilder";
 
 /** Feature */
 export default class Feature { 
@@ -100,33 +102,9 @@ export default class Feature {
      * Highlights feature
      */
     public highlight(): void {
-        const selectStyleLinePolygon = new OlStyle({
-            stroke: new OlStroke({
-                color: "#555",
-                width: 3
-            }),
-            fill: new OlFill({
-                color: "rgba(128, 128, 128, 0.2)",
-            }) 
-        });
-        const selectStylePoint = new OlStyle({
-            image: new OlCircle({
-                radius: 3,
-                stroke: new OlStroke({
-                    color: "#555",
-                    width: 3
-                })
-            })
-        });
-        //debugger
-        //console.log(this.feature.getStyle());
         this.featureStyle = (<OlStyle> this.feature.getStyle());
-        const type = this.feature.getGeometry().getType();
-        if (type == "Point" || type == "MultiPoint") {
-            this.feature.setStyle(selectStylePoint);
-        } else {
-            this.feature.setStyle(selectStyleLinePolygon);
-        }
+        const styleFunc = new StyleBuilder(HighlightFeatureStyle).build(false);
+        this.setStyle(styleFunc);
     }
 
     /**
