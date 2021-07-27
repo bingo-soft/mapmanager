@@ -127,18 +127,6 @@ export default class LayerBuilder {
     }
 
     /**
-     * Sets layer's source change callback
-     * @param callback - callback
-     * @return layer builder instance
-     */
-    public setSourceChangeCallback(callback: () => void): LayerBuilder {
-        if (typeof callback === "function") {
-            this.layer.setEventHandler(EventType.Change, "SourceChangeEventHandler", callback);
-        }
-        return this;
-    }
-
-    /**
      * Builds layer
      * @return layer instance
      */

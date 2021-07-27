@@ -36,11 +36,10 @@ export default class MapManager {
     public static createMap(targetDOMId: string, opts?: unknown): Map {
         const map = new Map(targetDOMId, opts);
         map.setEventBus(MapManager.eventBus);
+        if (Object.prototype.hasOwnProperty.call(opts, "source_change_callback")) {
+            MapManager.eventBus.subscribe(EventType.SourceChange, opts["source_change_callback"])
+        }
         return map;
-    }
-
-    public static subscribe(eventType: EventType, callback: (event: EventInterface) => void): void {
-        MapManager.eventBus.subscribe(eventType, callback)
     }
 
     /**
@@ -241,9 +240,6 @@ export default class MapManager {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);
-            }
-            if (Object.prototype.hasOwnProperty.call(opts, "source_change_callback")) {
-                builder.setSourceChangeCallback(opts["source_change_callback"]);
             }
         }
         return builder.build();
