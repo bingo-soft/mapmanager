@@ -6,6 +6,7 @@ import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollec
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
+import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import GeometryItem from "../Feature/GeometryItem";
 
@@ -37,6 +38,10 @@ export default interface LayerInterface
      * @return layer source type
      */
     getType(): SourceType;
+
+    setEventBus(eventBus: EventBus): void;
+
+    getEventBus(): EventBus;
     
     /**
      * Sets layer source type

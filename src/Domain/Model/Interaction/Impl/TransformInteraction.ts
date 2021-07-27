@@ -9,11 +9,13 @@ import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCol
 import FeatureCollection from "../../Feature/FeatureCollection";
 import { TransformCallbackFunction } from "../InteractionCallbackType";
 import LayerInterface from "../../Layer/LayerInterface";
+import SourceChangedEvent from "../../Source/SourceChangedEvent";
 
 
 /** TransformInteraction */
 export default class TransformInteraction extends BaseInteraction {
 
+    private source: LayerInterface;
     private callback: TransformCallbackFunction;
     private static readonly ROTATE_CURSOR = "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXAgMAAACdRDwzAAAAAXNSR0IArs4c6QAAAAlQTFRF////////AAAAjvTD7AAAAAF0Uk5TAEDm2GYAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH2wwSEgUFmXJDjQAAAEZJREFUCNdjYMAOuCCk6goQpbp0GpRSAFKcqdNmQKgIILUoNAxIMUWFhoKosNDQBKDgVAilCqcaQBogFFNoGNjsqSgUTgAAM3ES8k912EAAAAAASUVORK5CYII=') 5 5, auto";
 
@@ -23,6 +25,7 @@ export default class TransformInteraction extends BaseInteraction {
      */
     constructor(source: LayerInterface, callback?: TransformCallbackFunction) { 
         super();
+        this.source = source;
         this.handler = this.handler.bind(this);
         const optsTransform: unknown = {
             enableRotatedTransform: false,
@@ -55,6 +58,7 @@ export default class TransformInteraction extends BaseInteraction {
             const transformedFeatures: OlFeature[] = (<OlTransformEvent> e).features.getArray();
             const fc = new FeatureCollection(transformedFeatures);
             fc.setDirty(true);
+            this.source.getEventBus().dispatch(new SourceChangedEvent());
             this.callback(fc);
         }
     }

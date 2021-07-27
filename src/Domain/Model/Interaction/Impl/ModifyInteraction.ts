@@ -5,11 +5,13 @@ import Collection from 'ol/Collection';
 import BaseInteraction from "./BaseInteraction";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
+import EventBus from "../../EventHandlerCollection/EventBus";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import LayerInterface from "../../Layer/LayerInterface";
 import { ModifyCallbackFunction } from "../InteractionCallbackType";
 import Feature from "../../Feature/Feature";
+import SourceChangedEvent from "../../Source/SourceChangedEvent";
 
 /** @class ModifyInteraction */
 export default class ModifyInteraction extends BaseInteraction {
@@ -21,14 +23,19 @@ export default class ModifyInteraction extends BaseInteraction {
     constructor(source: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction) {
         super();
         const opts: unknown = {};
+        let eventBus: EventBus;
         if (source instanceof FeatureCollection) {
             const olFeatures: OlFeature[] = [];
             source.getFeatures().forEach((feature: Feature): void => {
+                if (eventBus == null) {
+                    eventBus = feature.getEventBus();
+                }
                 olFeatures.push(feature.getFeature());
             });
             opts["features"] = new Collection(olFeatures);
         } else {
-            opts["source"] = source.getSource();            
+            opts["source"] = source.getSource();
+            eventBus = source.getEventBus();          
         }
         this.interaction = new OlModify(opts);
         this.type = InteractionType.Modify;
@@ -38,6 +45,7 @@ export default class ModifyInteraction extends BaseInteraction {
                 const modifiedFeatures = (<OlModifyEvent> e).features.getArray();
                 const fc = new FeatureCollection(modifiedFeatures);
                 fc.setDirty(true);
+                eventBus.dispatch(new SourceChangedEvent());
                 callback(fc);
             }
         });

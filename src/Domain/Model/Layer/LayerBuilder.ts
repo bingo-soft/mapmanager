@@ -6,6 +6,7 @@ import XYZSource from "../Source/Impl/XYZSource";
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
 import TileWMSSource from "../Source/Impl/TileWMSSource";
 import StyleBuilder from "../Style/StyleBuilder";
+import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 
 /** LayerBuilder */
@@ -46,6 +47,10 @@ export default class LayerBuilder {
                 break;
         }
         return this;
+    }
+
+    public setEventBus(eventBus: EventBus): void {
+        this.layer.setEventBus(eventBus);
     }
 
     /**

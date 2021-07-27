@@ -22,6 +22,7 @@ import { Select as OlSelect } from "ol/interaction";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
+import SourceChangedEvent from "../Source/SourceChangedEvent";
 import SourceType from "../Source/SourceType";
 import Feature from "../Feature/Feature";
 import FeatureCollection from "../Feature/FeatureCollection";
@@ -34,6 +35,7 @@ import SelectInteraction from "../Interaction/Impl/SelectInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
 import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
+import EventBus from "../EventHandlerCollection/EventBus";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
@@ -47,8 +49,6 @@ import VectorLayer from "../Layer/Impl/VectorLayer";
 import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
 import StyleBuilder from "../Style/StyleBuilder";
 import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
-
-
 
 /** Map */
 export default class Map { 
@@ -66,7 +66,8 @@ export default class Map {
     private clipboard: unknown;
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
-    private eventHandlers: EventHandlerCollection; 
+    private eventHandlers: EventHandlerCollection;
+    private eventBus: EventBus;
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
@@ -186,6 +187,14 @@ export default class Map {
                 }
             });
         });
+    }
+
+    public setEventBus(eventBus: EventBus): void {
+        this.eventBus = eventBus;
+    }
+
+    public getEventBus(): EventBus {
+        return this.eventBus;
     }
 
     /**
@@ -359,7 +368,12 @@ export default class Map {
             throw new InteractionNotSupported(InteractionType.Draw);
         }
         this.clearInteractions();
-        this.interaction = new DrawInteraction(layer, geometryType, callback);
+        this.interaction = new DrawInteraction(layer, geometryType, (feature: Feature) => {
+            //eventbus!
+            if (typeof callback == "function") {
+                callback(feature);
+            }
+        });
         this.addInteraction(this.interaction);        
     }
 
@@ -547,6 +561,7 @@ export default class Map {
     public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
         if (features) {
             const source = <OlVectorSource> layer.getSource();
+            this.eventBus.dispatch(new SourceChangedEvent());
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer);
@@ -562,6 +577,7 @@ export default class Map {
      */
     public removeFeatures(features: FeatureCollection): void {
         if (features) {
+            this.eventBus.dispatch(new SourceChangedEvent());
             features.forEach((feature: Feature): void => {
                 const layer = feature.getLayer(); 
                 layer.setRemovedFeatures(feature);
@@ -765,6 +781,7 @@ export default class Map {
      */
     public pasteFromClipboard(layer: LayerInterface): void {
         if (this.clipboard["features"]) {
+            this.eventBus.dispatch(new SourceChangedEvent());
             if (this.clipboard["remove"]) {
                 this.removeFeatures(this.clipboard["features"]);
             }

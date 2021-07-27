@@ -9,6 +9,7 @@ import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
+import EventBus from "../EventHandlerCollection/EventBus";
 import GeometryItem from "../Feature/GeometryItem";
 
 /** AbstractLayer */
@@ -18,6 +19,7 @@ export default abstract class AbstractLayer implements LayerInterface
     protected properties: unknown;
     protected eventHandlers: EventHandlerCollection;
     protected srsId: number;
+    protected eventBus: EventBus;
 
     /**
      * Returns Openlayers layer instance
@@ -39,6 +41,14 @@ export default abstract class AbstractLayer implements LayerInterface
      */
     public setType(type: SourceType): void {
         throw new MethodNotImplemented();
+    }
+
+    public setEventBus(eventBus: EventBus): void {
+        this.eventBus = eventBus;
+    }
+
+    public getEventBus(): EventBus {
+        return this.eventBus;
     }
 
     /**

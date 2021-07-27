@@ -4,6 +4,7 @@ import { Vector as OlVectorSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import BaseVectorLayer from "ol/layer/BaseVector";
+import SourceChangedEvent from "../../Source/SourceChangedEvent";
 import SourceType from "../../Source/SourceType";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
@@ -87,6 +88,7 @@ export default class VectorLayer extends AbstractLayer{
         } else {
             addingFeatures = <OlFeature[]> features;            
         }
+        this.eventBus.dispatch(new SourceChangedEvent());
         (<OlVectorLayer> this.layer).getSource().addFeatures(addingFeatures);
     }
 
@@ -177,6 +179,7 @@ export default class VectorLayer extends AbstractLayer{
         this.addFeatures([feature.getFeature()]);
         this.setDirtyFeatures(new FeatureCollection([feature]), true);
         feature.updateFromVertices(items);
+        this.eventBus.dispatch(new SourceChangedEvent());
         return feature;
     }
     

@@ -47,7 +47,6 @@ export default class MeasureInteraction extends BaseInteraction {
 
         this.eventHandlers = new EventHandlerCollection(interaction.getInteraction());
         this.eventHandlers.add(EventType.DrawStart, "MeasureStartEventHandler", (e: OlBaseEvent): void => {
-            let overlay: OlOverlay;
             tooltipCoord = (<any> e).coordinate;
             const feature = (<OlDrawEvent> e).feature;
             geomChangelistener = feature.getGeometry().on("change", (evt: OlBaseEvent): void => {
@@ -72,7 +71,7 @@ export default class MeasureInteraction extends BaseInteraction {
             });
             const tooltip: HTMLElement = document.createElement("div");
             tooltip.className = "tooltip tooltip-static";
-            overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]);
+            const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]);
         });
         this.eventHandlers.add(EventType.DrawEnd, "MeasureEndEventHandler", (e: OlBaseEvent): void => {
             OlObservable.unByKey(geomChangelistener);

@@ -10,6 +10,7 @@ import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import { DrawCallbackFunction } from "../InteractionCallbackType";
+import SourceChangedEvent from "../../Source/SourceChangedEvent";
 
 /** DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
@@ -35,6 +36,7 @@ export default class DrawInteraction extends BaseInteraction {
             if (typeof callback === "function") {
                 const feature = new Feature((<OlDrawEvent> e).feature, layer);
                 feature.setDirty(true);
+                layer.getEventBus().dispatch(new SourceChangedEvent());
                 callback(feature);
             }
         });

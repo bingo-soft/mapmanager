@@ -15,10 +15,13 @@ import GeometryItem from "./GeometryItem";
 import VertexCoordinate from "./VertexCoordinate";
 import { HighlightFeatureStyle } from "../Style/HighlightFeatureStyle";
 import StyleBuilder from "../Style/StyleBuilder";
+import EventBus from "../EventHandlerCollection/EventBus";
+import SourceChangedEvent from "../Source/SourceChangedEvent";
 
 /** Feature */
 export default class Feature { 
     
+    private eventBus: EventBus;
     private feature: OlFeature;
     private layer: LayerInterface;
     private dirty: boolean;
@@ -40,6 +43,14 @@ export default class Feature {
         if (layer) { 
             this.layer = layer;
         }
+    }
+
+    public setEventBus(eventBus: EventBus): void {
+        this.eventBus = eventBus;
+    }
+
+    public getEventBus(): EventBus {
+        return this.eventBus;
     }
 
     /**
@@ -146,6 +157,7 @@ export default class Feature {
         this.feature = feature;
         this.dirty = true;
         source.addFeature(this.feature);
+        this.eventBus.dispatch(new SourceChangedEvent());
         return this;
     }
 
@@ -386,6 +398,7 @@ export default class Feature {
             });
             this.feature.setGeometry(tempFeature.getGeometry());
             this.dirty = true;
+            this.eventBus.dispatch(new SourceChangedEvent());
         }
     }
 
@@ -406,6 +419,7 @@ export default class Feature {
             });
             (<OlVectorSource> layer.getLayer().getSource()).addFeature(this.feature);
             this.dirty = true;
+            this.eventBus.dispatch(new SourceChangedEvent());
             return this;
         }
         return null;
@@ -465,6 +479,7 @@ export default class Feature {
         }
         const olFeature = new OlGeoJSON().readFeature(turfPolygon);
         this.feature.setGeometry(olFeature.getGeometry());
+        this.eventBus.dispatch(new SourceChangedEvent());
         return this;
     }
 
@@ -482,6 +497,7 @@ export default class Feature {
         }
         const olFeature = new OlGeoJSON().readFeature(turfLine);
         this.feature.setGeometry(olFeature.getGeometry());
+        this.eventBus.dispatch(new SourceChangedEvent());
         return this;
     }
 

@@ -10,6 +10,8 @@ import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerReposi
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
+import EventBus from "./Domain/Model/EventHandlerCollection/EventBus"
+import EventInterface from "./Domain/Model/EventHandlerCollection/EventInterface"
 import EventType from "./Domain/Model/EventHandlerCollection/EventType"
 import EventHandlerCollection from "./Domain/Model/EventHandlerCollection/EventHandlerCollection"
 import Feature from "./Domain/Model/Feature/Feature"
@@ -22,6 +24,8 @@ import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
 
+    public static eventBus = new EventBus();
+
     /**
      * Creates OpenLayers map object and controls.
      * @category Map
@@ -30,8 +34,13 @@ export default class MapManager {
      * @return map instance
      */
     public static createMap(targetDOMId: string, opts?: unknown): Map {
-        const map = new Map(targetDOMId, opts); 
+        const map = new Map(targetDOMId, opts);
+        map.setEventBus(MapManager.eventBus);
         return map;
+    }
+
+    public static subscribe(eventType: EventType, callback: (event: EventInterface) => void): void {
+        MapManager.eventBus.subscribe(eventType, callback)
     }
 
     /**
@@ -190,7 +199,8 @@ export default class MapManager {
         switch (type) {
             case SourceType.Vector:
                 builder = new LayerBuilder(new VectorLayer(null, opts));
-                builder.setSource(SourceType.Vector);       
+                builder.setSource(SourceType.Vector);
+                builder.setEventBus(MapManager.eventBus);     
                 break;
             case SourceType.TileWMS:
                 builder = new LayerBuilder(new TileLayer());
