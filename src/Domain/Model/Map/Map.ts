@@ -368,12 +368,7 @@ export default class Map {
             throw new InteractionNotSupported(InteractionType.Draw);
         }
         this.clearInteractions();
-        this.interaction = new DrawInteraction(layer, geometryType, (feature: Feature) => {
-            //eventbus!
-            if (typeof callback == "function") {
-                callback(feature);
-            }
-        });
+        this.interaction = new DrawInteraction(layer, geometryType, callback);
         this.addInteraction(this.interaction);        
     }
 
