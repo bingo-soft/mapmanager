@@ -37,9 +37,13 @@ export default class MapManager {
         const map = new Map(targetDOMId, opts);
         map.setEventBus(MapManager.eventBus);
         if (Object.prototype.hasOwnProperty.call(opts, "source_change_callback")) {
-            MapManager.eventBus.subscribe(EventType.SourceChange, opts["source_change_callback"])
+            MapManager.eventBus.subscribe(EventType.SourceChange, opts["source_change_callback"]);
         }
         return map;
+    }
+
+    public static subscribe(eventType: EventType, callback: (event: EventInterface) => void) {
+        MapManager.eventBus.subscribe(eventType, callback);
     }
 
     /**
