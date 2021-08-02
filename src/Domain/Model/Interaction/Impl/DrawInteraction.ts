@@ -24,6 +24,8 @@ export default class DrawInteraction extends BaseInteraction {
         super();
         const olLayer = <OlVectorLayer> layer.getLayer();
         const olSource = olLayer.getSource();
+        const eventBus = layer.getEventBus();
+
         this.interaction = new OlDraw({
             source: olSource,
             features: new OlCollection(),
@@ -35,12 +37,11 @@ export default class DrawInteraction extends BaseInteraction {
         this.eventHandlers.add(EventType.AddFeature, "DrawEventHandler", (e: OlBaseEvent): void => {
             if (typeof callback === "function") {
                 const feature = new Feature((<OlDrawEvent> e).feature, layer);
-                feature.setDirty(true);
-                const eventBus = layer.getEventBus();
-                if (eventBus) {
-                    eventBus.dispatch(new SourceChangedEvent());
-                }
+                feature.setDirty(true);                
                 callback(feature);
+            }
+            if (eventBus) {
+                eventBus.dispatch(new SourceChangedEvent()); 
             }
         });
     }

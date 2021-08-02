@@ -29,15 +29,13 @@ export default class ModifyInteraction extends BaseInteraction {
             source.getFeatures().forEach((feature: Feature): void => {
                 if (eventBus == null) {
                     eventBus = feature.getEventBus();
-                    console.log("get event bus from feature", eventBus);
                 }
                 olFeatures.push(feature.getFeature());
             });
             opts["features"] = new Collection(olFeatures);
         } else {
             opts["source"] = source.getSource();
-            eventBus = source.getEventBus();
-            console.log("get event bus", eventBus);         
+            eventBus = source.getEventBus();      
         }
         this.interaction = new OlModify(opts);
         this.type = InteractionType.Modify;
@@ -47,12 +45,11 @@ export default class ModifyInteraction extends BaseInteraction {
                 const modifiedFeatures = (<OlModifyEvent> e).features.getArray();
                 const fc = new FeatureCollection(modifiedFeatures);
                 fc.setDirty(true);
-                console.log(eventBus, "<----eventBus");
-                if (eventBus) {
-                    eventBus.dispatch(new SourceChangedEvent());
-                    console.log("dispatch", eventBus);   
-                }
                 callback(fc);
+            } 
+            if (eventBus) {
+                eventBus.dispatch(new SourceChangedEvent());
+                console.log("dispatch", eventBus);   
             }
         });
     }
