@@ -10,33 +10,23 @@ import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCol
 import FeatureCollection from "../../Feature/FeatureCollection";
 import LayerInterface from "../../Layer/LayerInterface";
 import { ModifyCallbackFunction } from "../InteractionCallbackType";
-import Feature from "../../Feature/Feature";
 import SourceChangedEvent from "../../Source/SourceChangedEvent";
 
 /** @class ModifyInteraction */
 export default class ModifyInteraction extends BaseInteraction {
 
+    private layer: LayerInterface;
+
     /**
-     * @param source - layer or features to modify
+     * @param source - target layer for interaction
      * @param callback - callback function to call after geometry is modified
      */
-    constructor(source: LayerInterface | FeatureCollection, callback?: ModifyCallbackFunction) {
+    constructor(source: LayerInterface, callback?: ModifyCallbackFunction) {
         super();
         const opts: unknown = {};
-        let eventBus: EventBus;
-        if (source instanceof FeatureCollection) {
-            const olFeatures: OlFeature[] = [];
-            source.getFeatures().forEach((feature: Feature): void => {
-                if (eventBus == null) {
-                    eventBus = feature.getEventBus();
-                }
-                olFeatures.push(feature.getFeature());
-            });
-            opts["features"] = new Collection(olFeatures);
-        } else {
-            opts["source"] = source.getSource();
-            eventBus = source.getEventBus();      
-        }
+        this.layer = source;
+        opts["source"] = source.getSource();
+        const eventBus = source.getEventBus(); 
         this.interaction = new OlModify(opts);
         this.type = InteractionType.Modify;
         this.eventHandlers = new EventHandlerCollection(this.interaction);
@@ -44,6 +34,7 @@ export default class ModifyInteraction extends BaseInteraction {
             const modifiedFeatures = (<OlModifyEvent> e).features.getArray();
             const fc = new FeatureCollection(modifiedFeatures);
             fc.setDirty(true);
+            this.layer.setDirtyFeatures(fc, true);
             if (typeof callback === "function") {               
                 callback(fc);
             } 

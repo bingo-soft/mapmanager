@@ -6,6 +6,7 @@ import OlBaseEvent from "ol/events/Event";
 import BaseInteraction from "./BaseInteraction";
 import LayerInterface from "../../Layer/LayerInterface";
 import Feature from "../../Feature/Feature";
+import FeatureCollection from "../../Feature/FeatureCollection";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
@@ -15,6 +16,8 @@ import SourceChangedEvent from "../../Source/SourceChangedEvent";
 /** DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
 
+    private layer: LayerInterface;
+
     /**
      * @param layer - layer to draw on
      * @param geometryType - type of geometry to draw
@@ -22,6 +25,7 @@ export default class DrawInteraction extends BaseInteraction {
      */
     constructor(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction) {
         super();
+        this.layer = layer;
         const olLayer = <OlVectorLayer> layer.getLayer();
         const olSource = olLayer.getSource();
         const eventBus = layer.getEventBus();
@@ -36,13 +40,12 @@ export default class DrawInteraction extends BaseInteraction {
         this.eventHandlers = new EventHandlerCollection(olSource);
         this.eventHandlers.add(EventType.AddFeature, "DrawEventHandler", (e: OlBaseEvent): void => {
             const feature = new Feature((<OlDrawEvent> e).feature, layer);
-            feature.setDirty(true);    
+            feature.setDirty(true);
+            this.layer.setDirtyFeatures(new FeatureCollection([feature]), true);
             if (typeof callback === "function") {                            
                 callback(feature);
             }
-            console.log(eventBus);
             if (eventBus) {
-                console.log("dispatch source change");
                 eventBus.dispatch(new SourceChangedEvent()); 
             }
         });

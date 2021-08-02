@@ -15,22 +15,22 @@ import SourceChangedEvent from "../../Source/SourceChangedEvent";
 /** TransformInteraction */
 export default class TransformInteraction extends BaseInteraction {
 
-    private source: LayerInterface;
+    private layer: LayerInterface;
     private callback: TransformCallbackFunction;
     private static readonly ROTATE_CURSOR = "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAXAgMAAACdRDwzAAAAAXNSR0IArs4c6QAAAAlQTFRF////////AAAAjvTD7AAAAAF0Uk5TAEDm2GYAAAABYktHRACIBR1IAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH2wwSEgUFmXJDjQAAAEZJREFUCNdjYMAOuCCk6goQpbp0GpRSAFKcqdNmQKgIILUoNAxIMUWFhoKosNDQBKDgVAilCqcaQBogFFNoGNjsqSgUTgAAM3ES8k912EAAAAAASUVORK5CYII=') 5 5, auto";
 
     /**
-     * @param source - target layer for interaction
+     * @param layer - target layer for interaction
      * @param callback - callback function after geometry is transformed
      */
-    constructor(source: LayerInterface, callback?: TransformCallbackFunction) { 
+    constructor(layer: LayerInterface, callback?: TransformCallbackFunction) { 
         super();
-        this.source = source;
+        this.layer = layer;
         this.handler = this.handler.bind(this);
         const optsTransform: unknown = {
             enableRotatedTransform: false,
             addCondition: OlEventConditionShiftKeyOnly,
-            layers: [source.getLayer()],
+            layers: [layer.getLayer()],
             hitTolerance: 2,
             translateFeature: false,
             scale: true,
@@ -54,10 +54,11 @@ export default class TransformInteraction extends BaseInteraction {
      * @param e - event
      */
     private handler(e: OlBaseEvent): void {
-        const eventBus = this.source.getEventBus();
+        const eventBus = this.layer.getEventBus();
         const transformedFeatures: OlFeature[] = (<OlTransformEvent> e).features.getArray();
         const fc = new FeatureCollection(transformedFeatures);
-        fc.setDirty(true);  
+        fc.setDirty(true);
+        this.layer.setDirtyFeatures(fc, true);
         if (typeof this.callback === "function") {                      
             this.callback(fc);
         }
