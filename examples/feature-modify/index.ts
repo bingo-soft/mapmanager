@@ -15,7 +15,10 @@ const optsMap = {
         y: 56.319241,
         declared_coordinate_system_id: 4326
     }, 
-    zoom: 13
+    zoom: 13,
+    "source_change_callback": () => {
+        console.log("source changed");
+    }
 }
 const map: Map = MapManager.createMap("map", optsMap);
 
