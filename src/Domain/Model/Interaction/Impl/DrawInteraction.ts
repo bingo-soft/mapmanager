@@ -35,9 +35,9 @@ export default class DrawInteraction extends BaseInteraction {
 
         this.eventHandlers = new EventHandlerCollection(olSource);
         this.eventHandlers.add(EventType.AddFeature, "DrawEventHandler", (e: OlBaseEvent): void => {
-            if (typeof callback === "function") {
-                const feature = new Feature((<OlDrawEvent> e).feature, layer);
-                feature.setDirty(true);                
+            const feature = new Feature((<OlDrawEvent> e).feature, layer);
+            feature.setDirty(true);    
+            if (typeof callback === "function") {                            
                 callback(feature);
             }
             if (eventBus) {

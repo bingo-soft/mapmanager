@@ -17,7 +17,8 @@ const optsMap = {
     }, 
     zoom: 13,
     "source_change_callback": () => {
-        console.log("source changed");
+        const dirtyLayers = MapManager.getDirtyLayers(map);
+        console.log("dirty layers: ", dirtyLayers);
     }
 }
 const map: Map = MapManager.createMap("map", optsMap);
