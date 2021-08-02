@@ -40,7 +40,9 @@ export default class DrawInteraction extends BaseInteraction {
             if (typeof callback === "function") {                            
                 callback(feature);
             }
+            console.log(eventBus);
             if (eventBus) {
+                console.log("dispatch source change");
                 eventBus.dispatch(new SourceChangedEvent()); 
             }
         });

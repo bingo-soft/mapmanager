@@ -38,6 +38,7 @@ export default class MapManager {
         map.setEventBus(MapManager.eventBus);
         if (Object.prototype.hasOwnProperty.call(opts, "source_change_callback")) {
             MapManager.eventBus.subscribe(EventType.SourceChange, opts["source_change_callback"]);
+            console.log(MapManager.eventBus, "subscribed");
         }
         return map;
     }
