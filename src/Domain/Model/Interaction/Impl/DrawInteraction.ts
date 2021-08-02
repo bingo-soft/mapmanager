@@ -36,7 +36,10 @@ export default class DrawInteraction extends BaseInteraction {
             if (typeof callback === "function") {
                 const feature = new Feature((<OlDrawEvent> e).feature, layer);
                 feature.setDirty(true);
-                layer.getEventBus().dispatch(new SourceChangedEvent());
+                const eventBus = layer.getEventBus();
+                if (eventBus) {
+                    eventBus.dispatch(new SourceChangedEvent());
+                }
                 callback(feature);
             }
         });

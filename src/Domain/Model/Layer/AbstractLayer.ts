@@ -43,11 +43,12 @@ export default abstract class AbstractLayer implements LayerInterface
         throw new MethodNotImplemented();
     }
 
-    public setEventBus(eventBus: EventBus): void {
+    public setEventBus(eventBus: EventBus | null): void {
         this.eventBus = eventBus;
     }
 
-    public getEventBus(): EventBus {
+    public getEventBus(): EventBus | null
+    {
         return this.eventBus;
     }
 

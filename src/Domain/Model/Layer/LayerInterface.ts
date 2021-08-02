@@ -39,9 +39,9 @@ export default interface LayerInterface
      */
     getType(): SourceType;
 
-    setEventBus(eventBus: EventBus): void;
+    setEventBus(eventBus: EventBus | null): void;
 
-    getEventBus(): EventBus;
+    getEventBus(): EventBus | null;
     
     /**
      * Sets layer source type

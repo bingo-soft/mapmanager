@@ -45,11 +45,13 @@ export default class Feature {
         }
     }
 
-    public setEventBus(eventBus: EventBus): void {
+    public setEventBus(eventBus: EventBus): void
+    {
         this.eventBus = eventBus;
     }
 
-    public getEventBus(): EventBus {
+    public getEventBus(): EventBus | null
+    {
         return this.eventBus;
     }
 
@@ -157,7 +159,9 @@ export default class Feature {
         this.feature = feature;
         this.dirty = true;
         source.addFeature(this.feature);
-        this.eventBus.dispatch(new SourceChangedEvent());
+        if (this.eventBus) {
+            this.eventBus.dispatch(new SourceChangedEvent());
+        }
         return this;
     }
 
@@ -398,7 +402,9 @@ export default class Feature {
             });
             this.feature.setGeometry(tempFeature.getGeometry());
             this.dirty = true;
-            this.eventBus.dispatch(new SourceChangedEvent());
+            if (this.eventBus) {
+                this.eventBus.dispatch(new SourceChangedEvent());
+            }
         }
     }
 
@@ -419,7 +425,9 @@ export default class Feature {
             });
             (<OlVectorSource> layer.getLayer().getSource()).addFeature(this.feature);
             this.dirty = true;
-            this.eventBus.dispatch(new SourceChangedEvent());
+            if (this.eventBus) {
+                this.eventBus.dispatch(new SourceChangedEvent());
+            }
             return this;
         }
         return null;
@@ -444,7 +452,6 @@ export default class Feature {
         if (geometry instanceof OlPolygon) {
             const linesFeature = this.polygonToLine();
             const coordinates = (<OlMultiLineString> linesFeature.getFeature().getGeometry()).getCoordinates();
-            console.log(coordinates);
             for (let i = 0; i < coordinates.length; i++) {
                 for (let j = 0; j < coordinates.length; j++) {
                     if (i != j) {
@@ -479,7 +486,9 @@ export default class Feature {
         }
         const olFeature = new OlGeoJSON().readFeature(turfPolygon);
         this.feature.setGeometry(olFeature.getGeometry());
-        this.eventBus.dispatch(new SourceChangedEvent());
+        if (this.eventBus) {
+            this.eventBus.dispatch(new SourceChangedEvent());
+        }
         return this;
     }
 
@@ -497,7 +506,9 @@ export default class Feature {
         }
         const olFeature = new OlGeoJSON().readFeature(turfLine);
         this.feature.setGeometry(olFeature.getGeometry());
-        this.eventBus.dispatch(new SourceChangedEvent());
+        if (this.eventBus) {
+            this.eventBus.dispatch(new SourceChangedEvent());
+        }
         return this;
     }
 

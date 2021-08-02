@@ -88,7 +88,9 @@ export default class VectorLayer extends AbstractLayer{
         } else {
             addingFeatures = <OlFeature[]> features;            
         }
-        this.eventBus.dispatch(new SourceChangedEvent());
+        if (this.eventBus) {
+            this.eventBus.dispatch(new SourceChangedEvent());
+        }
         (<OlVectorLayer> this.layer).getSource().addFeatures(addingFeatures);
     }
 
@@ -179,7 +181,9 @@ export default class VectorLayer extends AbstractLayer{
         this.addFeatures([feature.getFeature()]);
         this.setDirtyFeatures(new FeatureCollection([feature]), true);
         feature.updateFromVertices(items);
-        this.eventBus.dispatch(new SourceChangedEvent());
+        if (this.eventBus) {
+            this.eventBus.dispatch(new SourceChangedEvent());
+        }
         return feature;
     }
     

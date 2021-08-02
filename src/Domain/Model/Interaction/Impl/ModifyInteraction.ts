@@ -45,7 +45,9 @@ export default class ModifyInteraction extends BaseInteraction {
                 const modifiedFeatures = (<OlModifyEvent> e).features.getArray();
                 const fc = new FeatureCollection(modifiedFeatures);
                 fc.setDirty(true);
-                eventBus.dispatch(new SourceChangedEvent());
+                if (eventBus) {
+                    eventBus.dispatch(new SourceChangedEvent());
+                }
                 callback(fc);
             }
         });
