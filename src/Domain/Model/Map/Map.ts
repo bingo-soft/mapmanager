@@ -557,14 +557,14 @@ export default class Map {
      */
     public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
         if (features) {
-            const source = <OlVectorSource> layer.getSource();
-            this.eventBus.dispatch(new SourceChangedEvent());
+            const source = <OlVectorSource> layer.getSource();            
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer);
                 feature.setDirty(true);
                 layer.setDirtyFeatures(new FeatureCollection([feature]), true);
             });
+            this.eventBus.dispatch(new SourceChangedEvent());
         }
     }
 
@@ -573,14 +573,14 @@ export default class Map {
      * @param features - features to remove
      */
     public removeFeatures(features: FeatureCollection): void {
-        if (features) {
-            this.eventBus.dispatch(new SourceChangedEvent());
+        if (features) {            
             features.forEach((feature: Feature): void => {
                 const layer = feature.getLayer(); 
                 layer.setRemovedFeatures(feature);
                 const source = <OlVectorSource> (layer.getLayer().getSource());
                 source.removeFeature(feature.getFeature());
             });
+            this.eventBus.dispatch(new SourceChangedEvent());
             this.clearSelectedFeatures();
         }
     }
@@ -778,7 +778,6 @@ export default class Map {
      */
     public pasteFromClipboard(layer: LayerInterface): void {
         if (this.clipboard["features"]) {
-            this.eventBus.dispatch(new SourceChangedEvent());
             if (this.clipboard["remove"]) {
                 this.removeFeatures(this.clipboard["features"]);
             }

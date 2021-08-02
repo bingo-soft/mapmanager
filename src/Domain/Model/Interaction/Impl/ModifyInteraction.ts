@@ -49,7 +49,6 @@ export default class ModifyInteraction extends BaseInteraction {
             } 
             if (eventBus) {
                 eventBus.dispatch(new SourceChangedEvent());
-                console.log("dispatch", eventBus);   
             }
         });
     }
