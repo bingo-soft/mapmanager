@@ -162,7 +162,7 @@ export default class VectorLayer extends AbstractLayer{
      * @return flag indicating that the layer is dirty
      */
     public isDirty(): boolean {
-        if (this.removedFeatures.getLength() == this.idleFeatures.getLength()) {
+        if (this.removedFeatures.getLength() == this.idleFeatures.getLength() && this.removedFeatures.getLength() != 0) {
             for (let i = 0; i < this.removedFeatures.getLength(); i += 1) {
                 const removedFeature = this.removedFeatures.getAt(i);
                 //if there is an idle feature, that is not get removed

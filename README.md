@@ -6,6 +6,12 @@ MapManager is a JavaScript and TypeScript library, which simplifies usage of Ope
 
 MapManager depends on [OpenLayers](https://github.com/openlayers/openlayers) and [ol-ext](https://viglino.github.io/ol-ext) libraries
 
+## Installation
+
+```
+npm install @bingo_soft/mapmanager
+```
+
 ## Examples
 
 ### Basic map creation, OSM is used as a base layer

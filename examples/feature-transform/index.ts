@@ -16,7 +16,10 @@ const optsMap = {
         declared_coordinate_system_id: 4326
     }, 
     zoom: 13,
-
+    "source_change_callback": () => {
+        const dirtyLayers = MapManager.getDirtyLayers(map);
+        console.log("dirty layers: ", dirtyLayers);
+    }
 }
 const map: Map = MapManager.createMap("map", optsMap);
 
