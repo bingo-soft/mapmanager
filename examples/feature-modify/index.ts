@@ -19,6 +19,9 @@ const optsMap = {
     "source_change_callback": () => {
         const dirtyLayers = MapManager.getDirtyLayers(map);
         console.log("dirty layers: ", dirtyLayers);
+        dirtyLayers.forEach(layer => {
+            console.log("dirty features: ", layer.getDirtyFeatures());
+        });
     }
 }
 const map: Map = MapManager.createMap("map", optsMap);

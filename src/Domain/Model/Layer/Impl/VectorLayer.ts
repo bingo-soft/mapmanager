@@ -119,7 +119,9 @@ export default class VectorLayer extends AbstractLayer{
     public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
         features.forEach((feature: Feature): void => {
             if (dirty) {
-                this.dirtyFeatures.add(feature)
+                if (this.dirtyFeatures.indexOf(feature) == -1) {
+                    this.dirtyFeatures.add(feature);
+                }
             } else {
                 this.dirtyFeatures.remove(feature);
 
