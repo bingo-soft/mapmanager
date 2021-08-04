@@ -284,7 +284,7 @@ export default class Map {
      */
     public getDirtyLayers(): LayerInterface[] {
         return Array.from(this.layers).filter((layer: LayerInterface): boolean => {
-            return layer.getDirtyFeatures().getLength() != 0;
+            return layer.isDirty();
         });
     }
 
@@ -513,6 +513,7 @@ export default class Map {
         if (layer) {
             this.map.addLayer(layer.getLayer());
             this.layers.add(layer);
+            layer.setEventBus(this.getEventBus());
         }
     }
 
@@ -561,7 +562,6 @@ export default class Map {
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer);
-                feature.setDirty(true);
                 layer.setDirtyFeatures(new FeatureCollection([feature]), true);
             });
             this.eventBus.dispatch(new SourceChangedEvent());
@@ -573,9 +573,10 @@ export default class Map {
      * @param features - features to remove
      */
     public removeFeatures(features: FeatureCollection): void {
-        if (features) {            
+        if (features) {   
+            let layer;         
             features.forEach((feature: Feature): void => {
-                const layer = feature.getLayer(); 
+                layer = feature.getLayer(); 
                 layer.setRemovedFeatures(feature);
                 const source = <OlVectorSource> (layer.getLayer().getSource());
                 source.removeFeature(feature.getFeature());

@@ -33,7 +33,6 @@ export default class ModifyInteraction extends BaseInteraction {
         this.eventHandlers.add(EventType.ModifyFeature, "ModifyEventHandler", (e: OlBaseEvent): void => {
             const modifiedFeatures = (<OlModifyEvent> e).features.getArray();
             const fc = new FeatureCollection(modifiedFeatures);
-            fc.setDirty(true);
             this.layer.setDirtyFeatures(fc, true);
             if (typeof callback === "function") {               
                 callback(fc);

@@ -53,10 +53,12 @@ export default class SelectInteraction extends BaseInteraction {
                     const selectedFeatures: OlFeature[] = e.target.getFeatures().getArray();
                     const features: Feature[] = [];
                     const layers: Set<OlLayer> = new Set();
-                    selectedFeatures.forEach((feature: OlFeature): void => {
-                        const olLayer: OlLayer = e.target.getLayer(feature);
+                    selectedFeatures.forEach((olFeature: OlFeature): void => {
+                        const olLayer: OlLayer = e.target.getLayer(olFeature);
                         layers.add(olLayer);
-                        features.push(new Feature(feature, map.getLayer(olLayer)));
+                        const feature = new Feature(olFeature, map.getLayer(olLayer));
+                        feature.setEventBus(map.getEventBus());
+                        features.push(feature);
                     });
                     fc = new FeatureCollection(features);
                     map.setSelectedFeatures(fc);
@@ -82,7 +84,8 @@ export default class SelectInteraction extends BaseInteraction {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
-                                    const feature = new Feature(olFeature, map.getLayer(olLayer)); 
+                                    const feature = new Feature(olFeature, map.getLayer(olLayer));
+                                    feature.setEventBus(map.getEventBus());
                                     features.push(feature);
                                     layers.add(olLayer);
                                     selectedFeatures.push(olFeature); // just to highlight the selection

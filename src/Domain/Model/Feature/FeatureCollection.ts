@@ -72,17 +72,6 @@ export default class FeatureCollection {
     }
 
     /**
-     * Sets the flag indicating whether the features in collection are dirty (newly added or modified)
-     * @param dirty - flag indicating whether the features in collection are dirty
-     */
-    public setDirty(dirty: boolean): void {
-        this.features.forEach((feature: Feature): void => {
-            feature.setDirty(dirty);
-        });
-    }
-
-
-    /**
      * Returns feature at index
      * @param index - index
      */
@@ -106,10 +95,23 @@ export default class FeatureCollection {
      * @param feature - feature to remove
      */
     public remove(feature: Feature): void {
-        const index = this.features.indexOf(feature);
+        const index = this.indexOf(feature);
         if (index > -1) {
             this.features.splice(index, 1);
         }
+    }
+
+    /**
+     * Returns feature index
+     * @return feature index
+     */
+    public indexOf(feature: Feature): number {
+        for (let i = 0; i < this.features.length; i += 1) {
+            if (this.features[i] == feature || this.features[i].getFeature() == feature.getFeature()) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**

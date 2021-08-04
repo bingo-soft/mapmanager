@@ -38,7 +38,6 @@ export default class MapManager {
         map.setEventBus(MapManager.eventBus);
         if (Object.prototype.hasOwnProperty.call(opts, "source_change_callback")) {
             MapManager.eventBus.subscribe(EventType.SourceChange, opts["source_change_callback"]);
-            console.log(MapManager.eventBus, "subscribed");
         }
         return map;
     }
@@ -204,7 +203,6 @@ export default class MapManager {
             case SourceType.Vector:
                 builder = new LayerBuilder(new VectorLayer(null, opts));
                 builder.setSource(SourceType.Vector);
-                builder.setEventBus(MapManager.eventBus);     
                 break;
             case SourceType.TileWMS:
                 builder = new LayerBuilder(new TileLayer());
@@ -483,12 +481,29 @@ export default class MapManager {
     }
 
     /**
+     * Returns map's removed features
+     * @category Feature
+     * @param layer - layer instance
+     * @return removed features
+     */
+    public static getRemovedFeatures(layer: LayerInterface): FeatureCollection {
+        return layer.getRemovedFeatures();
+    }
+
+    /**
      * @param map - map instance
      * @category Layer
      * @return dirty layers
      */
     public static getDirtyLayers(map: Map): LayerInterface[] {
         return map.getDirtyLayers();
+    }
+
+    /**
+     * @param layer - layer to clear
+     */
+    public static clearDirtyFeatures(layer: LayerInterface): void {
+        layer.clearDirtyFeatures();
     }
 
     /**
@@ -673,7 +688,7 @@ export default class MapManager {
      * @param feature - feature representing a polygon
      * @return feature representing a line
      */
-     public static polygonToLine(feature: Feature): Feature {
+    public static polygonToLine(feature: Feature): Feature {
         return feature.polygonToLine();
     }
 

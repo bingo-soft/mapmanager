@@ -24,7 +24,6 @@ export default class Feature {
     private eventBus: EventBus;
     private feature: OlFeature;
     private layer: LayerInterface;
-    private dirty: boolean;
     private treeId: number;
     private featureParts: Map<number, OlGeometry> = new Map();
     private featureStyle: OlStyle;
@@ -96,22 +95,6 @@ export default class Feature {
     }
 
     /**
-     * Returns the flag indicating whether the feature is dirty (newly added or modified)
-     * @return flag indicating whether the feature is dirty
-     */
-    public isDirty(): boolean {
-        return this.dirty;
-    }
-
-    /**
-     * Sets the flag indicating whether the feature is dirty (newly added or modified)
-     * @param dirty - flag indicating whether the feature is dirty 
-     */
-    public setDirty(dirty: boolean): void {
-        this.dirty = dirty;
-    }
-
-    /**
      * Highlights feature
      */
     public highlight(): void {
@@ -157,7 +140,6 @@ export default class Feature {
         }
         feature.setProperties(this.feature.getProperties());
         this.feature = feature;
-        this.dirty = true;
         source.addFeature(this.feature);
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
@@ -401,7 +383,6 @@ export default class Feature {
                 featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
             });
             this.feature.setGeometry(tempFeature.getGeometry());
-            this.dirty = true;
             if (this.eventBus) {
                 this.eventBus.dispatch(new SourceChangedEvent());
             }
@@ -424,7 +405,6 @@ export default class Feature {
                 featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
             });
             (<OlVectorSource> layer.getLayer().getSource()).addFeature(this.feature);
-            this.dirty = true;
             if (this.eventBus) {
                 this.eventBus.dispatch(new SourceChangedEvent());
             }

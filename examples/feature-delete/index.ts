@@ -16,7 +16,11 @@ const optsMap = {
         y: 56.319241,
         declared_coordinate_system_id: 4326
     }, 
-    zoom: 13
+    zoom: 13,
+    "source_change_callback": () => {
+        const dirtyLayers = MapManager.getDirtyLayers(map);
+        console.log("dirty layers: ", dirtyLayers);
+    }
 }
 const map: Map = MapManager.createMap("map", optsMap);
 
@@ -42,6 +46,23 @@ const layer: LayerInterface = MapManager.createLayerFromGeoJSON(geojsonObject, o
 MapManager.addLayer(map, layer);
 
 /* Set buttons click handlers */
+
+const btSave: HTMLElement = document.getElementById("save-btn");
+btSave.onclick = function(e: any) {
+    const dirtyLayers = MapManager.getDirtyLayers(map);
+    console.log("dirty layers: ", dirtyLayers);
+    MapManager.clearDirtyFeatures(layer);
+}
+
+
+const btDrawPoint: HTMLElement = document.getElementById("draw-point-btn");
+btDrawPoint.onclick = function(e: any) {
+    MapManager.setNormalInteraction(map);
+    MapManager.setDrawInteraction(map, layer, {
+        "geometry_type": "Point"
+    });
+}
+
 const btSelectByClick: HTMLElement = document.getElementById("select-byclick-btn");
 btSelectByClick.onclick = function(e: any) {
     doSelect(e, "singleclick");
@@ -54,6 +75,7 @@ btSelectByRectangle.onclick = function(e: any) {
 let selectedFeatures: FeatureCollection;
 
 /* Select handler */
+
 const doSelect = function(e: any, selectionType: string) {
     e.target.style.backgroundColor = "#777";
     e.target.style.color = "#fff";

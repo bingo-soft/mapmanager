@@ -122,11 +122,23 @@ export default interface LayerInterface
     getDirtyFeatures(): FeatureCollection;
 
     /**
+     * Clears all layer dirty features
+     */
+    clearDirtyFeatures(): void;
+
+    /**
      * Adds or removes dirty features
      * @param features - features to be set
      * @param dirty - dirty flag. If true, features are added to layer dirty features collection, removed otherwise
      */
     setDirtyFeatures(features: FeatureCollection, dirty: boolean): void;
+
+    /**
+     * Adds or removes idle features
+     * @param features - features to be set
+     * @param idle - idle flag. If true, features are added to layer idle features collection, removed otherwise
+     */
+    setIdleFeatures(features: FeatureCollection, idle: boolean): void;
 
     /**
      * Checks if layer is dirty
