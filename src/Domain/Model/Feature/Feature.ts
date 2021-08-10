@@ -95,6 +95,22 @@ export default class Feature {
     }
 
     /**
+     * Sets properties of the feature
+     * @param props - properties
+     */
+    public setProperties(props: {[key: string]: any}): void {
+        this.feature.setProperties(props);
+    }
+
+    /**
+     * Returns feature properties
+     * @return feature properties
+     */
+    public getProperties(): any {
+        return this.feature.getProperties();
+    }
+
+    /**
      * Highlights feature
      */
     public highlight(): void {
