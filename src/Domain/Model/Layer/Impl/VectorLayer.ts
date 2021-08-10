@@ -129,18 +129,18 @@ export default class VectorLayer extends AbstractLayer{
 
                 //clean features are no longer removed
                 for (let i = 0; i < this.removedFeatures.getLength(); i += 1) {
-                    console.log(this.removedFeatures.indexOf(this.removedFeatures.getAt(i)), feature, this.removedFeatures.getAt(i).getFeature() ==  feature.getFeature(), "removed feature index");
-                    if (this.removedFeatures.indexOf(this.removedFeatures.getAt(i)) != -1) {
-                        this.removedFeatures.remove(this.removedFeatures.getAt(i));
+                    console.log(this.removedFeatures.indexOf(feature), feature, feature.getFeature(), this.removedFeatures.getAt(i).getFeature(), this.removedFeatures.getAt(i).getFeature() ==  feature.getFeature(), "removed feature index");
+                    if (this.removedFeatures.indexOf(feature) != -1) {
+                        this.removedFeatures.remove(feature);
                         break;
                     }
                 }
 
                 //clean features are no longer idle
                 for (let i = 0; i < this.idleFeatures.getLength(); i += 1) {
-                    console.log(this.idleFeatures.indexOf(this.removedFeatures.getAt(i)), this.idleFeatures, this.idleFeatures.getLength(), "removed feature index");
-                    if (this.idleFeatures.indexOf(this.removedFeatures.getAt(i)) != -1) {
-                        this.idleFeatures.remove(this.removedFeatures.getAt(i));
+                    console.log(this.idleFeatures.indexOf(feature), this.idleFeatures, this.idleFeatures.getLength(), "removed feature index");
+                    if (this.idleFeatures.indexOf(feature) != -1) {
+                        this.idleFeatures.remove(feature);
                         break;
                     }
                 }
