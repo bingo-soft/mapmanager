@@ -117,6 +117,7 @@ export default class VectorLayer extends AbstractLayer{
      * @param dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
     public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
+        console.log(`debug, call setDirtyFeatures ${dirty} `, features, features.getLength());
         features.forEach((feature: Feature): void => {
             if (dirty) {
                 if (this.dirtyFeatures.indexOf(feature) == -1) {
@@ -124,19 +125,22 @@ export default class VectorLayer extends AbstractLayer{
                 }
             } else {
                 this.dirtyFeatures.remove(feature);
+                console.log('dirty features after removal: ', this.dirtyFeatures, this.dirtyFeatures.getLength());
 
                 //clean features are no longer removed
                 for (let i = 0; i < this.removedFeatures.getLength(); i += 1) {
-                    if (feature.getFeature() == this.removedFeatures.getAt(i).getFeature()) {
-                        this.removedFeatures.remove(this.removedFeatures.getAt(i));
+                    console.log(this.removedFeatures.indexOf(feature), this.removedFeatures, this.removedFeatures.getLength(), "removed feature index");
+                    if (this.removedFeatures.indexOf(feature) != -1) {
+                        this.removedFeatures.remove(feature);
                         break;
                     }
                 }
 
                 //clean features are no longer idle
                 for (let i = 0; i < this.idleFeatures.getLength(); i += 1) {
-                    if (feature.getFeature() == this.idleFeatures.getAt(i).getFeature()) {
-                        this.idleFeatures.remove(this.idleFeatures.getAt(i));
+                    console.log(this.idleFeatures.indexOf(feature), this.idleFeatures, this.idleFeatures.getLength(), "removed feature index");
+                    if (this.idleFeatures.indexOf(feature) != -1) {
+                        this.idleFeatures.remove(feature);
                         break;
                     }
                 }
