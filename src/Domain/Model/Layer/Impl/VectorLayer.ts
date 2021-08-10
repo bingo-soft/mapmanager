@@ -116,34 +116,10 @@ export default class VectorLayer extends AbstractLayer{
      * @param features - collection of dirty features
      * @param dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
-    public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
-        console.log(`debug, call setDirtyFeatures ${dirty} `, features, features.getLength());
+    public setDirtyFeatures(features: FeatureCollection): void  {
         features.forEach((feature: Feature): void => {
-            if (dirty) {
-                if (this.dirtyFeatures.indexOf(feature) == -1) {
-                    this.dirtyFeatures.add(feature);
-                }
-            } else {
-                this.dirtyFeatures.remove(feature);
-                console.log('dirty features after removal: ', this.dirtyFeatures, this.dirtyFeatures.getLength());
-
-                //clean features are no longer removed
-                for (let i = 0; i < this.removedFeatures.getLength(); i += 1) {
-                    console.log(this.removedFeatures.indexOf(feature), feature, feature.getFeature(), this.removedFeatures.getAt(i).getFeature(), this.removedFeatures.getAt(i).getFeature() ==  feature.getFeature(), "removed feature index");
-                    if (this.removedFeatures.indexOf(feature) != -1) {
-                        this.removedFeatures.remove(feature);
-                        break;
-                    }
-                }
-
-                //clean features are no longer idle
-                for (let i = 0; i < this.idleFeatures.getLength(); i += 1) {
-                    console.log(this.idleFeatures.indexOf(feature), this.idleFeatures, this.idleFeatures.getLength(), "removed feature index");
-                    if (this.idleFeatures.indexOf(feature) != -1) {
-                        this.idleFeatures.remove(feature);
-                        break;
-                    }
-                }
+            if (this.dirtyFeatures.indexOf(feature) == -1) {
+                this.dirtyFeatures.add(feature);
             }
         });
     }
@@ -201,7 +177,9 @@ export default class VectorLayer extends AbstractLayer{
      * Clears all layer dirty features
      */
     public clearDirtyFeatures(): void {
-        this.setDirtyFeatures(this.getFeatures(), false);
+        this.dirtyFeatures = new FeatureCollection([]);
+        this.removedFeatures = new FeatureCollection([]);
+        this.idleFeatures = new FeatureCollection([]);
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
         }
@@ -260,7 +238,7 @@ export default class VectorLayer extends AbstractLayer{
     public createFeatureFromVertices(items: GeometryItem[]): Feature {
         const feature = new Feature(new OlFeature(), this);
         this.addFeatures([feature.getFeature()]);
-        this.setDirtyFeatures(new FeatureCollection([feature]), true);
+        this.setDirtyFeatures(new FeatureCollection([feature]));
         feature.setEventBus(this.eventBus);
         feature.updateFromVertices(items);
         return feature;
