@@ -113,11 +113,11 @@ export default class LayerBuilder {
      * @param callback - callback
      * @return layer builder instance
      */
-    public setLoadCallback(callback: () => void): LayerBuilder {
+    public setLoadCallback(callback: (layer: LayerInterface) => void): LayerBuilder {
         if (typeof callback === "function") {
             const listener = (e: OlBaseEvent): void => {
-                if (e.target.getState() == "ready") {
-                    callback();
+                if (e.target.getState() == "ready" && this.layer) {
+                    callback(this.layer);
                     e.target.un("change", listener);
                 }
             }
