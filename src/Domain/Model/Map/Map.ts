@@ -49,6 +49,8 @@ import VectorLayer from "../Layer/Impl/VectorLayer";
 import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
 import StyleBuilder from "../Style/StyleBuilder";
 import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
+import { SearchMarkerStyle } from "../Style/SearchMarkerStyle";
+import TemporaryLayerType from "./TemporaryLayerType";
 
 /** Map */
 export default class Map { 
@@ -59,6 +61,7 @@ export default class Map {
     private activeLayer: LayerInterface;
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
+    private searchLayer: LayerInterface;
     private featurePopupOverlay: OlOverlay;
     private vertexHighlightLayer: OlVectorLayer;
     private selectedFeatures: FeatureCollection;
@@ -79,7 +82,7 @@ export default class Map {
      * @param targetDOMId - id of target DOM element 
      * @param opts - options 
      */
-    constructor(targetDOMId: string, opts?: unknown) {
+    constructor(targetDOMId: string, opts?: unknown) { 
         let baseLayer = Map.BASE_LAYER, 
             srsId = Map.SRS_ID,
             centerX = Map.CENTER_X,
@@ -221,7 +224,8 @@ export default class Map {
     public setCenter(opts?: unknown): void {
         let centerX = Map.CENTER_X,
             centerY = Map.CENTER_Y,
-            centerSRSId = Map.SRS_ID;
+            centerSRSId = Map.SRS_ID, 
+            showMarker = false;
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "x")) {
                 centerX = opts["x"];
@@ -232,6 +236,9 @@ export default class Map {
             if (Object.prototype.hasOwnProperty.call(opts, "declared_coordinate_system_id")) {
                 centerSRSId = opts["declared_coordinate_system_id"];
             }
+            if (Object.prototype.hasOwnProperty.call(opts, "show_marker")) {
+                showMarker = opts["show_marker"];
+            }
         }
         const mapProj = this.map.getView().getProjection().getCode();
         let coordinate: OlCoordinate.Coordinate = [centerX, centerY];
@@ -239,6 +246,13 @@ export default class Map {
             coordinate = OlProj.transform(coordinate, "EPSG:" + centerSRSId.toString(), mapProj);
         }
         this.map.getView().setCenter(coordinate);
+        if (showMarker) {
+            const style = new StyleBuilder(SearchMarkerStyle).build();
+            const marker = new OlFeature(new OlPoint(coordinate));
+            marker.setStyle(style);
+            const layer = this.createTemporaryLayer(TemporaryLayerType.Search);
+            (<OlVectorSource> layer.getSource()).addFeature(marker);
+        }
     }
 
     /**
@@ -633,28 +647,33 @@ export default class Map {
     }
 
     /**
-     * Creates a measure layer and adds it to map
+     * Creates a temporary layer and adds it to map
      * @memberof Map
      * @return measure layer instance 
      */
-    public createMeasureLayer(): LayerInterface {
-        if (!this.measureLayer) {
+    public createTemporaryLayer(type: TemporaryLayerType): LayerInterface {
+        let layer: LayerInterface;
+        type == TemporaryLayerType.Measure ? layer = this.measureLayer : layer = this.searchLayer;
+        if (!layer) {
             const builder = new LayerBuilder(new VectorLayer());
             builder.setSource(SourceType.Vector);
-            this.measureLayer = builder.build();
-            //this.addLayer(this.measureLayer);
-            this.measureLayer.getLayer().setMap(this.map);
+            layer = builder.build();
+            layer.getLayer().setMap(this.map);
         }
-        return this.measureLayer;
+        type == TemporaryLayerType.Measure ? this.measureLayer = layer: this.searchLayer = layer;
+        return layer;
     }
 
     /**
-     * Clears measure layer
+     * Clears temporary layer
      */
-    public clearMeasureLayer(): void {
-        //this.removeLayer(this.measureLayer);
-        this.measureLayer.getLayer().setMap(null);
-        this.measureLayer = null;
+    public clearTemporaryLayer(type: TemporaryLayerType): void {
+        let layer: LayerInterface;
+        type == TemporaryLayerType.Measure ? layer = this.measureLayer : layer = this.searchLayer;
+        if (layer) {
+            layer.getLayer().setMap(null);
+            layer = null;
+        }
     }
 
     /**

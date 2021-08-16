@@ -14,6 +14,7 @@ import * as OlObservable from "ol/Observable";
 import Map from "../../Map/Map";
 import { MeasureCallbackFunction } from "../InteractionCallbackType";
 import { Coordinate } from "ol/coordinate";
+import TemporaryLayerType from "../../Map/TemporaryLayerType";
 
 /** MeasureInteraction */
 export default class MeasureInteraction extends BaseInteraction {
@@ -38,7 +39,7 @@ export default class MeasureInteraction extends BaseInteraction {
             default:
         }
     
-        const layer = map.createMeasureLayer();
+        const layer = map.createTemporaryLayer(TemporaryLayerType.Measure);
         map.setDrawInteraction(layer, realType);
         const interaction = map.getInteraction();
         let geomChangelistener: OlEventsKey;

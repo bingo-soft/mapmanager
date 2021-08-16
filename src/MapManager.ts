@@ -20,6 +20,7 @@ import InteractionInterface from "./Domain/Model/Interaction/InteractionInterfac
 import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
 import GeometryItem from "./Domain/Model/Feature/GeometryItem"
 import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
+import TemporaryLayerType from "./Domain/Model/Map/TemporaryLayerType"
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -184,7 +185,7 @@ export default class MapManager {
      * @param map - map instance
      */
     public static clearMeasureResult(map: Map): void {
-        map.clearMeasureLayer();
+        map.clearTemporaryLayer(TemporaryLayerType.Measure);
         map.clearMeasureOverlays();
         map.setNormalInteraction();
     }

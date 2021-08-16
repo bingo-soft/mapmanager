@@ -1,10 +1,8 @@
 import OlVectorLayer from "ol/layer/Vector";
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
-// temp
-/* import * as OlColor from "ol/color";
-import * as OlColorLike from "ol/colorlike"; */
-// temp
+import * as OlColor from "ol/color";
+import * as OlColorLike from "ol/colorlike";
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 
@@ -16,10 +14,10 @@ export default class StyleBuilder {
     
     private style: StyleType;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
-    // temp - раскраска по уникальному значению
-    /* private uniqueStyles: Map<number, OlStyle>;
-    private lastColor: number; */
-    // temp
+    private uniqueColors: Map<number, number>;
+    private uniqueColor: number;
+    private uniqueColorIncrement: number;
+    private uniqueColorField: string;
     private static readonly POSITIONS = {
         "top": 0,
         "bottom": 1,
@@ -43,10 +41,7 @@ export default class StyleBuilder {
             "GeometryCollection": null,
             "Text": null
         };
-        // temp
-        /* this.uniqueStyles = new Map();
-        this.lastColor = 10; */
-        // temp
+        this.uniqueColors = new Map();
         this.applyOptions(opts);
     }
 
@@ -56,17 +51,33 @@ export default class StyleBuilder {
      */
     private applyOptions(opts?: unknown): void {
         if (typeof opts !== "undefined") {
-            if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length) {
+            let hasUniqueStyle = false;
+            if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
+                hasUniqueStyle = true;
+                this.uniqueColor = this.htmlColorToInt(opts["unique_values"]["start_color"]);
+                this.uniqueColorIncrement = opts["unique_values"]["increment_color"];
+                this.uniqueColorField = opts["unique_values"]["field"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length != 0) {
+                if (hasUniqueStyle && opts["point"]) {
+                    opts["point"]["color"] = opts["unique_values"]["start_color"];
+                }
                 this.setPointStyle(opts["point"]);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "linestring") && Object.keys(opts["linestring"]).length) {
+            if (Object.prototype.hasOwnProperty.call(opts, "linestring") && Object.keys(opts["linestring"]).length != 0) {
+                if (hasUniqueStyle && opts["linestring"]) {
+                    opts["linestring"]["color"] = opts["unique_values"]["start_color"];
+                }
                 this.setLinestringStyle(opts["linestring"]);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "polygon") && Object.keys(opts["polygon"]).length) {
+            if (Object.prototype.hasOwnProperty.call(opts, "polygon") && Object.keys(opts["polygon"]).length != 0) {
+                if (hasUniqueStyle && opts["polygon"]) {
+                    opts["polygon"]["background_color"] = opts["unique_values"]["start_color"];
+                }
                 this.setPolygonStyle(opts["polygon"]);
                 this.setGeometryCollectionStyle(opts["polygon"]);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length) {
+            if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length != 0) {
                 this.setTextStyle(opts["label"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "style_builder")) {
@@ -225,27 +236,24 @@ export default class StyleBuilder {
                 this.applyOptions(featureStyle);
             }
             const geomType = feature.getGeometry().getType();
-            const style = this.style[geomType];
-            // temp - раскраска по уникальному значению
-            /* const valueToPaintOn: number = feature.getProperties()["attr_939_id"];
-            let savedStyle: OlStyle = this.uniqueStyles.get(valueToPaintOn);
-            if (!savedStyle) {
-                // create style
-                const color: OlColor.Color | OlColorLike.ColorLike = [this.lastColor, 0, 0, 0.5];
-                savedStyle = new OlStyle({
-                    stroke: new OlStroke({
-                        color: color, 
-                        width: 1
-                    }),
-                    fill: new OlFill({
-                        color: color,
-                    }),
-                });
-                this.lastColor += 10;
-                this.uniqueStyles.set(valueToPaintOn, savedStyle);
+            const style: OlStyle = this.style[geomType];
+            // painting on unique attribute value
+            if (this.uniqueColorField) {
+                const valueToPaintOn: number = feature.getProperties()[this.uniqueColorField];
+                if (valueToPaintOn) {
+                    const alreadyPaintedColor = this.uniqueColors.get(valueToPaintOn);
+                    if (alreadyPaintedColor) {
+                        this.uniqueColor = alreadyPaintedColor;
+                    } else {
+                        this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
+                    }
+                    const htmlColor = this.applyOpacity("#" + this.uniqueColor.toString(16), 50);
+                    style.getStroke().setColor(htmlColor);
+                    style.getFill().setColor(htmlColor);
+                    this.uniqueColor += this.uniqueColorIncrement;
+                }
             }
-            return savedStyle; */
-            // temp
+            //
             const textStyle: OlTextStyle = this.style["Text"];
             if (style && textStyle) {
                 const properties = feature.getProperties();
@@ -289,5 +297,13 @@ export default class StyleBuilder {
         }
         opacity = Math.round(opacity * 2.55);
         return color + opacity.toString(16).toUpperCase().padStart(2, "0");
+    }
+
+
+    private htmlColorToInt(color: string): number {
+        if (color.length == 4) { // short color like #333
+            color += "000";
+        }
+        return parseInt(color.substr(1, 6), 16);
     }
 }
