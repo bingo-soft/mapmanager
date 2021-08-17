@@ -189,6 +189,15 @@ export default class MapManager {
         map.clearMeasureOverlays();
         map.setNormalInteraction();
     }
+    
+    /**
+     * Clears center markers on map
+     * @category Map
+     * @param map - map instance
+     */
+    public static clearCenterMarkers(map: Map): void {
+        map.clearTemporaryLayer(TemporaryLayerType.CenterMarker);
+    }
 
     /**
      * Creates new layer

@@ -250,7 +250,7 @@ export default class Map {
             const style = new StyleBuilder(SearchMarkerStyle).build();
             const marker = new OlFeature(new OlPoint(coordinate));
             marker.setStyle(style);
-            const layer = this.createTemporaryLayer(TemporaryLayerType.Search);
+            const layer = this.createTemporaryLayer(TemporaryLayerType.CenterMarker);
             (<OlVectorSource> layer.getSource()).addFeature(marker);
         }
     }
