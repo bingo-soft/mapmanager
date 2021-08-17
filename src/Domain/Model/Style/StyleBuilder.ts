@@ -236,9 +236,9 @@ export default class StyleBuilder {
                 this.applyOptions(featureStyle);
             }
             const geomType = feature.getGeometry().getType();
-            const style: OlStyle = this.style[geomType];
+            const style: OlStyle = this.style[geomType]; debugger
             // painting on unique attribute value
-            if (this.uniqueColorField) {
+            if (this.uniqueColorField) { 
                 const valueToPaintOn: number = feature.getProperties()[this.uniqueColorField];
                 if (valueToPaintOn) {
                     const alreadyPaintedColor = this.uniqueColors.get(valueToPaintOn);
@@ -248,8 +248,14 @@ export default class StyleBuilder {
                         this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
                     }
                     const htmlColor = this.applyOpacity("#" + this.uniqueColor.toString(16), 50);
-                    style.getStroke().setColor(htmlColor);
-                    style.getFill().setColor(htmlColor);
+                    const stroke = style.getStroke();
+                    const fill = style.getFill();
+                    if (stroke) {
+                        stroke.setColor(htmlColor);
+                    }
+                    if (fill) {
+                        fill.setColor(htmlColor);
+                    }
                     this.uniqueColor += this.uniqueColorIncrement;
                 }
             }
