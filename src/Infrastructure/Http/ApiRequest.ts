@@ -6,4 +6,5 @@ export type ApiRequest = {
     params?: unknown;
     headers?: unknown;
     data?: unknown;
+    additional_params?: unknown;
 }

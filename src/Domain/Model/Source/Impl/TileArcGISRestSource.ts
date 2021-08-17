@@ -8,7 +8,14 @@ export default class TileArcGISRestSource extends BaseSource {
     constructor() {
         super();
         this.source = new OlTileArcGISRestSource({
-            crossOrigin: "anonymous"
+            crossOrigin: "anonymous"/* ,
+            params: {
+                "LAYERS": "show:21",
+                "FORMAT": "PNG8",
+                //"IMAGESR": 102001,
+                //"BBOXSR": 102001,
+                //"DPI": 96
+            } */
         });
     }
 

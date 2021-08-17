@@ -236,7 +236,7 @@ export default class StyleBuilder {
                 this.applyOptions(featureStyle);
             }
             const geomType = feature.getGeometry().getType();
-            const style: OlStyle = this.style[geomType]; debugger
+            const style: OlStyle = this.style[geomType];
             // painting on unique attribute value
             if (this.uniqueColorField) { 
                 const valueToPaintOn: number = feature.getProperties()[this.uniqueColorField];
