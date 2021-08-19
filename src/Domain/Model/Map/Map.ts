@@ -2,7 +2,7 @@ import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import * as OlExtent from "ol/extent";
-import { OverviewMap as OlOverviewMapControl, defaults as OlDefaultControls } from "ol/control";
+import { OverviewMap as OlOverviewMapControl, Zoom as OlZoomControl, Control as OlControl /* , defaults as OlDefaultControls */ } from "ol/control";
 import OlVectorLayer from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
@@ -118,17 +118,28 @@ export default class Map {
         } /* else if (...) {
             TODO
         } */
+        // Ol map controls init
+        const controls: OlControl[] = [];
+        if (Object.prototype.hasOwnProperty.call(opts, "controls")) {
+            if (opts["controls"].includes("overview")) {
+                const olOverviewMapControl = new OlOverviewMapControl({
+                    layers: [
+                        new OlTileLayer({
+                            source: source,
+                        })
+                    ],
+                });
+                controls.push(olOverviewMapControl);
+            }
+            if (opts["controls"].includes("zoom")) {
+                const olZoomControl = new OlZoomControl();
+                controls.push(olZoomControl);
+            }
+        }
         // Ol map init
-        const overviewMapControl = new OlOverviewMapControl({
-            layers: [
-                new OlTileLayer({
-                    source: source,
-                })
-            ],
-        });
         this.srsId = srsId;
         this.map = new OlMap({
-            controls: OlDefaultControls().extend([overviewMapControl]),
+            controls: controls,
             layers: [
                 new OlTileLayer({
                     source: source
