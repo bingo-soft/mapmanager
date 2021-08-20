@@ -13,6 +13,7 @@ import StyleFunction from "./StyleFunctionType";
 export default class StyleBuilder {
     
     private style: StyleType;
+    private field: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
     private uniqueColors: Map<number, number>;
     private uniqueColor: number;
@@ -262,22 +263,15 @@ export default class StyleBuilder {
             //
             const textStyle: OlTextStyle = this.style["Text"];
             if (style && textStyle) {
+                if (!this.field) {
+                    this.field = textStyle.getText();
+                }
                 const properties = feature.getProperties();
                 if (properties) {
-                    const textValue: string = properties[textStyle.getText()];
+                    const textValue: string = properties[this.field];
                     if (textValue) {
-                        const newTextStyle = new OlTextStyle({
-                            stroke: new OlStroke({
-                                color: textStyle.getStroke().getColor(),
-                                width: textStyle.getStroke().getWidth()
-                            }),
-                            fill: new OlFill({
-                                color: textStyle.getFill().getColor()
-                            }),
-                            font: textStyle.getFont()
-                        });
-                        newTextStyle.setText(textValue);
-                        style.setText(newTextStyle);
+                        textStyle.setText(textValue);
+                        style.setText(textStyle);
                     }
                 }
             }

@@ -13,7 +13,8 @@ const optsMap = {
         y: 56.319241,
         declared_coordinate_system_id: 4326
     }, 
-    zoom: 13
+    zoom: 13,
+    controls: ["zoom", "overview"]
 }
 const map: Map = MapManager.createMap("map", optsMap);
 
