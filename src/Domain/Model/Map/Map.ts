@@ -663,14 +663,10 @@ export default class Map {
      * @return measure layer instance 
      */
     public createTemporaryLayer(type: TemporaryLayerType): LayerInterface {
-        let layer: LayerInterface;
-        type == TemporaryLayerType.Measure ? layer = this.measureLayer : layer = this.searchLayer;
-        if (!layer) {
-            const builder = new LayerBuilder(new VectorLayer());
-            builder.setSource(SourceType.Vector);
-            layer = builder.build();
-            layer.getLayer().setMap(this.map);
-        }
+        const builder = new LayerBuilder(new VectorLayer());
+        builder.setSource(SourceType.Vector);
+        const layer = builder.build();
+        layer.getLayer().setMap(this.map);
         type == TemporaryLayerType.Measure ? this.measureLayer = layer: this.searchLayer = layer;
         return layer;
     }
@@ -679,8 +675,7 @@ export default class Map {
      * Clears temporary layer
      */
     public clearTemporaryLayer(type: TemporaryLayerType): void {
-        let layer: LayerInterface;
-        type == TemporaryLayerType.Measure ? layer = this.measureLayer : layer = this.searchLayer;
+        let layer = type == TemporaryLayerType.Measure ? this.measureLayer : this.searchLayer;
         if (layer) {
             layer.getLayer().setMap(null);
             layer = null;
