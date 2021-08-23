@@ -15,7 +15,7 @@ export default class StyleBuilder {
     private style: StyleType;
     private field: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
-    private uniqueColors: Map<number, number>;
+    private uniqueColors: Map<string, number>;
     private uniqueColor: number;
     private uniqueColorIncrement: number;
     private uniqueColorField: string;
@@ -240,8 +240,10 @@ export default class StyleBuilder {
             const style: OlStyle = this.style[geomType];
             // painting on unique attribute value
             if (this.uniqueColorField) { 
-                const valueToPaintOn: number = feature.getProperties()[this.uniqueColorField];
+                let valueToPaintOn: string = feature.getProperties()[this.uniqueColorField];
                 if (valueToPaintOn) {
+                    valueToPaintOn = this.parseAttributeValue(valueToPaintOn);
+                    console.log(valueToPaintOn);
                     const alreadyPaintedColor = this.uniqueColors.get(valueToPaintOn);
                     if (alreadyPaintedColor) {
                         this.uniqueColor = alreadyPaintedColor;
@@ -299,11 +301,33 @@ export default class StyleBuilder {
         return color + opacity.toString(16).toUpperCase().padStart(2, "0");
     }
 
-
+    /**
+     * Converts html color to integer value
+     * @param color - hex color code
+     * @return integer color value
+     */
     private htmlColorToInt(color: string): number {
         if (color.length == 4) { // short color like #333
             color += "000";
         }
         return parseInt(color.substr(1, 6), 16);
+    }
+
+    /**
+     * Parses attribute value
+     * @param value - value to parse
+     * @return parsed value
+     */
+    private parseAttributeValue(value: unknown): string {
+        if (typeof value == "object") {
+            if ((<any> value).id) {
+                return (<any> value).id.toString();
+            } else if (value[0] && (<any> value[0]).id) {
+                return (<any> value[0]).id.toString();
+            } else {
+                return "";
+            }
+        }
+        return value.toString();
     }
 }
