@@ -19,6 +19,7 @@ export default class StyleBuilder {
     private uniqueColor: number;
     private uniqueColorIncrement: number;
     private uniqueColorField: string;
+    private static readonly MAX_TEXT_RESOLUTION = 10;
     private static readonly POSITIONS = {
         "top": 0,
         "bottom": 1,
@@ -264,14 +265,18 @@ export default class StyleBuilder {
             }
             //
             const textStyle: OlTextStyle = this.style["Text"];
+            //console.log(textStyle);
             if (style && textStyle) {
                 if (!this.field) {
                     this.field = textStyle.getText();
                 }
                 const properties = feature.getProperties();
                 if (properties) {
-                    const textValue: string = properties[this.field];
-                    if (textValue) {
+                    let textValue: string = properties[this.field];
+                    if (textValue) { 
+                        if (geomType != "Polygon" && geomType != "MultiPolygon") {
+                            textValue = this.adjustText(textValue, resolution);
+                        }
                         textStyle.setText(textValue);
                         style.setText(textStyle);
                     }
@@ -302,6 +307,16 @@ export default class StyleBuilder {
     }
 
     /**
+     * Adjusts text depending on the resolution - hides or divides it into substrings
+     * @param text - text to adjust
+     * @param resolution - resolution
+     * @return adjusted text
+     */
+    private adjustText(text: string, resolution: number): string {
+        return resolution > StyleBuilder.MAX_TEXT_RESOLUTION ? "" : this.divideString(text, 16, "\n");
+    };
+
+    /**
      * Converts html color to integer value
      * @param color - hex color code
      * @return integer color value
@@ -329,5 +344,32 @@ export default class StyleBuilder {
             }
         }
         return value.toString();
+    }
+
+    /**
+     * Divides text into substrings
+     * @param text - text to divide
+     * @param width - max width
+     * @param spaceReplacer - space replacer
+     * @return divided text
+     */
+    private divideString(text: string, width: number, spaceReplacer: string): string {
+        if (text.length > width) {
+            let p: number = width;
+            while (p > 0 && text[p] != " " && text[p] != "-") {
+                p--;
+            }
+            if (p > 0) {
+                let left: string;
+                if (text.substring(p, p + 1) == "-") {
+                    left = text.substring(0, p + 1);
+                } else {
+                    left = text.substring(0, p);
+                }
+                const right = text.substring(p + 1);
+                return left + spaceReplacer + this.divideString(right, width, spaceReplacer);
+            }
+        }
+        return text;
     }
 }
