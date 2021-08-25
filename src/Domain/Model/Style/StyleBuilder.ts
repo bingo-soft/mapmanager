@@ -1,12 +1,11 @@
 import OlVectorLayer from "ol/layer/Vector";
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
-import * as OlColor from "ol/color";
-import * as OlColorLike from "ol/colorlike";
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
-
-
+import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
+import StringUtil from "../../../Infrastructure/Util/StringUtil";
+import ColorUtil from "../../../Infrastructure/Util/ColorUtil";
 
 
 /** StyleBuilder */
@@ -19,7 +18,8 @@ export default class StyleBuilder {
     private uniqueColor: number;
     private uniqueColorIncrement: number;
     private uniqueColorField: string;
-    private static readonly MAX_TEXT_RESOLUTION = 10;
+    private showLabelMaxResolution: number;
+    private static readonly MAX_SHOW_LABEL_RESOLUTION = 10;
     private static readonly POSITIONS = {
         "top": 0,
         "bottom": 1,
@@ -56,7 +56,7 @@ export default class StyleBuilder {
             let hasUniqueStyle = false;
             if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
                 hasUniqueStyle = true;
-                this.uniqueColor = this.htmlColorToInt(opts["unique_values"]["start_color"]);
+                this.uniqueColor = ColorUtil.htmlColorToInt(opts["unique_values"]["start_color"]);
                 this.uniqueColorIncrement = opts["unique_values"]["increment_color"];
                 this.uniqueColorField = opts["unique_values"]["field"];
             }
@@ -85,6 +85,9 @@ export default class StyleBuilder {
             if (Object.prototype.hasOwnProperty.call(opts, "style_builder")) {
                 this.externalStyleBuilder = opts["style_builder"];
             }
+            if (Object.prototype.hasOwnProperty.call(opts, "show_label_max_resolution")) {
+                this.showLabelMaxResolution = opts["show_label_max_resolution"] ? opts["show_label_max_resolution"] : StyleBuilder.MAX_SHOW_LABEL_RESOLUTION;
+            }
         }
     }
 
@@ -100,8 +103,7 @@ export default class StyleBuilder {
                 image: new OlCircleStyle({
                     radius: opts["size"] || 2,
                     fill: new OlFill({
-                        //color: opts["color"]
-                        color: opts["opacity"] ? this.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
+                        color: opts["opacity"] ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
                     }),
                     stroke: new OlStroke({
                         color: opts["color"],
@@ -156,7 +158,7 @@ export default class StyleBuilder {
                 width: opts["stroke_width"]
             }),
             fill: new OlFill({
-                color: opts["opacity"] ? this.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
+                color: opts["opacity"] ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
             }),
         });
         this.style["Polygon"] = style;
@@ -201,7 +203,7 @@ export default class StyleBuilder {
      * @return style builder instance
      */
      private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
-        const opacity = this.applyOpacity(opts["background_color"], opts["opacity"]);
+        const opacity = ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]);
         const style = new OlStyle({
             image: new OlCircleStyle({
                 radius: opts["size"] || 2,
@@ -240,136 +242,68 @@ export default class StyleBuilder {
             const geomType = feature.getGeometry().getType();
             const style: OlStyle = this.style[geomType];
             // painting on unique attribute value
-            if (this.uniqueColorField) { 
-                let valueToPaintOn: string = feature.getProperties()[this.uniqueColorField];
-                if (valueToPaintOn) {
-                    valueToPaintOn = this.parseAttributeValue(valueToPaintOn);
-                    console.log(valueToPaintOn);
-                    const alreadyPaintedColor = this.uniqueColors.get(valueToPaintOn);
-                    if (alreadyPaintedColor) {
-                        this.uniqueColor = alreadyPaintedColor;
-                    } else {
-                        this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
-                    }
-                    const htmlColor = this.applyOpacity("#" + this.uniqueColor.toString(16), 50);
-                    const stroke = style.getStroke();
-                    const fill = style.getFill();
-                    if (stroke) {
-                        stroke.setColor(htmlColor);
-                    }
-                    if (fill) {
-                        fill.setColor(htmlColor);
-                    }
-                    this.uniqueColor += this.uniqueColorIncrement;
-                }
-            }
-            //
-            const textStyle: OlTextStyle = this.style["Text"];
-            //console.log(textStyle);
-            if (style && textStyle) {
-                if (!this.field) {
-                    this.field = textStyle.getText();
-                }
-                const properties = feature.getProperties();
-                if (properties) {
-                    let textValue: string = properties[this.field];
-                    if (textValue) { 
-                        if (geomType != "Polygon" && geomType != "MultiPolygon") {
-                            textValue = this.adjustText(textValue, resolution);
-                        }
-                        textStyle.setText(textValue);
-                        style.setText(textStyle);
-                    }
-                }
-            }
+            this.paintOnUniqueAttributeValue(feature, style);
+            // apply text 
+            this.applyText(feature, style, geomType, resolution);
             return style ? style : new OlVectorLayer().getStyleFunction()(feature, resolution); // default OL style
         }
     }
 
     /**
-     * Applies opacity to hex color code
-     * @param color - hex color code
-     * @param opacity - opacity value from 1 to 100
-     * @return hex code representing color and opacity
+     * Aplies text value to the style
+     * @param feature - feature
+     * @param style - style to apply the text value to
+     * @param geomType - feature geometry type
+     * @param resolution - current map view resolution
      */
-    private applyOpacity(color: string, opacity: number): string {
-        if (color.length == 4) { // short color like #333
-            color += "000";
-        }
-        if (opacity < 0) {
-            opacity = 0;   
-        }
-        if (opacity > 100) {
-            opacity = 100;
-        }
-        opacity = Math.round(opacity * 2.55);
-        return color + opacity.toString(16).toUpperCase().padStart(2, "0");
-    }
-
-    /**
-     * Adjusts text depending on the resolution - hides or divides it into substrings
-     * @param text - text to adjust
-     * @param resolution - resolution
-     * @return adjusted text
-     */
-    private adjustText(text: string, resolution: number): string {
-        return resolution > StyleBuilder.MAX_TEXT_RESOLUTION ? "" : this.divideString(text, 16, "\n");
-    };
-
-    /**
-     * Converts html color to integer value
-     * @param color - hex color code
-     * @return integer color value
-     */
-    private htmlColorToInt(color: string): number {
-        if (color.length == 4) { // short color like #333
-            color += "000";
-        }
-        return parseInt(color.substr(1, 6), 16);
-    }
-
-    /**
-     * Parses attribute value
-     * @param value - value to parse
-     * @return parsed value
-     */
-    private parseAttributeValue(value: unknown): string {
-        if (typeof value == "object") {
-            if ((<any> value).id) {
-                return (<any> value).id.toString();
-            } else if (value[0] && (<any> value[0]).id) {
-                return (<any> value[0]).id.toString();
-            } else {
-                return "";
+    private applyText(feature: OlFeature, style: OlStyle, geomType: string, resolution: number): void {
+        const textStyle: OlTextStyle = this.style["Text"];
+        if (style && textStyle) {
+            if (!this.field) {
+                this.field = textStyle.getText();
             }
-        }
-        return value.toString();
-    }
-
-    /**
-     * Divides text into substrings
-     * @param text - text to divide
-     * @param width - max width
-     * @param spaceReplacer - space replacer
-     * @return divided text
-     */
-    private divideString(text: string, width: number, spaceReplacer: string): string {
-        if (text.length > width) {
-            let p: number = width;
-            while (p > 0 && text[p] != " " && text[p] != "-") {
-                p--;
-            }
-            if (p > 0) {
-                let left: string;
-                if (text.substring(p, p + 1) == "-") {
-                    left = text.substring(0, p + 1);
-                } else {
-                    left = text.substring(0, p);
+            const properties = feature.getProperties();
+            if (properties) {
+                let textValue: string = properties[this.field];
+                if (textValue) { 
+                    if (geomType != "Polygon" && geomType != "MultiPolygon") {
+                        textValue = StringUtil.adjustText(textValue, resolution, this.showLabelMaxResolution);
+                    }
+                    textStyle.setText(textValue);
+                    style.setText(textStyle);
                 }
-                const right = text.substring(p + 1);
-                return left + spaceReplacer + this.divideString(right, width, spaceReplacer);
             }
         }
-        return text;
     }
+
+    /**
+     * Applies unique stroke and fill colors by attribute value
+     * @param feature - feature
+     * @param style - style to apply the painting
+     */
+    private paintOnUniqueAttributeValue(feature: OlFeature, style: OlStyle): void {
+        if (this.uniqueColorField) { 
+            let valueToPaintOn: string = feature.getProperties()[this.uniqueColorField];
+            if (valueToPaintOn) {
+                valueToPaintOn = ObjectParser.parseAttributeValue(valueToPaintOn);
+                const alreadyPaintedColor = this.uniqueColors.get(valueToPaintOn);
+                if (alreadyPaintedColor) {
+                    this.uniqueColor = alreadyPaintedColor;
+                } else {
+                    this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
+                }
+                const htmlColor = ColorUtil.applyOpacity("#" + this.uniqueColor.toString(16), 50);
+                const stroke = style.getStroke();
+                const fill = style.getFill();
+                if (stroke) {
+                    stroke.setColor(htmlColor);
+                }
+                if (fill) {
+                    fill.setColor(htmlColor);
+                }
+                this.uniqueColor += this.uniqueColorIncrement;
+            }
+        }
+    }
+    
 }
