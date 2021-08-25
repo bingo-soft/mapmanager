@@ -19,7 +19,7 @@ export default class StyleBuilder {
     private uniqueColorIncrement: number;
     private uniqueColorField: string;
     private showLabelMaxResolution: number;
-    private static readonly MAX_SHOW_LABEL_RESOLUTION = 10;
+    private static readonly SHOW_LABEL_MAX_RESOLUTION = 10;
     private static readonly POSITIONS = {
         "top": 0,
         "bottom": 1,
@@ -86,7 +86,7 @@ export default class StyleBuilder {
                 this.externalStyleBuilder = opts["style_builder"];
             }
             if (Object.prototype.hasOwnProperty.call(opts, "show_label_max_resolution")) {
-                this.showLabelMaxResolution = opts["show_label_max_resolution"] ? opts["show_label_max_resolution"] : StyleBuilder.MAX_SHOW_LABEL_RESOLUTION;
+                this.showLabelMaxResolution = opts["show_label_max_resolution"] ? opts["show_label_max_resolution"] : StyleBuilder.SHOW_LABEL_MAX_RESOLUTION;
             }
         }
     }

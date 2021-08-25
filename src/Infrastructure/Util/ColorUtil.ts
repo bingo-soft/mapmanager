@@ -9,7 +9,7 @@ export default class ColorUtil {
      */
     public static applyOpacity(color: string, opacity: number): string {
         if (color.length == 4) { // short color like #333
-            color += "000";
+            color += color.substring(1);
         }
         if (opacity < 0) {
             opacity = 0;   
@@ -28,7 +28,7 @@ export default class ColorUtil {
      */
      public static htmlColorToInt(color: string): number {
         if (color.length == 4) { // short color like #333
-            color += "000";
+            color += color.substring(1);
         }
         return parseInt(color.substr(1, 6), 16);
     }
