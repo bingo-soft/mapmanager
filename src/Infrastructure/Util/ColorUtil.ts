@@ -8,6 +8,9 @@ export default class ColorUtil {
      * @return hex code representing color and opacity
      */
     public static applyOpacity(color: string, opacity: number): string {
+        if (color.substring(0, 1) != "#") {
+            color = "#" + color;
+        }
         if (color.length == 4) { // short color like #333
             color += color.substring(1);
         }

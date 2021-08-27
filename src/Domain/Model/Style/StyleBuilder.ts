@@ -85,8 +85,9 @@ export default class StyleBuilder {
             if (Object.prototype.hasOwnProperty.call(opts, "style_builder")) {
                 this.externalStyleBuilder = opts["style_builder"];
             }
+            this.showLabelMaxResolution = StyleBuilder.SHOW_LABEL_MAX_RESOLUTION;
             if (Object.prototype.hasOwnProperty.call(opts, "show_label_max_resolution")) {
-                this.showLabelMaxResolution = opts["show_label_max_resolution"] ? opts["show_label_max_resolution"] : StyleBuilder.SHOW_LABEL_MAX_RESOLUTION;
+                this.showLabelMaxResolution = opts["show_label_max_resolution"];
             }
         }
     }
@@ -240,12 +241,35 @@ export default class StyleBuilder {
                 this.applyOptions(featureStyle);
             }
             const geomType = feature.getGeometry().getType();
-            const style: OlStyle = this.style[geomType];
+            let style: OlStyle;
+            if (this.style[geomType]) {
+                style = this.style[geomType];
+            } else {
+                style = new OlStyle({
+                    stroke: new OlStroke({
+                        color: "#000", 
+                        width: 1
+                    }),
+                    fill: new OlFill({
+                        color: "rgba(255, 255, 255, 0)"
+                    }),
+                    image: new OlCircleStyle({
+                        radius: 2,
+                        fill: new OlFill({
+                            color: "rgba(255, 255, 255, 0)",
+                        }),
+                        stroke: new OlStroke({
+                            color: "#000", 
+                            width: 1
+                        }),
+                    })
+                });
+            }
             // painting on unique attribute value
             this.paintOnUniqueAttributeValue(feature, style);
             // apply text 
             this.applyText(feature, style, geomType, resolution);
-            return style ? style : new OlVectorLayer().getStyleFunction()(feature, resolution); // default OL style
+            return style;
         }
     }
 
@@ -292,14 +316,26 @@ export default class StyleBuilder {
                 } else {
                     this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
                 }
-                const htmlColor = ColorUtil.applyOpacity("#" + this.uniqueColor.toString(16), 50);
-                const stroke = style.getStroke();
-                const fill = style.getFill();
+                const htmlColor = ColorUtil.applyOpacity(this.uniqueColor.toString(16), 50);
+                let stroke = style.getStroke();
+                let fill = style.getFill();
                 if (stroke) {
                     stroke.setColor(htmlColor);
                 }
                 if (fill) {
                     fill.setColor(htmlColor);
+                }
+                const image = style.getImage(); // points
+                if (image) { console.log(feature.getGeometry().getType());
+                    stroke = (<OlCircleStyle> image).getStroke();
+                    if (stroke) {
+                        stroke.setColor(htmlColor);
+                    }
+                    fill = (<OlCircleStyle> image).getFill();
+                    if (fill) {
+                        fill.setColor(htmlColor);
+                    }
+                    style.setImage(image);
                 }
                 this.uniqueColor += this.uniqueColorIncrement;
             }
