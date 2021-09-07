@@ -246,22 +246,12 @@ export default class StyleBuilder {
                 style = this.style[geomType];
             } else {
                 style = new OlStyle({
-                    stroke: new OlStroke({
-                        color: "#000", 
-                        width: 1
-                    }),
-                    fill: new OlFill({
-                        color: "rgba(255, 255, 255, 0)"
-                    }),
+                    stroke: new OlStroke(),
+                    fill: new OlFill(),
                     image: new OlCircleStyle({
                         radius: 2,
-                        fill: new OlFill({
-                            color: "rgba(255, 255, 255, 0)",
-                        }),
-                        stroke: new OlStroke({
-                            color: "#000", 
-                            width: 1
-                        }),
+                        fill: new OlFill(),
+                        stroke: new OlStroke()
                     })
                 });
             }

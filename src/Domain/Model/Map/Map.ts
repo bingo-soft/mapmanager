@@ -193,7 +193,7 @@ export default class Map {
                     const featurePopupTemplate = layer.getFeaturePopupTemplate();
                     if (featurePopupTemplate) {
                         const properties = olFeature.getProperties();
-                        featurePopupElement.innerHTML = ObjectParser.parse(featurePopupTemplate, properties);
+                        featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupTemplate, properties);
                         if (featurePopupElement.innerHTML) {
                             this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));
                         }
