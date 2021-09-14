@@ -6,7 +6,7 @@ export default class ObjectParser {
     * @param data - data
     * @return parsed data string
     */
-    public static parse(template: string, data: unknown): string {
+    public static parseTemplate(template: string, data: unknown): string {
         const reg = new RegExp(/({{\s*([a-zA-Z0-9_]+)\s*}})/g);
         const arr = [...template.matchAll(reg)];
         arr.forEach((item) => {

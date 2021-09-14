@@ -4,6 +4,8 @@ import { Vector as OlVectorSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import BaseVectorLayer from "ol/layer/BaseVector";
+import OlProjection from "ol/proj/Projection";
+import { Extent as OlExtent } from "ol/extent";
 import SourceChangedEvent from "../../Source/SourceChangedEvent";
 import SourceType from "../../Source/SourceType";
 import FeatureCollection from "../../Feature/FeatureCollection";
@@ -11,6 +13,7 @@ import AbstractLayer from "../AbstractLayer";
 import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
 import GeometryItem from "../../Feature/GeometryItem";
+import LoaderFunction from "../LoaderFunctionType";
 
 
 /** VectorLayer */
@@ -24,10 +27,11 @@ export default class VectorLayer extends AbstractLayer{
     private static readonly DEFAULT_SRS_ID = 3857;
     
     /**
+     * @param layer - OL layer
      * @param opts - options
      */
     constructor(layer?: OlLayer, opts?: unknown) { 
-        super();
+        super(opts);
         this.layer = layer ? layer : new OlVectorLayer(/* {declutter: true} */);
         this.srsId = VectorLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
@@ -48,10 +52,10 @@ export default class VectorLayer extends AbstractLayer{
      * Sets layer's loader
      * @param loader - loader function
      */
-    public setLoader(loader: () => Promise<string>): void {   
+    public setLoader(loader: LoaderFunction): void {   
         const source = <OlVectorSource> this.layer.getSource();
-        source.setLoader(async () => {
-            const data = await loader(); 
+        source.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection) => {
+            const data = await loader(extent, resolution, projection); 
             source.addFeatures(new OlGeoJSON().readFeatures(data, {
                 dataProjection: "EPSG:" + this.srsId.toString(),
                 featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
@@ -243,5 +247,7 @@ export default class VectorLayer extends AbstractLayer{
         feature.updateFromVertices(items);
         return feature;
     }
+
+
     
 }

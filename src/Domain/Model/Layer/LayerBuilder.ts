@@ -8,6 +8,7 @@ import TileWMSSource from "../Source/Impl/TileWMSSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
+import LoaderFunction from "./LoaderFunctionType";
 
 /** LayerBuilder */
 export default class LayerBuilder {
@@ -19,6 +20,14 @@ export default class LayerBuilder {
      */
     constructor(layer: LayerInterface) {
         this.layer = layer;
+    }
+
+    /**
+     * Returns layer
+     * @return layer
+     */
+    public getLayer(): LayerInterface {
+        return this.layer;
     }
 
     /**
@@ -67,7 +76,7 @@ export default class LayerBuilder {
      * @param loader - loader function
      * @return layer builder instance
      */
-    public setLoader(loader: () => Promise<string>): LayerBuilder {
+    public setLoader(loader: LoaderFunction): LayerBuilder {
         this.layer.setLoader(loader);
         return this;
     }
