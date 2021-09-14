@@ -1,3 +1,6 @@
+import * as OlProj from "ol/proj";
+import OlProjection from "ol/proj/Projection";
+import { Extent as OlExtent } from "ol/extent";
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
@@ -215,15 +218,15 @@ export default class MapManager {
                 builder.setSource(SourceType.Vector);
                 break;
             case SourceType.TileWMS:
-                builder = new LayerBuilder(new TileLayer());
+                builder = new LayerBuilder(new TileLayer(opts));
                 builder.setSource(SourceType.TileWMS); 
                 break;
             case SourceType.XYZ:
-                builder = new LayerBuilder(new TileLayer());
+                builder = new LayerBuilder(new TileLayer(opts));
                 builder.setSource(SourceType.XYZ); 
                 break;
             case SourceType.TileArcGISRest:
-                builder = new LayerBuilder(new TileLayer());
+                builder = new LayerBuilder(new TileLayer(opts));
                 builder.setSource(SourceType.TileArcGISRest);  
                 break;
             default:
@@ -234,7 +237,14 @@ export default class MapManager {
                 builder.setProperties(opts["properties"]);
             }
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
-                    builder.setLoader(async (): Promise<string> => {
+                    builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
+                        const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();
+                        let mapSrs = projection.getCode();
+                        if (layerSrs != mapSrs) {
+                            extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
+                        }
+                        opts["request"]["base_url"] += "&cql_filter=bbox(" + opts["request"]["additional_params"]["geometry_name"] + "," + extent.join(",") + ")";
+                        console.log(opts["request"]["base_url"]);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(opts["request"]);
                     });

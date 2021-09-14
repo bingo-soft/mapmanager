@@ -11,15 +11,32 @@ import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
 import EventBus from "../EventHandlerCollection/EventBus";
 import GeometryItem from "../Feature/GeometryItem";
+import Map from "../Map/Map";
+import LoaderFunction from "./LoaderFunctionType";
 
 /** AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
 {
     protected layer: OlLayer;
     protected properties: unknown;
-    protected eventHandlers: EventHandlerCollection;
     protected srsId: number;
+    protected minZoom: number;
+    protected maxZoom: number;
+    protected eventHandlers: EventHandlerCollection;
     protected eventBus: EventBus;
+    protected map: Map;
+
+    /**
+     * @param opts - options
+     */
+    constructor(opts?: unknown) { 
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "min_zoom")) {
+            this.minZoom = opts["min_zoom"];
+        }
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "max_zoom")) {
+            this.maxZoom = opts["max_zoom"];
+        }
+    }
 
     /**
      * Returns Openlayers layer instance
@@ -116,7 +133,7 @@ export default abstract class AbstractLayer implements LayerInterface
      * Sets layer's loader
      * @param loader - loader function
      */
-    public setLoader(loader: () => Promise<string>): void {
+    public setLoader(loader: LoaderFunction): void {
         throw new MethodNotImplemented();
     }
 
@@ -130,7 +147,7 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's params
-     * @param params - source url
+     * @param params - params
      */
     public setParams(params: unknown): void {
         throw new MethodNotImplemented();
@@ -158,6 +175,22 @@ export default abstract class AbstractLayer implements LayerInterface
      */
     public setStyle(style: StyleFunction): void { 
         throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns layer min zoom
+     * @return min zoom
+     */
+    public getMinZoom(): number { 
+        return this.minZoom;
+    }
+
+    /**
+     * Returns layer max zoom
+     * @return max zoom
+     */
+    public getMaxZoom(): number { 
+        return this.maxZoom;
     }
 
     /**
@@ -242,6 +275,26 @@ export default abstract class AbstractLayer implements LayerInterface
         throw new MethodNotImplemented();
     }
 
-
+    /**
+    * Checks if specified zoom is within layer's min and max zoom bounds
+    *
+    * @param zoom - zoom
+    * @return whether specified zoom is within layer's min and max zoom bounds
+    */
+    public fitsZoom(zoom: number): boolean {
+        let fitsMin = false;
+        let fitsMax = false;
+        if (this.minZoom) {
+            if (this.minZoom <= zoom) fitsMin = true; 
+        } else {
+            fitsMin = true;
+        }
+        if (this.maxZoom) {
+            if (this.maxZoom >= zoom) fitsMax = true; 
+        } else {
+            fitsMax = true;
+        }
+        return fitsMin && fitsMax;
+    }
 
 }

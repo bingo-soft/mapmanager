@@ -6,9 +6,11 @@ import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollec
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
+import GeometryItem from "../Feature/GeometryItem";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
-import GeometryItem from "../Feature/GeometryItem";
+import Map from "../Map/Map";
+import LoaderFunction from "./LoaderFunctionType";
 
 /** LayerInterface */
 export default interface LayerInterface
@@ -83,7 +85,7 @@ export default interface LayerInterface
      * Sets layer loader
      * @param loader - loader function
      */
-    setLoader(loader: () => Promise<string>): void;
+    setLoader(loader: LoaderFunction): void;
     
     /**
      * Sets layer source url
@@ -114,6 +116,18 @@ export default interface LayerInterface
      * @param style - style function
      */
     setStyle(style: StyleFunction): void;
+
+    /**
+     * Returns layer min zoom
+     * @return min zoom
+     */
+     getMinZoom(): number;
+
+    /**
+     * Returns layer max zoom
+     * @return max zoom
+     */
+    getMaxZoom(): number;
 
     /**
      * Returns collection of dirty features
@@ -176,4 +190,12 @@ export default interface LayerInterface
      * @return resulting feature
      */
     createFeatureFromVertices(items: GeometryItem[]): Feature;
+
+    /**
+    * Checks if specified zoom is within layer's min and max zoom bounds
+    *
+    * @param zoom - zoom
+    * @return whether specified zoom is within layer's min and max zoom bounds
+    */
+    fitsZoom(zoom: number): boolean;
 }

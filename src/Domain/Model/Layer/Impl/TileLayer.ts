@@ -11,8 +11,8 @@ import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCol
 export default class TileLayer extends AbstractLayer {
     private type: SourceType;
     
-    constructor() {
-        super();
+    constructor(opts?: unknown) {
+        super(opts);
         this.layer = new OlTileLayer();
     }
 

@@ -201,6 +201,12 @@ export default class Map {
                 }
             });
         });
+        this.eventHandlers.add(EventType.MoveEnd, "MapMoveEndEventHandler", (e: OlBaseEvent): void => {
+            const currentZoom = this.getMap().getView().getZoom();
+            this.getLayers().forEach((layer: LayerInterface): void => {
+                this.toggleLayer(layer, currentZoom);
+            });
+        });
     }
 
     public setEventBus(eventBus: EventBus | null): void
@@ -576,6 +582,18 @@ export default class Map {
         return layers[0] ? layers[0] : null;
     }
 
+    /**
+     * Checks if layer exists on the map 
+     * @param layer - layer instance
+     * @return whether layer exists on the map
+     */
+    /* public layerExists(layer: LayerInterface): boolean {
+        const layers: LayerInterface[] = Array.from(this.layers).filter((l: LayerInterface): boolean => {
+            return l == layer;
+        });
+        return (layers && layers.length != 0);
+    } */
+
     /** 
      * Adds features to map
      * @param layer - layer to add to
@@ -655,6 +673,16 @@ export default class Map {
         if (typeof zoom !== "undefined") {
             view.setZoom(zoom);
         }
+    }
+
+    /**
+     * Toggles layer on/off depending on zoom
+     * @param layer - layer to toggle
+     * @param currentZoom - current zoom
+     */
+    private toggleLayer(layer: LayerInterface, currentZoom: number): void {
+        layer.getLayer().setVisible(layer.fitsZoom(currentZoom));
+        //console.log(layer.getLayer().getVisible());
     }
 
     /**
