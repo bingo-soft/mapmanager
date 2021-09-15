@@ -267,6 +267,22 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Returns feature popup CSS
+     * @return feature popup CSS
+     */
+     public getFeaturePopupCss(): string  {
+        throw new MethodNotImplemented();
+    }
+    
+    /**
+     * Sets feature popup CSS
+     * @param css - feature popup CSS
+     */
+    public setFeaturePopupCss(css: string): void  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Creates feature from vertices
      * @param items - of feature vertices along with their ids and coordinates
      * @return resulting feature
