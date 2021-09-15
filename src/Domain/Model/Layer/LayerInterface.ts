@@ -185,6 +185,18 @@ export default interface LayerInterface
     setFeaturePopupTemplate(template: string): void;
 
     /**
+     * Returns feature popup CSS
+     * @return feature popup CSS
+     */
+    getFeaturePopupCss(): string;
+    
+    /**
+     * Sets feature popup CSS
+     * @param css - feature popup CSS
+     */
+    setFeaturePopupCss(css: string): void;
+
+    /**
      * Creates feature from vertices
      * @param  array - array of feature vertices along with their ids and coordinates
      * @return resulting feature

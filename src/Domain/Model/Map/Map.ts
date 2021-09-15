@@ -19,6 +19,7 @@ import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import { Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle } from "ol/style";
 import { Select as OlSelect } from "ol/interaction";
+import { Pixel } from "ol/pixel";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -51,6 +52,7 @@ import StyleBuilder from "../Style/StyleBuilder";
 import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
 import { SearchMarkerStyle } from "../Style/SearchMarkerStyle";
 import TemporaryLayerType from "./TemporaryLayerType";
+
 
 /** Map */
 export default class Map { 
@@ -165,13 +167,9 @@ export default class Map {
         }
         // popup overlay init
         const popupElement: HTMLElement = document.createElement("div");
-        popupElement.className = "feature-popup";
         this.featurePopupOverlay = new OlOverlay({
             element: popupElement,
-            autoPan: true,
-            autoPanAnimation: {
-                duration: 250,
-            },
+            autoPan: false
         });
         this.map.addOverlay(this.featurePopupOverlay);
         // event handlers init
@@ -181,25 +179,11 @@ export default class Map {
                 this.clearSelectedFeatures();
             }
         });
-        this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler1", (e: OlBaseEvent): void => {
+        this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
             const pixel = (<OlMapBrowserEvent>e).pixel;
             this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel(pixel) ? CursorType.Pointer : this.cursor;
             // show popup
-            const featurePopupElement = this.featurePopupOverlay.getElement();
-            this.featurePopupOverlay.setPosition(null);
-            this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
-                const layer = this.getLayer(olLayer);
-                if (layer) {
-                    const featurePopupTemplate = layer.getFeaturePopupTemplate();
-                    if (featurePopupTemplate) {
-                        const properties = olFeature.getProperties();
-                        featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupTemplate, properties);
-                        if (featurePopupElement.innerHTML) {
-                            this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));
-                        }
-                    }
-                }
-            });
+            this.showFeaturePopup(pixel);
         });
         this.eventHandlers.add(EventType.MoveEnd, "MapMoveEndEventHandler", (e: OlBaseEvent): void => {
             const currentZoom = this.getMap().getView().getZoom();
@@ -841,4 +825,29 @@ export default class Map {
         }
     }
 
+    /**
+     * Pastes features from clipboard
+     * @param layer - layer instance to paste to
+     */
+    private showFeaturePopup(pixel: Pixel): void {
+        const featurePopupElement = this.featurePopupOverlay.getElement();
+        this.featurePopupOverlay.setPosition(null);
+        this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
+            const layer = this.getLayer(olLayer);
+            if (layer) {
+                const featurePopupTemplate = layer.getFeaturePopupTemplate();
+                if (featurePopupTemplate) {
+                    const properties = olFeature.getProperties();
+                    featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupTemplate, properties);
+                    const featurePopupCss = layer.getFeaturePopupCss();// console.log(featurePopupCss);
+                    if (featurePopupCss) { 
+                        featurePopupElement.setAttribute("style", featurePopupCss);
+                    }
+                    if (featurePopupElement.innerHTML) {
+                        this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));
+                    }
+                }
+            }
+        });
+    }
 }
