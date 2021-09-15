@@ -19,9 +19,10 @@ export class ApiClient {
             headers: request.headers,
             data: request.data
         };
-        for (const k in <any> request.additional_params) {
-            payload[k] = request.additional_params[k];
+        for (const k in <any> request.axios_params) {
+            payload[k] = request.axios_params[k];
         }
+        console.log(payload);
         return new Promise((resolve, reject) => {
           axios
             .request(payload)
