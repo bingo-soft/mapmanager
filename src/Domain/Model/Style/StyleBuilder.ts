@@ -316,7 +316,7 @@ export default class StyleBuilder {
                     fill.setColor(htmlColor);
                 }
                 const image = style.getImage(); // points
-                if (image) { console.log(feature.getGeometry().getType());
+                if (image) {
                     stroke = (<OlCircleStyle> image).getStroke();
                     if (stroke) {
                         stroke.setColor(htmlColor);
