@@ -206,7 +206,34 @@ export default class MapManager {
      * Creates new layer
      * @category Layer
      * @param type - layer's source type
-     * @param opts - options
+     * @param opts
+     * ```Options
+     * Options:
+     * 
+     * Name                         Type           Description
+     * "request"                    object         HTTP Request options
+     * - "method"                   string         HTTP Method of the request
+     * - "base_url"                 string         Request URL
+     * - "headers"                  string         Request headers
+     * - "geometry_name"            string         Geometry field name for WFS request BBox CQL Filter
+     * - "axios_params"             string         Additional params to send along with the axios request
+     * 
+     * "min_zoom"                   number         Minimum zoom to display the layer on map
+     * "max_zoom"                   number         Maximum zoom to display the layer on map
+     * "feature_popup_template"     string         Template of the popup window over features, feature attribute names go in double curly braces
+     * "feature_popup_css"          string         CSS of the popup window over features
+     * "style"                      object         Featuire styling options
+     * - "point"                    object         Options for point style
+     * - "linestring"               object         Options for linestring style
+     * - "polygon"                  object         Options for polygon style
+     * - "label"                    object         Options for label style
+     * - "unique_values":           object         Unique feature attribute value painting options
+     * - - "field"                  string         Feature attribute to get unique values from
+     * - - "start_color"            string         HTML color to start painting from 
+     * - - "increment_color"        number         Value to increment the color by
+     * "load_callback"              function       Function to call after the layer has been loaded, the layer goes as a parameter
+     * "source_change_callback"     function       Function to call on layer's source modification
+     * ```
      * @param callback - callback to run on complete layer load
      * @return created layer instance
      */
@@ -233,9 +260,9 @@ export default class MapManager {
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
-            if (typeof opts["properties"] !== "undefined") { 
+            /* if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
-            }
+            } */
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();

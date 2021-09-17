@@ -73,17 +73,17 @@ export default abstract class AbstractLayer implements LayerInterface
      * Returns layer properties
      * @return layer properties
      */
-    public getProperties(): unknown {
+    /* public getProperties(): unknown {
         return this.properties;
-    }
+    } */
 
     /**
      * Sets layer properties
      * @param properties - layer properties
      */
-    public setProperties(properties: unknown): void {
+    /* public setProperties(properties: unknown): void {
         this.properties = properties;
-    }
+    } */
 
     /**
      * Returns layer's event handlers
