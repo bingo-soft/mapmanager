@@ -14,8 +14,8 @@ export default class StyleBuilder {
     private style: StyleType;
     private field: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
-    private uniqueColors: Map<string, number>;
-    private uniqueColor: number;
+    private uniqueColors: Map<string, string>;
+    private uniqueColor: string;
     private uniqueColorIncrement: number;
     private uniqueColorField: string;
     private showLabelMaxResolution: number;
@@ -54,9 +54,10 @@ export default class StyleBuilder {
     private applyOptions(opts?: unknown): void {
         if (typeof opts !== "undefined") {
             let hasUniqueStyle = false;
-            if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
+            if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0
+                && opts["unique_values"]["start_color"] && opts["unique_values"]["increment_color"] && opts["unique_values"]["field"]) {
                 hasUniqueStyle = true;
-                this.uniqueColor = ColorUtil.htmlColorToInt(opts["unique_values"]["start_color"]);
+                this.uniqueColor = opts["unique_values"]["start_color"];
                 this.uniqueColorIncrement = opts["unique_values"]["increment_color"];
                 this.uniqueColorField = opts["unique_values"]["field"];
             }
@@ -104,7 +105,7 @@ export default class StyleBuilder {
                 image: new OlCircleStyle({
                     radius: opts["size"] || 2,
                     fill: new OlFill({
-                        color: opts["opacity"] ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
+                        color: opts["color"] && opts["opacity"] ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
                     }),
                     stroke: new OlStroke({
                         color: opts["color"],
@@ -159,7 +160,7 @@ export default class StyleBuilder {
                 width: opts["stroke_width"]
             }),
             fill: new OlFill({
-                color: opts["opacity"] ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
+                color: opts["background_color"] && opts["opacity"] ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
             }),
         });
         this.style["Polygon"] = style;
@@ -175,11 +176,11 @@ export default class StyleBuilder {
     private setTextStyle(opts: unknown): StyleBuilder {
         const style = new OlTextStyle({
             stroke: new OlStroke({
-                color: opts["stroke"] ? opts["stroke"]["color"] : null, 
-                width: opts["stroke"] ? opts["stroke"]["stroke_width"] : null
+                color: opts["color"],
+                width: opts["stroke_width"]
             }),
             fill: new OlFill({
-                color: opts["fill"] ? opts["fill"]["background_color"] : null
+                color: opts["fill"]
             }),
             font: opts["font"],
             text: opts["field"],
@@ -204,7 +205,7 @@ export default class StyleBuilder {
      * @return style builder instance
      */
      private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
-        const opacity = ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]);
+        const opacity = opts["background_color"] && opts["opacity"] ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : null;
         const style = new OlStyle({
             image: new OlCircleStyle({
                 radius: opts["size"] || 2,
@@ -306,7 +307,7 @@ export default class StyleBuilder {
                 } else {
                     this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
                 }
-                const htmlColor = ColorUtil.applyOpacity(this.uniqueColor.toString(16), 50);
+                const htmlColor = ColorUtil.applyOpacity(this.uniqueColor, 50);
                 let stroke = style.getStroke();
                 let fill = style.getFill();
                 if (stroke) {
@@ -327,9 +328,10 @@ export default class StyleBuilder {
                     }
                     style.setImage(image);
                 }
-                this.uniqueColor += this.uniqueColorIncrement;
+                this.uniqueColor = ColorUtil.incrementColor(this.uniqueColor, this.uniqueColorIncrement);
             }
         }
     }
-    
+
+   
 }
