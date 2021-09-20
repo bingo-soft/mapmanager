@@ -29,7 +29,7 @@ export default class ColorUtil {
         color = ColorUtil.normalizeColor(color);
         const colorHex = color.split("#")[1];
         let r = parseInt(colorHex.substring(0, 2), 16) + increment;
-        let g = parseInt(colorHex.substring(2, 4), 16) + increment;;
+        let g = parseInt(colorHex.substring(2, 4), 16) + increment;
         let b = parseInt(colorHex.substring(4), 16) + increment;
         r = r > 255 ? 255: r;
         g = g > 255 ? 255: g;

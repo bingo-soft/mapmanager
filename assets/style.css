@@ -32,7 +32,7 @@
 
 
 /***** Feature popup *****/
-.feature-popup {
+/* .feature-popup {
     position: absolute;
     background-color: white;
     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
@@ -42,5 +42,5 @@
     bottom: 12px;
     left: -50px;
     min-width: 280px;
-}
+} */
 /***** EOF Feature popup *****/
