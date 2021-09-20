@@ -73,13 +73,13 @@ export default interface LayerInterface
      * Returns layer properties
      * @return layer properties
      */
-    /* getProperties(): unknown; */
+    getProperties(): unknown;
     
     /**
      * Sets layer properties
      * @return layer properties
      */
-    /* setProperties(source: unknown): void; */
+    setProperties(source: unknown): void;
     
     /**
      * Sets layer loader
