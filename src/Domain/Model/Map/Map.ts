@@ -72,6 +72,7 @@ export default class Map {
     private interaction: InteractionInterface;
     private interactions: InteractionInterface[] = [];
     private eventHandlers: EventHandlerCollection;
+    private documentEventHandlers: EventHandlerCollection;
     private eventBus: EventBus;
 
     private static readonly BASE_LAYER = BaseLayer.OSM;
@@ -190,6 +191,17 @@ export default class Map {
             this.getLayers().forEach((layer: LayerInterface): void => {
                 this.toggleLayer(layer, currentZoom);
             });
+        });
+        this.documentEventHandlers = new EventHandlerCollection(document);
+        this.documentEventHandlers.add(EventType.KeyDown, "KeyDownEventHandler", (e: KeyboardEvent): void => {
+            if (this.interaction.getType() == InteractionType.Draw) {
+                if (e.key == "Escape") {
+                    (<DrawInteraction> this.interaction).abortDrawing();
+                }
+                if (e.key == "Delete") {
+                    (<DrawInteraction> this.interaction).removeLastPoint();
+                }
+            }
         });
     }
 

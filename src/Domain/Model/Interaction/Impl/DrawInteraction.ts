@@ -38,7 +38,7 @@ export default class DrawInteraction extends BaseInteraction {
         this.type = InteractionType.Draw;
 
         this.eventHandlers = new EventHandlerCollection(olSource);
-        this.eventHandlers.add(EventType.AddFeature, "DrawEventHandler", (e: OlBaseEvent): void => {
+        this.eventHandlers.add(EventType.AddFeature, "DrawEventHandler", (e: OlBaseEvent): void => { console.log("DrawEventHandler");
             const feature = new Feature((<OlDrawEvent> e).feature, layer);
             this.layer.setDirtyFeatures(new FeatureCollection([feature]), true);
             this.layer.setIdleFeatures(new FeatureCollection([feature]), true);
@@ -49,6 +49,20 @@ export default class DrawInteraction extends BaseInteraction {
                 eventBus.dispatch(new SourceChangedEvent()); 
             }
         });
+    }
+
+    /**
+     * Stops drawing without adding the feature currently being drawn to the target layer
+     */
+    public abortDrawing(): void {
+        (<OlDraw> this.interaction).abortDrawing();
+    }
+
+    /**
+     * Removes last point of the feature currently being drawn
+     */
+    public removeLastPoint(): void {
+        (<OlDraw> this.interaction).removeLastPoint();
     }
 
 }

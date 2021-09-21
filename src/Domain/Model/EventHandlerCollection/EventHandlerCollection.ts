@@ -1,3 +1,4 @@
+import { Listener as OlListener } from "ol/events";
 import OlBaseObject from "ol/Object";
 import EventType from "./EventType";
 import Handler from "./HandlerType";
@@ -7,13 +8,13 @@ type V = { type: string, handler: Handler };
 
 /** EventHandlerCollection */
 export default class EventHandlerCollection { 
-    private target: OlBaseObject;
+    private target: OlBaseObject | Document;
     private handlers: Map<K, V> = new Map<K, V>();
 
     /**
      * @param target - handler target
      */
-    constructor(target: OlBaseObject) {
+    constructor(target: OlBaseObject | Document) {
         this.target = target;
     }
 
@@ -32,7 +33,7 @@ export default class EventHandlerCollection {
      * @param handler - handler
      */
     public add(type: EventType, id: string, handler: Handler): void {
-        this.target.on(type, handler);
+        this.target.addEventListener(type, <OlListener> handler);
         this.handlers.set(id, { type, handler });
     }
 
@@ -43,7 +44,7 @@ export default class EventHandlerCollection {
     public remove(id: string): void {
         const type = this.handlers.get(id).type;
         const handler = this.handlers.get(id).handler;
-        this.target.un(type, handler);
+        this.target.removeEventListener(type, <OlListener> handler);
         this.handlers.delete(id);
     }
 
@@ -52,7 +53,7 @@ export default class EventHandlerCollection {
      */
     public clear(): void {
         this.handlers.forEach(el => {
-            this.target.un(el.type, el.handler); 
+            this.target.removeEventListener(el.type, <OlListener> el.handler);
         });
         this.handlers.clear();
     }
