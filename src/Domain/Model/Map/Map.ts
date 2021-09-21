@@ -173,7 +173,7 @@ export default class Map {
             autoPan: false
         });
         this.map.addOverlay(this.featurePopupOverlay);
-        // event handlers init
+        // OL event handlers init
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
             if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
@@ -192,24 +192,33 @@ export default class Map {
                 this.toggleLayer(layer, currentZoom);
             });
         });
+        // DOM document event handlers init
         this.documentEventHandlers = new EventHandlerCollection(document);
         this.documentEventHandlers.add(EventType.KeyDown, "KeyDownEventHandler", (e: KeyboardEvent): void => {
             if (this.interaction.getType() == InteractionType.Draw) {
                 if (e.key == "Escape") {
                     (<DrawInteraction> this.interaction).abortDrawing();
                 }
-                if (e.key == "Delete") {
+                if (e.key == "Delete" || e.key == "Backspace") {
                     (<DrawInteraction> this.interaction).removeLastPoint();
                 }
             }
         });
     }
 
+    /**
+     * Sets Event Bus
+     * @param eventBus - Event Bus
+     */
     public setEventBus(eventBus: EventBus | null): void
     {
         this.eventBus = eventBus;
     }
 
+    /**
+     * Returns Event Bus
+     * @return Event Bus
+     */
     public getEventBus(): EventBus | null 
     {
         return this.eventBus;
@@ -672,13 +681,12 @@ export default class Map {
     }
 
     /**
-     * Toggles layer on/off depending on zoom
+     * Toggles layer on/off depending on current zoom
      * @param layer - layer to toggle
      * @param currentZoom - current zoom
      */
     private toggleLayer(layer: LayerInterface, currentZoom: number): void {
         layer.getLayer().setVisible(layer.fitsZoom(currentZoom));
-        //console.log(layer.getLayer().getVisible());
     }
 
     /**

@@ -298,17 +298,13 @@ export default abstract class AbstractLayer implements LayerInterface
     * @return whether specified zoom is within layer's min and max zoom bounds
     */
     public fitsZoom(zoom: number): boolean {
-        let fitsMin = false;
-        let fitsMax = false;
+        let fitsMin = true;
+        let fitsMax = true;
         if (this.minZoom) {
-            if (this.minZoom <= zoom) fitsMin = true; 
-        } else {
-            fitsMin = true;
+            fitsMin = this.minZoom <= zoom;
         }
         if (this.maxZoom) {
-            if (this.maxZoom >= zoom) fitsMax = true; 
-        } else {
-            fitsMax = true;
+            fitsMax = this.maxZoom >= zoom;
         }
         return fitsMin && fitsMax;
     }
