@@ -117,7 +117,7 @@ export default class MapManager {
      */
     public static setDrawInteraction(map: Map, layer: LayerInterface, opts: unknown): void {
         map.setDrawInteraction(layer, opts["geometry_type"], opts["draw_callback"]);
-        map.setModifyInteraction(layer);
+        //map.setModifyInteraction(layer);
     }
 
     /**

@@ -1,5 +1,6 @@
 enum EventType {
     Click = "click",
+    KeyDown = "keydown",
     Change = "change",
     MoveEnd = "moveend",
     AddFeature = "addfeature",
