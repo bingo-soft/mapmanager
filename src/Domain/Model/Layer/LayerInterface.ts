@@ -118,18 +118,6 @@ export default interface LayerInterface
     setStyle(style: StyleFunction): void;
 
     /**
-     * Returns layer min zoom
-     * @return min zoom
-     */
-     getMinZoom(): number;
-
-    /**
-     * Returns layer max zoom
-     * @return max zoom
-     */
-    getMaxZoom(): number;
-
-    /**
      * Returns collection of dirty features
      * @return collection of dirty features
      */
@@ -203,11 +191,4 @@ export default interface LayerInterface
      */
     createFeatureFromVertices(items: GeometryItem[]): Feature;
 
-    /**
-    * Checks if specified zoom is within layer's min and max zoom bounds
-    *
-    * @param zoom - zoom
-    * @return whether specified zoom is within layer's min and max zoom bounds
-    */
-    fitsZoom(zoom: number): boolean;
 }

@@ -32,12 +32,18 @@ export default class VectorLayer extends AbstractLayer{
      * @param opts - options
      */
     constructor(layer?: OlLayer, opts?: unknown) { 
-        super(opts);
+        super();
         this.layer = layer ? layer : new OlVectorLayer(/* {declutter: true} */);
         this.srsId = VectorLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
             this.srsId = (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
+        }
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
+            this.layer.setMinZoom(opts["min_zoom"]-1);
+        }
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
+            this.layer.setMaxZoom(opts["max_zoom"]);
         }
     }
 
