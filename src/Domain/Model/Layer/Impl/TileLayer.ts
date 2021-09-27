@@ -1,19 +1,22 @@
 import { Tile as OlTileLayer } from "ol/layer";
-import { Source as OlSource } from "ol/source";
 import { TileImage as OlTileImage } from "ol/source";
 import OlTileWMSSource from "ol/source/TileWMS";
 import AbstractLayer from "../AbstractLayer";
 import SourceType from "../../Source/SourceType";
-import SourceInterface from "../../Source/SourceInterface";
-import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 
 /** TileLayer */
 export default class TileLayer extends AbstractLayer {
     private type: SourceType;
     
     constructor(opts?: unknown) {
-        super(opts);
+        super();
         this.layer = new OlTileLayer();
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
+            this.layer.setMinZoom(opts["min_zoom"]-1);
+        }
+        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
+            this.layer.setMaxZoom(opts["max_zoom"]);
+        }
     }
 
     /**

@@ -20,23 +20,9 @@ export default abstract class AbstractLayer implements LayerInterface
     protected layer: OlLayer;
     protected properties: unknown;
     protected srsId: number;
-    protected minZoom: number;
-    protected maxZoom: number;
     protected eventHandlers: EventHandlerCollection;
     protected eventBus: EventBus;
     protected map: Map;
-
-    /**
-     * @param opts - options
-     */
-    constructor(opts?: unknown) { 
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "min_zoom")) {
-            this.minZoom = opts["min_zoom"];
-        }
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "max_zoom")) {
-            this.maxZoom = opts["max_zoom"];
-        }
-    }
 
     /**
      * Returns Openlayers layer instance
@@ -178,22 +164,6 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Returns layer min zoom
-     * @return min zoom
-     */
-    public getMinZoom(): number { 
-        return this.minZoom;
-    }
-
-    /**
-     * Returns layer max zoom
-     * @return max zoom
-     */
-    public getMaxZoom(): number { 
-        return this.maxZoom;
-    }
-
-    /**
      * Returns collection of dirty features
      * @return collection of dirty features
      */
@@ -289,24 +259,6 @@ export default abstract class AbstractLayer implements LayerInterface
      */
     public createFeatureFromVertices(items: GeometryItem[]): Feature {
         throw new MethodNotImplemented();
-    }
-
-    /**
-    * Checks if specified zoom is within layer's min and max zoom bounds
-    *
-    * @param zoom - zoom
-    * @return whether specified zoom is within layer's min and max zoom bounds
-    */
-    public fitsZoom(zoom: number): boolean {
-        let fitsMin = true;
-        let fitsMax = true;
-        if (this.minZoom) {
-            fitsMin = this.minZoom <= zoom;
-        }
-        if (this.maxZoom) {
-            fitsMax = this.maxZoom >= zoom;
-        }
-        return fitsMin && fitsMax;
     }
 
 }

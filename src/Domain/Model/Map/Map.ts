@@ -186,12 +186,6 @@ export default class Map {
             // show popup
             this.showFeaturePopup(pixel);
         });
-        this.eventHandlers.add(EventType.MoveEnd, "MapMoveEndEventHandler", (e: OlBaseEvent): void => {
-            const currentZoom = this.getMap().getView().getZoom();
-            this.getLayers().forEach((layer: LayerInterface): void => {
-                this.toggleLayer(layer, currentZoom);
-            });
-        });
         // DOM document event handlers init
         this.documentEventHandlers = new EventHandlerCollection(document);
         this.documentEventHandlers.add(EventType.KeyDown, "KeyDownEventHandler", (e: KeyboardEvent): void => {
@@ -685,9 +679,9 @@ export default class Map {
      * @param layer - layer to toggle
      * @param currentZoom - current zoom
      */
-    private toggleLayer(layer: LayerInterface, currentZoom: number): void {
+    /* private toggleLayer(layer: LayerInterface, currentZoom: number): void {
         layer.getLayer().setVisible(layer.fitsZoom(currentZoom));
-    }
+    } */
 
     /**
      * Creates a temporary layer and adds it to map

@@ -270,7 +270,7 @@ export default class MapManager {
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
-                        opts["request"]["base_url"] += "&cql_filter=bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
+                        opts["request"]["base_url"] += "&srsname=" + layerSrs + "&cql_filter=bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
                         console.log(opts["request"]["base_url"]);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(opts["request"]);
