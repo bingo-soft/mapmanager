@@ -191,4 +191,28 @@ export default interface LayerInterface
      */
     createFeatureFromVertices(items: GeometryItem[]): Feature;
 
+    /**
+     * Returns loading tiles count
+     * @return loading tiles count
+     */
+    getLoadingTilesCount(): number;
+
+    /**
+     * Sets loading tiles count
+     * @param count - loading tiles count
+     */
+    setLoadingTilesCount(count: number): void;
+
+    /**
+     * Returns loaded tiles count
+     * @return loaded tiles count
+     */
+    getLoadedTilesCount(): number;
+
+     /**
+      * Sets loaded tiles count
+      * @param count - loaded tiles count
+      */
+    setLoadedTilesCount(count: number): void;
+
 }

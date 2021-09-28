@@ -132,13 +132,34 @@ export default class LayerBuilder {
      */
     public setLoadCallback(callback: (layer: LayerInterface) => void): LayerBuilder {
         if (typeof callback === "function") {
-            const listener = (e: OlBaseEvent): void => {
+            const listenerVector = (e: OlBaseEvent): void => {
                 if (e.target.getState() == "ready" && this.layer) {
                     callback(this.layer);
-                    e.target.un("change", listener);
+                    e.target.un(EventType.Change, listenerVector);
                 }
             }
-            this.layer.setEventHandler(EventType.Change, "LayerLoadEventHanler", listener);
+            const layerType = this.layer.getType();
+            if (layerType == SourceType.Vector) {
+                this.layer.setEventHandler(EventType.Change, "LayerVectorLoadEventHanler", listenerVector);
+            } else {
+                this.layer.setEventHandler(EventType.TileLoadStart, "LayerTileLoadStartEventHanler", () => {
+                    this.layer.setLoadingTilesCount(this.layer.getLoadingTilesCount()+1);
+                });
+                this.layer.setEventHandler(EventType.TileLoadError, "LayerTileLoadErrorEventHanler", () => {
+                    this.layer.setLoadedTilesCount(this.layer.getLoadedTilesCount()+1);
+                });
+                this.layer.setEventHandler(EventType.TileLoadEnd, "LayerTileLoadEndEventHanler", () => {
+                    setTimeout(() => {
+                        let loadedCount = this.layer.getLoadedTilesCount();
+                        this.layer.setLoadedTilesCount(++loadedCount);
+                        if (loadedCount == this.layer.getLoadingTilesCount()) {
+                            this.layer.setLoadingTilesCount(0);
+                            this.layer.setLoadedTilesCount(0);
+                            callback(this.layer); 
+                        }
+                    }, 100);
+                });
+            }
         }
         return this;
     }

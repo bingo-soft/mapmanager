@@ -13,7 +13,10 @@ enum EventType {
     DrawStart = "drawstart", 
     DrawEnd = "drawend",
     PointerMove = "pointermove",
-    SourceChange = "sourcechange"
+    SourceChange = "sourcechange",
+    TileLoadStart = "tileloadstart",
+    TileLoadError = "tileloaderror",
+    TileLoadEnd = "tileloadend"
 }
 
 export default EventType;
