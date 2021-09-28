@@ -261,4 +261,36 @@ export default abstract class AbstractLayer implements LayerInterface
         throw new MethodNotImplemented();
     }
 
+    /**
+     * Returns loading tiles count
+     * @return loading tiles count
+     */
+    public getLoadingTilesCount(): number { 
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets loading tiles count
+     * @param count - loading tiles count
+     */
+    public setLoadingTilesCount(count: number): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns loaded tiles count
+     * @return loaded tiles count
+     */
+    public getLoadedTilesCount(): number { 
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets loaded tiles count
+     * @param count - loaded tiles count
+     */
+    public setLoadedTilesCount(count: number): void {
+        throw new MethodNotImplemented();
+    }
+
 }

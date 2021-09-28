@@ -1,12 +1,15 @@
 import { Tile as OlTileLayer } from "ol/layer";
 import { TileImage as OlTileImage } from "ol/source";
 import OlTileWMSSource from "ol/source/TileWMS";
+import OlTileArcGISRestSource from "ol/source/TileArcGISRest";
 import AbstractLayer from "../AbstractLayer";
 import SourceType from "../../Source/SourceType";
 
 /** TileLayer */
 export default class TileLayer extends AbstractLayer {
     private type: SourceType;
+    private loadingTiles = 0;
+    private loadedTiles = 0;
     
     constructor(opts?: unknown) {
         super();
@@ -51,7 +54,40 @@ export default class TileLayer extends AbstractLayer {
         if (this.type == SourceType.TileWMS) {
             (<OlTileWMSSource> this.layer.getSource()).updateParams(params);
         }
+        if (this.type == SourceType.TileArcGISRest) {
+            (<OlTileArcGISRestSource> this.layer.getSource()).updateParams(params);
+        }
     }
 
-    
+    /**
+     * Returns loading tiles count
+     * @return loading tiles count
+     */
+    public getLoadingTilesCount(): number { 
+        return this.loadingTiles;
+    }
+
+    /**
+     * Sets loading tiles count
+     * @param count - loading tiles count
+     */
+    public setLoadingTilesCount(count: number): void {
+        this.loadingTiles = count;
+    }
+
+    /**
+     * Returns loaded tiles count
+     * @return loaded tiles count
+     */
+    public getLoadedTilesCount(): number { 
+        return this.loadedTiles;
+    }
+
+    /**
+     * Sets loaded tiles count
+     * @param count - loaded tiles count
+     */
+    public setLoadedTilesCount(count: number): void {
+        this.loadedTiles = count;
+    }
 }
