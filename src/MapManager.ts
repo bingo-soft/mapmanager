@@ -88,6 +88,15 @@ export default class MapManager {
     public static setCursor(map: Map, cursor: string): void {
         map.setCursor(cursor);
     }
+
+    /**
+     * Prints map
+     * @category Map
+     * @param map - map instance
+     */
+    public static print(map: Map): void {
+        map.print();
+    }
    
     /**
      * Returns current map interaction type
@@ -260,9 +269,9 @@ export default class MapManager {
                 break;
         }
         if (typeof builder !== "undefined" && typeof opts !== "undefined") { 
-            /* if (typeof opts["properties"] !== "undefined") { 
+            if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
-            } */
+            }
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();
@@ -270,7 +279,16 @@ export default class MapManager {
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
-                        opts["request"]["base_url"] += "&srsname=" + layerSrs + "&cql_filter=bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
+                        const cqlFilter = "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
+                        opts["request"]["base_url"] += "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter;
+                        if (opts["request"]["data"]) {
+                            opts["request"]["data"]["cql_filter"] = cqlFilter;
+                        } else {
+                            opts["request"]["data"] = {
+                                "cql_filter": cqlFilter
+                            }
+                        }
+                        console.log(opts["request"]["data"]);
                         console.log(opts["request"]["base_url"]);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(opts["request"]);
