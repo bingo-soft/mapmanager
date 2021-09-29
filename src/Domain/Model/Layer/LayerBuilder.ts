@@ -66,10 +66,10 @@ export default class LayerBuilder {
      * Sets layer's properties
      * @return layer's properties
      */
-    /* public setProperties(properties: unknown): LayerBuilder {
+    public setProperties(properties: unknown): LayerBuilder {
         this.layer.setProperties(properties);
         return this;
-    } */
+    }
 
     /**
      * Sets layer's loader

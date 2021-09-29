@@ -840,6 +840,36 @@ export default class Map {
     }
 
     /**
+     * Prints map
+     */
+    public print(): void {
+        this.map.once("postcompose", () => {
+            let printContainer = document.getElementById("print-container");
+            if (printContainer) {
+                printContainer.remove();
+            }
+            printContainer = document.createElement("div");
+            printContainer.id = "print-container";
+            printContainer.style.display = "none";
+            document.body.appendChild(printContainer);
+            
+            const iframe = document.createElement("iframe");
+            printContainer.appendChild(iframe);
+
+			const img = document.createElement("img");
+            img.setAttribute("crossorigin", "anonymous");
+			img.src = "data:image/png;base64,";//event.context.canvas.toDataURL("image/png");
+			img.onload = () => {
+    			iframe.contentWindow.print();
+			}
+            
+            iframe.contentWindow.document.body.appendChild(img);
+            console.log(iframe.contentWindow);
+        });
+        this.map.renderSync();
+    }
+
+    /**
      * Pastes features from clipboard
      * @param layer - layer instance to paste to
      */
