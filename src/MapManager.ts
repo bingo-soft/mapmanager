@@ -243,7 +243,6 @@ export default class MapManager {
      * "load_callback"              function       Function to call after the layer has been loaded, the layer goes as a parameter
      * "source_change_callback"     function       Function to call on layer's source modification
      * ```
-     * @param callback - callback to run on complete layer load
      * @return created layer instance
      */
     public static createLayer(type: SourceType, opts?: unknown): LayerInterface { 
