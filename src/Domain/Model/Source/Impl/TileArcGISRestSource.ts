@@ -8,6 +8,7 @@ export default class TileArcGISRestSource extends BaseSource {
     constructor() {
         super();
         this.source = new OlTileArcGISRestSource({
+            params: {},
             crossOrigin: "anonymous"/* ,
             params: {
                 "LAYERS": "show:21",
