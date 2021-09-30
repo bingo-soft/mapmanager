@@ -1,12 +1,10 @@
-import OlVectorLayer from "ol/layer/Vector";
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
 import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
 import StringUtil from "../../../Infrastructure/Util/StringUtil";
-import ColorUtil from "../../../Infrastructure/Util/ColorUtil";
-
+import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 
 /** StyleBuilder */
 export default class StyleBuilder {
@@ -14,10 +12,8 @@ export default class StyleBuilder {
     private style: StyleType;
     private field: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
-    private uniqueColors: Map<string, string>;
-    private uniqueColor: string;
-    private uniqueColorIncrement: number;
     private uniqueColorField: string;
+    private colorUtil: ColorUtil;
     private showLabelMaxResolution: number;
     private static readonly SHOW_LABEL_MAX_RESOLUTION = 10;
     private static readonly POSITIONS = {
@@ -43,7 +39,6 @@ export default class StyleBuilder {
             "GeometryCollection": null,
             "Text": null
         };
-        this.uniqueColors = new Map();
         this.applyOptions(opts);
     }
 
@@ -54,11 +49,9 @@ export default class StyleBuilder {
     private applyOptions(opts?: unknown): void {
         if (typeof opts !== "undefined") {
             let hasUniqueStyle = false;
-            if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0
-                && opts["unique_values"]["start_color"] && opts["unique_values"]["increment_color"] && opts["unique_values"]["field"]) {
+            if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
                 hasUniqueStyle = true;
-                this.uniqueColor = opts["unique_values"]["start_color"];
-                this.uniqueColorIncrement = opts["unique_values"]["increment_color"];
+                this.colorUtil = new ColorUtil(opts["unique_values"]["start_color"], opts["unique_values"]["increment_color"]);
                 this.uniqueColorField = opts["unique_values"]["field"];
             }
             if (Object.prototype.hasOwnProperty.call(opts, "point") && Object.keys(opts["point"]).length != 0) {
@@ -187,8 +180,8 @@ export default class StyleBuilder {
             textAlign: opts["text_align"],
             textBaseline: opts["text_baseline"],
             maxAngle: opts["max_angle"] ? opts["max_angle"] * Math.PI / 180 : 0,
-            offsetX: opts["offset"] ? opts["offset_x"] : null,
-            offsetY: opts["offset"] ? opts["offset_y"] : null,
+            offsetX: opts["offset"][0] ? opts["offset"][0] : null,
+            offsetY: opts["offset"][1] ? opts["offset_y"][1] : null,
             overflow: opts["overflow"],
             placement: opts["placement"],
             scale: opts["scale"],
@@ -301,13 +294,7 @@ export default class StyleBuilder {
             let valueToPaintOn: string = feature.getProperties()[this.uniqueColorField];
             if (valueToPaintOn) {
                 valueToPaintOn = ObjectParser.parseAttributeValue(valueToPaintOn);
-                const alreadyPaintedColor = this.uniqueColors.get(valueToPaintOn);
-                if (alreadyPaintedColor) {
-                    this.uniqueColor = alreadyPaintedColor;
-                } else {
-                    this.uniqueColors.set(valueToPaintOn, this.uniqueColor);
-                }
-                const htmlColor = ColorUtil.applyOpacity(this.uniqueColor, 50);
+                const htmlColor = this.colorUtil.getUniqueColor(valueToPaintOn);
                 let stroke = style.getStroke();
                 let fill = style.getFill();
                 if (stroke) {
@@ -328,7 +315,6 @@ export default class StyleBuilder {
                     }
                     style.setImage(image);
                 }
-                this.uniqueColor = ColorUtil.incrementColor(this.uniqueColor, this.uniqueColorIncrement);
             }
         }
     }
