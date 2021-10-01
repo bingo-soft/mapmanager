@@ -12,7 +12,8 @@ export default class VectorSource extends BaseSource {
         super();
         this.source = new OlVectorSource({
             format: new OlGeoJSON(),
-            strategy: OlLoadingstrategy.bbox
+            //strategy: OlLoadingstrategy.bbox
+            strategy: OlLoadingstrategy.all
         });
     }
 
