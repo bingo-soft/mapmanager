@@ -24,6 +24,7 @@ import StyleBuilder from "./Domain/Model/Style/StyleBuilder"
 import GeometryItem from "./Domain/Model/Feature/GeometryItem"
 import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
 import TemporaryLayerType from "./Domain/Model/Map/TemporaryLayerType"
+import { ApiRequest } from "./Infrastructure/Http/ApiRequest";
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -278,8 +279,13 @@ export default class MapManager {
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
-                        const cqlFilter = "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
-                        const payload = {
+                        let cqlFilter = "";
+                        if (opts["request"]["cql_filter"]) {
+                            cqlFilter = opts["request"]["cql_filter"] + " and ";
+                            //opts["request"]["cql_filter"] = null;
+                        }
+                        cqlFilter += "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
+                        const payload: ApiRequest = {
                             method: opts["request"]["method"],
                             params: opts["request"]["params"],
                             base_url: opts["request"]["base_url"] + "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter,
