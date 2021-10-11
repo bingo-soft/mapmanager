@@ -279,18 +279,22 @@ export default class MapManager {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
                         const cqlFilter = "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
-                        opts["request"]["base_url"] += "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter;
-                        if (opts["request"]["data"]) {
-                            opts["request"]["data"]["cql_filter"] = cqlFilter;
+                        const payload = {
+                            method: opts["request"]["method"],
+                            params: opts["request"]["params"],
+                            base_url: opts["request"]["base_url"] + "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter,
+                            headers: opts["request"]["headers"],
+                            data: opts["request"]["data"],
+                            axios_params: opts["request"]["axios_params"]
+                        };
+                        if (payload["data"]) {
+                            payload["data"]["cql_filter"] = cqlFilter;
                         } else {
-                            opts["request"]["data"] = {
-                                "cql_filter": cqlFilter
-                            }
+                            payload["data"] = { "cql_filter": cqlFilter };
                         }
-                        console.log(opts["request"]["data"]);
-                        console.log(opts["request"]["base_url"]);
+                        console.log(payload);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                        return await query.execute(opts["request"]);
+                        return await query.execute(payload);
                     });
             }
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "style")) {
