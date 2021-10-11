@@ -278,10 +278,9 @@ export default class MapManager {
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
-                        const cqlFilter = "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
-                        //opts["request"]["base_url"] += "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter;
-                        opts["request"]["base_url"] += "&srsname=" + layerSrs;
-                        /* if (opts["request"]["data"]) {
+                        /* const cqlFilter = "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
+                        opts["request"]["base_url"] += "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter;
+                        if (opts["request"]["data"]) {
                             opts["request"]["data"]["cql_filter"] = cqlFilter;
                         } else {
                             opts["request"]["data"] = {
