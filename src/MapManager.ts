@@ -295,6 +295,9 @@ export default class MapManager {
                         };
                         if (payload["data"]) {
                             payload["data"]["cql_filter"] = cqlFilter;
+                            payload["data"]["native_coordinate_system_id"] = opts["srs_handling"]["native_coordinate_system_id"];
+                            payload["data"]["declared_coordinate_system_id"] = opts["srs_handling"]["declared_coordinate_system_id"];
+                            payload["data"]["srs_handling_type"] = opts["srs_handling"]["srs_handling_type"];
                         } else {
                             payload["data"] = { "cql_filter": cqlFilter };
                         }
