@@ -25,6 +25,8 @@ import GeometryItem from "./Domain/Model/Feature/GeometryItem"
 import { CopyStyle, CutStyle } from "./Domain/Model/Style/ClipboardStyle"
 import TemporaryLayerType from "./Domain/Model/Map/TemporaryLayerType"
 import { ApiRequest } from "./Infrastructure/Http/ApiRequest";
+import { HttpMethod } from "./Infrastructure/Http/HttpMethod";
+import ExportType from "./Domain/Model/Map/ExportType";
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -91,12 +93,79 @@ export default class MapManager {
     }
 
     /**
-     * Prints map
+     * Exports map
      * @category Map
      * @param map - map instance
+     * @param exportType - type of export, defaults to ExportType.Printer
      */
-    public static print(map: Map): void {
-        map.print();
+    public static export(map: Map, exportType: ExportType = ExportType.Printer): void {
+        const olMap = map.getMap();
+        olMap.once("rendercomplete", () => {
+            // get map canvas through iterating its layers
+            const mapCanvas = document.createElement("canvas");
+            const size = olMap.getSize();
+            mapCanvas.width = size[0];
+            mapCanvas.height = size[1];
+            const mapContext = mapCanvas.getContext("2d");
+            const layers = document.getElementsByClassName("ol-layer");
+            Array.prototype.forEach.call(layers, (layer: any) => {
+                const canvas = layer.children[0];
+                if (canvas.width > 0) {
+                    const opacity = canvas.parentNode.style.opacity;
+                    mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                    const transform = canvas.style.transform;
+                    // Get the transform parameters from the style's transform matrix
+                    const matrix = transform
+                        .match(/^matrix\(([^\(]*)\)$/)[1]
+                        .split(',')
+                        .map(Number);
+                    // Apply the transform to the export map context
+                    CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                    mapContext.drawImage(canvas, 0, 0);
+                }
+            });
+            
+            let printContainer = document.getElementById("print-container");
+            if (printContainer) {
+                printContainer.remove();
+            }
+            printContainer = document.createElement("div");
+            printContainer.id = "print-container";
+            printContainer.style.display = "none";
+            document.body.appendChild(printContainer);
+            
+            const iframe = document.createElement("iframe");
+            printContainer.appendChild(iframe);
+
+            const img = document.createElement("img");
+            img.setAttribute("crossorigin", "anonymous");
+            const mimeType = exportType == ExportType.Printer ? "image/png" : "application/x-geotiff";
+            console.log(mimeType);
+            img.src = mapCanvas.toDataURL(mimeType); 
+            img.onload = async (): Promise<String>  => {
+                if (exportType == ExportType.Printer) {
+                    iframe.contentWindow.print();
+                } else if (exportType == ExportType.GeoTIFF) {
+                    const payload: ApiRequest = {
+                        method: HttpMethod.POST,
+                        base_url: "http://ya.ru",
+                        params: null,
+                        headers: null,
+                        data: {
+                            file: img.src,
+                            extent: olMap.getView().calculateExtent(),
+                            srsId: map.getSrsId()
+                        },
+                        axios_params: null
+                    };
+                    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                    return await query.execute(payload);
+                } else {
+
+                }
+            }
+            iframe.contentWindow.document.body.appendChild(img);
+        });
     }
    
     /**
@@ -282,8 +351,8 @@ export default class MapManager {
                         let cqlFilter = "";
                         if (opts["request"]["cql_filter"]) {
                             cqlFilter = opts["request"]["cql_filter"] + " and ";
-                            //opts["request"]["cql_filter"] = null;
                         }
+                        // TODO: opts["request"]["geometry_name"] => opts["request"]["data"]["field"]
                         cqlFilter += "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
                         const payload: ApiRequest = {
                             method: opts["request"]["method"],
@@ -299,7 +368,12 @@ export default class MapManager {
                             payload["data"]["declared_coordinate_system_id"] = opts["srs_handling"]["declared_coordinate_system_id"];
                             payload["data"]["srs_handling_type"] = opts["srs_handling"]["srs_handling_type"];
                         } else {
-                            payload["data"] = { "cql_filter": cqlFilter };
+                            payload["data"] = { 
+                                "cql_filter": cqlFilter,
+                                "native_coordinate_system_id": opts["srs_handling"]["native_coordinate_system_id"],
+                                "declared_coordinate_system_id": opts["srs_handling"]["declared_coordinate_system_id"],
+                                "srs_handling_type": opts["srs_handling"]["srs_handling_type"]
+                            };
                         }
                         console.log(payload);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
