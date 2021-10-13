@@ -17,11 +17,8 @@ import * as OlProj from "ol/proj";
 import OlOverlay from "ol/Overlay";
 import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
-import { Circle as OlCircleStyle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle } from "ol/style";
 import { Select as OlSelect } from "ol/interaction";
 import { Pixel } from "ol/pixel";
-import OlRenderEvent from "ol/render/Event";
-import {getVectorContext} from 'ol/render';
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -227,6 +224,14 @@ export default class Map {
      */
     public getMap(): OlMap {
         return this.map;
+    }
+
+    /**
+     * Returns map SRS id
+     * @return map SRS id
+     */
+     public getSrsId(): number {
+        return this.srsId;
     }
 
     /**
@@ -843,57 +848,6 @@ export default class Map {
             this.clipboard["features"].clear();
             this.clearSelectedFeatures();
         }
-    }
-
-    /**
-     * Prints map
-     */
-    public print(): void {
-        this.map.once("rendercomplete", () => {
-            // get map canvas through iterating its layers
-            const mapCanvas = document.createElement("canvas");
-            const size = this.map.getSize();
-            mapCanvas.width = size[0];
-            mapCanvas.height = size[1];
-            const mapContext = mapCanvas.getContext("2d");
-            const layers = document.getElementsByClassName("ol-layer");
-            Array.prototype.forEach.call(layers, (layer: any) => {
-                const canvas = layer.children[0];
-                if (canvas.width > 0) {
-                    const opacity = canvas.parentNode.style.opacity;
-                    mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
-                    const transform = canvas.style.transform;
-                    // Get the transform parameters from the style's transform matrix
-                    const matrix = transform
-                        .match(/^matrix\(([^\(]*)\)$/)[1]
-                        .split(',')
-                        .map(Number);
-                    // Apply the transform to the export map context
-                    CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
-                    mapContext.drawImage(canvas, 0, 0);
-                }
-            });
-            
-            let printContainer = document.getElementById("print-container");
-            if (printContainer) {
-                printContainer.remove();
-            }
-            printContainer = document.createElement("div");
-            printContainer.id = "print-container";
-            printContainer.style.display = "none";
-            document.body.appendChild(printContainer);
-            
-            const iframe = document.createElement("iframe");
-            printContainer.appendChild(iframe);
-
-			const img = document.createElement("img");
-            img.setAttribute("crossorigin", "anonymous");
-			img.src = mapCanvas.toDataURL("image/png");
-			img.onload = () => {
-    			iframe.contentWindow.print();
-			}
-            iframe.contentWindow.document.body.appendChild(img);
-        });
     }
 
     /**
