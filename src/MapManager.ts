@@ -27,6 +27,7 @@ import TemporaryLayerType from "./Domain/Model/Map/TemporaryLayerType"
 import { ApiRequest } from "./Infrastructure/Http/ApiRequest";
 import { HttpMethod } from "./Infrastructure/Http/HttpMethod";
 import ExportType from "./Domain/Model/Map/ExportType";
+import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -411,9 +412,24 @@ export default class MapManager {
      */
     public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
         const layer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
+        //MapManager.addToLayerFromGeoJSON(layer, geoJSON);
         geoJSON = Geometry.flattenGeometry(geoJSON);
         layer.addFeatures(geoJSON);
         return layer;
+    }
+
+    /**
+     * Adds features from GeoJSON string to layer
+     * @category Layer
+     * @param layer - layer to add to
+     * @param geoJSON - GeoJSON string representing features
+     */
+    public static addToLayerFromGeoJSON(layer: LayerInterface, geoJSON: string): void {
+        if (layer instanceof VectorLayer) {
+            layer.addFeatures(Geometry.flattenGeometry(geoJSON));
+        } else {
+            throw new MethodNotImplemented();
+        }
     }
 
     /**
