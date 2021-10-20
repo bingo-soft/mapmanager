@@ -88,7 +88,7 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Adds features to layer
-     * @param features - features as an array of OL feature instances or GeoJSON string
+     * @param features - features as an array of OL feature instances or as a GeoJSON string
      */
     public addFeatures(features: OlFeature[] | string): void {
         let addingFeatures: OlFeature[] = [];

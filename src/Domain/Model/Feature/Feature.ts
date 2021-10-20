@@ -413,7 +413,7 @@ export default class Feature {
      * @param srsId - SRS Id of feature text representation
      * @return feature
      */
-    public createGeometryFromText(layer:LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
+    public createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
         const formatInstance = this.getFormatInstance(format);
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
