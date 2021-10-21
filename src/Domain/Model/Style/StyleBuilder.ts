@@ -240,8 +240,13 @@ export default class StyleBuilder {
                 style = this.style[geomType];
             } else {
                 style = new OlStyle({
-                    stroke: new OlStroke(),
-                    fill: new OlFill(),
+                    stroke: new OlStroke({
+                        color: "#FF0000", 
+                        width: 2
+                    }),
+                    fill: new OlFill({
+                        color: "rgba(255, 255, 255, 0.4)",
+                    }),
                     image: new OlCircleStyle({
                         radius: 2,
                         fill: new OlFill(),
