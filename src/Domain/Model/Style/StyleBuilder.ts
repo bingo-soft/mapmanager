@@ -98,7 +98,7 @@ export default class StyleBuilder {
                 image: new OlCircleStyle({
                     radius: opts["size"] || 2,
                     fill: new OlFill({
-                        color: opts["color"] && opts["opacity"] ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
+                        color: opts["color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
                     }),
                     stroke: new OlStroke({
                         color: opts["color"],
@@ -153,7 +153,7 @@ export default class StyleBuilder {
                 width: opts["stroke_width"]
             }),
             fill: new OlFill({
-                color: opts["background_color"] && opts["opacity"] ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
+                color: opts["background_color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
             }),
         });
         this.style["Polygon"] = style;
@@ -198,7 +198,7 @@ export default class StyleBuilder {
      * @return style builder instance
      */
      private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
-        const opacity = opts["background_color"] && opts["opacity"] ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : null;
+        const opacity = opts["background_color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : null;
         const style = new OlStyle({
             image: new OlCircleStyle({
                 radius: opts["size"] || 2,
