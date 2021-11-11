@@ -345,7 +345,7 @@ export default class MapManager {
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();
-                        let mapSrs = projection.getCode();
+                        const mapSrs = projection.getCode();
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
