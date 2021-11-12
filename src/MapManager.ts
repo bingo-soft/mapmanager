@@ -101,6 +101,7 @@ export default class MapManager {
      */
     public static export(map: Map, exportType: ExportType = ExportType.Printer): void {
         const olMap = map.getMap();
+        olMap.updateSize();
         olMap.once("rendercomplete", () => {
             // get map canvas through iterating its layers
             const mapCanvas = document.createElement("canvas");
