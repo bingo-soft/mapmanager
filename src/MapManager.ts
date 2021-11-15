@@ -218,7 +218,7 @@ export default class MapManager {
      * @param map - map instance
      * @param opts - options
      */
-     public static setZoomInteraction(map: Map, opts: unknown): void {
+    public static setZoomInteraction(map: Map, opts: unknown): void {
         map.setZoomInteraction(opts["zoom_type"]);
     }
 
@@ -251,6 +251,16 @@ export default class MapManager {
      */
     public static setMeasureInteraction(map: Map, opts: unknown): void { 
        map.setMeasureInteraction(opts["measure_type"], opts["measure_popup_settings"], opts["measure_callback"]);
+    }
+
+    /**
+     * Sets map get coordinates by click interaction
+     * @category Interaction
+     * @param map - map instance
+     * @param opts - options
+     */
+    public static setMapCoordinatesInteraction(map: Map, opts: unknown): void {
+        map.setMapCoordinatesInteraction(opts["map_coordinates_callback"], opts["declared_coordinate_system_id"]);
     }
 
     /**
