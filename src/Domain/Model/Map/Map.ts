@@ -32,6 +32,7 @@ import DrawInteraction from "../Interaction/Impl/DrawInteraction";
 import ZoomInteraction from "../Interaction/Impl/ZoomInteraction";
 import ZoomType from "../Interaction/Impl/ZoomType";
 import SelectInteraction from "../Interaction/Impl/SelectInteraction";
+import MapCoordinatesInteraction from "../Interaction/Impl/MapCoordinatesInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
 import MethodNotImplemented from "../../Exception/MethodNotImplemented";
 import InteractionNotSupported from "../../Exception/InteractionNotSupported";
@@ -39,7 +40,7 @@ import EventBus from "../EventHandlerCollection/EventBus";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
-import { DrawCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
+import { DrawCallbackFunction, MapCoordinatesCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
 import CursorType from "./CursorType";
 import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
@@ -51,7 +52,6 @@ import StyleBuilder from "../Style/StyleBuilder";
 import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
 import { SearchMarkerStyle } from "../Style/SearchMarkerStyle";
 import TemporaryLayerType from "./TemporaryLayerType";
-
 
 
 /** Map */
@@ -474,6 +474,17 @@ export default class Map {
         this.clearInteractions();
         this.interaction = new MeasureInteraction(type, popupSettings, this, callback);
         this.addInteraction(this.interaction);  
+    }
+
+    /**
+     * Sets map get coordinates by click interaction
+     * @param callback - callback function returning coordinates
+     * @param srsId - SRS Id to return coordinates in
+     */
+    public setMapCoordinatesInteraction(callback: MapCoordinatesCallbackFunction, srsId?: number): void {
+        this.clearInteractions(); 
+        this.interaction = new MapCoordinatesInteraction(this, callback, srsId);
+        this.addInteraction(this.interaction);        
     }
 
      /**

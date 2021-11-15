@@ -22,7 +22,7 @@ export default abstract class BaseInteraction implements InteractionInterface
      * Returns interaction type
      * @return interaction type
      */
-    public  getType(): InteractionType {
+    public getType(): InteractionType {
         return this.type;
     }
 
