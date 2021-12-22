@@ -141,7 +141,7 @@ export default class MapManager {
 
             const img = document.createElement("img");
             img.setAttribute("crossorigin", "anonymous");
-            const mimeType = exportType == ExportType.Printer ? "image/png" : "application/x-geotiff";
+            const mimeType = exportType == ExportType.Printer || ExportType.PNG ? "image/png" : "application/x-geotiff";
             console.log(mimeType);
             img.src = mapCanvas.toDataURL(mimeType); 
             img.onload = async (): Promise<String>  => {
@@ -162,8 +162,15 @@ export default class MapManager {
                     };
                     const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                     return await query.execute(payload);
-                } else {
-
+                } else if (exportType == ExportType.PNG) {
+                    mapCanvas.toBlob((blob: Blob): void => {
+                        const link = document.createElement("a");
+                        link.style.display = "none";
+                        link.href = URL.createObjectURL(blob);
+                        link.download = "map.png";
+                        link.click();
+                    }, mimeType);
+                
                 }
             }
             iframe.contentWindow.document.body.appendChild(img);
