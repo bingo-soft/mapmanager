@@ -121,7 +121,6 @@ export default class Feature {
 
     /**
      * Unhighlights feature
-     * @category Feature
      * @param feature - feature to unhighlight
      */
     public unhighlight(): void {
