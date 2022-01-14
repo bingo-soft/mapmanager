@@ -1,5 +1,6 @@
 enum EventType {
     Click = "click",
+    PointerMove = "pointermove",
     KeyDown = "keydown",
     Change = "change",
     MoveEnd = "moveend",
@@ -12,7 +13,6 @@ enum EventType {
     ScaleFeature = "scaleend",
     DrawStart = "drawstart", 
     DrawEnd = "drawend",
-    PointerMove = "pointermove",
     SourceChange = "sourcechange",
     TileLoadStart = "tileloadstart",
     TileLoadError = "tileloaderror",

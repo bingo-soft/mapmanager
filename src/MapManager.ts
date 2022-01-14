@@ -99,82 +99,8 @@ export default class MapManager {
      * @param map - map instance
      * @param exportType - type of export, defaults to ExportType.Printer
      */
-    public static export(map: Map, exportType: ExportType = ExportType.Printer): void {
-        const olMap = map.getMap();
-        olMap.updateSize();
-        olMap.once("rendercomplete", () => {
-            // get map canvas through iterating its layers
-            const mapCanvas = document.createElement("canvas");
-            const size = olMap.getSize();
-            mapCanvas.width = size[0];
-            mapCanvas.height = size[1];
-            const mapContext = mapCanvas.getContext("2d");
-            const layers = document.getElementsByClassName("ol-layer");
-            Array.prototype.forEach.call(layers, (layer: any) => {
-                const canvas = layer.children[0];
-                if (canvas.width > 0) {
-                    const opacity = canvas.parentNode.style.opacity;
-                    mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
-                    const transform = canvas.style.transform;
-                    // Get the transform parameters from the style's transform matrix
-                    const matrix = transform
-                        .match(/^matrix\(([^\(]*)\)$/)[1]
-                        .split(',')
-                        .map(Number);
-                    // Apply the transform to the export map context
-                    CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
-                    mapContext.drawImage(canvas, 0, 0);
-                }
-            });
-            
-            let printContainer = document.getElementById("print-container");
-            if (printContainer) {
-                printContainer.remove();
-            }
-            printContainer = document.createElement("div");
-            printContainer.id = "print-container";
-            printContainer.style.display = "none";
-            document.body.appendChild(printContainer);
-            
-            const iframe = document.createElement("iframe");
-            printContainer.appendChild(iframe);
-
-            const img = document.createElement("img");
-            img.setAttribute("crossorigin", "anonymous");
-            const mimeType = exportType == ExportType.Printer || ExportType.PNG ? "image/png" : "application/x-geotiff";
-            console.log(mimeType);
-            img.src = mapCanvas.toDataURL(mimeType); 
-            img.onload = async (): Promise<String>  => {
-                if (exportType == ExportType.Printer) {
-                    iframe.contentWindow.print();
-                } else if (exportType == ExportType.GeoTIFF) {
-                    const payload: ApiRequest = {
-                        method: HttpMethod.POST,
-                        base_url: "http://ya.ru",
-                        params: null,
-                        headers: null,
-                        data: {
-                            file: img.src,
-                            extent: olMap.getView().calculateExtent(),
-                            srsId: map.getSrsId()
-                        },
-                        axios_params: null
-                    };
-                    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                    return await query.execute(payload);
-                } else if (exportType == ExportType.PNG) {
-                    mapCanvas.toBlob((blob: Blob): void => {
-                        const link = document.createElement("a");
-                        link.style.display = "none";
-                        link.href = URL.createObjectURL(blob);
-                        link.download = "map.png";
-                        link.click();
-                    }, mimeType);
-                
-                }
-            }
-            iframe.contentWindow.document.body.appendChild(img);
-        });
+    public static async export(map: Map, exportType: ExportType = ExportType.Printer): Promise<unknown> {
+        return await map.export(exportType);
     }
    
     /**
@@ -261,13 +187,20 @@ export default class MapManager {
     }
 
     /**
-     * Sets map get coordinates by click interaction
+     * Sets map get coordinates by click or pointer move interaction
      * @category Interaction
      * @param map - map instance
-     * @param opts - options
+     * @param opts
+     * ```Options
+     * Options:
+     * Name                             Type                           Description
+     * "type"                           string                         Interaction type ("click" or "pointermove")
+     * "map_coordinates_callback"       function(number[], string)     Callback function returning coordinates and map projection code
+     * "declared_coordinate_system_id"  integer                        SRS Id to return coordinates in
+     * ```
      */
     public static setMapCoordinatesInteraction(map: Map, opts: unknown): void {
-        map.setMapCoordinatesInteraction(opts["map_coordinates_callback"], opts["declared_coordinate_system_id"]);
+        map.setMapCoordinatesInteraction(opts["type"], opts["map_coordinates_callback"], opts["declared_coordinate_system_id"]);
     }
 
     /**
@@ -307,7 +240,6 @@ export default class MapManager {
      * @param opts
      * ```Options
      * Options:
-     * 
      * Name                         Type           Description
      * "request"                    object         HTTP Request options
      * - "method"                   string         HTTP Method of the request

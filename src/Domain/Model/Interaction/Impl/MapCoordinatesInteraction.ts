@@ -15,21 +15,21 @@ export default class MapCoordinatesInteraction extends BaseInteraction {
      * @param callback - callback function returning coordinates
      * @param srsId - SRS Id to return coordinates in
      */
-    constructor(map: Map, callback: MapCoordinatesCallbackFunction, srsId?: number) {
+    constructor(map: Map, type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number) {
         super();
         const olMap = map.getMap();
+        const mapProj = olMap.getView().getProjection().getCode();
         this.eventHandlers = new EventHandlerCollection(olMap);
-        this.eventHandlers.add(EventType.Click, "MapCoordinatesEventHandler", (e: OlMapBrowserEvent): void => {
+        this.eventHandlers.add(type, "MapCoordinatesEventHandler", (e: OlMapBrowserEvent): void => {
             let coordinate = e.coordinate;
             if (srsId !== undefined) {
-                const mapProj = olMap.getView().getProjection().getCode();
                 const retProj = "EPSG:" + srsId.toString();
                 if (mapProj != retProj) {
                     coordinate = OlProj.transform(coordinate, mapProj, retProj);
                 }
             }
             if (typeof callback == 'function') {
-                callback(coordinate);
+                callback(coordinate, mapProj);
             }
         });
     }
