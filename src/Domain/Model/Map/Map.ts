@@ -52,6 +52,7 @@ import StyleBuilder from "../Style/StyleBuilder";
 import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
 import { SearchMarkerStyle } from "../Style/SearchMarkerStyle";
 import TemporaryLayerType from "./TemporaryLayerType";
+import ExportType from "./ExportType";
 
 
 /** Map */
@@ -481,9 +482,9 @@ export default class Map {
      * @param callback - callback function returning coordinates
      * @param srsId - SRS Id to return coordinates in
      */
-    public setMapCoordinatesInteraction(callback: MapCoordinatesCallbackFunction, srsId?: number): void {
+    public setMapCoordinatesInteraction(type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number): void {
         this.clearInteractions(); 
-        this.interaction = new MapCoordinatesInteraction(this, callback, srsId);
+        this.interaction = new MapCoordinatesInteraction(this, type, callback, srsId);
         this.addInteraction(this.interaction);        
     }
 
@@ -651,8 +652,26 @@ export default class Map {
      * Fits map to given extent
      * @param extent - extent to fit to
      */
-    public fitExtent(extent: number[]): void {
+    /* public fitExtent(extent: number[]): void {
         this.map.getView().fit(<OlExtent.Extent> extent);
+    } */
+
+    /**
+     * Fits map to given features extent
+     * @param features - features
+     * @param zoom - zoom to set after fit
+     */
+     public fitFeatures(features: FeatureCollection, zoom?: number): void {
+        const geometries = features.getFeatureGeometries();
+        const gc = new GeometryCollection(geometries);
+        const view = this.map.getView();
+        if (geometries.length) {
+            const extent = OlExtent.buffer(gc.getExtent(), 10);
+            view.fit(extent);
+        }
+        if (typeof zoom !== "undefined") {
+            view.setZoom(zoom);
+        }
     }
 
     /**
@@ -664,33 +683,8 @@ export default class Map {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
-        let extent = (<OlVectorSource> layer.getSource()).getExtent();
-        if (extent[0] !== Infinity && extent[1] !== Infinity && extent[2] !== -Infinity && extent[3] !== -Infinity) {
-            extent = OlExtent.buffer(extent, 0);
-            const view = this.map.getView();
-            view.fit(extent);
-            if (typeof zoom !== "undefined") {
-                view.setZoom(zoom);
-            }
-        }
-    }
-
-    /**
-     * Fits map to given features extent
-     * @param features - features
-     * @param zoom - zoom to set after fit
-     */
-    public fitFeatures(features: FeatureCollection, zoom?: number): void {
-        const geometries = features.getFeatureGeometries();
-        const gc = new GeometryCollection(geometries);
-        const view = this.map.getView();
-        if (geometries.length) {
-            const extent = OlExtent.buffer(gc.getExtent(), 10);
-            view.fit(extent);
-        }
-        if (typeof zoom !== "undefined") {
-            view.setZoom(zoom);
-        }
+        const features = (<OlVectorSource> layer.getSource()).getFeatures();
+        this.fitFeatures(new FeatureCollection(features), zoom);
     }
 
     /**
@@ -862,8 +856,82 @@ export default class Map {
     }
 
     /**
-     * Pastes features from clipboard
-     * @param layer - layer instance to paste to
+     * Exports map
+     * @category Map
+     * @param exportType - type of export, defaults to ExportType.Printer
+     */
+    public export(exportType: ExportType = ExportType.Printer): Promise<unknown> {
+        return new Promise((resolve): void => {
+            this.map.updateSize();
+            this.map.once("rendercomplete", () => {
+                // get map canvas through iterating its layers
+                const mapCanvas = document.createElement("canvas");
+                const size = this.map.getSize();
+                mapCanvas.width = size[0];
+                mapCanvas.height = size[1];
+                const mapContext = mapCanvas.getContext("2d");
+                const layers = document.getElementsByClassName("ol-layer");
+                Array.prototype.forEach.call(layers, (layer: any) => {
+                    const canvas = layer.children[0];
+                    if (canvas.width > 0) {
+                        const opacity = canvas.parentNode.style.opacity;
+                        mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                        const transform = canvas.style.transform;
+                        // Get the transform parameters from the style's transform matrix
+                        const matrix = transform
+                            .match(/^matrix\(([^\(]*)\)$/)[1]
+                            .split(',')
+                            .map(Number);
+                        // Apply the transform to the export map context
+                        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                        mapContext.drawImage(canvas, 0, 0);
+                    }
+                });
+                
+                let printContainer = document.getElementById("print-container");
+                if (printContainer) {
+                    printContainer.remove();
+                }
+                printContainer = document.createElement("div");
+                printContainer.id = "print-container";
+                printContainer.style.display = "none";
+                document.body.appendChild(printContainer);
+                
+                const iframe = document.createElement("iframe");
+                printContainer.appendChild(iframe);
+
+                const img = document.createElement("img");
+                img.setAttribute("crossorigin", "anonymous");
+                const mimeType = exportType == ExportType.Printer || ExportType.PNG ? "image/png" : "application/x-geotiff";
+                img.src = mapCanvas.toDataURL(mimeType); 
+                img.onload = (): void => {
+                    if (exportType == ExportType.Printer) {
+                        iframe.contentWindow.print();
+                        iframe.contentWindow.document.body.appendChild(img);
+                    } else if (exportType == ExportType.GeoTIFF) {
+                        resolve({
+                            image: img.src, 
+                            extent: this.map.getView().calculateExtent(),
+                            srsId: this.getSrsId()
+                        });
+                    } else if (exportType == ExportType.PNG) {
+                        mapCanvas.toBlob((blob: Blob): void => {
+                            const link = document.createElement("a");
+                            link.style.display = "none";
+                            link.href = URL.createObjectURL(blob);
+                            link.download = "map.png";
+                            link.click();
+                        }, mimeType);
+                    }
+                }
+                iframe.contentWindow.document.body.appendChild(img);
+            });
+        });
+    }
+
+    /**
+     * Shows feature popup
+     * @param pixel - pixel coordinates
      */
     private showFeaturePopup(pixel: Pixel): void {
         const featurePopupElement = this.featurePopupOverlay.getElement();
@@ -886,4 +954,6 @@ export default class Map {
             }
         });
     }
+
+
 }
