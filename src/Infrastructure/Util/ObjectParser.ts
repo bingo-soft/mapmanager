@@ -11,7 +11,7 @@ export default class ObjectParser {
         const arr = [...template.matchAll(reg)];
         arr.forEach((item) => {
             const reg = new RegExp("{{\\s*(" + item[2] + ")\\s*}}", "g");
-            template = template.replace(reg, data[item[2]]);
+            template = template.replace(reg, this.parseAttributeValue(data[item[2]], "name"));
         });
         return template;
     }
@@ -21,12 +21,19 @@ export default class ObjectParser {
      * @param value - value to parse
      * @return parsed value
      */
-    public static parseAttributeValue(value: unknown): string {
+    public static parseAttributeValue(value: unknown, objectKeyToReturn: string = "id"): string {
         if (typeof value == "object") {
-            if ((<any> value).id) {
-                return (<any> value).id.toString();
-            } else if (value[0] && (<any> value[0]).id) {
-                return (<any> value[0]).id.toString();
+            objectKeyToReturn = objectKeyToReturn.toLowerCase();
+            if (value[objectKeyToReturn]) {
+                return value[objectKeyToReturn].toString();
+            } else if (Array.isArray(value)) {
+                let values = "";
+                value.forEach((item: unknown): void => {
+                    if (item[objectKeyToReturn]) {
+                        values += item[objectKeyToReturn] + ", ";
+                    }
+                });
+                return values.substring(0, values.length - 2);
             } else {
                 return "";
             }
