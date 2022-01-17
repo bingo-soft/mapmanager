@@ -82,6 +82,16 @@ export default class LayerBuilder {
     }
 
     /**
+     * Sets layer's loader
+     * @param loader - loader function
+     * @return layer builder instance
+     */
+     public setLoaderUrl(url: string): LayerBuilder {
+        this.layer.setLoaderUrl(url);
+        return this;
+    }
+
+    /**
      * Sets layer's source url
      * @param url - source url
      * @return layer builder instance

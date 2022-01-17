@@ -86,6 +86,18 @@ export default interface LayerInterface
      * @param loader - loader function
      */
     setLoader(loader: LoaderFunction): void;
+
+    /**
+     * Returns layer's loader function source url 
+     * @return layer's SRS
+     */
+    getLoaderUrl(): string;
+
+    /**
+     * Sets layer's source url via loader function
+     * @return layer's SRS
+     */
+    setLoaderUrl(url: string): void;
     
     /**
      * Sets layer source url
