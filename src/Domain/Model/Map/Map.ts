@@ -661,7 +661,7 @@ export default class Map {
      * @param features - features
      * @param zoom - zoom to set after fit
      */
-     public fitFeatures(features: FeatureCollection, zoom?: number): void {
+    public fitFeatures(features: FeatureCollection, zoom?: number): void {
         const geometries = features.getFeatureGeometries();
         const gc = new GeometryCollection(geometries);
         const view = this.map.getView();
