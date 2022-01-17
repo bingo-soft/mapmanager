@@ -292,7 +292,10 @@ export default class MapManager {
             if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
             }
-            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) { 
+            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) {
+                    if (opts["request"]["base_url"]) {
+                        builder.setLoaderUrl(opts["request"]["base_url"]);
+                    }
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();
                         const mapSrs = projection.getCode();
@@ -326,7 +329,7 @@ export default class MapManager {
                                 "srs_handling_type": opts["srs_handling"]["srs_handling_type"]
                             };
                         }
-                        console.log(payload);
+                        //console.log(payload);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(payload);
                     });
@@ -336,6 +339,7 @@ export default class MapManager {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
+                builder.setLoaderUrl(opts["url"]);
             }
             if (type == SourceType.TileWMS && Object.prototype.hasOwnProperty.call(opts, "params")) { 
                 builder.setParams(opts["params"]);
@@ -393,9 +397,30 @@ export default class MapManager {
     }
 
     /**
-     * Returns features of the layer as single geometry GeoJSON
+     * Returns total feature count of the layer (not only bounded by bbox or cql filter)
      * @category Layer
      * @param layer - layer instance
+     * @return a promise with feature count
+     */
+    public static async getFeatureCountTotal(layer: LayerInterface): Promise<number> {
+        const payload: ApiRequest = {
+            method: HttpMethod.GET,
+            base_url: layer.getLoaderUrl(),
+            "axios_params": {
+                "hideNotification": true
+            }        
+        };
+        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+        const data = await query.execute(payload);
+        return new Promise((resolve): void => {
+            resolve(data["features"].length);
+        });
+    }
+
+    /**
+     * Returns features as single geometry GeoJSON
+     * @category Feature
+     * @param features - feature collection
      * @param srsId - SRS Id of returned features
      * @return GeoJSON representing features as single geometry
      */
@@ -404,9 +429,9 @@ export default class MapManager {
     }
 
     /**
-     * Returns features of the layer as multi geometry GeoJSON
+     * Returns features as multi geometry GeoJSON
      * @category Layer
-     * @param layer - layer instance
+     * @param features - feature collection
      * @param srsId - SRS Id of returned features
      * @return GeoJSON representing features as multi geometry
      */
@@ -415,16 +440,16 @@ export default class MapManager {
     }
 
     /**
-     * Returns features of the layer as GeometryCollection GeoJSON
+     * Returns features as GeometryCollection GeoJSON
      * @category Layer
-     * @param layer - layer instance
+     * @param features - feature collection
      * @param srsId - SRS Id of returned features
      * @return GeoJSON representing features as GeometryCollection
      */
     public static getFeaturesAsGeometryCollection(features: FeatureCollection, srsId: number): string {
         return features.getAsGeometryCollection(srsId);
     }
-
+    
     /**
      * Adds features to map
      * @category Feature
