@@ -408,7 +408,7 @@ export default class Map {
         if (layer.getType() != SourceType.Vector) {
             throw new InteractionNotSupported(InteractionType.Draw);
         }
-        this.clearInteractions();
+        this.clearInteractions([InteractionType.Draw]);
         this.interaction = new DrawInteraction(layer, geometryType, callback);
         this.addInteraction(this.interaction);        
     }
@@ -418,7 +418,7 @@ export default class Map {
      * @param type - zoom type
      */
     public setZoomInteraction(type: ZoomType): void {
-        this.clearInteractions(); 
+        this.clearInteractions([InteractionType.Zoom]); 
         this.interaction = new ZoomInteraction(type, this);
         this.addInteraction(this.interaction);        
     }
@@ -438,7 +438,7 @@ export default class Map {
                 }
             });
         }
-        this.clearInteractions();
+        this.clearInteractions([InteractionType.Select]);
         this.interaction = new SelectInteraction(type, this, layers, multiple, callback);
         this.addInteraction(this.interaction);
         return this.interaction;
@@ -472,7 +472,7 @@ export default class Map {
      * @param popupSettings - popup settings
      */
     public setMeasureInteraction(type: MeasureType, popupSettings: unknown, callback?: MeasureCallbackFunction): void {
-        this.clearInteractions();
+        this.clearInteractions([InteractionType.Measure]);
         this.interaction = new MeasureInteraction(type, popupSettings, this, callback);
         this.addInteraction(this.interaction);  
     }
@@ -483,7 +483,7 @@ export default class Map {
      * @param srsId - SRS Id to return coordinates in
      */
     public setMapCoordinatesInteraction(type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number): void {
-        this.clearInteractions(); 
+        this.clearInteractions([InteractionType.MapCoordinates]); 
         this.interaction = new MapCoordinatesInteraction(this, type, callback, srsId);
         this.addInteraction(this.interaction);        
     }

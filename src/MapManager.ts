@@ -1,6 +1,7 @@
 import * as OlProj from "ol/proj";
 import OlProjection from "ol/proj/Projection";
 import { Extent as OlExtent } from "ol/extent";
+import * as proj4 from "proj4"
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
@@ -835,6 +836,20 @@ export default class MapManager {
      */
     public static polygonToLine(feature: Feature): Feature {
         return feature.polygonToLine();
+    }
+
+    /**
+     * Registers a new projection
+     * @category Misc
+     * @param code - projection EPSG:XXXX code
+     * @param definition - projection definition in Proj4 format
+     * @param extent - projection extent
+     */
+    public static addProjection(code: string, definition: string, extent?: number[]): void {
+        proj4.defs(code, definition);
+        if (extent && extent.length == 4) {
+            OlProj.get(code).setExtent(<OlExtent> extent);
+        }
     }
 
 }

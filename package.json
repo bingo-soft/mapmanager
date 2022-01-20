@@ -1,6 +1,6 @@
 {
   "name": "@bingo_soft/mapmanager",
-  "version": "1.61.0",
+  "version": "1.62.0",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "repository": {
@@ -37,6 +37,7 @@
     "axios": "^0.18.1",
     "ol": "6.5.0",
     "ol-ext": "^3.1.17",
+    "proj4": "^2.7.5",
     "src": "^1.1.2"
   },
   "devDependencies": {
@@ -45,6 +46,7 @@
     "@babel/preset-typescript": "^7.14.5",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.3.0",
+    "@types/proj4": "^2.5.2",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
     "eslint": "^7.18.0",
