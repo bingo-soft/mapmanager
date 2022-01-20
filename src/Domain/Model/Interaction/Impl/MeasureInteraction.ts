@@ -15,6 +15,7 @@ import Map from "../../Map/Map";
 import { MeasureCallbackFunction } from "../InteractionCallbackType";
 import { Coordinate } from "ol/coordinate";
 import TemporaryLayerType from "../../Map/TemporaryLayerType";
+import InteractionType from "../InteractionType";
 
 /** MeasureInteraction */
 export default class MeasureInteraction extends BaseInteraction {
@@ -38,6 +39,7 @@ export default class MeasureInteraction extends BaseInteraction {
                 break;
             default:
         }
+        this.type = InteractionType.Measure;
     
         const layer = map.createTemporaryLayer(TemporaryLayerType.Measure);
         map.setDrawInteraction(layer, realType);

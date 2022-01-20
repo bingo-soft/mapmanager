@@ -4,7 +4,9 @@ enum InteractionType {
     Select = "select",
     Zoom = "zoom",
     Modify = "modify",
-    Transform = "transform"
+    Transform = "transform",
+    Measure = "measure",
+    MapCoordinates = "mapcoordinates"
 }
 
 export default InteractionType;

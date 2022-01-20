@@ -6,6 +6,7 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import MethodNotImplemented from "../../../Exception/MethodNotImplemented";
 import { MapCoordinatesCallbackFunction } from "../InteractionCallbackType";
+import InteractionType from "../InteractionType";
 
 /** MapCoordinatesInteraction */
 export default class MapCoordinatesInteraction extends BaseInteraction {
@@ -17,6 +18,7 @@ export default class MapCoordinatesInteraction extends BaseInteraction {
      */
     constructor(map: Map, type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number) {
         super();
+        this.type = InteractionType.MapCoordinates;
         const olMap = map.getMap();
         const mapProj = olMap.getView().getProjection().getCode();
         this.eventHandlers = new EventHandlerCollection(olMap);

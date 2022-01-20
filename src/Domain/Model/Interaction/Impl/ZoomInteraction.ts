@@ -6,6 +6,7 @@ import Map from "../../Map/Map";
 import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import MethodNotImplemented from "../../../Exception/MethodNotImplemented";
+import InteractionType from "../InteractionType";
 
 /** ZoomInteraction */
 export default class ZoomInteraction extends BaseInteraction {
@@ -16,6 +17,7 @@ export default class ZoomInteraction extends BaseInteraction {
      */
     constructor(type: ZoomType, map: Map) {
         super();
+        this.type = InteractionType.Zoom;
         this.eventHandlers = new EventHandlerCollection(map.getMap());
         this.eventHandlers.add(EventType.Click, "ZoomEventHandler", (e: OlBaseEvent): void => {
             const zoom = map.getMap().getView().getZoom();
