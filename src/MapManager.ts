@@ -95,6 +95,17 @@ export default class MapManager {
     }
 
     /**
+     * Transforms coordinates from map projection to given one
+     * @category Map
+     * @param map - map instance
+     * @param coordinates - coordinates
+     * @param srsId - SRS Id (e.g. 4326)
+     */
+    public static transformCoordinates(map: Map, coordinates: number[], srsId: number): number[] {
+        return map.transformCoordinates(coordinates, srsId);
+    }
+
+    /**
      * Exports map
      * @category Map
      * @param map - map instance
