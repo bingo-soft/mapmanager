@@ -1,4 +1,5 @@
 import * as OlProj from "ol/proj";
+import { register as OlProjRegister } from 'ol/proj/proj4';
 import OlProjection from "ol/proj/Projection";
 import { Extent as OlExtent } from "ol/extent";
 import * as proj4 from "proj4"
@@ -856,8 +857,9 @@ export default class MapManager {
      * @param definition - projection definition in Proj4 format
      * @param extent - projection extent
      */
-    public static addProjection(code: string, definition: string, extent?: number[]): void {
-        proj4.defs(code, definition);
+    public static addProjection(code: string, definition: string, extent?: number[]): void { console.log(proj4);
+        proj4.default.defs(code, definition);
+        OlProjRegister(proj4.default);
         if (extent && extent.length == 4) {
             OlProj.get(code).setExtent(<OlExtent> extent);
         }
