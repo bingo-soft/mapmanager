@@ -909,10 +909,18 @@ export default class Map {
                         iframe.contentWindow.print();
                         iframe.contentWindow.document.body.appendChild(img);
                     } else if (exportType == ExportType.GeoTIFF) {
+                        const extent = this.map.getView().calculateExtent();
+                        const bottomLeft = OlExtent.getBottomLeft(extent);
+                        const topRight = OlExtent.getTopRight(extent);
                         resolve({
-                            image: img.src, 
-                            extent: this.map.getView().calculateExtent(),
-                            srsId: this.getSrsId()
+                            file: img.src, 
+                            extent: {
+                                "xmin": bottomLeft[0],
+                                "ymin": bottomLeft[1],
+                                "xmax": topRight[0],
+                                "ymax": topRight[1]
+                            },
+                            srid: this.getSrsId()
                         });
                     } else if (exportType == ExportType.PNG) {
                         mapCanvas.toBlob((blob: Blob): void => {
