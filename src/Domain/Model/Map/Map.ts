@@ -483,7 +483,7 @@ export default class Map {
      * @param srsId - SRS Id to return coordinates in
      */
     public setMapCoordinatesInteraction(type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number): void {
-        this.clearInteractions([InteractionType.MapCoordinates]); 
+        //this.clearInteractions([InteractionType.MapCoordinates]); 
         this.interaction = new MapCoordinatesInteraction(this, type, callback, srsId);
         this.addInteraction(this.interaction);        
     }
