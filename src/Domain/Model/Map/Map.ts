@@ -902,7 +902,8 @@ export default class Map {
 
                 const img = document.createElement("img");
                 img.setAttribute("crossorigin", "anonymous");
-                const mimeType = exportType == ExportType.Printer || ExportType.PNG ? "image/png" : "application/x-geotiff";
+                //const mimeType = (exportType == ExportType.Printer || exportType == ExportType.PNG) ? "image/png" : "image/tiff";
+                const mimeType = "image/png";
                 img.src = mapCanvas.toDataURL(mimeType); 
                 img.onload = (): void => {
                     if (exportType == ExportType.Printer) {

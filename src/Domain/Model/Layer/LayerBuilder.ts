@@ -9,6 +9,7 @@ import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import LoaderFunction from "./LoaderFunctionType";
+import { unkinkPolygon } from "@turf/turf";
 
 /** LayerBuilder */
 export default class LayerBuilder {
@@ -86,8 +87,8 @@ export default class LayerBuilder {
      * @param loader - loader function
      * @return layer builder instance
      */
-     public setLoaderUrl(url: string): LayerBuilder {
-        this.layer.setLoaderUrl(url);
+     public setLoaderData(data: unknown): LayerBuilder {
+        this.layer.setLoaderData(data);
         return this;
     }
 

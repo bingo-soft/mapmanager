@@ -307,7 +307,8 @@ export default class MapManager {
             }
             if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) {
                     if (opts["request"]["base_url"]) {
-                        builder.setLoaderUrl(opts["request"]["base_url"]);
+                        //builder.setLoaderUrl(opts["request"]["base_url"]);
+                        builder.setLoaderData(opts["request"]);
                     }
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();
@@ -352,7 +353,7 @@ export default class MapManager {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
-                builder.setLoaderUrl(opts["url"]);
+                builder.setLoaderData({"url": opts["url"]});
             }
             if (type == SourceType.TileWMS && Object.prototype.hasOwnProperty.call(opts, "params")) { 
                 builder.setParams(opts["params"]);
@@ -416,18 +417,18 @@ export default class MapManager {
      * @return a promise with feature count
      */
     public static async getFeatureCountTotal(layer: LayerInterface): Promise<number> {
+        const loaderData = layer.getLoaderData();
+        const url = loaderData["base_url"] ? loaderData["base_url"] + "/count" : loaderData["url"];
         const payload: ApiRequest = {
             method: HttpMethod.GET,
-            base_url: layer.getLoaderUrl(),
+            base_url: url,
             "axios_params": {
                 "hideNotification": true
             }        
         };
         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
         const data = await query.execute(payload);
-        return new Promise((resolve): void => {
-            resolve(data["features"].length);
-        });
+        return Promise.resolve(loaderData["base_url"] ? data["count"] : data["features"].length);
     }
 
     /**
@@ -542,8 +543,25 @@ export default class MapManager {
      * @param layer - layer instance
      * @param zoom - zoom after fit
      */
-    public static fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
+    public static async fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
         map.fitLayer(layer, zoom);
+        /* const loaderData = layer.getLoaderData();
+        let payload: unknown = {};
+        if (loaderData["base_url"]) {
+            loaderData["base_url"] += "/extent";
+            payload = <ApiRequest> loaderData;
+        } else {
+            payload = <ApiRequest> {
+                method: HttpMethod.GET,
+                base_url: loaderData["url"],
+                "axios_params": {
+                    "hideNotification": true
+                }        
+            };
+        }
+        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+        const data = await query.execute(payload);
+        return Promise.resolve(data["features"].length); */
     }
 
     /**
@@ -857,7 +875,7 @@ export default class MapManager {
      * @param definition - projection definition in Proj4 format
      * @param extent - projection extent
      */
-    public static addProjection(code: string, definition: string, extent?: number[]): void { console.log(proj4);
+    public static addProjection(code: string, definition: string, extent?: number[]): void {
         proj4.default.defs(code, definition);
         OlProjRegister(proj4.default);
         if (extent && extent.length == 4) {
