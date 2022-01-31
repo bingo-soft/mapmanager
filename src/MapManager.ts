@@ -543,7 +543,7 @@ export default class MapManager {
      * @param layer - layer instance
      * @param zoom - zoom after fit
      */
-    public static async fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
+    public static fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
         map.fitLayer(layer, zoom);
         /* const loaderData = layer.getLoaderData();
         let payload: unknown = {};
