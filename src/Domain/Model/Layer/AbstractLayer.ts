@@ -23,7 +23,7 @@ export default abstract class AbstractLayer implements LayerInterface
     protected eventHandlers: EventHandlerCollection;
     protected eventBus: EventBus;
     protected map: Map;
-    protected loaderData: unknown;
+    protected loaderOptions: unknown;
 
     /**
      * Returns Openlayers layer instance
@@ -125,19 +125,19 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Returns layer's loader function source url 
+     * Returns layer's options
      * @return layer's SRS
      */
-    public getLoaderData(): unknown {
-        return this.loaderData;
+    public getLoaderOptions(): unknown {
+        return this.loaderOptions;
     }
 
     /**
-     * Sets layer's source url via loader function
+     * Sets layer's options
      * @return layer's SRS
      */
-    public setLoaderData(data: unknown): void {
-        this.loaderData = data;
+    public setLoaderOptions(options: unknown): void {
+        this.loaderOptions = options;
     }
 
     /**
