@@ -83,12 +83,12 @@ export default class LayerBuilder {
     }
 
     /**
-     * Sets layer's loader
-     * @param loader - loader function
+     * Sets layer's options
+     * @param options - options
      * @return layer builder instance
      */
-     public setLoaderData(data: unknown): LayerBuilder {
-        this.layer.setLoaderData(data);
+     public setLoaderOptions(options: unknown): LayerBuilder {
+        this.layer.setLoaderOptions(options);
         return this;
     }
 
