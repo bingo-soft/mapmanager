@@ -66,7 +66,10 @@ export default class FeatureCollection {
     public getFeatureGeometries(): OlGeometry[] {
         const ret: OlGeometry[] = [];
         this.features.forEach((feature: Feature): void => {
-            ret.push(feature.getFeature().getGeometry());
+            const geometry = feature.getFeature().getGeometry();
+            if (geometry) {
+                ret.push(geometry);
+            }
         });
         return ret;
     }
