@@ -663,12 +663,13 @@ export default class Map {
      */
     public fitFeatures(features: FeatureCollection, zoom?: number): void {
         const geometries = features.getFeatureGeometries();
-        const gc = new GeometryCollection(geometries);
-        const view = this.map.getView();
-        if (geometries.length) {
-            const extent = OlExtent.buffer(gc.getExtent(), 10);
-            view.fit(extent);
+        if (!geometries.length) {
+            return;
         }
+        const view = this.map.getView();
+        const gc = new GeometryCollection(geometries);
+        const extent = OlExtent.buffer(gc.getExtent(), 10);
+        view.fit(extent);
         if (typeof zoom !== "undefined") {
             view.setZoom(zoom);
         }
@@ -684,7 +685,9 @@ export default class Map {
             throw new MethodNotImplemented();
         }
         const features = (<OlVectorSource> layer.getSource()).getFeatures();
-        this.fitFeatures(new FeatureCollection(features), zoom);
+        if (features) {
+            this.fitFeatures(new FeatureCollection(features), zoom);
+        }
     }
 
     /**
