@@ -405,9 +405,6 @@ export default class Map {
      * @param callback - callback function to call after geometry is drawn
      */
     public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
-        if (layer.getType() != SourceType.Vector) {
-            throw new InteractionNotSupported(InteractionType.Draw);
-        }
         this.clearInteractions([InteractionType.Draw]);
         this.interaction = new DrawInteraction(layer, geometryType, callback);
         this.addInteraction(this.interaction);        
@@ -681,9 +678,6 @@ export default class Map {
      * @param zoom - zoom to set after fit
      */
     public fitLayer(layer: LayerInterface, zoom?: number): void {
-        if (layer.getType() != SourceType.Vector) {
-            throw new MethodNotImplemented();
-        }
         const features = (<OlVectorSource> layer.getSource()).getFeatures();
         if (features) {
             this.fitFeatures(new FeatureCollection(features), zoom);

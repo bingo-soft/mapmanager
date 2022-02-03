@@ -143,8 +143,10 @@ export default class MapManager {
      * @param opts - options
      */
     public static setDrawInteraction(map: Map, layer: LayerInterface, opts: unknown): void {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         map.setDrawInteraction(layer, opts["geometry_type"], opts["draw_callback"]);
-        //map.setModifyInteraction(layer);
     }
 
     /**
@@ -342,7 +344,6 @@ export default class MapManager {
                                 "srs_handling_type": opts["srs_handling"]["srs_handling_type"]
                             };
                         }
-                        //console.log(payload);
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(payload);
                     });
@@ -405,8 +406,11 @@ export default class MapManager {
      * @param layer - layer instance
      * @return feature collection 
      */
-    public static getFeatures(layer: VectorLayer): FeatureCollection {
-        return layer.getFeatures();
+    public static getFeatures(layer: LayerInterface): FeatureCollection {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
+        return (<VectorLayer> layer).getFeatures();
     }
 
     /**
@@ -416,6 +420,9 @@ export default class MapManager {
      * @return a promise with feature count
      */
     public static async getFeatureCountTotal(layer: LayerInterface): Promise<number> {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         const loaderOptions = layer.getLoaderOptions();
         if (!loaderOptions["base_url"]) {
             return Promise.resolve(0);
@@ -435,7 +442,6 @@ export default class MapManager {
                 hideNotification: true
             }        
         };
-        console.log(payload);
         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
         const response = await query.execute(payload);
         return Promise.resolve(isStandartWFS ? response["features"].length : response["count"]);
@@ -482,6 +488,9 @@ export default class MapManager {
      * @param features - features to add
      */
     public static addFeatures(map: Map, layer: LayerInterface, features: FeatureCollection): void {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         map.addFeatures(layer, features);
     }
 
@@ -554,6 +563,9 @@ export default class MapManager {
      * @param zoom - zoom after fit
      */
     public static fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         map.fitLayer(layer, zoom);
         /* const loaderOptions = layer.getLoaderOptions();
         let payload: unknown = {};
@@ -673,6 +685,9 @@ export default class MapManager {
      * @return removed features
      */
     public static getRemovedFeatures(layer: LayerInterface): FeatureCollection {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         return layer.getRemovedFeatures();
     }
 
@@ -689,6 +704,9 @@ export default class MapManager {
      * @param layer - layer to clear
      */
     public static clearDirtyFeatures(layer: LayerInterface): void {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         layer.clearDirtyFeatures();
     }
 
@@ -710,6 +728,9 @@ export default class MapManager {
      * @return resulting feature
      */
      public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface): Feature {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         return layer.createFeatureFromVertices(geometryItems);
     }
 
@@ -775,6 +796,9 @@ export default class MapManager {
      * @param srsId - SRS Id of feature text representation
      */
     public static createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         const feature = new Feature();
         return feature.createGeometryFromText(layer, text, format, srsId);
     }
@@ -811,6 +835,9 @@ export default class MapManager {
      * @param map - layer instance to paste to
      */
     public static pasteFeatures(map: Map, layer: LayerInterface): void {
+        if (layer.getType() != SourceType.Vector) {
+            throw new MethodNotImplemented();
+        }
         map.pasteFromClipboard(layer);
     }
 
