@@ -133,28 +133,25 @@ export default class Feature {
      * @return resulting feature
      */
     public updateFromVertices(items: GeometryItem[]): Feature {
-        let feature: OlFeature;
+        let olFeature: OlFeature;
         if (items[0].name == "GeometryCollection") {
             const geometries: OlGeometry[] = [];
             (<GeometryItem[]> items[0].children).forEach((item: GeometryItem): void => {
                 const geometry = this.createGeometry([item]);
                 geometries.push(geometry);
             });
-            feature = new OlFeature({
-                geometry: new OlGeometryCollection(geometries)
-            });
+            olFeature = new OlFeature();
+            olFeature.setProperties(this.feature.getProperties());
+            olFeature.setGeometry(new OlGeometryCollection(geometries));
         } else {
             const geometry = this.createGeometry(items);
-            feature = new OlFeature({
-                geometry: geometry
-            });
+            olFeature = new OlFeature();
+            olFeature.setProperties(this.feature.getProperties());
+            olFeature.setGeometry(geometry);
         }
         const source = <OlVectorSource> this.layer.getLayer().getSource();
-        if (this.feature.getGeometry()) {
-            source.removeFeature(this.feature);
-        }
-        feature.setProperties(this.feature.getProperties());
-        this.feature = feature;
+        source.removeFeature(this.feature);
+        this.feature = olFeature;
         source.addFeature(this.feature);
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
@@ -174,7 +171,7 @@ export default class Feature {
         let coordinates: OlCoordinate | OlCoordinate[] | OlCoordinate[][] = [];
         if (items[0].name == "Point") {
             (<VertexCoordinate[]> items[0].children).forEach((coordinate: VertexCoordinate): void => {
-                coordinates = [coordinate.x, coordinate.y];
+                coordinates = [coordinate.x , coordinate.y];
             });
             return new OlPoint(<OlCoordinate> coordinates);
         }
