@@ -16,6 +16,18 @@ import LoaderFunction from "./LoaderFunctionType";
 export default interface LayerInterface
 {
     /**
+     * Returns map instance
+     * @return map instance
+     */
+    getMap(): Map;
+
+    /**
+     * Sets map instance
+     * @param map - map instance
+     */
+    setMap(map: Map): void;
+
+    /**
      * Returns Openlayers layer instance
      * @return layer instance
      */
@@ -197,10 +209,11 @@ export default interface LayerInterface
 
     /**
      * Creates feature from vertices
-     * @param  array - array of feature vertices along with their ids and coordinates
+     * @param  items - feature vertices along with their ids and coordinates
+     * @param srsId - SRS Id of geometry items
      * @return resulting feature
      */
-    createFeatureFromVertices(items: GeometryItem[]): Feature;
+    createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature;
 
     /**
      * Returns loading tiles count

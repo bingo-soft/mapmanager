@@ -26,6 +26,22 @@ export default abstract class AbstractLayer implements LayerInterface
     protected loaderOptions: unknown;
 
     /**
+     * Returns map instance
+     * @return map instance
+     */
+    getMap(): Map {
+        return this.map;
+    }
+
+    /**
+     * Sets map instance
+     * @param map - map instance
+     */
+    setMap(map: Map): void {
+        this.map = map;
+    };
+
+    /**
      * Returns Openlayers layer instance
      * @return layer instance
      */
@@ -271,10 +287,11 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Creates feature from vertices
-     * @param items - of feature vertices along with their ids and coordinates
+     * @param items - feature vertices along with their ids and coordinates
+     * @param srsId - SRS Id of geometry items
      * @return resulting feature
      */
-    public createFeatureFromVertices(items: GeometryItem[]): Feature {
+    public createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature {
         throw new MethodNotImplemented();
     }
 
