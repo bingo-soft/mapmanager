@@ -259,18 +259,16 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Creates feature from vertices and puts it into layer
-     * @param array - array of feature vertices along with their ids and coordinates
+     * @param items - feature vertices along with their ids and coordinates
+     * @param srsId - SRS Id of geometry items
      * @return resulting feature
      */
-    public createFeatureFromVertices(items: GeometryItem[]): Feature {
+    public createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature {
         const feature = new Feature(new OlFeature(), this);
         this.addFeatures([feature.getFeature()]);
         this.setDirtyFeatures(new FeatureCollection([feature]));
         feature.setEventBus(this.eventBus);
-        feature.updateFromVertices(items);
+        feature.updateFromVertices(items, srsId);
         return feature;
     }
-
-
-    
 }

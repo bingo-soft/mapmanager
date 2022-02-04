@@ -103,7 +103,7 @@ export default class MapManager {
      * @param srsId - SRS Id (e.g. 4326)
      */
     public static transformCoordinates(map: Map, coordinates: number[], srsId: number): number[] {
-        return map.transformCoordinates(coordinates, srsId);
+        return map.transformCoordinatesFrom(coordinates, srsId);
     }
 
     /**
@@ -713,36 +713,39 @@ export default class MapManager {
     /**
      * Returns feature vertices' coordinates along with their indices
      * @category Feature
-     * @param  feature - feature
+     * @param feature - feature
+     * @param srsId - SRS Id to return vertices in
      * @return array of feature vertices' along with their ids and coordinates
      */
-    public static getVertices(feature: Feature): GeometryItem[] {
-        return feature.getVertices();
+    public static getVertices(feature: Feature, srsId?: number): GeometryItem[] {
+        return feature.getVertices(srsId);
     }
 
     /**
      * Creates feature from vertices
      * @category Feature
-     * @param array of feature vertices' along with their ids and coordinates
-     * @param feature - feature to set vertices to. If not specified, a new feature will be created and added to map
+     * @param geometryItems feature vertices' along with their ids and coordinates
+     * @param layer - layer to put feature to
+     * @param srsId - SRS Id of geometry items
      * @return resulting feature
      */
-     public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface): Feature {
+     public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface, srsId?: number): Feature {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
-        return layer.createFeatureFromVertices(geometryItems);
+        return layer.createFeatureFromVertices(geometryItems, srsId);
     }
 
     /**
      * Updates feature from vertices
      * @category Feature
-     * @param array of feature vertices along with their ids and coordinates
-     * @param feature - feature to set vertices to.
+     * @param geometryItems feature vertices' along with their ids and coordinates
+     * @param feature - feature to set vertices to
+     * @param srsId - SRS Id of geometry items
      * @return resulting feature
      */
-    public static updateFeatureFromVertices(geometryItems: GeometryItem[], feature: Feature): Feature {
-        return feature.updateFromVertices(geometryItems);
+    public static updateFeatureFromVertices(geometryItems: GeometryItem[], feature: Feature, srsId?: number): Feature {
+        return feature.updateFromVertices(geometryItems, srsId);
     }
 
     /**

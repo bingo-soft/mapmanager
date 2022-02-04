@@ -560,6 +560,7 @@ export default class Map {
         if (layer) {
             this.map.addLayer(layer.getLayer());
             this.layers.add(layer);
+            layer.setMap(this);
             layer.setEventBus(this.getEventBus());
         }
     }
@@ -815,8 +816,18 @@ export default class Map {
      * @param srsId - SRS Id (e.g. 4326)
      * @return transformed coordinates
      */
-    public transformCoordinates(coordinates: number[], srsId: number): number[] {
+    public transformCoordinatesFrom(coordinates: number[], srsId: number): number[] {
         return OlProj.transform(coordinates, "EPSG:" + this.srsId.toString(), "EPSG:" + srsId.toString());
+    }
+
+    /**
+     * Transforms coordinates from given projection to map projection
+     * @param coordinates - coordinates
+     * @param srsId - SRS Id (e.g. 4326)
+     * @return transformed coordinates
+     */
+    public transformCoordinatesTo(coordinates: number[], srsId: number): number[] {
+        return OlProj.transform(coordinates, "EPSG:" + srsId.toString(), "EPSG:" + this.srsId.toString());
     }
 
     /**
