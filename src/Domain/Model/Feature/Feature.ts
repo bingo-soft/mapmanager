@@ -127,33 +127,18 @@ export default class Feature {
         this.feature.setStyle(this.featureStyle);
     }
 
-    /**
-     * Updates feature from  vertices
-     * @param items - feature vertices' along with their ids and coordinates
-     * @param srsId - SRS Id of items
-     * @return resulting feature
-     */
     public updateFromVertices(items: GeometryItem[], srsId?: number): Feature {
-        let olFeature: OlFeature;
         if (items[0].name == "GeometryCollection") {
             const geometries: OlGeometry[] = [];
             (<GeometryItem[]> items[0].children).forEach((item: GeometryItem): void => {
                 const geometry = this.createGeometry([item], srsId);
                 geometries.push(geometry);
             });
-            olFeature = new OlFeature();
-            olFeature.setProperties(this.feature.getProperties());
-            olFeature.setGeometry(new OlGeometryCollection(geometries));
+            this.getFeature().setGeometry(new OlGeometryCollection(geometries));
         } else {
             const geometry = this.createGeometry(items, srsId);
-            olFeature = new OlFeature();
-            olFeature.setProperties(this.feature.getProperties());
-            olFeature.setGeometry(geometry);
+            this.getFeature().setGeometry(geometry);
         }
-        const source = <OlVectorSource> this.layer.getLayer().getSource();
-        source.removeFeature(this.feature);
-        this.feature = olFeature;
-        source.addFeature(this.feature);
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
         }
