@@ -57,7 +57,7 @@ export default class TransformInteraction extends BaseInteraction {
         const eventBus = this.layer.getEventBus();
         const transformedFeatures: OlFeature[] = (<OlTransformEvent> e).features.getArray();
         const fc = new FeatureCollection(transformedFeatures);
-        this.layer.setDirtyFeatures(fc, true);        
+        this.layer.setDirtyFeatures(fc);        
         if (typeof this.callback === "function") {                      
             this.callback(fc);
         }

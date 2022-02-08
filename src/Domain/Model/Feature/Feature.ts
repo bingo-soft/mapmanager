@@ -17,6 +17,7 @@ import { HighlightFeatureStyle } from "../Style/HighlightFeatureStyle";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import SourceChangedEvent from "../Source/SourceChangedEvent";
+import FeatureCollection from "./FeatureCollection";
 
 /** Feature */
 export default class Feature { 
@@ -139,6 +140,7 @@ export default class Feature {
             const geometry = this.createGeometry(items, srsId);
             this.getFeature().setGeometry(geometry);
         }
+        this.getLayer().setDirtyFeatures(new FeatureCollection([this]));
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
         }
