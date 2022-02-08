@@ -214,9 +214,8 @@ export default abstract class AbstractLayer implements LayerInterface
     /**
      * Sets collection of dirty features
      * @param features - collection of dirty features
-     * @param dirty - dirty flag. If true, features are added to layer's dirty features collection, removed otherwise
      */
-    public setDirtyFeatures(features: FeatureCollection, dirty: boolean): void  {
+    public setDirtyFeatures(features: FeatureCollection): void  {
         throw new MethodNotImplemented();
     }
 
@@ -225,10 +224,10 @@ export default abstract class AbstractLayer implements LayerInterface
      * @param features - collection of idle features
      * @param idle - idle flag. If true, features are added to layer's idle features collection, removed otherwise
      */
-    public setIdleFeatures(features: FeatureCollection, idle: boolean): void  {
+    /* public setIdleFeatures(features: FeatureCollection, idle: boolean): void  {
         throw new MethodNotImplemented();
     }
-
+ */
     /**
      * Checks if layer is dirty
      * @return flag indicating that the layer is dirty

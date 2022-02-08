@@ -140,7 +140,7 @@ export default class VectorLayer extends AbstractLayer{
      * @param features - collection of idle features
      * @param idle - idle flag. If true, features are added to layer's idle features collection, removed otherwise
      */
-    public setIdleFeatures(features: FeatureCollection, idle: boolean): void  {
+    /* public setIdleFeatures(features: FeatureCollection, idle: boolean): void  {
         features.forEach((feature: Feature): void => {
             if (idle) {
                 this.idleFeatures.add(feature)
@@ -148,7 +148,7 @@ export default class VectorLayer extends AbstractLayer{
                 this.idleFeatures.remove(feature);
             }
         });
-    }
+    } */
 
     /**
      * Checks if layer is dirty

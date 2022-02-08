@@ -622,7 +622,7 @@ export default class Map {
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer);
-                layer.setDirtyFeatures(new FeatureCollection([feature]), true);
+                layer.setDirtyFeatures(new FeatureCollection([feature]));
             });
             this.eventBus.dispatch(new SourceChangedEvent());
         }
