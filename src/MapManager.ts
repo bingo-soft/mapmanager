@@ -714,7 +714,7 @@ export default class MapManager {
      * Returns feature vertices' coordinates along with their indices
      * @category Feature
      * @param feature - feature
-     * @param srsId - SRS Id to return vertices in
+     * @param srsId - SRS Id to return vertices in, defaults to feature's layer SRS Id
      * @return array of feature vertices' along with their ids and coordinates
      */
     public static getVertices(feature: Feature, srsId?: number): GeometryItem[] {
@@ -726,10 +726,10 @@ export default class MapManager {
      * @category Feature
      * @param geometryItems feature vertices' along with their ids and coordinates
      * @param layer - layer to put feature to
-     * @param srsId - SRS Id of geometry items
+     * @param srsId - SRS Id of geometry items, defaults to layer SRS Id
      * @return resulting feature
      */
-     public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface, srsId?: number): Feature {
+    public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface, srsId?: number): Feature {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
@@ -741,7 +741,7 @@ export default class MapManager {
      * @category Feature
      * @param geometryItems feature vertices' along with their ids and coordinates
      * @param feature - feature to set vertices to
-     * @param srsId - SRS Id of geometry items
+     * @param srsId - SRS Id of geometry items, defaults to feature's layer SRS Id
      * @return resulting feature
      */
     public static updateFeatureFromVertices(geometryItems: GeometryItem[], feature: Feature, srsId?: number): Feature {

@@ -129,6 +129,7 @@ export default class Feature {
     }
 
     public updateFromVertices(items: GeometryItem[], srsId?: number): Feature {
+        srsId = srsId || this.layer.getSRSId();
         if (items[0].name == "GeometryCollection") {
             const geometries: OlGeometry[] = [];
             (<GeometryItem[]> items[0].children).forEach((item: GeometryItem): void => {
@@ -140,7 +141,7 @@ export default class Feature {
             const geometry = this.createGeometry(items, srsId);
             this.getFeature().setGeometry(geometry);
         }
-        this.getLayer().setDirtyFeatures(new FeatureCollection([this]));
+        this.layer.setDirtyFeatures(new FeatureCollection([this]));
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
         }
@@ -153,7 +154,7 @@ export default class Feature {
      * @param srsId - SRS Id of items
      * @return OL geometry instance
      */
-    private createGeometry(items: GeometryItem[], srsId?: number): OlGeometry {
+    private createGeometry(items: GeometryItem[], srsId: number): OlGeometry {
         if (!items.length) {
             return null;
         }
@@ -214,7 +215,7 @@ export default class Feature {
      * @param srsId - projection to transform from
      * @return coordinate transformed into map projection
      */
-    private transformCoordinateToMapSRS(coordinate: OlCoordinate, srsId?: number): OlCoordinate {
+    private transformCoordinateToMapSRS(coordinate: OlCoordinate, srsId: number): OlCoordinate {
         if (srsId) {
             coordinate = this.layer.getMap().transformCoordinatesTo(coordinate, srsId);
         }
@@ -227,7 +228,7 @@ export default class Feature {
      * @return array of geometry parts of feature along with their coordinates
      */
     public getVertices(srsId?: number): GeometryItem[] {
-        const srs = srsId ? "EPSG:" + srsId : "EPSG:" + this.getLayer().getSRSId().toString();
+        const srs = srsId ? "EPSG:" + srsId : "EPSG:" + this.layer.getSRSId().toString();
         this.treeId = 1;
         const geometry = this.feature.getGeometry();
         if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
@@ -356,9 +357,9 @@ export default class Feature {
     private iterateCoordinates(coordinates: OlCoordinate[], srs: string): VertexCoordinate[] {
         let indexCoord = 1;
         const returnCoordinates: VertexCoordinate[] = [];
-        const mapSRS = "EPSG:" + this.getLayer().getMap().getSrsId();
+        const mapSRS = "EPSG:" + this.layer.getMap().getSRSId();
         coordinates.forEach((coordinate: OlCoordinate): void => {
-            coordinate = OlProj.transform(coordinate, mapSRS/* Feature.DEFAULT_SRS */, srs);
+            coordinate = OlProj.transform(coordinate, mapSRS, srs);
             returnCoordinates.push({"id": this.treeId, "coordinate_id": indexCoord, "name": "Coordinate", "x": coordinate[0], "y": coordinate[1]});
             this.treeId++;
             indexCoord++;
@@ -369,7 +370,7 @@ export default class Feature {
     /**
      * Returns feature geometry as text
      * @param format - format to return in
-     * @param srsId - SRS Id of returned feature text representation
+     * @param srsId - SRS Id of returning feature text representation
      * @return text representing feature
      */
     public getGeometryAsText(format: GeometryFormat, srsId: number): string {
@@ -377,7 +378,8 @@ export default class Feature {
         if (formatInstance) {
             return formatInstance.writeFeature(this.feature, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
+                //featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
+                featureProjection: "EPSG:" + this.layer.getMap().getSRSId()
             });
         }
         return "";
@@ -394,7 +396,8 @@ export default class Feature {
         if (formatInstance) {
             const tempFeature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
+                //featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
+                featureProjection: "EPSG:" + this.layer.getMap().getSRSId()
             });
             this.feature.setGeometry(tempFeature.getGeometry());
             if (this.eventBus) {
@@ -416,9 +419,11 @@ export default class Feature {
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
                 dataProjection: "EPSG:" + srsId.toString(),
-                featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
+                //featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
+                featureProjection: "EPSG:" + layer.getMap().getSRSId()
             });
             (<OlVectorSource> layer.getLayer().getSource()).addFeature(this.feature);
+            this.layer = layer;
             if (this.eventBus) {
                 this.eventBus.dispatch(new SourceChangedEvent());
             }
