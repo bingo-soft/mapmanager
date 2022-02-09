@@ -231,7 +231,7 @@ export default class Map {
      * Returns map SRS id
      * @return map SRS id
      */
-     public getSrsId(): number {
+     public getSRSId(): number {
         return this.srsId;
     }
 
@@ -929,7 +929,7 @@ export default class Map {
                                 "xmax": topRight[0],
                                 "ymax": topRight[1]
                             },
-                            srid: this.getSrsId()
+                            srid: this.getSRSId()
                         });
                     } else if (exportType == ExportType.PNG) {
                         mapCanvas.toBlob((blob: Blob): void => {

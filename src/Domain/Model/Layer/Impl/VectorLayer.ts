@@ -268,6 +268,7 @@ export default class VectorLayer extends AbstractLayer{
         this.addFeatures([feature.getFeature()]);
         this.setDirtyFeatures(new FeatureCollection([feature]));
         feature.setEventBus(this.eventBus);
+        feature.setLayer(this);
         feature.updateFromVertices(items, srsId);
         return feature;
     }
