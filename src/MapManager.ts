@@ -569,7 +569,7 @@ export default class MapManager {
         const loaderOptions = layer.getLoaderOptions();
         let url = loaderOptions["base_url"];
         const isStandartWFS = url.toString().toLowerCase().includes("service=wfs");
-        if (!isStandartWFS) {
+        if (isStandartWFS) {
             map.fitLayer(layer, zoom);
         } else {
             url += "/extent";
