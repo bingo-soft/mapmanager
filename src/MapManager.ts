@@ -1,3 +1,4 @@
+import { Vector as OlVectorSource } from "ol/source";
 import * as OlProj from "ol/proj";
 import { register as OlProjRegister } from 'ol/proj/proj4';
 import OlProjection from "ol/proj/Projection";
@@ -424,8 +425,8 @@ export default class MapManager {
             throw new MethodNotImplemented();
         }
         const loaderOptions = layer.getLoaderOptions();
-        if (!loaderOptions["base_url"]) {
-            return Promise.resolve(0);
+        if (!loaderOptions || !loaderOptions["base_url"]) {
+            return Promise.resolve((<OlVectorSource> layer.getLayer().getSource()).getFeatures().length);
         }
         let url = loaderOptions["base_url"];
         let data: unknown;
@@ -435,7 +436,7 @@ export default class MapManager {
             data = loaderOptions["data"];
         }
         const payload: ApiRequest = {
-            method: HttpMethod.GET,
+            method: HttpMethod.POST,
             base_url: url,
             data: data,
             axios_params: {
@@ -567,6 +568,10 @@ export default class MapManager {
             throw new MethodNotImplemented();
         }
         const loaderOptions = layer.getLoaderOptions();
+        if (!loaderOptions || !loaderOptions["base_url"]) {
+            map.fitLayer(layer, zoom);
+            return;
+        }
         let url = loaderOptions["base_url"];
         const isStandartWFS = url.toString().toLowerCase().includes("service=wfs");
         if (isStandartWFS) {
@@ -584,9 +589,10 @@ export default class MapManager {
             };
             const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
             const response = await query.execute(payload);
-            console.log(response);
+            let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId, "EPSG:" + map.getSRSId);
+            //extent = OlExtent.buffer(extent, 10);
             const olView = map.getMap().getView();
-            olView.fit(<OlExtent> response["extent"]);
+            olView.fit(<OlExtent> extent);
             if (typeof zoom !== "undefined") {
                 olView.setZoom(zoom);
             }
