@@ -13,15 +13,18 @@ export class ApiClient {
      */
     public static request(request: ApiRequest): Promise<string> {
         const payload = {
-            method: request.method,
-            params: request.params,
-            baseURL: request.base_url,
-            headers: request.headers,
-            data: request.data
+            method: request["method"] || null,
+            params: request["params"] || null,
+            baseURL: request["base_url"] || null,
+            headers: request["headers"] || null,
+            data: request["data"] || null
         };
-        for (const k in <any> request.axios_params) {
-            payload[k] = request.axios_params[k];
+        if (request["axios_params"]) {
+            for (const k in <any> request["axios_params"]) {
+                payload[k] = request.axios_params[k] || null;
+            }
         }
+        console.log(payload);
         return new Promise((resolve, reject) => {
           axios
             .request(payload)

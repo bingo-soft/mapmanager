@@ -584,7 +584,7 @@ export default class MapManager {
             };
             const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
             const response = await query.execute(payload);
-            console.log(response["extent"]);
+            console.log(response);
             const olView = map.getMap().getView();
             olView.fit(<OlExtent> response["extent"]);
             if (typeof zoom !== "undefined") {
