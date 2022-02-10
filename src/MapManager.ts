@@ -589,7 +589,7 @@ export default class MapManager {
             };
             const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
             const response = await query.execute(payload);
-            let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId, "EPSG:" + map.getSRSId);
+            let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
             //extent = OlExtent.buffer(extent, 10);
             const olView = map.getMap().getView();
             olView.fit(<OlExtent> extent);
