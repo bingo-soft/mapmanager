@@ -128,6 +128,12 @@ export default class Feature {
         this.feature.setStyle(this.featureStyle);
     }
 
+    /**
+     * Updates geometry based on geometry items tree
+     * @param items - vertices data
+     * @param srsId - SRS Id of geometry items, defaults to feature's layer SRS Id
+     * @return OL geometry instance
+     */
     public updateFromVertices(items: GeometryItem[], srsId?: number): Feature {
         srsId = srsId || this.layer.getSRSId();
         if (items[0].name == "GeometryCollection") {
@@ -151,7 +157,7 @@ export default class Feature {
     /**
      * Creates geometry based on geometry items tree
      * @param items - vertices data
-     * @param srsId - SRS Id of items
+     * @param srsId - SRS Id of geometry items, defaults to feature's layer SRS Id
      * @return OL geometry instance
      */
     private createGeometry(items: GeometryItem[], srsId: number): OlGeometry {
@@ -224,7 +230,7 @@ export default class Feature {
 
     /**
      * Returns feature vertices' coordinates along with their indices
-     * @param srsId - SRS Id to return vertices in
+     * @param srsId - SRS Id to return vertices in, defaults to feature's layer SRS Id
      * @return array of geometry parts of feature along with their coordinates
      */
     public getVertices(srsId?: number): GeometryItem[] {

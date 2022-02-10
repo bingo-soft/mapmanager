@@ -562,28 +562,35 @@ export default class MapManager {
      * @param layer - layer instance
      * @param zoom - zoom after fit
      */
-    public static fitLayer(map: Map, layer: LayerInterface, zoom?: number): void { 
+    public static async fitLayer(map: Map, layer: LayerInterface, zoom?: number): Promise<void> {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
-        map.fitLayer(layer, zoom);
-        /* const loaderOptions = layer.getLoaderOptions();
-        let payload: unknown = {};
-        if (loaderOptions["base_url"]) {
-            loaderOptions["base_url"] += "/extent";
-            payload = <ApiRequest> loaderOptions;
+        const loaderOptions = layer.getLoaderOptions();
+        let url = loaderOptions["base_url"];
+        const isStandartWFS = url.toString().toLowerCase().includes("service=wfs");
+        if (!isStandartWFS) {
+            map.fitLayer(layer, zoom);
         } else {
-            payload = <ApiRequest> {
-                method: HttpMethod.GET,
-                base_url: loaderOptions["url"],
-                "axios_params": {
-                    "hideNotification": true
+            url += "/extent";
+            const data = loaderOptions["data"];
+            const payload: ApiRequest = {
+                method: HttpMethod.POST,
+                base_url: url,
+                data: data,
+                axios_params: {
+                    hideNotification: true
                 }        
             };
+            const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+            const response = await query.execute(payload);
+            console.log(response["extent"]);
+            const olView = map.getMap().getView();
+            olView.fit(<OlExtent> response["extent"]);
+            if (typeof zoom !== "undefined") {
+                olView.setZoom(zoom);
+            }
         }
-        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-        const data = await query.execute(payload);
-        return Promise.resolve(data["features"].length); */
     }
 
     /**
