@@ -260,7 +260,7 @@ export default class VectorLayer extends AbstractLayer{
     /**
      * Creates feature from vertices and puts it into layer
      * @param items - feature vertices along with their ids and coordinates
-     * @param srsId - SRS Id of geometry items
+     * @param srsId - SRS Id of geometry items, defaults to layer SRS Id
      * @return resulting feature
      */
     public createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature {
@@ -272,4 +272,5 @@ export default class VectorLayer extends AbstractLayer{
         feature.updateFromVertices(items, srsId);
         return feature;
     }
+   
 }
