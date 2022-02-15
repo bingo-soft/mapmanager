@@ -578,7 +578,7 @@ export default class MapManager {
         // layer is a WFS layer so it has a "service=wfs" substring in base_url
         if (isStandartWFS) {
             map.fitLayer(layer, zoom);
-        } else {
+        } else { 
             url += "/extent";
             const data = loaderOptions["data"];
             const payload: ApiRequest = {
@@ -591,10 +591,15 @@ export default class MapManager {
             };
             const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
             const response = await query.execute(payload);
-            let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
+            //let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
+            let extent = OlProj.transformExtent(
+                [parseFloat(response["extent"][0]), parseFloat(response["extent"][1]), parseFloat(response["extent"][2]), parseFloat(response["extent"][3])],
+                "EPSG:" + layer.getSRSId(),
+                "EPSG:" + map.getSRSId()
+            );
             //extent = OlExtent.buffer(extent, 10);
             const olView = map.getMap().getView();
-            olView.fit(<OlExtent> extent);
+            olView.fit(extent);
             if (typeof zoom !== "undefined") {
                 olView.setZoom(zoom);
             }
