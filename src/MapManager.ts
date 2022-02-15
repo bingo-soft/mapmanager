@@ -568,12 +568,14 @@ export default class MapManager {
             throw new MethodNotImplemented();
         }
         const loaderOptions = layer.getLoaderOptions();
+        // layer was created via createLayerFromGeoJSON() so it has no loaderOptions
         if (!loaderOptions || !loaderOptions["base_url"]) {
             map.fitLayer(layer, zoom);
             return;
         }
         let url = loaderOptions["base_url"];
-        const isStandartWFS = url.toString().toLowerCase().includes("service=wfs");
+        const isStandartWFS = url.toLowerCase().includes("service=wfs");
+        // layer is a WFS layer so it has a "service=wfs" substring in base_url
         if (isStandartWFS) {
             map.fitLayer(layer, zoom);
         } else {
