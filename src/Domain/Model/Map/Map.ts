@@ -502,6 +502,13 @@ export default class Map {
      * @param  types - types of interaction to clear, all if not set
      */ 
     public clearInteractions(types?: InteractionType[]): void {
+        // a MeasureInteraction is a bit particular: it's actually a DrawInteraction, so we have to turn it off as well
+        if (typeof types !=="undefined") {
+            const measureInteractions = this.interactions.filter((interaction: InteractionInterface): boolean => interaction.getType() == InteractionType.Measure);
+            if (measureInteractions.length) {
+                types.push(InteractionType.Draw);
+            }
+        }
         this.interactions.forEach((interaction: InteractionInterface): void => {
             if ((typeof types !== "undefined" && types.includes(interaction.getType())) || typeof types === "undefined") {
                 const interactionHandlers = interaction.getEventHandlers();
@@ -513,7 +520,7 @@ export default class Map {
         });
         if (typeof types !=="undefined") {
             types.forEach((type: InteractionType): void => {
-                this.interactions = this.interactions.filter((interaction: InteractionInterface) => interaction.getType() !== type);
+                this.interactions = this.interactions.filter((interaction: InteractionInterface): boolean => interaction.getType() !== type);
             });
         } else {
             this.interactions = [];
@@ -960,7 +967,7 @@ export default class Map {
                 if (featurePopupTemplate) {
                     const properties = olFeature.getProperties();
                     featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupTemplate, properties);
-                    const featurePopupCss = layer.getFeaturePopupCss();// console.log(featurePopupCss);
+                    const featurePopupCss = layer.getFeaturePopupCss();
                     if (featurePopupCss) { 
                         featurePopupElement.setAttribute("style", featurePopupCss);
                     }

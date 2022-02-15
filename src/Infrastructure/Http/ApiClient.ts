@@ -24,7 +24,6 @@ export class ApiClient {
                 payload[k] = request.axios_params[k] || null;
             }
         }
-        console.log(payload);
         return new Promise((resolve, reject) => {
           axios
             .request(payload)
