@@ -18,7 +18,7 @@ export default class MapCoordinatesInteraction extends BaseInteraction {
      */
     constructor(map: Map, type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number) {
         super();
-        this.type = InteractionType.MapCoordinates;
+        this.type = type == EventType.Click ? InteractionType.MapCoordinatesClick : InteractionType.MapCoordinatesPointerMove;
         const olMap = map.getMap();
         const mapProj = olMap.getView().getProjection().getCode();
         this.eventHandlers = new EventHandlerCollection(olMap);
