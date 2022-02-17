@@ -6,7 +6,8 @@ enum InteractionType {
     Modify = "modify",
     Transform = "transform",
     Measure = "measure",
-    MapCoordinates = "mapcoordinates"
+    MapCoordinatesClick = "mapcoordinatesclick",
+    MapCoordinatesPointerMove = "mapcoordinatespointermove"
 }
 
 export default InteractionType;

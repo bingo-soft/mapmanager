@@ -591,17 +591,16 @@ export default class MapManager {
             };
             const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
             const response = await query.execute(payload);
-            //let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
-            let extent = OlProj.transformExtent(
-                [parseFloat(response["extent"][0]), parseFloat(response["extent"][1]), parseFloat(response["extent"][2]), parseFloat(response["extent"][3])],
-                "EPSG:" + layer.getSRSId(),
-                "EPSG:" + map.getSRSId()
-            );
-            //extent = OlExtent.buffer(extent, 10);
-            const olView = map.getMap().getView();
-            olView.fit(extent);
-            if (typeof zoom !== "undefined") {
-                olView.setZoom(zoom);
+            if (response["extent"] && response["extent"].length == 4) {
+                let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
+                //extent = OlExtent.buffer(extent, 10);
+                if (!extent.includes(NaN)) {
+                    const olView = map.getMap().getView();
+                    olView.fit(extent);
+                    if (typeof zoom !== "undefined") {
+                        olView.setZoom(zoom);
+                    }
+                }
             }
         }
     }
@@ -613,7 +612,7 @@ export default class MapManager {
      * @param features - features
      * @param zoom - zoom after fit
      */
-     public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number): void { 
+    public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number): void { 
         map.fitFeatures(features, zoom);
     }
 
