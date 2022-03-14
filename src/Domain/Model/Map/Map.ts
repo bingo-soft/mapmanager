@@ -366,9 +366,13 @@ export default class Map {
         // if it's a DragBox interaction we must clear its highlighting select features
         const select = <SelectInteraction> this.interaction;
         if (select) {
-            const highlightSelect = select.getHighlightSelect();
+            /* const highlightSelect = select.getHighlightSelect();
             if (highlightSelect) {
                 highlightSelect.getFeatures().clear();
+            } */
+            const highlightSelect = select.getInnerInteractions()[0];
+            if (highlightSelect) {
+                (<OlSelect> highlightSelect).getFeatures().clear();
             }
         }
         this.selectedFeatures = new FeatureCollection([]);

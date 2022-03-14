@@ -22,7 +22,7 @@ import SourceType from "../../Source/SourceType";
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
 
-    private highlightSelect: OlSelect;
+    //private highlightSelect: OlSelect;
 
     /**
      * @param type - selection type
@@ -73,9 +73,13 @@ export default class SelectInteraction extends BaseInteraction {
                 break;
             case SelectionType.Rectangle:
                 // selected features are added to the feature overlay of a Select interaction for highlighting only
-                this.highlightSelect = new OlSelect();
+                /* this.highlightSelect = new OlSelect();
                 olMap.addInteraction(this.highlightSelect);
-                const selectedFeatures = this.highlightSelect.getFeatures();
+                const selectedFeatures = this.highlightSelect.getFeatures(); */
+                const select = new OlSelect();
+                olMap.addInteraction(select);
+                const selectedFeatures = select.getFeatures();
+                this.innerInteractions.push(select);
 
                 this.interaction = new OlDragBox();
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
@@ -112,8 +116,8 @@ export default class SelectInteraction extends BaseInteraction {
     /**
      * Returns highlight select instance
      */
-    public getHighlightSelect(): OlSelect {
+    /* public getHighlightSelect(): OlSelect {
         return this.highlightSelect;
-    }
+    } */
 
 }
