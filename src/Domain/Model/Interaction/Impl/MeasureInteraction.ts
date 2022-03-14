@@ -1,7 +1,8 @@
+import { Vector as OlVectorSource } from "ol/source";
 import OlFeature from "ol/Feature";
 import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";
 import { EventsKey as OlEventsKey } from "ol/events";
-import { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
+import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
 import OlOverlay from "ol/Overlay";
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import * as OlSphere from "ol/sphere";
@@ -16,6 +17,7 @@ import { MeasureCallbackFunction } from "../InteractionCallbackType";
 import { Coordinate } from "ol/coordinate";
 import TemporaryLayerType from "../../Map/TemporaryLayerType";
 import InteractionType from "../InteractionType";
+import GeometryType from "ol/geom/GeometryType";
 
 /** MeasureInteraction */
 export default class MeasureInteraction extends BaseInteraction {
@@ -41,14 +43,22 @@ export default class MeasureInteraction extends BaseInteraction {
         }
         this.type = InteractionType.Measure;
     
+        const olMap = map.getMap();
         const layer = map.createTemporaryLayer(TemporaryLayerType.Measure);
-        map.setDrawInteraction(layer, realType);
-        const interaction = map.getInteraction();
+        //map.setDrawInteraction(layer, realType);
+        //const interaction = map.getInteraction();
+        const draw = new OlDraw({
+            source: <OlVectorSource> layer.getSource(),
+            type: <GeometryType> realType,
+        });
+        olMap.addInteraction(draw);
+        this.innerInteractions.push(draw)
+
         let geomChangelistener: OlEventsKey;
         let result: string;
         let tooltipCoord: number[];
 
-        this.eventHandlers = new EventHandlerCollection(interaction.getInteraction());
+        this.eventHandlers = new EventHandlerCollection(draw);
         this.eventHandlers.add(EventType.DrawStart, "MeasureStartEventHandler", (e: OlBaseEvent): void => {
             tooltipCoord = (<any> e).coordinate;
             const feature = (<OlDrawEvent> e).feature;

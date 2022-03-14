@@ -2,6 +2,7 @@ import { Interaction as OLInteraction } from "ol/interaction";
 import InteractionInterface from "../InteractionInterface";
 import InteractionType from "../InteractionType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
+import Map from "../../Map/Map";
 
 /** BaseInteraction */
 export default abstract class BaseInteraction implements InteractionInterface
@@ -9,6 +10,7 @@ export default abstract class BaseInteraction implements InteractionInterface
     protected interaction: OLInteraction;
     protected type: InteractionType;
     protected eventHandlers: EventHandlerCollection;
+    protected innerInteractions: OLInteraction[] = [];
 
     /**
      * Returns OpenLayers' interaction object
@@ -40,5 +42,18 @@ export default abstract class BaseInteraction implements InteractionInterface
      */
     public setActive(active: boolean): void {
         this.interaction.setActive(active);
+    }
+
+    /**
+     * Removes all OL inner interactions
+     */
+    public removeInnerInteractions(map: Map): void {
+        if (this.innerInteractions && this.innerInteractions.length) {
+            const olMap = map.getMap();
+            this.innerInteractions.forEach((innerInteraction: OLInteraction): void => {
+                olMap.removeInteraction(innerInteraction);
+            });
+            this.innerInteractions = [];
+        }
     }
 }
