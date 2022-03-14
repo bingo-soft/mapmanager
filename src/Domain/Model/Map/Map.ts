@@ -53,6 +53,7 @@ import { HighlightVertexStyle } from "../Style/HighlightVertexStyle";
 import { SearchMarkerStyle } from "../Style/SearchMarkerStyle";
 import TemporaryLayerType from "./TemporaryLayerType";
 import ExportType from "./ExportType";
+import SnapInteraction from "../Interaction/Impl/SnapInteraction";
 
 
 /** Map */
@@ -428,15 +429,27 @@ export default class Map {
      * @param callback - callback function to call after geometry is selected
      */
     public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple = false, callback?: SelectCallbackFunction): InteractionInterface {
-        if (layers) {
+        /* if (layers) {
             layers.forEach((layer: LayerInterface) => {
                 if (layer.getType() != SourceType.Vector) {
                     throw new InteractionNotSupported(InteractionType.Select);
                 }
             });
-        }
+        } */
         this.clearInteractions([InteractionType.Select]);
         this.interaction = new SelectInteraction(type, this, layers, multiple, callback);
+        this.addInteraction(this.interaction);
+        return this.interaction;
+    }
+
+    /**
+     * Sets map snap interaction
+     * @param layers - array of layers which snap applies to
+     * @param pixelTolerance - pixel tolerance for considering the pointer close enough to a segment or vertex for snapping
+     */
+    public setSnapInteraction(layers: LayerInterface[], pixelTolerance?: number): InteractionInterface {
+        this.clearInteractions([InteractionType.Snap]);
+        this.interaction = new SnapInteraction(this, layers, pixelTolerance);
         this.addInteraction(this.interaction);
         return this.interaction;
     }
@@ -503,14 +516,17 @@ export default class Map {
      */ 
     public clearInteractions(types?: InteractionType[]): void {
         // a MeasureInteraction is a bit particular: it's actually a DrawInteraction, so we have to turn it off as well
-        if (typeof types !=="undefined") {
+        /* if (typeof types !=="undefined") {
             const measureInteractions = this.interactions.filter((interaction: InteractionInterface): boolean => interaction.getType() == InteractionType.Measure);
             if (measureInteractions.length) {
                 types.push(InteractionType.Draw);
             }
-        }
+        } */
         this.interactions.forEach((interaction: InteractionInterface): void => {
             if ((typeof types !== "undefined" && types.includes(interaction.getType())) || typeof types === "undefined") {
+                //if (interaction.getType() == InteractionType.Snap) {
+                interaction.removeInnerInteractions(this);
+                //}
                 const interactionHandlers = interaction.getEventHandlers();
                 if (interactionHandlers) {
                     interactionHandlers.clear();

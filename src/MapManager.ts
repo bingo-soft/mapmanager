@@ -154,11 +154,20 @@ export default class MapManager {
      * Sets map selection interaction
      * @category Interaction
      * @param map - map instance
-     * @param layer - layer instance
      * @param opts - options
      */
     public static setSelectInteraction(map: Map, opts: unknown): InteractionInterface {
         return map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["multiple"], opts["select_callback"]);
+    }
+
+    /**
+     * Sets map snap interaction
+     * @category Interaction
+     * @param map - map instance
+     * @param opts - options
+     */
+    public static setSnapInteraction(map: Map, opts: unknown): InteractionInterface {
+        return map.setSnapInteraction(opts["layers"], opts["pixelTolerance"]);
     }
 
     /**
@@ -565,7 +574,8 @@ export default class MapManager {
      */
     public static async fitLayer(map: Map, layer: LayerInterface, zoom?: number): Promise<void> {
         if (layer.getType() != SourceType.Vector) {
-            throw new MethodNotImplemented();
+            //throw new MethodNotImplemented();
+            return;
         }
         const loaderOptions = layer.getLoaderOptions();
         // layer was created via createLayerFromGeoJSON() so it has no loaderOptions

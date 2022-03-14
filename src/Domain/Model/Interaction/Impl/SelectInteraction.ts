@@ -17,6 +17,7 @@ import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCol
 import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
 import VectorLayer from "../../Layer/Impl/VectorLayer";
+import SourceType from "../../Source/SourceType";
 
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
@@ -37,8 +38,10 @@ export default class SelectInteraction extends BaseInteraction {
         let fc: FeatureCollection;
         const OlLayersToSelectOn: OlLayer[] = [];
         if (layers) {
-            layers.forEach((value: LayerInterface): void => {
-                OlLayersToSelectOn.push(value.getLayer());
+            layers.forEach((layer: LayerInterface): void => {
+                if (layer.getType() == SourceType.Vector) {
+                    OlLayersToSelectOn.push(layer.getLayer());
+                }
             });
         }
         switch(type) {

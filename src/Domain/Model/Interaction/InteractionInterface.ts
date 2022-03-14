@@ -1,5 +1,6 @@
 import { Interaction as OLInteraction } from "ol/interaction";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
+import Map from "../Map/Map";
 import InteractionType from "./InteractionType";
 
 /** InteractionInterface */
@@ -28,4 +29,9 @@ export default interface InteractionInterface {
      * @param active - activity flag
      */
     setActive(active: boolean): void;
+
+    /**
+     * Removes all OL inner interactions
+     */
+    removeInnerInteractions(map: Map): void;
 }
