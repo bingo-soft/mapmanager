@@ -31,6 +31,11 @@ export default interface InteractionInterface {
     setActive(active: boolean): void;
 
     /**
+     * Returns all OL inner interactions
+     */
+    getInnerInteractions(): OLInteraction[];
+
+    /**
      * Removes all OL inner interactions
      */
     removeInnerInteractions(map: Map): void;
