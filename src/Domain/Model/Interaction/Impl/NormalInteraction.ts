@@ -14,7 +14,7 @@ export default class NormalInteraction extends BaseInteraction {
      * Sets or unsets interaction active
      * @param active - activity flag
      */
-     public setActive(active: boolean): void {
+    public setActive(active: boolean): void {
         throw new MethodNotImplemented();
     }
 
