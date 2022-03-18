@@ -160,15 +160,17 @@ export default class LayerBuilder {
                     this.layer.setLoadedTilesCount(this.layer.getLoadedTilesCount()+1);
                 });
                 this.layer.setEventHandler(EventType.TileLoadEnd, "LayerTileLoadEndEventHanler", () => {
-                    setTimeout(() => {
+                   /*  setTimeout(() => { */
                         let loadedCount = this.layer.getLoadedTilesCount();
-                        this.layer.setLoadedTilesCount(++loadedCount);
-                        if (loadedCount == this.layer.getLoadingTilesCount()) {
-                            this.layer.setLoadingTilesCount(0);
-                            this.layer.setLoadedTilesCount(0);
-                            callback(this.layer); 
+                        if (loadedCount != -1) { // we don't want to call the callback more than once
+                            this.layer.setLoadedTilesCount(++loadedCount);
+                            if (loadedCount == this.layer.getLoadingTilesCount()) {
+                                //this.layer.setLoadingTilesCount(0);
+                                this.layer.setLoadedTilesCount(-1);  // we don't want to call the callback more than once
+                                callback(this.layer); 
+                            }
                         }
-                    }, 100);
+                    /* }, 100); */
                 });
             }
         }

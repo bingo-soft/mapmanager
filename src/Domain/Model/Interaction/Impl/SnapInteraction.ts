@@ -22,7 +22,7 @@ export default class SnapInteraction extends BaseInteraction {
             layersSnap.forEach((layer: LayerInterface): void => {
                 if (layer.getType() == SourceType.Vector) {
                     const snap = new OlSnap({
-                        source: <OlVectorSource>(layer.getLayer().getSource()),
+                        source: <OlVectorSource> (layer.getLayer().getSource()),
                         pixelTolerance: pixelTolerance ? pixelTolerance : 10
                     });
                     olMap.addInteraction(snap);
@@ -30,7 +30,6 @@ export default class SnapInteraction extends BaseInteraction {
                 }
             });
         }
-        
     }
 
 }

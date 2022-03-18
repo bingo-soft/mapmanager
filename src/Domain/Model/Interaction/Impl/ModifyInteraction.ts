@@ -1,11 +1,8 @@
 import OlModify, { ModifyEvent as OlModifyEvent } from "ol/interaction/Modify";
-import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
-import Collection from 'ol/Collection';
 import BaseInteraction from "./BaseInteraction";
 import InteractionType from "../InteractionType";
 import EventType from "../../EventHandlerCollection/EventType";
-import EventBus from "../../EventHandlerCollection/EventBus";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import LayerInterface from "../../Layer/LayerInterface";

@@ -1,4 +1,3 @@
-import OlMap from "ol/Map";
 import OlBaseLayer from "ol/layer/Base";
 import { Layer as OlLayer } from "ol/layer";
 import OlVectorLayer from "ol/layer/Vector";
@@ -16,14 +15,10 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
-import VectorLayer from "../../Layer/Impl/VectorLayer";
 import SourceType from "../../Source/SourceType";
 
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
-
-    //private highlightSelect: OlSelect;
-
     /**
      * @param type - selection type
      * @param map - map object to select on
@@ -73,9 +68,6 @@ export default class SelectInteraction extends BaseInteraction {
                 break;
             case SelectionType.Rectangle:
                 // selected features are added to the feature overlay of a Select interaction for highlighting only
-                /* this.highlightSelect = new OlSelect();
-                olMap.addInteraction(this.highlightSelect);
-                const selectedFeatures = this.highlightSelect.getFeatures(); */
                 const select = new OlSelect();
                 olMap.addInteraction(select);
                 const selectedFeatures = select.getFeatures();
@@ -112,12 +104,5 @@ export default class SelectInteraction extends BaseInteraction {
                 break;
         }
     }
-
-    /**
-     * Returns highlight select instance
-     */
-    /* public getHighlightSelect(): OlSelect {
-        return this.highlightSelect;
-    } */
 
 }

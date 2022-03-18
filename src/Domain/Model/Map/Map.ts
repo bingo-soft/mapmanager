@@ -366,10 +366,6 @@ export default class Map {
         // if it's a DragBox interaction we must clear its highlighting select features
         const select = <SelectInteraction> this.interaction;
         if (select) {
-            /* const highlightSelect = select.getHighlightSelect();
-            if (highlightSelect) {
-                highlightSelect.getFeatures().clear();
-            } */
             const highlightSelect = select.getInnerInteractions()[0];
             if (highlightSelect) {
                 (<OlSelect> highlightSelect).getFeatures().clear();
@@ -433,13 +429,6 @@ export default class Map {
      * @param callback - callback function to call after geometry is selected
      */
     public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple = false, callback?: SelectCallbackFunction): InteractionInterface {
-        /* if (layers) {
-            layers.forEach((layer: LayerInterface) => {
-                if (layer.getType() != SourceType.Vector) {
-                    throw new InteractionNotSupported(InteractionType.Select);
-                }
-            });
-        } */
         this.clearInteractions([InteractionType.Select]);
         this.interaction = new SelectInteraction(type, this, layers, multiple, callback);
         this.addInteraction(this.interaction);
@@ -484,6 +473,7 @@ export default class Map {
      * Sets map transform interaction
      * @param type - measure type
      * @param popupSettings - popup settings
+     * @param callback - callback function after measure is done
      */
     public setMeasureInteraction(type: MeasureType, popupSettings: unknown, callback?: MeasureCallbackFunction): void {
         this.clearInteractions([InteractionType.Measure]);
@@ -493,11 +483,11 @@ export default class Map {
 
     /**
      * Sets map get coordinates by click interaction
+     * @param type - type (mouse click or move)
      * @param callback - callback function returning coordinates
      * @param srsId - SRS Id to return coordinates in
      */
     public setMapCoordinatesInteraction(type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number): void {
-        //this.clearInteractions([InteractionType.MapCoordinates]); 
         this.interaction = new MapCoordinatesInteraction(this, type, callback, srsId);
         this.addInteraction(this.interaction);        
     }
@@ -516,21 +506,12 @@ export default class Map {
 
     /**
      * Clears interactions
-     * @param  types - types of interaction to clear, all if not set
+     * @param types - types of interaction to clear, all if not set
      */ 
     public clearInteractions(types?: InteractionType[]): void {
-        // a MeasureInteraction is a bit particular: it's actually a DrawInteraction, so we have to turn it off as well
-        /* if (typeof types !=="undefined") {
-            const measureInteractions = this.interactions.filter((interaction: InteractionInterface): boolean => interaction.getType() == InteractionType.Measure);
-            if (measureInteractions.length) {
-                types.push(InteractionType.Draw);
-            }
-        } */
         this.interactions.forEach((interaction: InteractionInterface): void => {
             if ((typeof types !== "undefined" && types.includes(interaction.getType())) || typeof types === "undefined") {
-                //if (interaction.getType() == InteractionType.Snap) {
                 interaction.removeInnerInteractions(this);
-                //}
                 const interactionHandlers = interaction.getEventHandlers();
                 if (interactionHandlers) {
                     interactionHandlers.clear();

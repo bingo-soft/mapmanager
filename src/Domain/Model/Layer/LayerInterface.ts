@@ -232,7 +232,7 @@ export default interface LayerInterface
      */
     getLoadedTilesCount(): number;
 
-     /**
+    /**
       * Sets loaded tiles count
       * @param count - loaded tiles count
       */
