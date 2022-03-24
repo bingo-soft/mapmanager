@@ -87,6 +87,25 @@ export default class MapManager {
     }
 
     /**
+     * Sets zoom callback function for the map.
+     * @category Map
+     * @param map - map instance
+     * @param callback - callback function to set
+     */
+    public static setZoomCallback(map: Map, callback: (zoom: number) => void): void {
+        map.setZoomCallback(callback);
+    }
+
+    /**
+     * Unsets zoom callback function for the map.
+     * @category Map
+     * @param map - map instance
+     */
+    public static unsetZoomCallback(map: Map): void {
+        map.unsetZoomCallback();
+    }
+
+    /**
      * Sets cursor of the map.
      * @category Map
      * @param map - map instance
