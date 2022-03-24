@@ -34,13 +34,11 @@ import ZoomType from "../Interaction/Impl/ZoomType";
 import SelectInteraction from "../Interaction/Impl/SelectInteraction";
 import MapCoordinatesInteraction from "../Interaction/Impl/MapCoordinatesInteraction";
 import SelectionType from "../Interaction/Impl/SelectionType";
-import MethodNotImplemented from "../../Exception/MethodNotImplemented";
-import InteractionNotSupported from "../../Exception/InteractionNotSupported";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import ModifyInteraction from "../Interaction/Impl/ModifyInteraction";
 import TransformInteraction from "../Interaction/Impl/TransformInteraction";
-import { DrawCallbackFunction, MapCoordinatesCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction } from "../Interaction/InteractionCallbackType";
+import { DrawCallbackFunction, MapCoordinatesCallbackFunction, MeasureCallbackFunction, ModifyCallbackFunction, SelectCallbackFunction, TransformCallbackFunction, ZoomCallbackFunction } from "../Interaction/InteractionCallbackType";
 import EventType from "../EventHandlerCollection/EventType";
 import CursorType from "./CursorType";
 import MeasureInteraction from "../Interaction/Impl/MeasureInteraction";
@@ -59,6 +57,7 @@ import SnapInteraction from "../Interaction/Impl/SnapInteraction";
 /** Map */
 export default class Map { 
     private map: OlMap;
+    private zoom: number;
     private srsId: number;
     private cursor: string;
     private layers: Set<LayerInterface> = new Set();
@@ -287,6 +286,30 @@ export default class Map {
      */
     public setZoom(zoom: number): void {
         this.map.getView().setZoom(zoom);
+    }
+
+    /**
+     * Sets zoom callback function for the map.
+     * @param callback - callback function to set
+     */
+    public setZoomCallback(callback: ZoomCallbackFunction): void {
+        this.eventHandlers.add(EventType.MoveEnd, "MapZoomEventHandler", (e: OlBaseEvent): void => {
+            if (typeof callback != "function") {
+                return;
+            }
+            const newZoom = this.map.getView().getZoom();
+            if (this.zoom != newZoom) {
+                this.zoom = newZoom;
+                callback(newZoom);
+            }
+        });
+    }
+
+    /**
+     * Unsets zoom callback function for the map.
+     */
+    public unsetZoomCallback(): void {
+        this.eventHandlers.remove("MapZoomEventHandler");
     }
 
     /**
