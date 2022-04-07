@@ -1,4 +1,4 @@
-import FillPattern from "ol-ext/style/FillPattern";
+import OlFillPattern from "ol-ext/style/FillPattern";
 import { Fill as OlFill, Icon as OlIcon } from "ol/style";
 
 /** Pattern */
@@ -11,8 +11,8 @@ export default class Pattern {
     public static getDefaultFillPatterns(): Map<string, string> {
         const ret: Map<string, string> = new Map();
         ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
-        for (const i in FillPattern.prototype.patterns) {
-            const p = new FillPattern({ pattern: i });
+        for (const i in OlFillPattern.prototype.patterns) {
+            const p = new OlFillPattern({ pattern: i });
             ret.set(i, p.getImage().toDataURL());
         }
         return ret;
@@ -38,14 +38,14 @@ export default class Pattern {
             pattern_offset: opts["pattern_offset"] || 0,
             pattern_scale: opts["pattern_scale"] || 0
         };
-        let p: FillPattern = null;
+        let p: OlFillPattern = null;
         if (patternName == "empty") {
-            p = new FillPattern({
+            p = new OlFillPattern({
                 pattern: patternName,
                 fill: new OlFill({ color: options["background_color"] })
             });
         } else {
-            p = new FillPattern({
+            p = new OlFillPattern({
                 pattern: patternName,
                 //image: new OlIcon({ src: options["image_src"] }),
                 size: options["pattern_stroke_width"],
