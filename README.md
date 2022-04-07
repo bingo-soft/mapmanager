@@ -4,7 +4,7 @@ MapManager is a TypeScript library, which simplifies usage of OpenLayers in GIS 
 
 ## Dependencies
 
-MapManager depends on [OpenLayers](https://github.com/openlayers/openlayers) and [ol-ext](https://viglino.github.io/ol-ext) libraries
+MapManager depends on [OpenLayers](https://github.com/openlayers/openlayers), [ol-ext](https://viglino.github.io/ol-ext) and [proj4](https://github.com/proj4js/proj4js) libraries
 
 ## Installation
 

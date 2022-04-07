@@ -1,4 +1,5 @@
 import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
+import OlFillPattern from "ol-ext/style/FillPattern";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
 import StyleFunction from "./StyleFunctionType";
@@ -147,14 +148,29 @@ export default class StyleBuilder {
      * @return style builder instance
      */
     private setPolygonStyle(opts: unknown): StyleBuilder {
+        let fill: OlFill | OlFillPattern = null;
+        if (opts["pattern_name"]) {
+            fill = new OlFillPattern({
+                pattern: opts["pattern_name"],
+                size: opts["pattern_stroke_width"] || 1,
+                color: opts["pattern_color"] || "rgb(0, 0, 0)",
+                offset: opts["pattern_offset"] || 0,
+                scale: opts["pattern_scale"] || 0,
+                fill: new OlFill({ color: opts["background_color"] || "rgb(255, 255, 255)" }),
+                spacing: opts["pattern_stroke_spacing"] || 0,
+                angle: opts["pattern_stroke_rotation"] || 0
+            });
+        } else {
+            fill = new OlFill({
+                color: opts["background_color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
+            });
+        }
         const style = new OlStyle({
             stroke: new OlStroke({
                 color: opts["color"], 
                 width: opts["stroke_width"]
             }),
-            fill: new OlFill({
-                color: opts["background_color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
-            }),
+            fill: fill
         });
         this.style["Polygon"] = style;
         this.style["MultiPolygon"] = style;
