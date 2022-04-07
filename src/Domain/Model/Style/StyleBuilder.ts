@@ -149,16 +149,16 @@ export default class StyleBuilder {
      */
     private setPolygonStyle(opts: unknown): StyleBuilder {
         let fill: OlFill | OlFillPattern = null;
-        const fillStyle = opts["fill_style"] ? opts["fill_style"] : "empty";
+        const fillStyle = (opts["fill_style"] ? opts["fill_style"] : "empty").toLowerCase();
         let backgroundColor = opts["background_color"] ? opts["background_color"] : "#fff";
         if (opts["opacity"]) {
             backgroundColor = ColorUtil.applyOpacity(backgroundColor, opts["opacity"]);
         }
-        if (fillStyle.toLowerCase() == "empty") {
+        if (fillStyle == "empty") {
             fill = new OlFill({color: backgroundColor});
         } else {
             fill = new OlFillPattern({
-                pattern: opts["fill_style"],
+                pattern: fillStyle,
                 size: opts["pattern_stroke_width"] || 0,
                 color: opts["pattern_color"] || "rgb(255, 255, 255)",
                 offset: opts["pattern_offset"] || 0,
