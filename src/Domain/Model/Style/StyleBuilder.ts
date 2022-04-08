@@ -154,6 +154,7 @@ export default class StyleBuilder {
         if (opts["opacity"]) {
             backgroundColor = ColorUtil.applyOpacity(backgroundColor, opts["opacity"]);
         }
+        console.log(fillStyle);
         if (fillStyle == "empty") {
             fill = new OlFill({color: backgroundColor});
         } else {
