@@ -15,13 +15,11 @@ export default class ClusterSource extends BaseSource {
         const vectorSource = new VectorSource();
         this.source = new OlClusterSource({
             distance: distance || 10,
-            minDistance: 100,
             source: <OlVectorSource> vectorSource.getSource(),
             geometryFunction: function (feature): OlPoint {
-                //const geometry = feature.getGeometry();
                 return new OlPoint(getCenter(feature.getGeometry().getExtent()));
-
-                /* if (geometry instanceof OlPoint) {
+                /* const geometry = feature.getGeometry();
+                if (geometry instanceof OlPoint) {
                     return <OlPoint> geometry;
                 } else if (geometry instanceof OlMultiPoint) {
                     return (<OlMultiPoint> geometry).getPoint(0);
