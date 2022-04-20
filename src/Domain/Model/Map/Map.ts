@@ -355,7 +355,7 @@ export default class Map {
      * Returns map's selected layers
      * @return selected layers
      */
-     public getSelectedLayers(): LayerInterface[] {
+    public getSelectedLayers(): LayerInterface[] {
         return Array.from(this.selectedLayers);
     }
 

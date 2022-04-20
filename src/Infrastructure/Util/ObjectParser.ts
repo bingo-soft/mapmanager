@@ -38,6 +38,6 @@ export default class ObjectParser {
                 return "";
             }
         }
-        return value.toString();
+        return value ? value.toString() : "";
     }
 }

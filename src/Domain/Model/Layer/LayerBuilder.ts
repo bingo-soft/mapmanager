@@ -5,11 +5,13 @@ import VectorSource from "../Source/Impl/VectorSource";
 import XYZSource from "../Source/Impl/XYZSource";
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
 import TileWMSSource from "../Source/Impl/TileWMSSource";
+import ClusterSource from "../Source/Impl/ClusterSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import LoaderFunction from "./LoaderFunctionType";
 import { unkinkPolygon } from "@turf/turf";
+
 
 /** LayerBuilder */
 export default class LayerBuilder {
@@ -34,14 +36,19 @@ export default class LayerBuilder {
     /**
      * Sets layer's source type
      * @param type - source type
+     * @param opts - options
      * @return layer builder instance
      */
-    public setSource(type: SourceType): LayerBuilder {
+    public setSource(type: SourceType, opts?: unknown): LayerBuilder {
         switch (type) {
             case SourceType.Vector:
                 this.layer.setSource(new VectorSource());
                 break;
-           case SourceType.TileWMS:
+            case SourceType.Cluster:
+                const distance = opts["style"] && opts["style"]["cluster"] ? opts["style"]["cluster"]["distance"] : null;
+                this.layer.setSource(new ClusterSource(distance));
+                break;
+            case SourceType.TileWMS:
                 this.layer.setSource(new TileWMSSource());
                 this.layer.setType(type);
                 break;
