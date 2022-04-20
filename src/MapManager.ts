@@ -317,6 +317,10 @@ export default class MapManager {
                 builder = new LayerBuilder(new VectorLayer(null, opts));
                 builder.setSource(SourceType.Vector);
                 break;
+            case SourceType.Cluster:
+                builder = new LayerBuilder(new VectorLayer(null, opts));
+                builder.setSource(SourceType.Cluster, opts);
+                break;
             case SourceType.TileWMS:
                 builder = new LayerBuilder(new TileLayer(opts));
                 builder.setSource(SourceType.TileWMS); 
@@ -336,7 +340,7 @@ export default class MapManager {
             if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
             }
-            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "request")) {
+            if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
                     if (opts["request"]) {
                         builder.setLoaderOptions(opts["request"]);
                     }
@@ -377,7 +381,7 @@ export default class MapManager {
                         return await query.execute(payload);
                     });
             }
-            if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts, "style")) {
+            if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "url")) { 

@@ -1,4 +1,4 @@
-import {Circle as OlCircleStyle, Icon as OlIconStyle, Fill as OlFill, Stroke as OlStroke, Text as OlTextStyle, Style as OlStyle} from "ol/style";
+import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
@@ -11,6 +11,7 @@ import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 export default class StyleBuilder {
     
     private style: StyleType;
+    private clusterStyle: OlStyle;
     private field: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
     private uniqueColorField: string;
@@ -77,6 +78,9 @@ export default class StyleBuilder {
             if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length != 0) {
                 this.setTextStyle(opts["label"]);
             }
+            if (Object.prototype.hasOwnProperty.call(opts, "cluster") && Object.keys(opts["cluster"]).length != 0) {
+                this.setClusterStyle(opts["cluster"]);
+            }
             if (Object.prototype.hasOwnProperty.call(opts, "style_builder")) {
                 this.externalStyleBuilder = opts["style_builder"];
             }
@@ -109,7 +113,7 @@ export default class StyleBuilder {
             });
         } else if (opts["marker_type"] == "image") {
             style = new OlStyle({
-                image: new OlIconStyle({
+                image: new OlIcon({
                     opacity: opts["opacity"] ? opts["opacity"] / 100 : 1,
                     rotation: opts["rotation"] ? opts["rotation"] * Math.PI / 180 : 0,
                     offset: opts["offset"],
@@ -187,7 +191,7 @@ export default class StyleBuilder {
      * @return style builder instance
      */
     private setTextStyle(opts: unknown): StyleBuilder {
-        const style = new OlTextStyle({
+        const style = new OlText({
             stroke: new OlStroke({
                 color: opts["color"],
                 width: opts["stroke_width"]
@@ -243,19 +247,64 @@ export default class StyleBuilder {
     }
 
     /**
+     * Sets cluster style
+     * @param opts - options
+     * @return style builder instance
+     */
+     private setClusterStyle(opts: unknown): StyleBuilder {
+        let style: OlStyle = null;
+        style = new OlStyle({
+            image: new OlCircleStyle({
+                radius: opts["size"] || 2,
+                fill: new OlFill({
+                    color: opts["color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
+                }),
+                stroke: new OlStroke({
+                    color: opts["color"],
+                    width: 1
+                })
+            }),
+            text: new OlText({
+                fill: new OlFill({
+                    color: opts["text_color"] || "#fff"
+                })
+            })
+        });
+        this.clusterStyle = style;
+        return this;
+    }
+
+    /**
      * Builds style
      * @param useExternalStyleBuilder - whether to use external style builder
      * @return style function
      */
     public build(useExternalStyleBuilder = true): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
+            let style: OlStyle;
+            // clustered features
+            const clusteredFeatures = feature.get('features');
+            if (clusteredFeatures) {
+                const size = clusteredFeatures.length;
+                
+                if (size == 1) {
+                    console.log(clusteredFeatures[0].getGeometry().getType());
+                }
+                style = this.clusterStyle;
+                if (style) {
+                    const text = style.getText();
+                    text.setText(size.toString());
+                    style.setText(text);
+                }
+                return style;
+            }
+            // common features
             if (useExternalStyleBuilder && typeof this.externalStyleBuilder === "function") {
                 const featureProps = feature.getProperties();
                 const featureStyle = this.externalStyleBuilder(featureProps);
                 this.applyOptions(featureStyle);
             }
             const geomType = feature.getGeometry().getType();
-            let style: OlStyle;
             if (this.style[geomType]) {
                 style = this.style[geomType];
             } else {
@@ -290,7 +339,7 @@ export default class StyleBuilder {
      * @param resolution - current map view resolution
      */
     private applyText(feature: OlFeature, style: OlStyle, geomType: string, resolution: number): void {
-        const textStyle: OlTextStyle = this.style["Text"];
+        const textStyle: OlText = this.style["Text"];
         if (style && textStyle) {
             if (!this.field) {
                 this.field = textStyle.getText();

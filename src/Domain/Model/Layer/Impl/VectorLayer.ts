@@ -1,6 +1,6 @@
 import { Layer as OlLayer } from "ol/layer";
 import { Vector as OlVectorLayer } from "ol/layer";
-import { Vector as OlVectorSource } from "ol/source";
+import { Vector as OlVectorSource, Cluster as OlClusterSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import BaseVectorLayer from "ol/layer/BaseVector";
@@ -59,11 +59,14 @@ export default class VectorLayer extends AbstractLayer{
      * Sets layer's loader
      * @param loader - loader function
      */
-    public setLoader(loader: LoaderFunction): void {   
-        const source = <OlVectorSource> this.layer.getSource();
-        source.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection) => {
+    public setLoader(loader: LoaderFunction): void {
+        let source = this.layer.getSource();
+        if (source instanceof OlClusterSource) {
+            source = source.getSource();
+        }
+        (<OlVectorSource> source).setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection) => {
             const data = await loader(extent, resolution, projection); 
-            source.addFeatures(new OlGeoJSON().readFeatures(data, {
+            (<OlVectorSource> source).addFeatures(new OlGeoJSON().readFeatures(data, {
                 dataProjection: "EPSG:" + this.srsId.toString(),
                 featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
             }));
