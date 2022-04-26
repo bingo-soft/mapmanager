@@ -10,7 +10,6 @@ import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import LoaderFunction from "./LoaderFunctionType";
-import { unkinkPolygon } from "@turf/turf";
 
 
 /** LayerBuilder */

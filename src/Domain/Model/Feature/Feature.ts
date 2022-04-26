@@ -1,5 +1,4 @@
 import * as turf from "@turf/turf"
-import booleanIntersects from "@turf/boolean-intersects"
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
 import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
@@ -439,42 +438,28 @@ export default class Feature {
     }
 
     /**
-     * Checks whether feature is valid
-     * @return boolean indicating whether feature is valid
+     * Checks whether feature valid
+     * @return boolean indicating whether feature valid
      */
     public isValid(): boolean {
-        const feature = this.getFeature();
-        const geometry = feature.getGeometry();
-        let coordinates: OlCoordinate | OlCoordinate[] | OlCoordinate[][];
+        const geometry = this.getFeature().getGeometry();
+        let invalid: OlPoint[] | OlLineString[];
         if (geometry instanceof OlPoint) {
-            coordinates = (<OlPoint> geometry).getCoordinates();
-            return coordinates.length == 2;
+            return (<OlPoint> geometry).getCoordinates().length == 2;
+        } else if (geometry instanceof OlMultiPoint) {
+            invalid = (<OlMultiPoint> geometry).getPoints().filter(point => point.getCoordinates().length != 2);
+            return invalid.length == 0;
+        } else if (geometry instanceof OlLineString) {
+            return !!(<OlLineString> geometry).getCoordinates().length;
+        } else if (geometry instanceof OlMultiLineString) { 
+            invalid = (<OlMultiLineString> geometry).getLineStrings().filter(linestring => linestring.getCoordinates().length == 0);
+            return invalid.length == 0;
+        } else if (geometry instanceof OlPolygon || geometry instanceof OlMultiPolygon) {
+            var unkinked = turf.unkinkPolygon(<any> new OlGeoJSON().writeFeatureObject(this.feature));
+            return unkinked && unkinked.features && unkinked.features.length == 1;
+        } else {
+            return false;
         }
-        if (geometry instanceof OlLineString) {
-            coordinates = (<OlLineString> geometry).getCoordinates();
-            return !!coordinates.length;
-        }
-        if (geometry instanceof OlPolygon) {
-            const linesFeature = this.polygonToLine();
-            const coordinates = (<OlMultiLineString> linesFeature.getFeature().getGeometry()).getCoordinates();
-            for (let i = 0; i < coordinates.length; i++) {
-                for (let j = 0; j < coordinates.length; j++) {
-                    if (i != j) {
-                        const line1 = turf.lineString(coordinates[i]);
-                        const line2 = turf.lineString(coordinates[j]);
-                        if (booleanIntersects(line1, line2)) {
-                            return false;
-                        }
-                    }
-
-                }
-            }
-            return true;
-        }
-
-
-
-        //return booleanValid(new OlGeoJSON().writeFeatureObject(this.feature));
     }
 
     /**
