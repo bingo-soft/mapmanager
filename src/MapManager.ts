@@ -931,13 +931,13 @@ export default class MapManager {
     }
 
     /**
-     * Checks whether feature is valid
+     * Checks whether feature collection valid
      * @category Feature
-     * @param feature - feature to validate
-     * @return boolean indicating whether feature is valid
+     * @param features - feature collection to validate
+     * @return boolean indicating whether all features in collection valid
      */
-     public static isValid(feature: Feature): boolean {
-        return feature.isValid();
+    public static isValid(features: FeatureCollection): boolean {
+        return features.getFeatures().filter(feature => !feature.isValid()).length == 0;
     }
 
     /**
