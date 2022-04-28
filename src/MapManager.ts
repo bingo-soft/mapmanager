@@ -961,6 +961,18 @@ export default class MapManager {
     }
 
     /**
+     * Creates feature collection from GeoJSON features
+     * @category Feature
+     * @param geoJSON - a string representing features
+     * @param sourceSRSId - SRS Id of input GeoJSON
+     * @param destinationSrsId - SRS Id of resulting features 
+     * @return feature collection
+     */
+    public static createFeatureCollectionFromGeoJSON(geoJSON: string, sourceSRSId: number, destinationSrsId?: number): FeatureCollection {
+        return FeatureCollection.createFromGeoJSON(Geometry.flattenGeometry(geoJSON), sourceSRSId, destinationSrsId);
+    }
+
+    /**
      * Registers a new projection
      * @category Misc
      * @param code - projection EPSG:XXXX code
