@@ -249,4 +249,22 @@ export default class FeatureCollection {
         }
         return "";
     }
+
+    /**
+     * Creates feature collection from GeoJSON features
+     * @param geoJSON - a string representing features
+     * @param sourceSRSId - SRS Id of input GeoJSON
+     * @param destinationSrsId - SRS Id of resulting features 
+     * @return feature collection
+     */
+    public static createFromGeoJSON(geoJSON: string, sourceSRSId: number, destinationSrsId?: number): FeatureCollection {
+        const sourceSRS = "EPSG:" + sourceSRSId.toString();
+        const destinationSRS = destinationSrsId ? "EPSG:" + destinationSrsId.toString() : sourceSRS;
+        const features = new OlGeoJSON().readFeatures(geoJSON, {
+            dataProjection: sourceSRS,
+            featureProjection: destinationSRS
+        });
+        return new FeatureCollection(features);
+    }
+    
 }
