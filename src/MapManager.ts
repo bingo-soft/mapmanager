@@ -644,9 +644,10 @@ export default class MapManager {
      * @param map - map instance
      * @param features - features
      * @param zoom - zoom after fit
+     * @param showCenterMarker - whether to show a center marker after fit
      */
-    public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number): void { 
-        map.fitFeatures(features, zoom);
+    public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number, showCenterMarker?: boolean): void { 
+        map.fitFeatures(features, zoom, showCenterMarker);
     }
 
     /**

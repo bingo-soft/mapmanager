@@ -272,11 +272,7 @@ export default class Map {
         }
         this.map.getView().setCenter(coordinate);
         if (showMarker) {
-            const style = new StyleBuilder(SearchMarkerStyle).build();
-            const marker = new OlFeature(new OlPoint(coordinate));
-            marker.setStyle(style);
-            const layer = this.createTemporaryLayer(TemporaryLayerType.CenterMarker);
-            (<OlVectorSource> layer.getSource()).addFeature(marker);
+            this.showMarker(coordinate);
         }
     }
 
@@ -689,8 +685,9 @@ export default class Map {
      * Fits map to given features extent
      * @param features - features
      * @param zoom - zoom to set after fit
+     * @param showCenterMarker - whether to show a center marker after fit
      */
-    public fitFeatures(features: FeatureCollection, zoom?: number): void {
+    public fitFeatures(features: FeatureCollection, zoom?: number, showCenterMarker?: boolean): void {
         const geometries = features.getFeatureGeometries();
         if (!geometries.length) {
             return;
@@ -701,6 +698,9 @@ export default class Map {
         view.fit(extent);
         if (typeof zoom !== "undefined") {
             view.setZoom(zoom);
+        }
+        if (typeof showCenterMarker !== "undefined" && showCenterMarker) {
+            this.showMarker(OlExtent.getCenter(extent));        
         }
     }
 
@@ -728,7 +728,7 @@ export default class Map {
     /**
      * Creates a temporary layer and adds it to map
      * @memberof Map
-     * @return measure layer instance 
+     * @return temporary layer instance 
      */
     public createTemporaryLayer(type: TemporaryLayerType): LayerInterface {
         let layer = type == TemporaryLayerType.Measure ? this.measureLayer: this.searchLayer;
@@ -975,6 +975,18 @@ export default class Map {
                 iframe.contentWindow.document.body.appendChild(img);
             });
         });
+    }
+
+    /**
+     * Shows marker
+     * @param coordinate - coordinate
+     */
+    private showMarker(coordinate: OlCoordinate.Coordinate): void {
+        const style = new StyleBuilder(SearchMarkerStyle).build();
+        const marker = new OlFeature(new OlPoint(coordinate));
+        marker.setStyle(style);
+        const layer = this.createTemporaryLayer(TemporaryLayerType.CenterMarker);
+        (<OlVectorSource> layer.getSource()).addFeature(marker);
     }
 
     /**
