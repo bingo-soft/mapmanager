@@ -1,9 +1,14 @@
+import * as turf from "@turf/turf"
 import OlBaseLayer from "ol/layer/Base";
 import { Layer as OlLayer } from "ol/layer";
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
-import {DragBox as OlDragBox, Select as OlSelect} from 'ol/interaction';
+import { Geometry as OlGeometry } from "ol/geom";
+import {DragBox as OlDragBox, Select as OlSelect, Draw as OlDraw} from 'ol/interaction';
 import { always as OlEventConditionAlways, shiftKeyOnly as OlEventConditionShiftKeyOnly } from "ol/events/condition"
+import { GeoJSON as OlGeoJSON }  from "ol/format";
+import OlCollection from 'ol/Collection';
+import OlGeometryType from "ol/geom/GeometryType";
 import OlBaseEvent from "ol/events/Event";
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
@@ -19,6 +24,10 @@ import SourceType from "../../Source/SourceType";
 
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
+    private select: OlSelect;
+    private selectedFeatures: OlCollection<OlFeature<OlGeometry>>;
+
+
     /**
      * @param type - selection type
      * @param map - map object to select on
@@ -39,6 +48,12 @@ export default class SelectInteraction extends BaseInteraction {
                 }
             });
         }
+        // selected features are added to the feature overlay of a Select interaction for highlighting only 
+        // (in case of SelectionType.Rectangle or SelectionType.Polygon)
+        this.select = new OlSelect();
+        olMap.addInteraction(this.select);
+        this.selectedFeatures = this.select.getFeatures();
+        this.innerInteractions.push(this.select);
         switch(type) {
             case SelectionType.SingleClick:
                 this.interaction = new OlSelect({
@@ -67,12 +82,6 @@ export default class SelectInteraction extends BaseInteraction {
                 });
                 break;
             case SelectionType.Rectangle:
-                // selected features are added to the feature overlay of a Select interaction for highlighting only
-                const select = new OlSelect();
-                olMap.addInteraction(select);
-                const selectedFeatures = select.getFeatures();
-                this.innerInteractions.push(select);
-
                 this.interaction = new OlDragBox();
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHandler", (e: OlBaseEvent): void => {
@@ -82,12 +91,12 @@ export default class SelectInteraction extends BaseInteraction {
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
-                                (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, function (olFeature) {
+                                (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) =>  {
                                     const feature = new Feature(olFeature, map.getLayer(olLayer));
                                     feature.setEventBus(map.getEventBus());
                                     features.push(feature);
                                     layers.add(olLayer);
-                                    selectedFeatures.push(olFeature); // just to highlight the selection
+                                    this.selectedFeatures.push(olFeature); // just to highlight the selection
                                 });
                             }
                         }
@@ -100,6 +109,42 @@ export default class SelectInteraction extends BaseInteraction {
                     }
                 });
                 break;
+                case SelectionType.Polygon:
+                    this.interaction = new OlDraw({
+                        features: new OlCollection(),
+                        type: OlGeometryType.POLYGON,
+                    });
+                    this.eventHandlers = new EventHandlerCollection(this.interaction);
+                    this.eventHandlers.add(EventType.DrawEnd, "SelectByPolygonEventHandler", (e: OlBaseEvent): void => {
+                        const extentFeature = (<any> e).feature;
+                        const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(extentFeature).geometry;
+                        const extent = extentFeature.getGeometry().getExtent();
+                        const features: Feature[] = [];
+                        const layers: Set<OlLayer> = new Set();
+                        olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
+                            if (olLayer instanceof OlVectorLayer) {
+                                if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                                    (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
+                                        const featureGeometryTurf = new OlGeoJSON().writeFeatureObject(olFeature).geometry;
+                                        if (turf.booleanContains(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
+                                            const feature = new Feature(olFeature, map.getLayer(olLayer));
+                                            feature.setEventBus(map.getEventBus());
+                                            features.push(feature);
+                                            layers.add(olLayer);
+                                            this.selectedFeatures.push(olFeature); // just to highlight the selection
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        fc = new FeatureCollection(features);
+                        map.setSelectedFeatures(fc);
+                        map.setSelectedLayers(layers);
+                        if (typeof callback === "function") {
+                            callback(fc);
+                        }
+                    });
+                    break;
             default:
                 break;
         }

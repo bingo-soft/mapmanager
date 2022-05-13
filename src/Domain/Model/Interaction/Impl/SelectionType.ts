@@ -1,6 +1,7 @@
 enum SelectionType {
     SingleClick = "singleclick",
-    Rectangle = "rectangle"
+    Rectangle = "rectangle",
+    Polygon = "polygon"
 }
 
 export default SelectionType;
