@@ -116,17 +116,6 @@ export default class MapManager {
     }
 
     /**
-     * Transforms coordinates from map projection to given one
-     * @category Map
-     * @param map - map instance
-     * @param coordinates - coordinates
-     * @param srsId - SRS Id (e.g. 4326)
-     */
-    public static transformCoordinates(map: Map, coordinates: number[], srsId: number): number[] {
-        return map.transformCoordinatesFrom(coordinates, srsId);
-    }
-
-    /**
      * Exports map
      * @category Map
      * @param map - map instance
@@ -986,6 +975,19 @@ export default class MapManager {
         if (extent && extent.length == 4) {
             OlProj.get(code).setExtent(<OlExtent> extent);
         }
+    }
+
+    /**
+     * Transforms coordinates from one projection to another one
+     * @category Misc
+     * @param map - map instance
+     * @param coordinates - coordinates
+     * @param sourceSrsId - source SRS Id (e.g. 4326)
+     * @param destinationSrsId - destination SRS Id (e.g. 3857)
+     * @return transformed coordinates
+     */
+    public static transformCoordinates(coordinates: number[], sourceSrsId: number, destinationSrsId: number): number[] {
+        return OlProj.transform(coordinates, "EPSG:" + sourceSrsId.toString(), "EPSG:" + destinationSrsId.toString());
     }
 
 }
