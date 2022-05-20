@@ -222,7 +222,7 @@ export default class Feature {
      */
     private transformCoordinateToMapSRS(coordinate: OlCoordinate, srsId: number): OlCoordinate {
         if (srsId) {
-            coordinate = this.layer.getMap().transformCoordinatesTo(coordinate, srsId);
+            coordinate = OlProj.transform(coordinate, "EPSG:" + srsId.toString(), "EPSG:" + this.layer.getMap().getSRSId().toString());
         }
         return coordinate;
     }

@@ -24,7 +24,7 @@ MapManager.setCursor(map, CursorType.SelectByArea);
 /* Set an event handler to get cursor coordinates */
 MapManager.setEventHandler(map, EventType.PointerMove, "GetCursorCoords", function(data: any): void {
     const pixelCoords: number[] = map.getCoordinateFromPixel(data.pixel);
-    const srsCoords: number[] = map.transformCoordinates(pixelCoords, 4326);
+    const srsCoords: number[] = MapManager.transformCoordinates(pixelCoords, map.getSRSId(), 4326);
     console.log(srsCoords);
 });
 

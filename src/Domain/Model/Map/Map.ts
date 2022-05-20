@@ -842,23 +842,14 @@ export default class Map {
     }
 
     /**
-     * Transforms coordinates from map projection to given one
+     * Transforms coordinates from one projection to another
      * @param coordinates - coordinates
-     * @param srsId - SRS Id (e.g. 4326)
+     * @param sourceSrsId - source SRS Id (e.g. 4326)
+     * @param destinationSrsId - destination SRS Id (e.g. 4326)
      * @return transformed coordinates
      */
-    public transformCoordinatesFrom(coordinates: number[], srsId: number): number[] {
-        return OlProj.transform(coordinates, "EPSG:" + this.srsId.toString(), "EPSG:" + srsId.toString());
-    }
-
-    /**
-     * Transforms coordinates from given projection to map projection
-     * @param coordinates - coordinates
-     * @param srsId - SRS Id (e.g. 4326)
-     * @return transformed coordinates
-     */
-    public transformCoordinatesTo(coordinates: number[], srsId: number): number[] {
-        return OlProj.transform(coordinates, "EPSG:" + srsId.toString(), "EPSG:" + this.srsId.toString());
+    public static transformCoordinates(coordinates: number[], sourceSrsId: number, destinationSrsId: number): number[] {
+        return OlProj.transform(coordinates, "EPSG:" + sourceSrsId.toString(), "EPSG:" + destinationSrsId.toString());
     }
 
     /**
