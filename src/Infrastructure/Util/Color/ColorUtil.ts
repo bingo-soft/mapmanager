@@ -71,8 +71,8 @@ export default class ColorUtil {
      */
     public static applyOpacity(color: string, opacity: number): string {
         color = ColorUtil.normalizeColor(color);
-        if (opacity < 0) {
-            opacity = 0;   
+        if (opacity <= 0) {
+            opacity = 1;   
         }
         if (opacity > 100) {
             opacity = 100;
