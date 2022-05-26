@@ -628,6 +628,15 @@ export default class MapManager {
     }
 
     /**
+     * Returns an array of layers where feature intersects layer's feature(s)
+     * @param feature - feature
+     * @return an array of intersected layers
+     */
+    public static getFeatureIntersectedLayers(feature: Feature): LayerInterface[] { 
+        return feature.getIntersectedLayers();
+    }
+
+    /**
      * Fits map to given features extent
      * @category Feature
      * @param map - map instance
@@ -635,7 +644,7 @@ export default class MapManager {
      * @param zoom - zoom after fit
      * @param showCenterMarker - whether to show a center marker after fit
      */
-    public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number, showCenterMarker?: boolean): void { 
+     public static fitFeatures(map: Map, features: FeatureCollection, zoom?: number, showCenterMarker?: boolean): void { 
         map.fitFeatures(features, zoom, showCenterMarker);
     }
 

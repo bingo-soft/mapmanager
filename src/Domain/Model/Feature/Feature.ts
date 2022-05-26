@@ -1,4 +1,7 @@
 import * as turf from "@turf/turf"
+    import booleanIntersects from "@turf/boolean-intersects"
+import OlBaseLayer from "ol/layer/Base";
+import OlVectorLayer from "ol/layer/Vector";
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
 import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
@@ -460,6 +463,32 @@ export default class Feature {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns an array of layers where feature intersects layer's feature(s)
+     * @return an array of intersected layers
+     */
+    public getIntersectedLayers(): LayerInterface[] {
+        const intersectedLayers: LayerInterface[] = [];
+        const thisFeature = this.getFeature();
+        const thisFeatureGeometryTurf = new OlGeoJSON().writeFeatureObject(thisFeature).geometry;
+        const layers = this.layer.getMap().getLayers();
+        for (let i = 0; i < layers.length; ++i) {
+            const olLayer = layers[i].getLayer();
+            if (olLayer instanceof OlVectorLayer) {
+                const olFeatures = (<OlVectorLayer> olLayer).getSource().getFeatures();
+                for (let j = 0; j < olFeatures.length; ++j) {
+                    const featureGeometryTurf = new OlGeoJSON().writeFeatureObject(olFeatures[j]).geometry;
+                    // if it's not an original feature and there is an intersection
+                    if (olFeatures[j] !== thisFeature && booleanIntersects(turf.feature(thisFeatureGeometryTurf), turf.feature(featureGeometryTurf))) {
+                        intersectedLayers.push(layers[i]);
+                        break;
+                    } 
+                }
+            }    
+        }
+        return intersectedLayers;
     }
 
     /**
