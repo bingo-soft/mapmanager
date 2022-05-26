@@ -2,7 +2,7 @@ import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import * as OlExtent from "ol/extent";
-import { OverviewMap as OlOverviewMapControl, Zoom as OlZoomControl, Control as OlControl /* , defaults as OlDefaultControls */ } from "ol/control";
+import { OverviewMap as OlOverviewMapControl, Zoom as OlZoomControl, Control as OlControl, ScaleLine as OlScaleLine} from "ol/control";
 import OlVectorLayer from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
@@ -125,19 +125,18 @@ export default class Map {
         // Ol map controls init
         const controls: OlControl[] = [];
         if (Object.prototype.hasOwnProperty.call(opts, "controls")) {
-            if (opts["controls"].includes("overview")) {
-                const olOverviewMapControl = new OlOverviewMapControl({
-                    layers: [
-                        new OlTileLayer({
-                            source: source,
-                        })
-                    ],
-                });
-                controls.push(olOverviewMapControl);
-            }
             if (opts["controls"].includes("zoom")) {
                 const olZoomControl = new OlZoomControl();
                 controls.push(olZoomControl);
+            }
+            if (opts["controls"].includes("scaleline")) {
+                const olScaleLineControl = new OlScaleLine({
+                    units: "metric",
+                    bar: true,
+                    steps: 1,
+                    text: true
+                });
+                controls.push(olScaleLineControl);
             }
         }
         // Ol map init
@@ -290,13 +289,13 @@ export default class Map {
      */
     public setZoomCallback(callback: ZoomCallbackFunction): void {
         this.eventHandlers.add(EventType.MoveEnd, "MapZoomEventHandler", (e: OlBaseEvent): void => {
-            if (typeof callback != "function") {
+            if (typeof callback !== "function") {
                 return;
             }
-            const newZoom = this.map.getView().getZoom();
-            if (this.zoom != newZoom) {
-                this.zoom = newZoom;
-                callback(newZoom);
+            const zoom = this.map.getView().getZoom();
+            if (this.zoom != zoom) {
+                this.zoom = zoom; 
+                callback(zoom);
             }
         });
     }

@@ -1,6 +1,12 @@
+/***** OL Controls *****/
 .ol-zoom {
     top: 40% !important;
 }
+.ol-scale-bar {
+    bottom: 35px !important;
+    right: 10px !important;
+}
+/***** EOF OL Controls *****/
 
 /***** Measure tooltip *****/
 .tooltip {
