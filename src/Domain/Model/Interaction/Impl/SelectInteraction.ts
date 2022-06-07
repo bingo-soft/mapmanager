@@ -25,6 +25,8 @@ import SourceType from "../../Source/SourceType";
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
     private select: OlSelect;
+    private layers: Set<OlLayer> = new Set();
+    private features: Set<Feature> = new Set();
     private selectedFeatures: OlCollection<OlFeature<OlGeometry>>;
 
 
@@ -64,18 +66,17 @@ export default class SelectInteraction extends BaseInteraction {
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.SelectSingleFeature, "SelectSingleFeatureEventHandler", (e: OlBaseEvent): void => {
                     const selectedFeatures: OlFeature[] = e.target.getFeatures().getArray();
-                    const features: Feature[] = [];
-                    const layers: Set<OlLayer> = new Set();
+                    this.features.clear();
                     selectedFeatures.forEach((olFeature: OlFeature): void => {
                         const olLayer: OlLayer = e.target.getLayer(olFeature);
-                        layers.add(olLayer);
+                        this.layers.add(olLayer);
                         const feature = new Feature(olFeature, map.getLayer(olLayer));
                         feature.setEventBus(map.getEventBus());
-                        features.push(feature);
+                        this.features.add(feature);
                     });
-                    fc = new FeatureCollection(features);
+                    fc = new FeatureCollection(Array.from(this.features));
                     map.setSelectedFeatures(fc);
-                    map.setSelectedLayers(layers);
+                    map.setSelectedLayers(this.layers);
                     if (typeof callback === "function") {
                         callback(fc);
                     }
@@ -86,68 +87,80 @@ export default class SelectInteraction extends BaseInteraction {
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHandler", (e: OlBaseEvent): void => {
                     const extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
-                    const features: Feature[] = [];
-                    const layers: Set<OlLayer> = new Set();
+                    this.features.clear();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) =>  {
-                                    const feature = new Feature(olFeature, map.getLayer(olLayer));
-                                    feature.setEventBus(map.getEventBus());
-                                    features.push(feature);
-                                    layers.add(olLayer);
-                                    this.selectedFeatures.push(olFeature); // just to highlight the selection
+                                    this.addToSelection(map, olLayer, olFeature);
                                 });
                             }
                         }
                     });
-                    fc = new FeatureCollection(features);
+                    fc = new FeatureCollection(Array.from(this.features));
                     map.setSelectedFeatures(fc);
-                    map.setSelectedLayers(layers);
+                    map.setSelectedLayers(this.layers);
                     if (typeof callback === "function") {
                         callback(fc);
                     }
                 });
                 break;
-                case SelectionType.Polygon:
-                    this.interaction = new OlDraw({
-                        features: new OlCollection(),
-                        type: OlGeometryType.POLYGON,
-                    });
-                    this.eventHandlers = new EventHandlerCollection(this.interaction);
-                    this.eventHandlers.add(EventType.DrawEnd, "SelectByPolygonEventHandler", (e: OlBaseEvent): void => {
-                        const extentFeature = (<any> e).feature;
-                        const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(extentFeature).geometry;
-                        const extent = extentFeature.getGeometry().getExtent();
-                        const features: Feature[] = [];
-                        const layers: Set<OlLayer> = new Set();
-                        olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
-                            if (olLayer instanceof OlVectorLayer) {
-                                if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
-                                    (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
-                                        const featureGeometryTurf = new OlGeoJSON().writeFeatureObject(olFeature).geometry;
+            case SelectionType.Polygon:
+                this.interaction = new OlDraw({
+                    features: new OlCollection(),
+                    type: OlGeometryType.POLYGON,
+                });
+                this.eventHandlers = new EventHandlerCollection(this.interaction);
+                this.eventHandlers.add(EventType.DrawEnd, "SelectByPolygonEventHandler", (e: OlBaseEvent): void => {
+                    const extentFeature = (<any> e).feature;
+                    const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(extentFeature).geometry;
+                    const extent = extentFeature.getGeometry().getExtent();
+                    this.features.clear();
+                    olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
+                        if (olLayer instanceof OlVectorLayer) {
+                            if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                                (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
+                                    let featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
+                                    const geomType = olFeature.getGeometry().getType();
+                                    console.log(geomType);
+                                    if (geomType == OlGeometryType.MULTI_POINT || geomType == OlGeometryType.MULTI_LINE_STRING || 
+                                        geomType == OlGeometryType.MULTI_POLYGON) {
+                                        turf.flattenEach(featureTurf, (turfFeature) => {
+                                            if (turf.booleanContains(turf.feature(extentGeometryTurf), turfFeature)) {
+                                                if (!this.selectedFeatures.getArray().includes(olFeature)) {
+                                                    this.addToSelection(map, olLayer, olFeature/* , layers, features */);
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        let featureGeometryTurf = featureTurf.geometry;
                                         if (turf.booleanContains(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
-                                            const feature = new Feature(olFeature, map.getLayer(olLayer));
-                                            feature.setEventBus(map.getEventBus());
-                                            features.push(feature);
-                                            layers.add(olLayer);
-                                            this.selectedFeatures.push(olFeature); // just to highlight the selection
+                                            this.addToSelection(map, olLayer, olFeature/* , layers, features */);
                                         }
-                                    });
-                                }
+                                    }
+                                });
                             }
-                        });
-                        fc = new FeatureCollection(features);
-                        map.setSelectedFeatures(fc);
-                        map.setSelectedLayers(layers);
-                        if (typeof callback === "function") {
-                            callback(fc);
                         }
                     });
-                    break;
+                    fc = new FeatureCollection(Array.from(this.features));
+                    map.setSelectedFeatures(fc);
+                    map.setSelectedLayers(this.layers);
+                    if (typeof callback === "function") {
+                        callback(fc);
+                    }
+                });
+                break;
             default:
                 break;
         }
+    }
+
+    addToSelection(map: Map, olLayer: OlLayer, olFeature: OlFeature): void {
+        const feature = new Feature(olFeature, map.getLayer(olLayer));
+        feature.setEventBus(map.getEventBus());
+        this.features.add(feature);
+        this.layers.add(olLayer);
+        this.selectedFeatures.push(olFeature); // just to highlight the selection
     }
 
 }

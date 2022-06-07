@@ -381,7 +381,7 @@ export default class Map {
         if (olSelect && olSelect instanceof OlSelect) {
             olSelect.getFeatures().clear();
         }
-        // if it's a DragBox interaction we must clear its highlighting select features
+        // if it's a DragBox or Draw interaction we must clear its highlighting select features
         const select = <SelectInteraction> this.interaction;
         if (select) {
             const highlightSelect = select.getInnerInteractions()[0];
