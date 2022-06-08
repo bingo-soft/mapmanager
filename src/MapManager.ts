@@ -402,7 +402,6 @@ export default class MapManager {
      */
     public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
         const layer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
-        //MapManager.addToLayerFromGeoJSON(layer, geoJSON);
         geoJSON = Geometry.flattenGeometry(geoJSON);
         layer.addFeatures(geoJSON);
         return layer;

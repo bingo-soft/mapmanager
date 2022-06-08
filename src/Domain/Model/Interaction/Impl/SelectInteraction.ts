@@ -1,4 +1,5 @@
 import * as turf from "@turf/turf"
+import booleanIntersects from "@turf/boolean-intersects" 
 import OlBaseLayer from "ol/layer/Base";
 import { Layer as OlLayer } from "ol/layer";
 import OlVectorLayer from "ol/layer/Vector";
@@ -120,24 +121,23 @@ export default class SelectInteraction extends BaseInteraction {
                         if (olLayer instanceof OlVectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
-                                    let featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
+                                    const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
                                     const geomType = olFeature.getGeometry().getType();
-                                    console.log(geomType);
-                                    if (geomType == OlGeometryType.MULTI_POINT || geomType == OlGeometryType.MULTI_LINE_STRING || 
+                                    /* if (geomType == OlGeometryType.MULTI_POINT || geomType == OlGeometryType.MULTI_LINE_STRING || 
                                         geomType == OlGeometryType.MULTI_POLYGON) {
                                         turf.flattenEach(featureTurf, (turfFeature) => {
-                                            if (turf.booleanContains(turf.feature(extentGeometryTurf), turfFeature)) {
+                                            if (booleanIntersects(turf.feature(extentGeometryTurf), turfFeature)) {
                                                 if (!this.selectedFeatures.getArray().includes(olFeature)) {
-                                                    this.addToSelection(map, olLayer, olFeature/* , layers, features */);
+                                                    this.addToSelection(map, olLayer, olFeature);
                                                 }
                                             }
                                         });
-                                    } else {
-                                        let featureGeometryTurf = featureTurf.geometry;
-                                        if (turf.booleanContains(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
-                                            this.addToSelection(map, olLayer, olFeature/* , layers, features */);
+                                    } else { */
+                                        const featureGeometryTurf = featureTurf.geometry;
+                                        if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
+                                            this.addToSelection(map, olLayer, olFeature);
                                         }
-                                    }
+                                   /*  } */
                                 });
                             }
                         }
