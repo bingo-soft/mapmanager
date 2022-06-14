@@ -14,6 +14,7 @@ import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
 import GeometryItem from "../../Feature/GeometryItem";
 import LoaderFunction from "../LoaderFunctionType";
+import { FeaturePopupCssStyle } from "../../Style/FeaturePopupCssStyle";
 
 
 /** VectorLayer */
@@ -256,8 +257,12 @@ export default class VectorLayer extends AbstractLayer{
      * Sets feature popup CSS
      * @param css - feature popup CSS
      */
-    public setFeaturePopupCss(css: string): void  {
-        this.featurePopupCss = css;
+    public setFeaturePopupCss(css: string | null): void  { console.log("css", css);
+        if (typeof css === "string" && css.trim().length != 0) {
+            this.featurePopupCss = css;
+        } else {
+            this.featurePopupCss = FeaturePopupCssStyle;
+        }
     }
 
     /**
