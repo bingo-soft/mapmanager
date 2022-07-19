@@ -41,7 +41,21 @@ export default class MapManager {
      * Creates OpenLayers map object and controls.
      * @category Map
      * @param targetDOMId - id of target DOM element
-     * @param opts - options
+     * @param opts
+     * ```Options
+     * Options:
+     * Name                               Type           Description
+     * "base_layer"                       number         Type of base layer, OSM only supported so far
+     * "base_layer_use_proxy"             boolean        Whether to use proxy of kind /osm/{z}/{x}/{y}.png for base layer to avoid CORS problems
+     * "declared_coordinate_system_id"    number         Map SRS Id, e.g. 3857
+     * "center"                           object         Map center options
+     * - "x"                              number         Map center X coordinate
+     * - "y"                              number         Map center Y coordinate
+     * - "declared_coordinate_system_id"  number         Map center SRS Id, e.g. 4326
+     * 
+     * "zoom"                             number         Map initial zoom   
+     * "controls"                         array<string>  Map controls, "zoom" and "scaleline" are supported
+     * ```
      * @return map instance
      */
     public static createMap(targetDOMId: string, opts?: unknown): Map {
