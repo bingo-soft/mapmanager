@@ -257,7 +257,7 @@ export default class VectorLayer extends AbstractLayer{
      * Sets feature popup CSS
      * @param css - feature popup CSS
      */
-    public setFeaturePopupCss(css: string | null): void  { console.log("css", css);
+    public setFeaturePopupCss(css: string | null): void  {
         if (typeof css === "string" && css.trim().length != 0) {
             this.featurePopupCss = css;
         } else {

@@ -118,7 +118,13 @@ export default class Map {
         // map source init
         let source: OlTileSource = null;
         if (baseLayer == BaseLayer.OSM) {
-             source = new OlOSM();
+            if (Object.prototype.hasOwnProperty.call(opts, "base_layer_use_proxy") && opts["base_layer_use_proxy"]) {
+                source = new OlOSM({
+                    url: "/osm/{z}/{x}/{y}.png"
+                });
+            } else {
+                source = new OlOSM();
+            }
         } /* else if (...) {
             TODO
         } */
