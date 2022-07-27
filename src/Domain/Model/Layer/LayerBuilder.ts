@@ -44,7 +44,7 @@ export default class LayerBuilder {
                 this.layer.setSource(new VectorSource());
                 break;
             case SourceType.Cluster:
-                const distance = opts["style"] && opts["style"]["cluster"] ? opts["style"]["cluster"]["distance"] : null;
+                const distance = opts["style"] && opts["style"]["point"] && opts["style"]["point"]["cluster"] ? opts["style"]["point"]["cluster"]["distance"] : null;
                 this.layer.setSource(new ClusterSource(distance));
                 break;
             case SourceType.TileWMS:

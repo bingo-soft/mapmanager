@@ -76,7 +76,6 @@ export default class Map {
     private documentEventHandlers: EventHandlerCollection;
     private eventBus: EventBus;
 
-    private static readonly BASE_LAYER = BaseLayer.OSM;
     private static readonly SRS_ID = 3857;
     private static readonly CENTER_X = 0;
     private static readonly CENTER_Y = 0;
@@ -87,7 +86,7 @@ export default class Map {
      * @param opts - options 
      */
     constructor(targetDOMId: string, opts?: unknown) { 
-        let baseLayer = Map.BASE_LAYER, 
+        let baseLayer = null, 
             srsId = Map.SRS_ID,
             centerX = Map.CENTER_X,
             centerY = Map.CENTER_Y,

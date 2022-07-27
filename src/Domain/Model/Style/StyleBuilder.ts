@@ -61,6 +61,9 @@ export default class StyleBuilder {
                     opts["point"]["color"] = opts["unique_values"]["start_color"];
                 }
                 this.setPointStyle(opts["point"]);
+                if (Object.prototype.hasOwnProperty.call(opts["point"], "cluster")) {
+                    this.setClusterStyle(opts["point"]["cluster"]);
+                }
             }
             if (Object.prototype.hasOwnProperty.call(opts, "linestring") && Object.keys(opts["linestring"]).length != 0) {
                 if (hasUniqueStyle && opts["linestring"]) {
@@ -77,9 +80,6 @@ export default class StyleBuilder {
             }
             if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length != 0) {
                 this.setTextStyle(opts["label"]);
-            }
-            if (Object.prototype.hasOwnProperty.call(opts, "cluster") && Object.keys(opts["cluster"]).length != 0) {
-                this.setClusterStyle(opts["cluster"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "style_builder")) {
                 this.externalStyleBuilder = opts["style_builder"];
@@ -285,17 +285,15 @@ export default class StyleBuilder {
             const clusteredFeatures = feature.get('features');
             if (clusteredFeatures) {
                 const size = clusteredFeatures.length;
-                
-                if (size == 1) {
-                    console.log(clusteredFeatures[0].getGeometry().getType());
+                if (size != 1) {
+                    style = this.clusterStyle;
+                    if (style) {
+                        const text = style.getText();
+                        text.setText(size.toString());
+                        style.setText(text);
+                        return style;
+                    }
                 }
-                style = this.clusterStyle;
-                if (style) {
-                    const text = style.getText();
-                    text.setText(size.toString());
-                    style.setText(text);
-                }
-                return style;
             }
             // common features
             if (useExternalStyleBuilder && typeof this.externalStyleBuilder === "function") {
