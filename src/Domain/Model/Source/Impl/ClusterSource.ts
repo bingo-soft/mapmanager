@@ -1,4 +1,5 @@
 import { Cluster as OlClusterSource, Vector as OlVectorSource } from "ol/source";
+import OlFeature from "ol/Feature";
 import { getCenter, Extent as OlExtent } from "ol/extent";
 import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
     Polygon as OlPolygon, MultiPolygon as OlMultiPolygon/* , GeometryCollection as OlGeometryCollection */} from "ol/geom"
@@ -14,11 +15,11 @@ export default class ClusterSource extends BaseSource {
         super();
         const vectorSource = new VectorSource();
         this.source = new OlClusterSource({
-            distance: distance || 10,
+            distance: distance || 20,
+            //minDistance: 10,
             source: <OlVectorSource> vectorSource.getSource(),
-            geometryFunction: function (feature): OlPoint {
-                return new OlPoint(getCenter(feature.getGeometry().getExtent()));
-                /* const geometry = feature.getGeometry();
+            geometryFunction: function(feature: OlFeature): OlPoint {
+                const geometry = feature.getGeometry();
                 if (geometry instanceof OlPoint) {
                     return <OlPoint> geometry;
                 } else if (geometry instanceof OlMultiPoint) {
@@ -32,8 +33,12 @@ export default class ClusterSource extends BaseSource {
                 } else if (geometry instanceof OlMultiPolygon) {
                     return (<OlMultiPolygon> geometry).getInteriorPoints().getPoint(0);
                 } else {
-
-                } */
+                    return new OlPoint(getCenter(feature.getGeometry().getExtent()));
+                }
+                /* if (geometry instanceof OlPoint) {
+                    return <OlPoint> geometry;
+                }
+                return null; */
             }
         });
     }
