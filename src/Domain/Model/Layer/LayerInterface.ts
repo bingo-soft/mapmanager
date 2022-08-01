@@ -47,15 +47,15 @@ export default interface LayerInterface
      */
     setEventHandler(eventType: EventType, handlerId: string, callback: (data: unknown) => void): void;
     
+    setEventBus(eventBus: EventBus | null): void;
+
+    getEventBus(): EventBus | null;
+    
     /**
      * Returns layer source type
      * @return layer source type
      */
     getType(): SourceType;
-
-    setEventBus(eventBus: EventBus | null): void;
-
-    getEventBus(): EventBus | null;
     
     /**
      * Sets layer source type

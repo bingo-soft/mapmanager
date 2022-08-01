@@ -13,10 +13,12 @@ import EventBus from "../EventHandlerCollection/EventBus";
 import GeometryItem from "../Feature/GeometryItem";
 import Map from "../Map/Map";
 import LoaderFunction from "./LoaderFunctionType";
+import { threadId } from "worker_threads";
 
 /** AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
 {
+    protected type: SourceType;
     protected layer: OlLayer;
     protected properties: unknown;
     protected srsId: number;
@@ -53,14 +55,16 @@ export default abstract class AbstractLayer implements LayerInterface
      * Returns layer's source type
      * @return layer's source type
      */
-    public abstract getType(): SourceType;
+    public getType(): SourceType {
+        return this.type;
+    }
 
     /**
      * Sets layer's source type
      * @param type - layer's source type
      */
     public setType(type: SourceType): void {
-        throw new MethodNotImplemented();
+        this.type = type;
     }
 
     public setEventBus(eventBus: EventBus | null): void {

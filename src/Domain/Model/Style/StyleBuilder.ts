@@ -6,10 +6,11 @@ import StyleFunction from "./StyleFunctionType";
 import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
 import StringUtil from "../../../Infrastructure/Util/StringUtil";
 import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
+import SourceType from "../Source/SourceType";
 
 /** StyleBuilder */
 export default class StyleBuilder {
-    
+    private sourceType: SourceType;
     private style: StyleType;
     private clusterStyle: OlStyle;
     private field: string;
@@ -29,7 +30,8 @@ export default class StyleBuilder {
     /**
      * @param opts - options
      */ 
-    constructor(opts?: unknown) {
+    constructor(opts?: unknown, sourceType?: SourceType) {
+        this.sourceType = sourceType;
         this.style = {
             "Point": null,
             "MultiPoint": null,
@@ -61,8 +63,8 @@ export default class StyleBuilder {
                     opts["point"]["color"] = opts["unique_values"]["start_color"];
                 }
                 this.setPointStyle(opts["point"]);
-                if (Object.prototype.hasOwnProperty.call(opts["point"], "cluster")) {
-                    this.setClusterStyle(opts["point"]["cluster"]);
+                if (this.sourceType == SourceType.Cluster) {
+                    this.setClusterStyle(opts["point"]);
                 }
             }
             if (Object.prototype.hasOwnProperty.call(opts, "linestring") && Object.keys(opts["linestring"]).length != 0) {
@@ -250,22 +252,23 @@ export default class StyleBuilder {
      * @param opts - options
      * @return style builder instance
      */
-     private setClusterStyle(opts: unknown): StyleBuilder {
+     private setClusterStyle(opts: unknown): StyleBuilder { 
         let style: OlStyle = null;
         style = new OlStyle({
             image: new OlCircleStyle({
-                radius: opts["size"] || 2,
+                radius: opts["cluster_size"] || 2,
                 fill: new OlFill({
-                    color: opts["color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
+                    color: opts["cluster_color"] && opts["cluster_opacity"] !== undefined ? 
+                        ColorUtil.applyOpacity(opts["cluster_color"], opts["cluster_opacity"]) : opts["cluster_color"],
                 }),
                 stroke: new OlStroke({
-                    color: opts["color"],
+                    color: opts["cluster_color"],
                     width: 1
                 })
             }),
             text: new OlText({
                 fill: new OlFill({
-                    color: opts["text_color"] || "#fff"
+                    color: opts["cluster_text_color"] || "#fff"
                 })
             })
         });

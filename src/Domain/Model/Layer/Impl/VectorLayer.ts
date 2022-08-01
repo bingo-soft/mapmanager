@@ -49,14 +49,6 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
-     * Returns layer type
-     * @return layer type
-     */
-    public getType(): SourceType {
-        return SourceType.Vector;
-    }
-
-    /**
      * Sets layer's loader
      * @param loader - loader function
      */
@@ -64,7 +56,7 @@ export default class VectorLayer extends AbstractLayer{
         let source = this.layer.getSource();
         if (source instanceof OlClusterSource) {
             source = source.getSource();
-        }
+        } 
         (<OlVectorSource> source).setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection) => {
             const data = await loader(extent, resolution, projection); 
             (<OlVectorSource> source).addFeatures(new OlGeoJSON().readFeatures(data, {
