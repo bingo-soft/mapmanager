@@ -13,7 +13,6 @@ import EventBus from "../EventHandlerCollection/EventBus";
 import GeometryItem from "../Feature/GeometryItem";
 import Map from "../Map/Map";
 import LoaderFunction from "./LoaderFunctionType";
-import { threadId } from "worker_threads";
 
 /** AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
