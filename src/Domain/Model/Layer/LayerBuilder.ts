@@ -39,25 +39,23 @@ export default class LayerBuilder {
      * @return layer builder instance
      */
     public setSource(type: SourceType, opts?: unknown): LayerBuilder {
+        this.layer.setType(type);
         switch (type) {
             case SourceType.Vector:
                 this.layer.setSource(new VectorSource());
                 break;
             case SourceType.Cluster:
-                const distance = opts["style"] && opts["style"]["point"] && opts["style"]["point"]["cluster"] ? opts["style"]["point"]["cluster"]["distance"] : null;
+                const distance = opts["style"] && opts["style"]["point"] ? opts["style"]["point"]["cluster_distance"] : null;
                 this.layer.setSource(new ClusterSource(distance));
                 break;
             case SourceType.TileWMS:
                 this.layer.setSource(new TileWMSSource());
-                this.layer.setType(type);
                 break;
             case SourceType.XYZ:
                 this.layer.setSource(new XYZSource());
-                this.layer.setType(type);
                 break;
             case SourceType.TileArcGISRest:
                 this.layer.setSource(new TileArcGISRestSource());
-                this.layer.setType(type);
                 break;
             default:
                 break;
@@ -122,7 +120,7 @@ export default class LayerBuilder {
      * @return layer builder instance
      */
     public setStyle(opts?: unknown): LayerBuilder {
-        this.layer.setStyle((new StyleBuilder(opts)).build());
+        this.layer.setStyle((new StyleBuilder(opts, this.layer.getType())).build());
         return this;
     }
 
@@ -156,7 +154,7 @@ export default class LayerBuilder {
                 }
             }
             const layerType = this.layer.getType();
-            if (layerType == SourceType.Vector) {
+            if (layerType == SourceType.Vector || layerType == SourceType.Cluster) {
                 this.layer.setEventHandler(EventType.Change, "LayerVectorLoadEventHanler", listenerVector);
             } else {
                 this.layer.setEventHandler(EventType.TileLoadStart, "LayerTileLoadStartEventHanler", () => {

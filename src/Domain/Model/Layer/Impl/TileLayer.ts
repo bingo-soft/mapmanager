@@ -7,7 +7,6 @@ import SourceType from "../../Source/SourceType";
 
 /** TileLayer */
 export default class TileLayer extends AbstractLayer {
-    private type: SourceType;
     private loadingTiles = 0;
     private loadedTiles = 0;
     
@@ -21,22 +20,6 @@ export default class TileLayer extends AbstractLayer {
             this.layer.setMaxZoom(opts["max_zoom"]);
         }
     }
-
-    /**
-     * Returns layer type
-     * @return layer type
-     */
-    public getType(): SourceType { 
-        return this.type;
-    }
-
-    /**
-     * Sets layer type
-     * @param type - layer type
-     */
-    public setType(type: SourceType): void { 
-        this.type = type;
-    } 
 
     /**
      * Sets layer's source url
