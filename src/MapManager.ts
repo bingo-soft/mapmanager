@@ -1010,4 +1010,14 @@ export default class MapManager {
         return OlProj.transform(coordinates, "EPSG:" + sourceSrsId.toString(), "EPSG:" + destinationSrsId.toString());
     }
 
+    /**
+     * Returns projection units
+     * @category Misc
+     * @param srsId - projection SRS Id (e.g. 4326)
+     * @return projection units
+     */
+    public static getProjectionUnits(srsId: number): string {
+        return OlProj.get("EPSG:" + srsId.toString()).getUnits();
+    }
+
 }
