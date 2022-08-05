@@ -941,6 +941,17 @@ export default class MapManager {
     }
 
     /**
+     * Selects all features inside a given one
+     * @category Feature
+     * @param map - map instance
+     * @param feature - given feature
+     * @param layers - layers to select features on (all layers if not specified)
+     */
+    public static selectFeaturesInside(map: Map, feature: Feature, layers?: LayerInterface[]): void {
+        map.selectFeaturesInside(feature, layers);
+    }
+
+    /**
      * Checks whether feature collection valid
      * @category Feature
      * @param features - feature collection to validate

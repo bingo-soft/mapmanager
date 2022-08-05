@@ -122,22 +122,10 @@ export default class SelectInteraction extends BaseInteraction {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                                     const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
-                                    const geomType = olFeature.getGeometry().getType();
-                                    /* if (geomType == OlGeometryType.MULTI_POINT || geomType == OlGeometryType.MULTI_LINE_STRING || 
-                                        geomType == OlGeometryType.MULTI_POLYGON) {
-                                        turf.flattenEach(featureTurf, (turfFeature) => {
-                                            if (booleanIntersects(turf.feature(extentGeometryTurf), turfFeature)) {
-                                                if (!this.selectedFeatures.getArray().includes(olFeature)) {
-                                                    this.addToSelection(map, olLayer, olFeature);
-                                                }
-                                            }
-                                        });
-                                    } else { */
-                                        const featureGeometryTurf = featureTurf.geometry;
-                                        if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
-                                            this.addToSelection(map, olLayer, olFeature);
-                                        }
-                                   /*  } */
+                                    const featureGeometryTurf = featureTurf.geometry;
+                                    if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
+                                        this.addToSelection(map, olLayer, olFeature);
+                                    }
                                 });
                             }
                         }

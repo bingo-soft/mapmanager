@@ -1,13 +1,17 @@
+import * as turf from "@turf/turf"
+import booleanIntersects from "@turf/boolean-intersects" 
 import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import * as OlExtent from "ol/extent";
 import { OverviewMap as OlOverviewMapControl, Zoom as OlZoomControl, Control as OlControl, ScaleLine as OlScaleLine} from "ol/control";
+import OlBaseLayer from "ol/layer/Base";
 import OlVectorLayer from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { OSM as OlOSM } from "ol/source";
 import { Layer as OlLayer, Tile as OlTileLayer } from "ol/layer";
+import { GeoJSON as OlGeoJSON }  from "ol/format";
 import OlFeature from "ol/Feature";
 import { Point as OlPoint } from "ol/geom"
 import OlBaseEvent from "ol/events/Event";
@@ -819,6 +823,50 @@ export default class Map {
     }
 
     /**
+     * Selects all features inside a given one
+     * @param feature - given feature
+     * @param layers - layers to select features on (all layers if not specified)
+     */
+    public selectFeaturesInside(feature: Feature, layers?: LayerInterface[]): void {
+        this.selectedFeatures = new FeatureCollection([]);
+        this.selectedLayers.clear();
+        const olMap = this.getMap();
+        const select = new OlSelect();
+        olMap.addInteraction(select);
+        const selectedFeatures = select.getFeatures();
+        const selectedLayers: Set<OlLayer> = new Set();
+        const OlLayersToSelectOn: OlLayer[] = [];
+        if (layers) {
+            layers.forEach((layer: LayerInterface): void => {
+                if (layer.getType() == SourceType.Vector) {
+                    OlLayersToSelectOn.push(layer.getLayer());
+                }
+            });
+        }
+        const extentFeature = feature.getFeature();
+        const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(extentFeature).geometry;
+        const extent = extentFeature.getGeometry().getExtent();
+        olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
+            if (olLayer instanceof OlVectorLayer) {
+                if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                    (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
+                        const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
+                        const featureGeometryTurf = featureTurf.geometry;
+                        if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf)) 
+                            && extentFeature != olFeature) {
+                            selectedLayers.add(olLayer);
+                            selectedFeatures.push(olFeature); // just to highlight the selection
+                        }
+                    });
+                }
+            }
+        });
+        const fc = new FeatureCollection(selectedFeatures.getArray());
+        this.setSelectedFeatures(fc);
+        this.setSelectedLayers(selectedLayers);
+    }    
+
+    /**
      * Returns map's event handlers
      * @return event handlers collection
      */
@@ -891,7 +939,6 @@ export default class Map {
 
     /**
      * Exports map
-     * @category Map
      * @param exportType - type of export, defaults to ExportType.Printer
      */
     public export(exportType: ExportType = ExportType.Printer): Promise<unknown> {
