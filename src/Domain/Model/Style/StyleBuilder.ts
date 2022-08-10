@@ -192,6 +192,8 @@ export default class StyleBuilder {
      * @return style builder instance
      */
     private setTextStyle(opts: unknown): StyleBuilder {
+        const overflow = typeof opts["overflow"] === "boolean" ? opts["overflow"] : opts["overflow"] === "true";
+        const rotateWithView = typeof opts["rotateWithView"] === "boolean" ? opts["rotateWithView"] : opts["rotateWithView"] === "true";
         const style = new OlText({
             stroke: new OlStroke({
                 color: opts["color"],
@@ -207,10 +209,10 @@ export default class StyleBuilder {
             maxAngle: opts["max_angle"] ? opts["max_angle"] * Math.PI / 180 : 0,
             offsetX: opts["offset"][0] ? opts["offset"][0] : null,
             offsetY: opts["offset"][1] ? opts["offset_y"][1] : null,
-            overflow: opts["overflow"],
+            overflow: overflow,
             placement: opts["placement"],
             scale: opts["scale"],
-            rotateWithView: opts["rotate_with_view"],
+            rotateWithView: rotateWithView,
             rotation: opts["rotation"] ? opts["rotation"] * Math.PI / 180 : 0,
         });
         this.style["Text"] = style;
