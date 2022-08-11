@@ -269,6 +269,7 @@ export default class StyleBuilder {
                 })
             }),
             text: new OlText({
+                font: opts["cluster_font"],
                 fill: new OlFill({
                     color: opts["cluster_text_color"] || "#fff"
                 })
