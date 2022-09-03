@@ -6,7 +6,7 @@ export default class Geometry {
      * @return flattened features
      */
     public static flattenGeometry(features: string): string {
-        const objFeatures: unknown = JSON.parse(features);  
+        const objFeatures: unknown = JSON.parse(features);
         if (objFeatures["type"] !== "undefined" && objFeatures["type"] == "GeometryCollection") {
             const featureCollection: unknown = { type: "FeatureCollection", features: [] };
             objFeatures["geometries"].forEach((el: unknown): void => {

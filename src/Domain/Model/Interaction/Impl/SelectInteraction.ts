@@ -36,9 +36,10 @@ export default class SelectInteraction extends BaseInteraction {
      * @param map - map object to select on
      * @param layers - layers to select on
      * @param multiple - flag indicating multiple selection
+     * @param pin - flag indicating pin selection
      * @param callback - callback function to call after selection is done
      */
-    constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple = false, callback?: SelectCallbackFunction) {
+    constructor(type: SelectionType, map: Map, layers: LayerInterface[], multiple = false, pin = true, callback?: SelectCallbackFunction) {
         super();
         const olMap = map.getMap(); 
         this.type = InteractionType.Select;
@@ -62,7 +63,7 @@ export default class SelectInteraction extends BaseInteraction {
                 this.interaction = new OlSelect({
                     toggleCondition: multiple ? OlEventConditionAlways : OlEventConditionShiftKeyOnly,
                     layers: OlLayersToSelectOn.length ? OlLayersToSelectOn : null,
-                    multi: true
+                    multi: pin
                 });
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.SelectSingleFeature, "SelectSingleFeatureEventHandler", (e: OlBaseEvent): void => {
