@@ -188,6 +188,9 @@ export default class Map {
             if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
                 this.clearSelectedFeatures();
             }
+            /* if (this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
+                window.open("https://www.geeksforgeeks.org", "_blank");
+            } */
         });
         this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
             const pixel = (<OlMapBrowserEvent>e).pixel;
@@ -453,11 +456,12 @@ export default class Map {
      * @param type - selection type
      * @param layers - array of layers which selection applies to
      * @param multiple - flag indicating multiple selection
+     * @param pin - flag indicating pin selection
      * @param callback - callback function to call after geometry is selected
      */
-    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple = false, callback?: SelectCallbackFunction): InteractionInterface {
+    public setSelectInteraction(type: SelectionType, layers: LayerInterface[], multiple = false, pin = false, callback?: SelectCallbackFunction): InteractionInterface {
         this.clearInteractions([InteractionType.Select]);
-        this.interaction = new SelectInteraction(type, this, layers, multiple, callback);
+        this.interaction = new SelectInteraction(type, this, layers, multiple, pin, callback);
         this.addInteraction(this.interaction);
         return this.interaction;
     }

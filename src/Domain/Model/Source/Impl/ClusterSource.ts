@@ -11,7 +11,7 @@ import VectorSource from "./VectorSource";
 /** ClusterSource */
 export default class ClusterSource extends BaseSource {
     
-    constructor(distance?: number) { console.log("distance", distance || 20);
+    constructor(distance?: number) {
         super();
         const vectorSource = new VectorSource();
         this.source = new OlClusterSource({

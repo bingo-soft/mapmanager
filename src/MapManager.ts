@@ -176,10 +176,18 @@ export default class MapManager {
      * Sets map selection interaction
      * @category Interaction
      * @param map - map instance
-     * @param opts - options
+     * @param opts
+     * ```Options
+     * Options:
+     * Name                         Type           Description
+     * "selection_type"             string         Type of selection. "singleclick", "rectangle", "polygon" are allowed
+     * "layers"                     array          Array of layers to select on
+     * "multiple"                   boolean        A boolean that determines if the default behaviour should add a next clicked feature to selection or select this single feature only. Actual for singleclick selection_type only
+     * "pin"                        boolean        A boolean that determines if the default behaviour should select only single features or all (overlapping) features. Actual for singleclick selection_type only
+     * ```
      */
     public static setSelectInteraction(map: Map, opts: unknown): InteractionInterface {
-        return map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["multiple"], opts["select_callback"]);
+        return map.setSelectInteraction(opts["selection_type"], opts["layers"], opts["multiple"], opts["pin"], opts["select_callback"]);
     }
 
     /**
