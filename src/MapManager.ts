@@ -1002,6 +1002,29 @@ export default class MapManager {
     }
 
     /**
+     * Returns default styles
+     * @category Style
+     * @return default styles
+     */
+    public static getDefaultStyles(): unknown {
+        return {
+            "point": {
+                "marker_type": "simple_point",
+                "color": "#3399CC"
+            },
+            "polygon": {
+                "color": "#3399CC",
+                "background_color": "rgba(255, 255, 255, 0.4)"
+            },
+            "linestring": {
+                "color": "#3399CC"
+            },
+            "label": {
+            }
+        };
+    }
+
+    /**
      * Registers a new projection
      * @category Misc
      * @param code - projection EPSG:XXXX code
