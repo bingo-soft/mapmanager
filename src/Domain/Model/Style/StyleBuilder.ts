@@ -1,4 +1,5 @@
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
+import OlVectorLayer from "ol/layer/Vector";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
@@ -311,20 +312,7 @@ export default class StyleBuilder {
             if (this.style[geomType]) {
                 style = this.style[geomType];
             } else {
-                style = new OlStyle({
-                    stroke: new OlStroke({
-                        color: "#FF0000", 
-                        width: 2
-                    }),
-                    fill: new OlFill({
-                        color: "rgba(255, 255, 255, 0.4)",
-                    }),
-                    image: new OlCircleStyle({
-                        radius: 2,
-                        fill: new OlFill(),
-                        stroke: new OlStroke()
-                    })
-                });
+                (<OlStyle | OlStyle[]> style) = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style
             }
             // painting on unique attribute value
             this.paintOnUniqueAttributeValue(feature, style);
