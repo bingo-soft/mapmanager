@@ -31,6 +31,7 @@ import { ApiRequest } from "./Infrastructure/Http/ApiRequest";
 import { HttpMethod } from "./Infrastructure/Http/HttpMethod";
 import ExportType from "./Domain/Model/Map/ExportType";
 import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
+import Units from "./Domain/Model/Feature/Units";
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -999,6 +1000,29 @@ export default class MapManager {
      */
     public static createFeatureCollectionFromGeoJSON(geoJSON: string, sourceSRSId: number, destinationSrsId?: number): FeatureCollection {
         return FeatureCollection.createFromGeoJSON(Geometry.flattenGeometry(geoJSON), sourceSRSId, destinationSrsId);
+    }
+
+    /**
+     * Returns the length of linestring or multilinestring, 
+     * the perimeter of polygon or multipolygon in given units
+     * @param feature - feature
+     * @param units - units, "meters" or "kilometers"
+     * @param srsId - srs id of projection, defaults to 3857
+     * @return length of linestring or multilinestring
+     */
+    public static getLength(feature: Feature, units: Units, srsId = 3857): number {
+        return feature.getLength(units, srsId);
+    }
+
+    /**
+     * Returns the area of polygon or multipolygon in given units
+     * @param feature - feature
+     * @param units - units, "meters" or "kilometers"
+     * @param srsId - srs id of projection, defaults to 3857
+     * @return area of polygon or multipolygon
+     */
+    public static getArea(feature: Feature, units: Units, srsId = 3857): number {
+        return feature.getArea(units, srsId);
     }
 
     /**

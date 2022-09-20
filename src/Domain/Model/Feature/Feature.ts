@@ -1,6 +1,5 @@
 import * as turf from "@turf/turf"
-    import booleanIntersects from "@turf/boolean-intersects"
-import OlBaseLayer from "ol/layer/Base";
+import booleanIntersects from "@turf/boolean-intersects"
 import OlVectorLayer from "ol/layer/Vector";
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
@@ -9,7 +8,8 @@ import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, Li
 import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
 import * as OlProj from 'ol/proj';
-import {Circle as OlCircle, Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style";
+import {Style as OlStyle} from "ol/style";
+import * as OlSphere from "ol/sphere";
 import GeometryFormat from "./GeometryFormat";
 import LayerInterface from "../Layer/LayerInterface";
 import StyleFunction from "../Style/StyleFunctionType";
@@ -20,6 +20,7 @@ import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import SourceChangedEvent from "../Source/SourceChangedEvent";
 import FeatureCollection from "./FeatureCollection";
+import Units from "./Units";
 
 /** Feature */
 export default class Feature { 
@@ -574,6 +575,35 @@ export default class Feature {
             });
         }
         return simpleGeometries;
+    }
+
+    /**
+     * Returns the length of linestring or multilinestring, 
+     * the perimeter of polygon or multipolygon in given units
+     * @param units - units, "meters" or "kilometers"
+     * @param srsId - srs id of projection, defaults to 3857
+     * @return length of linestring or multilinestring
+     */
+    public getLength(units: Units, srsId = 3857): number {
+        let length = OlSphere.getLength(this.feature.getGeometry(), {"projection": "EPSG:" + srsId.toString()});
+        if (units == Units.kilometers) {
+            length = length / 1000;
+        }
+        return length;
+    }
+
+    /**
+     * Returns the area of polygon or multipolygon in given units
+     * @param units - units, "meters" or "kilometers"
+     * @param srsId - srs id of projection, defaults to 3857
+     * @return area of polygon or multipolygon
+     */
+    public getArea(units: Units, srsId = 3857): number {
+        let area = OlSphere.getArea(this.feature.getGeometry(), {"projection": "EPSG:" + srsId.toString()});
+        if (units == Units.kilometers) {
+            area = area / 1000;
+        }
+        return area;
     }
 
     /**
