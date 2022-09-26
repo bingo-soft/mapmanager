@@ -366,12 +366,17 @@ export default class MapManager {
                         if (opts["request"]["cql_filter"]) {
                             cqlFilter = opts["request"]["cql_filter"] + " and ";
                         }
-                        // TODO: opts["request"]["geometry_name"] => opts["request"]["data"]["field"]
                         cqlFilter += "bbox(" + opts["request"]["geometry_name"] + "," + extent.join(",") + ")";
+                        if (!opts["request"]["params"]) {
+                            opts["request"]["params"] = {};
+                        }
+                        opts["request"]["params"]["cql_filter"] = cqlFilter;
+                        opts["request"]["params"]["srsname"] = layerSrs;
                         const payload: ApiRequest = {
                             method: opts["request"]["method"],
                             params: opts["request"]["params"],
-                            base_url: opts["request"]["base_url"] + "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter,
+                            //base_url: opts["request"]["base_url"] + "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter,
+                            base_url: opts["request"]["base_url"],
                             headers: opts["request"]["headers"],
                             data: opts["request"]["data"],
                             axios_params: opts["request"]["axios_params"]
@@ -1005,10 +1010,11 @@ export default class MapManager {
     /**
      * Returns the length of linestring or multilinestring, 
      * the perimeter of polygon or multipolygon in given units
+     * @category Feature
      * @param feature - feature
      * @param units - units, "meters" or "kilometers"
      * @param srsId - srs id of projection, defaults to 3857
-     * @return length of linestring or multilinestring
+     * @return length of linestring or multilinestring, perimeter of polygon or multipolygon
      */
     public static getLength(feature: Feature, units: Units, srsId = 3857): number {
         return feature.getLength(units, srsId);
@@ -1016,6 +1022,7 @@ export default class MapManager {
 
     /**
      * Returns the area of polygon or multipolygon in given units
+     * @category Feature
      * @param feature - feature
      * @param units - units, "meters" or "kilometers"
      * @param srsId - srs id of projection, defaults to 3857
@@ -1023,6 +1030,16 @@ export default class MapManager {
      */
     public static getArea(feature: Feature, units: Units, srsId = 3857): number {
         return feature.getArea(units, srsId);
+    }
+
+    /**
+     * Returns feature's geometry type
+     * @category Feature
+     * @param feature - feature
+     * @return geometry type: Point, LineString, LinearRing, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Circle
+     */
+    public static getFeatureType(feature: Feature): string {
+        return feature.getFeature().getGeometry().getType();
     }
 
     /**

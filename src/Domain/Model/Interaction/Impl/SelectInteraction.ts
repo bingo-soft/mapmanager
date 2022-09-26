@@ -13,7 +13,6 @@ import { GeoJSON as OlGeoJSON }  from "ol/format";
 import OlCollection from 'ol/Collection';
 import OlGeometryType from "ol/geom/GeometryType";
 import OlBaseEvent from "ol/events/Event";
-import * as OlObservable from "ol/Observable";
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
 import SelectionType from "./SelectionType";
@@ -33,7 +32,6 @@ export default class SelectInteraction extends BaseInteraction {
     private layers: Set<OlLayer> = new Set();
     private features: Set<Feature> = new Set();
     private selectedFeatures: OlCollection<OlFeature<OlGeometry>>;
-
 
     /**
      * @param type - selection type
@@ -150,29 +148,30 @@ export default class SelectInteraction extends BaseInteraction {
                     });
                     this.eventHandlers = new EventHandlerCollection(this.interaction);
 
-
-                    let geomChangelistener: OlEventsKey;
+                    let drawingFeature: OlFeature;
+                    let geomChangelistener: (evt: OlBaseEvent) => void;
                     let result: string;
                     let tooltipCoord: number[];
-                    
 
-                    this.eventHandlers.add(EventType.DrawEnd, "SelectByCircleStartEventHandler", (e: OlBaseEvent): void => {
-                        
-
+                    this.eventHandlers.add(EventType.DrawStart, "SelectByCircleStartEventHandler", (e: OlBaseEvent): void => {
                         tooltipCoord = (<any> e).coordinate;
-                        const feature = (<OlDrawEvent> e).feature;
-                        geomChangelistener = feature.getGeometry().on("change", (evt: OlBaseEvent): void => {
-                            const geom: OlGeometry = evt.target;
-                            console.log("geomChangelistener", geom);
-                            result = "123"; // this.getArea(geom).toString() + " " + popupSettings["area_units"];
-                            tooltipCoord = (<OlCircle> geom).getCenter();
+                        drawingFeature = (<OlDrawEvent> e).feature;
+                        geomChangelistener = (evt: OlBaseEvent): void => {
+                            const geom: OlCircle = <OlCircle> evt.target;
+                            result = "R = " + geom.getRadius().toFixed(4).toString();
+                            tooltipCoord = geom.getCenter();
                             tooltip.innerHTML = result;
                             overlay.setPosition(tooltipCoord);
-                        });
+                        };
+                        drawingFeature.getGeometry().on("change", geomChangelistener);
                         const tooltip: HTMLElement = document.createElement("div");
                         tooltip.className = "tooltip tooltip-static";
-                        const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]);
-
+                        const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, 0]);
+                    });
+                    
+                    this.eventHandlers.add(EventType.DrawEnd, "SelectByCircleEndEventHandler", (e: OlBaseEvent): void => {
+                        drawingFeature.getGeometry().un("change", geomChangelistener);
+                        map.clearMeasureOverlays();
 
                         const circleFeature = new OlFeature(fromCircle((<any> e).feature.getGeometry()));
                         const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(circleFeature).geometry;
@@ -198,9 +197,6 @@ export default class SelectInteraction extends BaseInteraction {
                             callback(fc);
                         }
                     });
-                    this.eventHandlers.add(EventType.DrawEnd, "SelectByCircleEndEventHandler", (e: OlBaseEvent): void => {
-                        OlObservable.unByKey(geomChangelistener);
-                    });
                     break;
             default:
                 break;
@@ -213,6 +209,7 @@ export default class SelectInteraction extends BaseInteraction {
         this.features.add(feature);
         this.layers.add(olLayer);
         this.selectedFeatures.push(olFeature); // just to highlight the selection
+        olFeature.setStyle(olFeature.getStyle());
     }
 
 }
