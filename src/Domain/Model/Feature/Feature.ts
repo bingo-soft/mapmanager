@@ -601,7 +601,7 @@ export default class Feature {
     public getArea(units: Units, srsId = 3857): number {
         let area = OlSphere.getArea(this.feature.getGeometry(), {"projection": "EPSG:" + srsId.toString()});
         if (units == Units.kilometers) {
-            area = area / 1000;
+            area = area / 1000000;
         }
         return area;
     }
