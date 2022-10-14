@@ -400,7 +400,7 @@ export default class Feature {
      * @param format - format of feature text representation
      * @param srsId - SRS Id of feature text representation
      */
-    public updateGeometryFromText(text: string, format: GeometryFormat, srsId: number): void {
+    public updateFeatureFromText(text: string, format: GeometryFormat, srsId: number): void {
         const formatInstance = this.getFormatInstance(format);
         if (formatInstance) {
             const tempFeature = formatInstance.readFeature(text, {
@@ -416,26 +416,20 @@ export default class Feature {
     }
 
     /**
-     * Creates feature geometry from text
-     * @param layer - layer to put a feature into
+     * Creates feature from text
      * @param text - feature text representation
      * @param format - format of feature text representation
-     * @param srsId - SRS Id of feature text representation
+     * @param sourceSrsId - SRS Id of feature text representation
+     * @param targetSrsId - SRS Id of returned feature, equals to sourceSrsId if omitted
      * @return feature
      */
-    public createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
+    public createFeatureFromText(text: string, format: GeometryFormat, sourceSrsId: number, targetSrsId: number): Feature {
         const formatInstance = this.getFormatInstance(format);
         if (formatInstance) {
             this.feature = formatInstance.readFeature(text, {
-                dataProjection: "EPSG:" + srsId.toString(),
-                //featureProjection: this.layer ? "EPSG:" + this.layer.getSRSId() || Feature.DEFAULT_SRS : Feature.DEFAULT_SRS
-                featureProjection: "EPSG:" + layer.getMap().getSRSId()
+                dataProjection: "EPSG:" + sourceSrsId.toString(),
+                featureProjection: "EPSG:" + targetSrsId.toString()
             });
-            (<OlVectorSource> layer.getLayer().getSource()).addFeature(this.feature);
-            this.layer = layer;
-            if (this.eventBus) {
-                this.eventBus.dispatch(new SourceChangedEvent());
-            }
             return this;
         }
         return null;
