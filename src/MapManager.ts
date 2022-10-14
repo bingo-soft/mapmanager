@@ -855,31 +855,32 @@ export default class MapManager {
     }
 
     /**
-     * Updates feature geometry from text
+     * Updates feature from text
      * @category Feature
      * @param feature - feature
      * @param text - feature text representation
-     * @param format - format of feature text representation
+     * @param format - text format, "WKT" or "GeoJSON"
      * @param srsId - SRS Id of feature text representation
      */
-    public static updateGeometryFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
-        feature.updateGeometryFromText(text, format, srsId);
+    public static updateFeatureFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
+        feature.updateFeatureFromText(text, format, srsId);
     }
 
     /**
-     * Creates feature geometry from text
+     * Creates feature from text
      * @category Feature
-     * @param layer - layer to put a feature into
      * @param text - feature text representation
-     * @param format - format of feature text representation
-     * @param srsId - SRS Id of feature text representation
+     * @param format - text format, "WKT" or "GeoJSON"
+     * @param sourceSrsId - SRS Id of feature text representation
+     * @param targetSrsId - SRS Id of returned feature, equals to sourceSrsId if omitted
+     * @return feature
      */
-    public static createGeometryFromText(layer: LayerInterface, text: string, format: GeometryFormat, srsId: number): Feature {
-        if (layer.getType() != SourceType.Vector) {
-            throw new MethodNotImplemented();
+    public static createFeatureFromText(text: string, format: GeometryFormat, sourceSrsId: number, targetSrsId?: number): Feature {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
         }
         const feature = new Feature();
-        return feature.createGeometryFromText(layer, text, format, srsId);
+        return feature.createFeatureFromText(text, format, sourceSrsId, targetSrsId);
     }
 
     /**
