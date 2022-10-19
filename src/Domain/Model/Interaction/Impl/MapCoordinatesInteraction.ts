@@ -31,7 +31,7 @@ export default class MapCoordinatesInteraction extends BaseInteraction {
                 }
             }
             if (typeof callback == 'function') {
-                callback(coordinate, mapProj);
+                callback(coordinate, e.pixel, mapProj);
             }
         });
     }

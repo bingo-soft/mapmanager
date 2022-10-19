@@ -1,6 +1,7 @@
 enum TemporaryLayerType {
     Measure = "measure",
-    CenterMarker = "centermarker"
+    CenterMarker = "centermarker",
+    Text = "text"
 }
 
 export default TemporaryLayerType;
