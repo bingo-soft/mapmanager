@@ -204,7 +204,7 @@ export default class StyleBuilder {
                 color: opts["fill"]
             }),
             font: opts["font"],
-            text: opts["field"],
+            text: opts["field"] ? opts["field"] : opts["text"],
             textAlign: opts["text_align"],
             textBaseline: opts["text_baseline"],
             maxAngle: opts["max_angle"] ? opts["max_angle"] * Math.PI / 180 : 0,
@@ -283,9 +283,10 @@ export default class StyleBuilder {
     /**
      * Builds style
      * @param useExternalStyleBuilder - whether to use external style builder
+     * @param useLabelTextOption - whether to use label text option instead of field option
      * @return style function
      */
-    public build(useExternalStyleBuilder = true): StyleFunction {
+    public build(useExternalStyleBuilder = true, useLabelTextOption = false): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
             let style: OlStyle;
             // clustered features
@@ -317,7 +318,11 @@ export default class StyleBuilder {
             // painting on unique attribute value
             this.paintOnUniqueAttributeValue(feature, style);
             // apply text 
-            this.applyText(feature, style, geomType, resolution);
+            if (useLabelTextOption) {
+                style.setText(this.style["Text"]);
+            } else {
+                this.applyText(feature, style, geomType, resolution);     
+            }
             return style;
         }
     }

@@ -139,6 +139,17 @@ export default class MapManager {
     public static async export(map: Map, exportType: ExportType = ExportType.Printer): Promise<unknown> {
         return await map.export(exportType);
     }
+
+    /**
+     * Adds text to the map
+     * @category Map
+     * @param map - map instance
+     * @param coordinates - coordinates in map projection
+     * @param opts - options
+     */
+    public static addText(map: Map, coordinates: number[], opts: unknown): void {
+        map.addText(coordinates, opts);
+    }
    
     /**
      * Returns current map interaction type

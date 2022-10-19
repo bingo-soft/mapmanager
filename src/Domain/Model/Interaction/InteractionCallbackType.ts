@@ -8,4 +8,4 @@ export type SelectCallbackFunction = (features: FeatureCollection) => void;
 export type ModifyCallbackFunction = (features: FeatureCollection) => void;
 export type TransformCallbackFunction = (features: FeatureCollection) => void;
 export type MeasureCallbackFunction = (measureResult: string) => void;
-export type MapCoordinatesCallbackFunction = (coordinates: number[], mapProjection: string) => void;
+export type MapCoordinatesCallbackFunction = (coordinates: number[], pixelCoordinates: number[], mapProjection: string) => void;

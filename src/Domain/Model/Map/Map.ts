@@ -9,6 +9,7 @@ import OlBaseLayer from "ol/layer/Base";
 import OlVectorLayer from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
+import { Polygon as OlPolygon } from "ol/geom";
 import { OSM as OlOSM } from "ol/source";
 import { Layer as OlLayer, Tile as OlTileLayer } from "ol/layer";
 import { GeoJSON as OlGeoJSON }  from "ol/format";
@@ -69,6 +70,7 @@ export default class Map {
     private measureLayer: LayerInterface;
     private measureOverlays: OlOverlay[] = [];
     private searchLayer: LayerInterface;
+    private textLayer: LayerInterface;
     private featurePopupOverlay: OlOverlay;
     private vertexHighlightLayer: OlVectorLayer;
     private selectedFeatures: FeatureCollection;
@@ -188,9 +190,6 @@ export default class Map {
             if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
                 this.clearSelectedFeatures();
             }
-            /* if (this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
-                window.open("https://www.geeksforgeeks.org", "_blank");
-            } */
         });
         this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
             const pixel = (<OlMapBrowserEvent>e).pixel;
@@ -523,6 +522,31 @@ export default class Map {
         this.addInteraction(this.interaction);        
     }
 
+    /**
+     * Adds text to the map
+     * @param coordinates - coordinates in map projection
+     * @param opts - options
+     */
+    public addText(coordinates: number[], opts: unknown): void {
+        const olMap = this.getMap();
+        const tempLayer = this.createTemporaryLayer(TemporaryLayerType.Text);
+        const LABEL_WIDTH = 100;
+        const LABEL_HEIGHT = 20;
+        this.eventHandlers = new EventHandlerCollection(olMap);
+        const point1 = olMap.getCoordinateFromPixel(coordinates);
+        const point2 = olMap.getCoordinateFromPixel([coordinates[0] + LABEL_WIDTH, coordinates[1]]);
+        const point3 = olMap.getCoordinateFromPixel([coordinates[0] + LABEL_WIDTH, coordinates[1] + LABEL_HEIGHT]);
+        const point4 = olMap.getCoordinateFromPixel([coordinates[0], coordinates[1] + LABEL_HEIGHT]);
+        const feature = new OlFeature({
+            geometry: new OlPolygon([[
+                point1, point2, point3, point4, point1 
+            ]])
+        });
+        const styleFunc = new StyleBuilder(opts).build(false, true);
+        feature.setStyle(styleFunc);
+        (<OlVectorLayer> tempLayer.getLayer()).getSource().addFeature(feature);
+    }
+
      /**
      * Adds interaction
      * @param interaction - interaction to add
@@ -743,12 +767,25 @@ export default class Map {
      * @return temporary layer instance 
      */
     public createTemporaryLayer(type: TemporaryLayerType): LayerInterface {
-        let layer = type == TemporaryLayerType.Measure ? this.measureLayer: this.searchLayer;
+        let layer = null;
+        if (type == TemporaryLayerType.Measure) {
+            layer = this.measureLayer;
+        } else if (type == TemporaryLayerType.CenterMarker) {
+            layer = this.searchLayer;
+        } else if (type == TemporaryLayerType.Text) {
+            layer = this.textLayer;
+        }
         if (!layer) {
             const builder = new LayerBuilder(new VectorLayer());
             builder.setSource(SourceType.Vector);
             layer = builder.build();
-            type == TemporaryLayerType.Measure ? this.measureLayer = layer: this.searchLayer = layer;
+            if (type == TemporaryLayerType.Measure) {
+                 this.measureLayer = layer;
+            } else if (type == TemporaryLayerType.CenterMarker) {
+                this.searchLayer = layer;
+            } else if (type == TemporaryLayerType.Text) {
+                this.textLayer = layer;
+            }
         }
         layer.getLayer().setMap(this.map);
         return layer;
@@ -758,10 +795,17 @@ export default class Map {
      * Clears temporary layer
      */
     public clearTemporaryLayer(type: TemporaryLayerType): void {
-        let layer = type == TemporaryLayerType.Measure ? this.measureLayer : this.searchLayer;
+        let layer = null;
+        if (type == TemporaryLayerType.Measure) {
+            layer = this.measureLayer;
+        } else if (type == TemporaryLayerType.CenterMarker) {
+            layer = this.searchLayer;
+        } else if (type == TemporaryLayerType.Text) {
+            layer = this.textLayer;
+        }
         if (layer) {
             layer.getLayer().setMap(null);
-            type == TemporaryLayerType.Measure ? this.measureLayer = null : this.searchLayer = null;
+            layer = null;
         }
     }
 
@@ -1028,7 +1072,7 @@ export default class Map {
      * @param coordinate - coordinate
      */
     private showMarker(coordinate: OlCoordinate.Coordinate): void {
-        const style = new StyleBuilder(SearchMarkerStyle).build();
+        const style = new StyleBuilder(SearchMarkerStyle).build(false);
         const marker = new OlFeature(new OlPoint(coordinate));
         marker.setStyle(style);
         const layer = this.createTemporaryLayer(TemporaryLayerType.CenterMarker);
