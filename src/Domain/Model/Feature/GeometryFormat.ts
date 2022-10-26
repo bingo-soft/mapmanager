@@ -1,6 +1,7 @@
 enum GeometryFormat {
     WKT = "WKT",
-    GeoJSON = "GeoJSON"
+    GeoJSON = "GeoJSON",
+    Text = "Text"
 }
 
 export default GeometryFormat;

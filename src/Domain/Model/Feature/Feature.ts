@@ -21,6 +21,7 @@ import EventBus from "../EventHandlerCollection/EventBus";
 import SourceChangedEvent from "../Source/SourceChangedEvent";
 import FeatureCollection from "./FeatureCollection";
 import Units from "./Units";
+import Geometry from "../../../Infrastructure/Util/Geometry";
 
 /** Feature */
 export default class Feature { 
@@ -32,7 +33,7 @@ export default class Feature {
     private featureParts: Map<number, OlGeometry> = new Map();
     private featureStyle: OlStyle;
 
-    private static readonly DEFAULT_SRS = "EPSG:3857";
+    private static readonly DEFAULT_SRS_ID = 3857;
 
     /**
      * @param feature - OpenLayers' feature object
@@ -237,16 +238,20 @@ export default class Feature {
      * @return array of geometry parts of feature along with their coordinates
      */
     public getVertices(srsId?: number): GeometryItem[] {
-        const srs = srsId ? "EPSG:" + srsId : "EPSG:" + this.layer.getSRSId().toString();
+        const srs = srsId ? 
+            "EPSG:" + srsId : 
+            "EPSG:" + (this.layer ? this.layer.getSRSId().toString() : Feature.DEFAULT_SRS_ID);
         this.treeId = 1;
         const geometry = this.feature.getGeometry();
-        if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
+        const type = this.getType();
+        //if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
+        if (type == "Point" || type == "LineString" || type == "Polygon") {
             const geometryItems: GeometryItem[] = [];
             const coordsArr = this.getCoordinates(geometry, srs);
             coordsArr.forEach((coords: VertexCoordinate[]): void => {
                 const geometryItem: GeometryItem = {
                     "id": this.treeId,
-                    "name": geometry instanceof OlPoint ? "Point" : geometry instanceof OlLineString ? "LineString" : "Polygon",
+                    "name": type,
                     "children": coords
                 };
                 geometryItems.push(geometryItem);
@@ -255,14 +260,14 @@ export default class Feature {
             });
             return geometryItems;
         }
-        if (geometry instanceof OlMultiPoint || geometry instanceof OlMultiLineString || geometry instanceof OlMultiPolygon) {
+        if (type == "MultiPoint" || type == "MultiLineString" || type == "MultiPolygon") {
             const geometryItems: GeometryItem[] = [{
                 "id": this.treeId,
-                "name": geometry instanceof OlMultiPoint ? "MultiPoint" : geometry instanceof OlMultiLineString ? "MultiLineString" : "MultiPolygon",
+                "name": type,
                 "children": []
             }];
             this.treeId++;
-            if (geometry instanceof OlMultiPoint) {
+            if (type == "MultiPoint") {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
                     const coords = this.getCoordinates(point, srs)[0];
                     const item: GeometryItem = {
@@ -275,7 +280,7 @@ export default class Feature {
                     this.treeId++;
                 });
             }
-            if (geometry instanceof OlMultiLineString) {
+            if (type == "MultiLineString") {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
                     const coords = this.getCoordinates(linestring, srs)[0];
                     const item: GeometryItem = {
@@ -288,7 +293,7 @@ export default class Feature {
                     this.treeId++;
                 });
             }
-            if (geometry instanceof OlMultiPolygon) {
+            if (type == "MultiPolygon") {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
                     const coords = this.getCoordinates(polygon, srs)[0];
                     const item: GeometryItem = {
@@ -317,22 +322,23 @@ export default class Feature {
         let coordinatesOneDim: OlCoordinate[] = [];
         let coordinatesTwoDim: OlCoordinate[][] = [];
         let coordinatesThreeDim: OlCoordinate[][][] = [];
-        if (geometry instanceof OlPoint) {
+        const type = geometry.getType();
+        if (type == "Point") {
             coordinatesFlat = (<OlPoint> geometry).getCoordinates();
         } 
-        if (geometry instanceof OlMultiPoint) {
+        if (type == "MultiPoint") {
             coordinatesOneDim = (<OlMultiPoint> geometry).getCoordinates();
         } 
-        if (geometry instanceof OlLineString) {
+        if (type == "LineString") {
             coordinatesOneDim = (<OlLineString> geometry).getCoordinates();
         } 
-        if (geometry instanceof OlMultiLineString) {
+        if (type == "MultiLineString") {
             coordinatesTwoDim = (<OlMultiLineString> geometry).getCoordinates();
         } 
-        if (geometry instanceof OlPolygon) {
+        if (type == "Polygon") {
             coordinatesTwoDim = (<OlPolygon> geometry).getCoordinates();
         } 
-        if (geometry instanceof OlMultiPolygon) {
+        if (type == "MultiPolygon") {
             coordinatesThreeDim = (<OlMultiPolygon> geometry).getCoordinates();
         } 
         if (coordinatesFlat.length) {
@@ -366,7 +372,7 @@ export default class Feature {
     private iterateCoordinates(coordinates: OlCoordinate[], srs: string): VertexCoordinate[] {
         let indexCoord = 1;
         const returnCoordinates: VertexCoordinate[] = [];
-        const mapSRS = "EPSG:" + this.layer.getMap().getSRSId();
+        const mapSRS = "EPSG:" + (this.layer ? this.layer.getMap().getSRSId() : Feature.DEFAULT_SRS_ID);
         coordinates.forEach((coordinate: OlCoordinate): void => {
             coordinate = OlProj.transform(coordinate, mapSRS, srs);
             returnCoordinates.push({"id": this.treeId, "coordinate_id": indexCoord, "name": "Coordinate", "x": coordinate[0], "y": coordinate[1]});
@@ -424,15 +430,149 @@ export default class Feature {
      * @return feature
      */
     public createFeatureFromText(text: string, format: GeometryFormat, sourceSrsId: number, targetSrsId: number): Feature {
-        const formatInstance = this.getFormatInstance(format);
-        if (formatInstance) {
-            this.feature = formatInstance.readFeature(text, {
+        if (format == GeometryFormat.Text) {
+            const points: number[][] = Geometry.textPointsToArray(text);
+            let olFeature;
+            const subGeometries = [];
+            const subGeometryTypes = [];
+            let subGeometry = [];
+            for (let i = 0; i < points.length; i++) {
+                if (points[i].length == 0 || i == points.length - 1) {
+                    if (i == points.length - 1) {
+                        subGeometry.push(points[i]);   
+                    }
+                    if (subGeometry.length == 1) {
+                        subGeometryTypes.push("Point");
+                        subGeometries.push(subGeometry);
+                    } else {
+                        const firstPoint = subGeometry[0];
+                        const lastPoint = subGeometry[subGeometry.length-1];
+                        if (firstPoint[0] == lastPoint[0] && firstPoint[1] == lastPoint[1]) {
+                            subGeometryTypes.push("Polygon");
+                            subGeometries.push(subGeometry);
+                        } else {
+                            subGeometryTypes.push("LineString");
+                            subGeometries.push(subGeometry);
+                        }
+                    }
+                    subGeometry = [];
+                } else {
+                    subGeometry.push(points[i]);
+                }
+            }
+            let geometryType;
+            if (subGeometries.length == 1) {
+                geometryType = "SimpleGeometry";
+            } else {
+                const multiGeometry = subGeometryTypes.every( (val, i, arr) => val === arr[0] ); 
+                geometryType =  multiGeometry ? "MultiGeometry" : "GeometryCollection";
+            }
+            if (geometryType == "SimpleGeometry") {
+                switch (subGeometryTypes[0]) {
+                    case "Point":
+                        olFeature = new OlFeature({
+                            geometry: new OlPoint(
+                                subGeometries[0][0]
+                            )
+                        });
+                        break;
+                    case "LineString":
+                        olFeature = new OlFeature({
+                            geometry: new OlLineString(
+                                subGeometries[0]
+                            )
+                        });
+                        break;
+                    case "Polygon":
+                        olFeature = new OlFeature({
+                            geometry: new OlPolygon([
+                                subGeometries[0]
+                            ])
+                        });
+                        break;
+                }
+            } else if (geometryType == "MultiGeometry") {
+                const points = [];
+                switch (subGeometryTypes[0]) {
+                    case "Point":
+                        subGeometries.forEach((item) => {
+                            points.push(item[0]);
+                        });
+                        olFeature = new OlFeature({
+                            geometry: new OlMultiPoint(
+                                points
+                            )
+                        });
+                        break;
+                    case "LineString":
+                        olFeature = new OlFeature({
+                            geometry: new OlMultiLineString(
+                                subGeometries
+                            )
+                        });
+                        break;
+                    case "Polygon":
+                        subGeometries.forEach((item) => {
+                            points.push([item]);
+                        });
+                        olFeature = new OlFeature({
+                            geometry: new OlMultiPolygon(
+                                points
+                            )
+                        });
+                        break;
+                }
+            } else if (geometryType == "GeometryCollection") {
+                const gc = new OlGeometryCollection();
+                const gcGeometries = [];
+                subGeometries.forEach((item, idx) => {
+                    let geometry;
+                    switch (subGeometryTypes[idx]) {
+                        case "Point":
+                            geometry = new OlPoint(
+                                item[0]
+                            )
+                            break;
+                        case "LineString":
+                            geometry = new OlLineString(
+                                item
+                            )
+                            break;
+                        case "Polygon":
+                            geometry = new OlPolygon([
+                                item
+                            ])
+                            break;
+                    }
+                    gcGeometries.push(geometry);
+                });
+                gc.setGeometries(gcGeometries);
+                olFeature = new OlFeature({
+                    geometry: gc
+                });
+            }
+            const formatInstance = this.getFormatInstance(GeometryFormat.GeoJSON);
+            const textFeature = formatInstance.writeFeature(olFeature, {
+                dataProjection: "EPSG:" + sourceSrsId.toString(),
+                featureProjection: "EPSG:" + sourceSrsId.toString()
+            });
+            olFeature = formatInstance.readFeature(textFeature, {
                 dataProjection: "EPSG:" + sourceSrsId.toString(),
                 featureProjection: "EPSG:" + targetSrsId.toString()
             });
+            this.feature = olFeature;
             return this;
+        } else {
+            const formatInstance = this.getFormatInstance(format);
+            if (formatInstance) {
+                this.feature = formatInstance.readFeature(text, {
+                    dataProjection: "EPSG:" + sourceSrsId.toString(),
+                    featureProjection: "EPSG:" + targetSrsId.toString()
+                });
+                return this;
+            }
+            return null;
         }
-        return null;
     }
 
     /**
