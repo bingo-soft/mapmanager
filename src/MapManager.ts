@@ -881,7 +881,7 @@ export default class MapManager {
      * Creates feature from text
      * @category Feature
      * @param text - feature text representation
-     * @param format - text format, "WKT" or "GeoJSON"
+     * @param format - text format, "Text", "WKT" or "GeoJSON"
      * @param sourceSrsId - SRS Id of feature text representation
      * @param targetSrsId - SRS Id of returned feature, equals to sourceSrsId if omitted
      * @return feature
