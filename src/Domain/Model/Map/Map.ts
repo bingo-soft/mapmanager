@@ -780,7 +780,7 @@ export default class Map {
             builder.setSource(SourceType.Vector);
             layer = builder.build();
             if (type == TemporaryLayerType.Measure) {
-                 this.measureLayer = layer;
+                this.measureLayer = layer;
             } else if (type == TemporaryLayerType.CenterMarker) {
                 this.searchLayer = layer;
             } else if (type == TemporaryLayerType.Text) {
@@ -797,15 +797,14 @@ export default class Map {
     public clearTemporaryLayer(type: TemporaryLayerType): void {
         let layer = null;
         if (type == TemporaryLayerType.Measure) {
-            layer = this.measureLayer;
+            this.measureLayer.getLayer().setMap(null);
+            this.measureLayer = null;
         } else if (type == TemporaryLayerType.CenterMarker) {
-            layer = this.searchLayer;
+            this.searchLayer.getLayer().setMap(null);
+            this.searchLayer = null;
         } else if (type == TemporaryLayerType.Text) {
-            layer = this.textLayer;
-        }
-        if (layer) {
-            layer.getLayer().setMap(null);
-            layer = null;
+            this.textLayer.getLayer().setMap(null);
+            this.textLayer = null;
         }
     }
 

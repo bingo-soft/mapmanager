@@ -192,7 +192,7 @@ export default class MapManager {
      * ```Options
      * Options:
      * Name                         Type           Description
-     * "selection_type"             string         Type of selection. "singleclick", "rectangle", "polygon" are allowed
+     * "selection_type"             string         Type of selection. "singleclick", "rectangle", "polygon", "circle" are allowed
      * "layers"                     array          Array of layers to select on
      * "multiple"                   boolean        A boolean that determines if the default behaviour should add a next clicked feature to selection or select this single feature only. Actual for singleclick selection_type only
      * "pin"                        boolean        A boolean that determines if the default behaviour should select only single features or all (overlapping) features. Actual for singleclick selection_type only
