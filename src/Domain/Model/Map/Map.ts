@@ -1086,6 +1086,16 @@ export default class Map {
         const featurePopupElement = this.featurePopupOverlay.getElement();
         this.featurePopupOverlay.setPosition(null);
         this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
+            const clusteredFeatures = olFeature.get('features');
+            if (clusteredFeatures) {
+                // if we have clusters and the feature is not in cluster
+                if (clusteredFeatures.length == 1) {
+                    olFeature = clusteredFeatures[0];
+                // if we have clusters and the feature is in cluster then we don't show a popup
+                } else {
+                    return;
+                }
+            }
             const layer = this.getLayer(olLayer);
             if (layer) {
                 const featurePopupTemplate = layer.getFeaturePopupTemplate();
