@@ -85,7 +85,15 @@ export default class MapManager {
      * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
      * @category Map
      * @param map - map instance
-     * @param opts - options
+     * @param opts
+     * ```Options
+     * Options:
+     * Name                             Type           Description
+     * "x"                              number         X coordinate
+     * "y"                              number         Y coordinate
+     * "declared_coordinate_system_id"  number         SRS of coordinates, e.g. 4326, defauts to map SRS if omitted
+     * "show_marker"                    boolean        A boolean that determines whether to show a marker after centering, defauts to false if omitted
+     * ```
      */
     public static setCenter(map: Map, opts?: unknown): void {
         map.setCenter(opts);
