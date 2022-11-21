@@ -795,14 +795,13 @@ export default class Map {
      * Clears temporary layer
      */
     public clearTemporaryLayer(type: TemporaryLayerType): void {
-        let layer = null;
-        if (type == TemporaryLayerType.Measure) {
+        if (type == TemporaryLayerType.Measure && this.measureLayer) {
             this.measureLayer.getLayer().setMap(null);
             this.measureLayer = null;
-        } else if (type == TemporaryLayerType.CenterMarker) {
+        } else if (type == TemporaryLayerType.CenterMarker && this.searchLayer) {
             this.searchLayer.getLayer().setMap(null);
             this.searchLayer = null;
-        } else if (type == TemporaryLayerType.Text) {
+        } else if (type == TemporaryLayerType.Text &&  this.textLayer) {
             this.textLayer.getLayer().setMap(null);
             this.textLayer = null;
         }
