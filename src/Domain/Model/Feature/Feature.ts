@@ -406,7 +406,7 @@ export default class Feature {
      * @param format - format of feature text representation
      * @param srsId - SRS Id of feature text representation
      */
-    public updateFeatureFromText(text: string, format: GeometryFormat, srsId: number): void {
+    public updateFeatureFromText(text: string, format: GeometryFormat, srsId: number): Feature {
         const formatInstance = this.getFormatInstance(format);
         if (formatInstance) {
             const tempFeature = formatInstance.readFeature(text, {
@@ -418,6 +418,7 @@ export default class Feature {
             if (this.eventBus) {
                 this.eventBus.dispatch(new SourceChangedEvent());
             }
+            return this;
         }
     }
 
