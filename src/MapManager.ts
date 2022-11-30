@@ -1123,4 +1123,24 @@ export default class MapManager {
         return OlProj.get("EPSG:" + srsId.toString()).getUnits();
     }
 
+   /**
+     * Converts points given in text to array
+     * @param text - points given in text
+     * @param swapCoordinates - whether to swap coordinates, defaults to false
+     * @return array of points
+     */
+     public static textPointsToArray(text: string, swapCoordinates: boolean = false): number[][] {
+        return Geometry.textPointsToArray(text, swapCoordinates);
+    }
+
+    /**
+     * Converts points given in text to array
+     * @param points - array of points
+     * @param swapCoordinates - whether to swap coordinates, defaults to false
+     * @return points given in text
+     */
+    public static arrayToTextPoints(points: number[][], swapCoordinates: boolean = false): string {
+        return Geometry.arrayToTextPoints(points, swapCoordinates);
+    }
+
 }
