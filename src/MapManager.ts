@@ -881,8 +881,12 @@ export default class MapManager {
      * @param format - text format, "WKT" or "GeoJSON"
      * @param srsId - SRS Id of feature text representation
      */
-    public static updateFeatureFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): void {
-        feature.updateFeatureFromText(text, format, srsId);
+    public static updateFeatureFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): Feature {
+        try {
+            return feature.updateFeatureFromText(text, format, srsId);
+        } catch(e) {
+            return null;
+        }
     }
 
     /**
@@ -899,7 +903,11 @@ export default class MapManager {
             targetSrsId = sourceSrsId;
         }
         const feature = new Feature();
-        return feature.createFeatureFromText(text, format, sourceSrsId, targetSrsId);
+        try {
+            return feature.createFeatureFromText(text, format, sourceSrsId, targetSrsId);
+        } catch(e) {
+            return null;
+        }
     }
 
     /**
