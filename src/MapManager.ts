@@ -309,6 +309,15 @@ export default class MapManager {
     }
 
     /**
+     * Clears temporary text objects on map
+     * @category Map
+     * @param map - map instance
+     */
+     public static clearTemporaryTexts(map: Map): void {
+        map.clearTemporaryLayer(TemporaryLayerType.Text);
+    }
+
+    /**
      * Creates new layer
      * @category Layer
      * @param type - layer's source type
