@@ -5,14 +5,14 @@ import InteractionType from "../../src/Domain/Model/Interaction/InteractionType"
 import MeasureType from "../../src/Domain/Model/Interaction/MeasureType";
 
 /* Create and initialize map */
-const optsMap = { 
+const optsMap = {
     base_layer: BaseLayer.OSM,
     declared_coordinate_system_id: 3857,
     center: {
         x: 44.008741,
         y: 56.319241,
         declared_coordinate_system_id: 4326
-    }, 
+    },
     zoom: 13
 }
 const map: Map = MapManager.createMap("map", optsMap);
@@ -20,9 +20,12 @@ const map: Map = MapManager.createMap("map", optsMap);
 /* Set measure handlers */
 const btMeasureDistance: HTMLElement = document.getElementById("measure-distance-btn");
 const btMeasureArea: HTMLElement = document.getElementById("measure-area-btn");
-btMeasureDistance.onclick = measureHanler;
-btMeasureArea.onclick = measureHanler;
-function measureHanler(e: any) {
+const btMeasureAbort: HTMLElement = document.getElementById("measure-abort-btn");
+
+btMeasureDistance.onclick = measureHandler;
+btMeasureArea.onclick = measureHandler;
+btMeasureAbort.onclick = measureHandler;
+function measureHandler(e: any) {
     const interactionType: InteractionType = MapManager.getInteractionType(map);
     if (interactionType == InteractionType.Normal) {
         e.target.style.backgroundColor = "#777";
@@ -40,9 +43,11 @@ function measureHanler(e: any) {
         if (measureType) {
             const optsMeasure = {
                 "measure_type": measureType,
-                "measure_units": {
-                    distance: "m.",
-                    area: "sq.m."
+                "measure_popup_settings": {
+                    'distance_units': "m.",
+                    'area_units': "sq.m.",
+                    'rotation_caption': "rot",
+                    'angle_caption': "deg"
                 }
             }
             MapManager.setMeasureInteraction(map, optsMeasure);
@@ -56,8 +61,8 @@ function measureHanler(e: any) {
 
 /* Set clear measure handler */
 const btMeasureClear: HTMLElement = document.getElementById("measure-clear-btn");
-btMeasureClear.onclick = measureClearHanler;
-function measureClearHanler(e: any) {
+btMeasureClear.onclick = measureClearHandler;
+function measureClearHandler(e: any) {
     MapManager.clearMeasureResult(map);
 }
 
