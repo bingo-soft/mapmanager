@@ -19,7 +19,7 @@ import GeometryType from "ol/geom/GeometryType";
 
 /** MeasureInteraction */
 export default class MeasureInteraction extends BaseInteraction {
-  
+
     /**
      * @param type - measure type
      * @param popupSettings - popup settings
@@ -40,7 +40,7 @@ export default class MeasureInteraction extends BaseInteraction {
             default:
         }
         this.type = InteractionType.Measure;
-    
+
         const olMap = map.getMap();
         const layer = map.createTemporaryLayer(TemporaryLayerType.Measure);
         //map.setDrawInteraction(layer, realType);
@@ -55,7 +55,7 @@ export default class MeasureInteraction extends BaseInteraction {
         let geomChangelistener: OlEventsKey;
         let result: string;
         let tooltipCoord: number[];
-
+        let tooltip: HTMLElement
         this.eventHandlers = new EventHandlerCollection(draw);
         this.eventHandlers.add(EventType.DrawStart, "MeasureStartEventHandler", (e: OlBaseEvent): void => {
             tooltipCoord = (<any> e).coordinate;
@@ -80,15 +80,18 @@ export default class MeasureInteraction extends BaseInteraction {
                 }
                 overlay.setPosition(tooltipCoord);
             });
-            const tooltip: HTMLElement = document.createElement("div");
+            tooltip = document.createElement("div");
             tooltip.className = "tooltip tooltip-static";
             const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]);
         });
+        this.eventHandlers.add(EventType.DrawAbort, "MeasureAbortEventHandler", (e: OlBaseEvent): void => {
+            tooltip.remove()
+        })
         this.eventHandlers.add(EventType.DrawEnd, "MeasureEndEventHandler", (e: OlBaseEvent): void => {
             OlObservable.unByKey(geomChangelistener);
            /*  const tooltip: HTMLElement = document.createElement("div");
             tooltip.className = "tooltip tooltip-static";
-            tooltip.innerHTML = result; 
+            tooltip.innerHTML = result;
             map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]); */
             if (typeof callback === "function") {
                 callback(result);
@@ -129,7 +132,7 @@ export default class MeasureInteraction extends BaseInteraction {
         line.forEachSegment((start: OlCoordinate, end: OlCoordinate): boolean => {
             segments.push([start[0], start[1], end[0], end[1]]);
             return false;
-        });   
+        });
         if (segments.length) {
             const lastSegment = segments[segments.length-1];
             rotation1 = Math.atan2(lastSegment[2] - lastSegment[0], lastSegment[3] - lastSegment[1]) * 180 / Math.PI;
@@ -151,7 +154,7 @@ export default class MeasureInteraction extends BaseInteraction {
             if (angle && angle > 360) {
                 angle -= 360;
             }
-        }    
+        }
         return {"rotation": rotation1, "angle": angle};
     }
 
