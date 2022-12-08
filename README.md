@@ -84,7 +84,9 @@ Explore [examples](examples/) to learn how to use the library
 
 ```
 cd examples
+npm install
 npm run build
+OR
 npm run serve
 ```
 
