@@ -82,7 +82,7 @@ export default class SelectInteraction extends BaseInteraction {
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(this.layers);
                     if (typeof callback === "function") {
-                        callback(fc);
+                        callback(fc, this.interaction);
                     }
                 });
                 break;
@@ -105,7 +105,7 @@ export default class SelectInteraction extends BaseInteraction {
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(this.layers);
                     if (typeof callback === "function") {
-                        callback(fc);
+                        callback(fc, this.interaction);
                     }
                 });
                 break;
@@ -137,7 +137,7 @@ export default class SelectInteraction extends BaseInteraction {
                     map.setSelectedFeatures(fc);
                     map.setSelectedLayers(this.layers);
                     if (typeof callback === "function") {
-                        callback(fc);
+                        callback(fc, this.interaction);
                     }
                 });
                 break;
@@ -194,7 +194,7 @@ export default class SelectInteraction extends BaseInteraction {
                         map.setSelectedFeatures(fc);
                         map.setSelectedLayers(this.layers);
                         if (typeof callback === "function") {
-                            callback(fc);
+                            callback(fc, this.interaction);
                         }
                     });
                     break;

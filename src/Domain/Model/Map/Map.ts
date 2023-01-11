@@ -840,22 +840,32 @@ export default class Map {
      * Highlights vertex
      * @param coordinate - coordinate
      * @param srsId - SRS Id of coordinate
+     * @param isTransparent - whether highlight must be transparent
+     * @param id - vertex id if needed
+     * @return highlight feature
      */
-    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number): void {
+    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number, isTransparent: boolean = false, id?: number): Feature {
         if (!this.vertexHighlightLayer) {
             this.vertexHighlightLayer = new OlVectorLayer({
                 source: new OlVectorSource()
             });
+            if (isTransparent) {
+                (<any> HighlightVertexStyle).point.opacity = 0;
+            }
             const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false);
             this.vertexHighlightLayer.setStyle(styleFunc);
             this.vertexHighlightLayer.setMap(this.map);
         }
         const source = this.vertexHighlightLayer.getSource();
-        source.clear();
+        //source.clear();
         const feature = new OlFeature({
             geometry: new OlPoint(OlProj.transform(coordinate, "EPSG:" + srsId.toString(), "EPSG:" + this.srsId.toString()))
         });
+        if (id) {
+            feature.set("vertexId", id);
+        }
         source.addFeature(feature);
+        return new Feature(feature);
     }
 
     /**

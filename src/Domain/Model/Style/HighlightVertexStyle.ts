@@ -3,6 +3,6 @@ export const HighlightVertexStyle: unknown = {
         "marker_type": "simple_point",
         "color": "#FF00FF",
         "opacity": 70,
-        "size": 3
+        "size": 5
     }
 };
