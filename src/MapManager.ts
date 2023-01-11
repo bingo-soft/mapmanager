@@ -977,9 +977,12 @@ export default class MapManager {
      * @category Feature
      * @param coordinate - coordinate
      * @param srsId - SRS Id of coordinate
+     * @param isTransparent - whether highlight must be transparent
+     * @param id - vertex id if needed
+     * @return highlight feature
      */
-     public static highlightVertex(map: Map, coordinate: number[], srsId: number): void {
-        map.highlightVertex(coordinate, srsId);
+     public static highlightVertex(map: Map, coordinate: number[], srsId: number, isTransparent: boolean = false, id?: number): Feature {
+        return map.highlightVertex(coordinate, srsId, isTransparent, id);
     }
 
     /**
