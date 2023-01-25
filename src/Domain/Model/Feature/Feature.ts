@@ -235,9 +235,10 @@ export default class Feature {
     /**
      * Returns feature vertices' coordinates along with their indices
      * @param srsId - SRS Id to return vertices in, defaults to feature's layer SRS Id
+     * @param axisRotate - whether to swap x and y coordinates, defaults to false
      * @return array of geometry parts of feature along with their coordinates
      */
-    public getVertices(srsId?: number): GeometryItem[] {
+    public getVertices(srsId?: number, axisRotate = false): GeometryItem[] {
         const srs = srsId ? 
             "EPSG:" + srsId : 
             "EPSG:" + (this.layer ? this.layer.getSRSId().toString() : Feature.DEFAULT_SRS_ID);
@@ -247,7 +248,7 @@ export default class Feature {
         //if (geometry instanceof OlPoint || geometry instanceof OlLineString || geometry instanceof OlPolygon) {
         if (type == "Point" || type == "LineString" || type == "Polygon") {
             const geometryItems: GeometryItem[] = [];
-            const coordsArr = this.getCoordinates(geometry, srs);
+            const coordsArr = this.getCoordinates(geometry, srs, axisRotate);
             coordsArr.forEach((coords: VertexCoordinate[]): void => {
                 const geometryItem: GeometryItem = {
                     "id": this.treeId,
@@ -269,7 +270,7 @@ export default class Feature {
             this.treeId++;
             if (type == "MultiPoint") {
                 (<OlMultiPoint> geometry).getPoints().forEach((point: OlPoint): void => {
-                    const coords = this.getCoordinates(point, srs)[0];
+                    const coords = this.getCoordinates(point, srs, axisRotate)[0];
                     const item: GeometryItem = {
                         "id": this.treeId,
                         "name": "Point",
@@ -282,7 +283,7 @@ export default class Feature {
             }
             if (type == "MultiLineString") {
                 (<OlMultiLineString> geometry).getLineStrings().forEach((linestring: OlLineString): void => {
-                    const coords = this.getCoordinates(linestring, srs)[0];
+                    const coords = this.getCoordinates(linestring, srs, axisRotate)[0];
                     const item: GeometryItem = {
                         "id": this.treeId,
                         "name": "LineString",
@@ -295,7 +296,7 @@ export default class Feature {
             }
             if (type == "MultiPolygon") {
                 (<OlMultiPolygon> geometry).getPolygons().forEach((polygon: OlPolygon): void => {
-                    const coords = this.getCoordinates(polygon, srs)[0];
+                    const coords = this.getCoordinates(polygon, srs, axisRotate)[0];
                     const item: GeometryItem = {
                         "id": this.treeId,
                         "name": "Polygon",
@@ -314,9 +315,10 @@ export default class Feature {
      * Returns feature vertices' coordinates along with their indices
      * @param geometry - geometry
      * @param srs - srs to return coordinates in
+     * @param axisRotate - whether to swap x and y coordinates, defaults to false
      * @return array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
-    private getCoordinates(geometry: OlGeometry, srs: string): VertexCoordinate[][] {
+    private getCoordinates(geometry: OlGeometry, srs: string, axisRotate = false): VertexCoordinate[][] {
         const returnCoordinates: VertexCoordinate[][] = [];
         let coordinatesFlat: OlCoordinate = [];
         let coordinatesOneDim: OlCoordinate[] = [];
@@ -342,20 +344,20 @@ export default class Feature {
             coordinatesThreeDim = (<OlMultiPolygon> geometry).getCoordinates();
         } 
         if (coordinatesFlat.length) {
-            returnCoordinates.push(this.iterateCoordinates([coordinatesFlat], srs));
+            returnCoordinates.push(this.iterateCoordinates([coordinatesFlat], srs, axisRotate));
         } 
         if (coordinatesOneDim.length) {
-            returnCoordinates.push(this.iterateCoordinates(coordinatesOneDim, srs));
+            returnCoordinates.push(this.iterateCoordinates(coordinatesOneDim, srs, axisRotate));
         }
         if (coordinatesTwoDim.length) {
             coordinatesTwoDim.forEach((coordinate1: OlCoordinate[]): void => {
-                returnCoordinates.push(this.iterateCoordinates(coordinate1, srs));
+                returnCoordinates.push(this.iterateCoordinates(coordinate1, srs, axisRotate));
             });
         }
         if (coordinatesThreeDim.length) {
             coordinatesThreeDim.forEach((coordinate1: OlCoordinate[][]): void => {
                 coordinate1.forEach((coordinate2: OlCoordinate[]): void => {
-                    returnCoordinates.push(this.iterateCoordinates(coordinate2, srs));
+                    returnCoordinates.push(this.iterateCoordinates(coordinate2, srs, axisRotate));
                 });
             });
         }
@@ -366,15 +368,18 @@ export default class Feature {
      * Iterates through array of coordinates and return them as array of objects
      * @param coordinates - array of coordinates
      * @param srs - srs to return coordinates in
-     * @param index - index for unique id generation
+     * @param axisRotate - whether to swap x and y coordinates, defaults to false
      * @return array of feature vertices' coordinates along with their indices e.g. [ {idx1, x1, y1}, {idx2, x2, y2} ]
      */
-    private iterateCoordinates(coordinates: OlCoordinate[], srs: string): VertexCoordinate[] {
+    private iterateCoordinates(coordinates: OlCoordinate[], srs: string, axisRotate = false): VertexCoordinate[] {
         let indexCoord = 1;
         const returnCoordinates: VertexCoordinate[] = [];
         const mapSRS = "EPSG:" + (this.layer ? this.layer.getMap().getSRSId() : Feature.DEFAULT_SRS_ID);
         coordinates.forEach((coordinate: OlCoordinate): void => {
             coordinate = OlProj.transform(coordinate, mapSRS, srs);
+            if (axisRotate) {
+                [coordinate[0], coordinate[1]] = [coordinate[1], coordinate[0]];
+            }
             returnCoordinates.push({"id": this.treeId, "coordinate_id": indexCoord, "name": "Coordinate", "x": coordinate[0], "y": coordinate[1]});
             this.treeId++;
             indexCoord++;

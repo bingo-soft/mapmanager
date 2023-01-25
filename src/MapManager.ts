@@ -819,10 +819,11 @@ export default class MapManager {
      * @category Feature
      * @param feature - feature
      * @param srsId - SRS Id to return vertices in, defaults to feature's layer SRS Id
+     * @param axisRotate - whether to swap x and y coordinates, defaults to false
      * @return array of feature vertices' along with their ids and coordinates
      */
-    public static getVertices(feature: Feature, srsId?: number): GeometryItem[] {
-        return feature.getVertices(srsId);
+    public static getVertices(feature: Feature, srsId?: number, axisRotate = false): GeometryItem[] {
+        return feature.getVertices(srsId, axisRotate);
     }
 
     /**
