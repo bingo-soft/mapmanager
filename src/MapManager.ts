@@ -819,11 +819,10 @@ export default class MapManager {
      * @category Feature
      * @param feature - feature
      * @param srsId - SRS Id to return vertices in, defaults to feature's layer SRS Id
-     * @param axisRotate - whether to swap x and y coordinates, defaults to false
      * @return array of feature vertices' along with their ids and coordinates
      */
-    public static getVertices(feature: Feature, srsId?: number, axisRotate = false): GeometryItem[] {
-        return feature.getVertices(srsId, axisRotate);
+    public static getVertices(feature: Feature, srsId?: number): GeometryItem[] {
+        return feature.getVertices(srsId);
     }
 
     /**
@@ -889,11 +888,16 @@ export default class MapManager {
      * @param feature - feature
      * @param text - feature text representation
      * @param format - text format, "WKT" or "GeoJSON"
-     * @param srsId - SRS Id of feature text representation
+     * @param sourceSrsId - SRS Id of feature text representation
+     * @param targetSrsId - SRS Id of returned feature, defaults to sourceSrsId if omitted
+     * @return feature
      */
-    public static updateFeatureFromText(feature: Feature, text: string, format: GeometryFormat, srsId: number): Feature {
+    public static updateFeatureFromText(feature: Feature, text: string, format: GeometryFormat, sourceSrsId: number, targetSrsId?: number): Feature {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
         try {
-            return feature.updateFeatureFromText(text, format, srsId);
+            return feature.updateFeatureFromText(text, format, sourceSrsId, targetSrsId);
         } catch(e) {
             return null;
         }
@@ -905,7 +909,7 @@ export default class MapManager {
      * @param text - feature text representation
      * @param format - text format, "Text", "WKT" or "GeoJSON"
      * @param sourceSrsId - SRS Id of feature text representation
-     * @param targetSrsId - SRS Id of returned feature, equals to sourceSrsId if omitted
+     * @param targetSrsId - SRS Id of returned feature, defaults to sourceSrsId if omitted
      * @return feature
      */
     public static createFeatureFromText(text: string, format: GeometryFormat, sourceSrsId: number, targetSrsId?: number): Feature {
