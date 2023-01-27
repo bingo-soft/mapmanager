@@ -829,15 +829,20 @@ export default class MapManager {
      * Creates feature from vertices
      * @category Feature
      * @param geometryItems feature vertices' along with their ids and coordinates
-     * @param layer - layer to put feature to
-     * @param srsId - SRS Id of geometry items, defaults to layer SRS Id
+     * @param sourceSrsId - SRS Id of feature representation
+     * @param targetSrsId - SRS Id of returned feature, defaults to sourceSrsId if omitted
      * @return resulting feature
      */
-    public static createFeatureFromVertices(geometryItems: GeometryItem[], layer: LayerInterface, srsId?: number): Feature {
-        if (layer.getType() != SourceType.Vector) {
-            throw new MethodNotImplemented();
+    public static createFeatureFromVertices(geometryItems: GeometryItem[], sourceSrsId: number, targetSrsId?: number): Feature {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
         }
-        return layer.createFeatureFromVertices(geometryItems, srsId);
+        try {
+            const feature = new Feature();
+            return feature.createFromVertices(geometryItems, sourceSrsId, targetSrsId);
+        } catch(e) {
+            return null;
+        }
     }
 
     /**
@@ -845,11 +850,19 @@ export default class MapManager {
      * @category Feature
      * @param geometryItems feature vertices' along with their ids and coordinates
      * @param feature - feature to set vertices to
-     * @param srsId - SRS Id of geometry items, defaults to feature's layer SRS Id
+     * @param sourceSrsId - SRS Id of feature representation
+     * @param targetSrsId - SRS Id of returned feature, defaults to sourceSrsId if omitted
      * @return resulting feature
      */
-    public static updateFeatureFromVertices(geometryItems: GeometryItem[], feature: Feature, srsId?: number): Feature {
-        return feature.updateFromVertices(geometryItems, srsId);
+    public static updateFeatureFromVertices(geometryItems: GeometryItem[], feature: Feature, sourceSrsId: number, targetSrsId?: number): Feature {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
+        try {
+            return feature.updateFromVertices(geometryItems, sourceSrsId, targetSrsId);
+        } catch(e) {
+            return null;
+        }
     }
 
     /**
@@ -875,11 +888,15 @@ export default class MapManager {
      * @category Feature
      * @param feature - feature
      * @param format - format to return in
-     * @param srsId - SRS Id of returned feature text representation
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return text representing feature
      */
-    public static getGeometryAsText(feature: Feature, format: GeometryFormat, srsId: number): string {
-       return feature.getGeometryAsText(format, srsId);
+    public static getGeometryAsText(feature: Feature, format: GeometryFormat, sourceSrsId: number, targetSrsId?: number): string {
+       if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+       }
+       return feature.getGeometryAsText(format, sourceSrsId, targetSrsId);
     }
 
     /**
@@ -897,7 +914,7 @@ export default class MapManager {
             targetSrsId = sourceSrsId;
         }
         try {
-            return feature.updateFeatureFromText(text, format, sourceSrsId, targetSrsId);
+            return feature.updateFromText(text, format, sourceSrsId, targetSrsId);
         } catch(e) {
             return null;
         }
@@ -918,7 +935,7 @@ export default class MapManager {
         }
         const feature = new Feature();
         try {
-            return feature.createFeatureFromText(text, format, sourceSrsId, targetSrsId);
+            return feature.createFromText(text, format, sourceSrsId, targetSrsId);
         } catch(e) {
             return null;
         }

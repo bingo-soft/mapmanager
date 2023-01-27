@@ -288,16 +288,6 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Creates feature from vertices
-     * @param items - feature vertices along with their ids and coordinates
-     * @param srsId - SRS Id of geometry items
-     * @return resulting feature
-     */
-    public createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature {
-        throw new MethodNotImplemented();
-    }
-
-    /**
      * Returns loading tiles count
      * @return loading tiles count
      */

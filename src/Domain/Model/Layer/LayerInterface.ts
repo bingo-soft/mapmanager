@@ -207,14 +207,6 @@ export default interface LayerInterface
     setFeaturePopupCss(css: string): void;
 
     /**
-     * Creates feature from vertices
-     * @param  items - feature vertices along with their ids and coordinates
-     * @param srsId - SRS Id of geometry items
-     * @return resulting feature
-     */
-    createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature;
-
-    /**
      * Returns loading tiles count
      * @return loading tiles count
      */
