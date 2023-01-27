@@ -257,21 +257,4 @@ export default class VectorLayer extends AbstractLayer{
             this.featurePopupCss = FeaturePopupCssStyle;
         }
     }
-
-    /**
-     * Creates feature from vertices
-     * @param items - feature vertices along with their ids and coordinates
-     * @param srsId - SRS Id of geometry items, defaults to layer SRS Id
-     * @return resulting feature
-     */
-    public createFeatureFromVertices(items: GeometryItem[], srsId?: number): Feature {
-        const feature = new Feature(new OlFeature(), this);
-        //this.addFeatures([feature.getFeature()]);
-        //this.setDirtyFeatures(new FeatureCollection([feature]));
-        feature.setEventBus(this.eventBus);
-        //feature.setLayer(this);
-        feature.updateFromVertices(items, srsId);
-        return feature;
-    }
-   
-}
+  }
