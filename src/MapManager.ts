@@ -818,11 +818,15 @@ export default class MapManager {
      * Returns feature vertices' coordinates along with their indices
      * @category Feature
      * @param feature - feature
-     * @param srsId - SRS Id to return vertices in, defaults to feature's layer SRS Id
+     * @param sourceSrsId - SRS Id of feature
+     * @param targetSrsId - SRS Id of returned data, defaults to sourceSrsId if omitted
      * @return array of feature vertices' along with their ids and coordinates
      */
-    public static getVertices(feature: Feature, srsId?: number): GeometryItem[] {
-        return feature.getVertices(srsId);
+    public static getVertices(feature: Feature, sourceSrsId: number, targetSrsId?: number): GeometryItem[] {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
+        return feature.getVertices(sourceSrsId, targetSrsId);
     }
 
     /**
