@@ -607,10 +607,14 @@ export default class Feature {
 
     /**
      * Checks whether feature valid
+     * @param geometryType - geometry type of feature, if omitted then feature's own geometry type will be used
      * @return boolean indicating whether feature valid
      */
-    public isValid(): boolean {
+    public isValid(geometryType?: string): boolean {
         const geometry = this.getFeature().getGeometry();
+        if (geometryType && geometry.getType() != geometryType) {
+            return false;
+        }
         let invalid: OlPoint[] | OlLineString[];
         if (geometry instanceof OlPoint) {
             return (<OlPoint> geometry).getCoordinates().length == 2;
@@ -624,7 +628,7 @@ export default class Feature {
             return invalid.length == 0;
         } else if (geometry instanceof OlPolygon || geometry instanceof OlMultiPolygon) {
             var unkinked = turf.unkinkPolygon(<any> new OlGeoJSON().writeFeatureObject(this.feature));
-            return unkinked && unkinked.features && unkinked.features.length == 1;
+            return unkinked && unkinked.features && unkinked.features.length != 0;
         } else {
             return false;
         }

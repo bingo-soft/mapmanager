@@ -1032,13 +1032,14 @@ export default class MapManager {
     }
 
     /**
-     * Checks whether feature collection valid
+     * Checks whether feature valid
      * @category Feature
-     * @param features - feature collection to validate
-     * @return boolean indicating whether all features in collection valid
+     * @param feature - feature to validate
+     * @param geometryType - geometry type of feature, if omitted then feature's own geometry type will be used
+     * @return boolean indicating whether feature valid
      */
-    public static isValid(features: FeatureCollection): boolean {
-        return features.getFeatures().filter(feature => !feature.isValid()).length == 0;
+    public static isValid(feature: Feature, geometryType?: string): boolean {
+        return feature.isValid(geometryType);
     }
 
     /**
