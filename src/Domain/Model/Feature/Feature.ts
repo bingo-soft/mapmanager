@@ -628,7 +628,7 @@ export default class Feature {
             return invalid.length == 0;
         } else if (geometry instanceof OlPolygon || geometry instanceof OlMultiPolygon) {
             var unkinked = turf.unkinkPolygon(<any> new OlGeoJSON().writeFeatureObject(this.feature));
-            return unkinked && unkinked.features && unkinked.features.length == 1;
+            return unkinked && unkinked.features && unkinked.features.length != 0;
         } else {
             return false;
         }
