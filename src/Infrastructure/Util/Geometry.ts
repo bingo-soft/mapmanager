@@ -37,12 +37,14 @@ export default class Geometry {
                 let xy = item.split(" ");
                 xy = xy.filter(word => word != " " && word != "");
                 const xyNumeric = []
-                xyNumeric[0] = parseFloat(xy[0].replace(/^\s+|\s+$/g, ''));
-                xyNumeric[1] = parseFloat(xy[1].replace(/^\s+|\s+$/g, ''));
+                xy.forEach((item) => {
+                    item = item.replace(/[\°'"]/g, '');
+                    xyNumeric.push(parseFloat(item.replace(/^\s+|\s+$/g, '')));
+                });
                 if (swapCoordinates) {
-                    points.push([xyNumeric[1], xyNumeric[0]]);
+                    xyNumeric.length == 2 ? points.push([xyNumeric[1], xyNumeric[0]]) : points.push([xyNumeric[3], xyNumeric[4], xyNumeric[5], xyNumeric[0], xyNumeric[1], xyNumeric[2]]);
                 } else {
-                    points.push([xyNumeric[0], xyNumeric[1]]);   
+                    xyNumeric.length == 2 ? points.push([xyNumeric[0], xyNumeric[1]]) : points.push([xyNumeric[0], xyNumeric[1], xyNumeric[2], xyNumeric[3], xyNumeric[4], xyNumeric[5]]);
                 }
             }
         });

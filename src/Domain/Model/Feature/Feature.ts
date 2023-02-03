@@ -478,7 +478,17 @@ export default class Feature {
      * @return GeoJSON string
      */
     private getGeoJSONFromText(text: string, sourceSrsId: number): string {
-        const points: number[][] = Geometry.textPointsToArray(text);
+        const pointsDecOrDMS: number[][] = Geometry.textPointsToArray(text);
+        let points = [];
+        if (pointsDecOrDMS[0] && pointsDecOrDMS[0].length == 6) { // DMS
+            pointsDecOrDMS.forEach((point) => {
+                const x = point[0] + point[1] / 60 + point[2] / 3600;
+                const y = point[3] + point[4] / 60 + point[5] / 3600;
+                points.push([x, y]);
+            });
+        } else { // decimal
+            points = pointsDecOrDMS;
+        }
         let olFeature;
         const subGeometries = [];
         const subGeometryTypes = [];
