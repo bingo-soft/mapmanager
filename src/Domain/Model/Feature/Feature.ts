@@ -323,6 +323,7 @@ export default class Feature {
             }
             return geometryItems;
         }
+        return [];
     }
 
     /**

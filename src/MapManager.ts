@@ -826,6 +826,9 @@ export default class MapManager {
         if (!targetSrsId) {
             targetSrsId = sourceSrsId;
         }
+        if (!feature) {
+            return [];
+        }
         return feature.getVertices(sourceSrsId, targetSrsId);
     }
 
