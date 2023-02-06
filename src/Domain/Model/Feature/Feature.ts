@@ -483,9 +483,13 @@ export default class Feature {
         let points = [];
         if (pointsDecOrDMS[0] && pointsDecOrDMS[0].length == 6) { // DMS
             pointsDecOrDMS.forEach((point) => {
-                const x = point[0] + point[1] / 60 + point[2] / 3600;
-                const y = point[3] + point[4] / 60 + point[5] / 3600;
-                points.push([x, y]);
+                if (point.length) {
+                    const x = point[0] + point[1] / 60 + point[2] / 3600;
+                    const y = point[3] + point[4] / 60 + point[5] / 3600;
+                    points.push([x, y]);
+                } else {
+                    points.push([]); 
+                }
             });
         } else { // decimal
             points = pointsDecOrDMS;
