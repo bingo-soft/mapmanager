@@ -458,6 +458,9 @@ export default class Feature {
     public createFromText(text: string, format: GeometryFormat, sourceSrsId: number, targetSrsId: number): Feature {
         if (format == GeometryFormat.Text) {
             text = this.getGeoJSONFromText(text, sourceSrsId);
+            if (text == '') {
+                return null;
+            }
             format = GeometryFormat.GeoJSON;
         }
         const formatInstance = this.getFormatInstance(format);
@@ -481,18 +484,25 @@ export default class Feature {
     private getGeoJSONFromText(text: string, sourceSrsId: number): string {
         const pointsDecOrDMS: number[][] = Geometry.textPointsToArray(text);
         let points = [];
-        if (pointsDecOrDMS[0] && pointsDecOrDMS[0].length == 6) { // DMS
-            pointsDecOrDMS.forEach((point) => {
-                if (point.length) {
-                    const x = point[0] + point[1] / 60 + point[2] / 3600;
-                    const y = point[3] + point[4] / 60 + point[5] / 3600;
-                    points.push([x, y]);
-                } else {
-                    points.push([]); 
-                }
-            });
-        } else { // decimal
-            points = pointsDecOrDMS;
+        let x = 0;
+        let y = 0;
+        for (let i = 0; i < pointsDecOrDMS.length; i++) {
+            const point = pointsDecOrDMS[i];
+            if (point.length == 0) {
+                points.push([]);
+                continue;   
+            }
+            if (point.length == 6) {
+                x = point[0] + point[1] / 60 + point[2] / 3600;
+                y = point[3] + point[4] / 60 + point[5] / 3600;
+            } else {
+                x = point[0];
+                y = point[1];    
+            }
+            if (!x || !y) {
+                return '';
+            }
+            points.push([x, y]);
         }
         let olFeature;
         const subGeometries = [];
