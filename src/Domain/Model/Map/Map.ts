@@ -997,9 +997,9 @@ export default class Map {
      * Exports map
      * @param exportType - type of export, defaults to ExportType.Printer
      * @param isDownload - parameter indicating whether the file should be downloaded by a browser
-     * @return in case of PNG or GeoTIFF a promise with the file information 
+     * @return in case of PNG or GeoTIFF a promise with the file information
      */
-    public export(exportType: ExportType = ExportType.Printer, isDownload: boolean = true): Promise<unknown> {
+    public export(exportType: ExportType = ExportType.Printer, isDownload: boolean): Promise<unknown> {
         return new Promise((resolve): void => {
             this.map.updateSize();
             this.map.once("rendercomplete", () => {
@@ -1063,19 +1063,19 @@ export default class Map {
                             srid: this.getSRSId()
                         });
                     } else if (exportType == ExportType.PNG) {
-                        if (isDownload) {
-                            mapCanvas.toBlob((blob: Blob): void => {
+                        mapCanvas.toBlob((blob: Blob): void => {
+                            if (isDownload) {
                                 const link = document.createElement("a");
                                 link.style.display = "none";
                                 link.href = URL.createObjectURL(blob);
                                 link.download = "map.png";
                                 link.click();
-                            }, mimeType);
-                        } else {
-                            resolve({
-                                file: img.src
-                            });    
-                        }
+                            } else {
+                                resolve({
+                                    file: blob
+                                });  
+                            }
+                        }, mimeType);
                     }
                 }
                 iframe.contentWindow.document.body.appendChild(img);

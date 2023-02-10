@@ -143,7 +143,7 @@ export default class MapManager {
      * @category Map
      * @param map - map instance
      * @param exportType - type of export, defaults to ExportType.Printer
-     * @param isDownload - parameter indicating whether the file should be downloaded by a browser
+     * @param isDownload - parameter indicating whether the file should be downloaded by a browser, defaults to true
      * @return in case of PNG or GeoTIFF a promise with the file information 
      */
     public static async export(map: Map, exportType: ExportType = ExportType.Printer, isDownload: boolean = true): Promise<unknown> {
