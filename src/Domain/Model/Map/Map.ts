@@ -996,7 +996,7 @@ export default class Map {
     /**
      * Exports map
      * @param exportType - type of export, defaults to ExportType.Printer
-     * @param isDownload - parameter indicating whether the file should be downloaded by a browser
+     * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works only in case of PNG
      * @return in case of PNG or GeoTIFF a promise with the file information
      */
     public export(exportType: ExportType = ExportType.Printer, isDownload: boolean): Promise<unknown> {
@@ -1048,34 +1048,29 @@ export default class Map {
                     if (exportType == ExportType.Printer) {
                         iframe.contentWindow.print();
                         iframe.contentWindow.document.body.appendChild(img);
-                    } else if (exportType == ExportType.GeoTIFF) {
-                        const extent = this.map.getView().calculateExtent();
-                        const bottomLeft = OlExtent.getBottomLeft(extent);
-                        const topRight = OlExtent.getTopRight(extent);
-                        resolve({
-                            file: img.src, 
-                            extent: {
-                                "xmin": bottomLeft[0],
-                                "ymin": bottomLeft[1],
-                                "xmax": topRight[0],
-                                "ymax": topRight[1]
-                            },
-                            srid: this.getSRSId()
-                        });
-                    } else if (exportType == ExportType.PNG) {
+                    } else {
+                        const ret = {file: null, xmin: null, ymin: null, xmax: null, ymax: null};
+                        if (exportType == ExportType.GeoTIFF) {
+                            const extent = this.map.getView().calculateExtent();
+                            const bottomLeft = OlExtent.getBottomLeft(extent);
+                            const topRight = OlExtent.getTopRight(extent);
+                            ret.xmin = bottomLeft[0];
+                            ret.ymin = bottomLeft[1];
+                            ret.xmax = topRight[0];
+                            ret.ymax = topRight[1];
+                        }
                         mapCanvas.toBlob((blob: Blob): void => {
-                            if (isDownload) {
+                            if (exportType == ExportType.PNG && isDownload) {
                                 const link = document.createElement("a");
                                 link.style.display = "none";
                                 link.href = URL.createObjectURL(blob);
                                 link.download = "map.png";
                                 link.click();
                             } else {
-                                resolve({
-                                    file: blob
-                                });  
+                                ret.file = blob;
+                                resolve(ret);  
                             }
-                        }, mimeType);
+                        }, mimeType);    
                     }
                 }
                 iframe.contentWindow.document.body.appendChild(img);
