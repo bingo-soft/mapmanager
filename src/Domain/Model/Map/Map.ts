@@ -841,10 +841,12 @@ export default class Map {
      * @param coordinate - coordinate
      * @param srsId - SRS Id of coordinate
      * @param isTransparent - whether highlight must be transparent
-     * @param id - vertex id if needed
+     * @param id - vertex id
+     * @param label - label for vertex
      * @return highlight feature
      */
-    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number, isTransparent: boolean = false, id?: number): Feature {
+    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number, 
+        isTransparent: boolean = false, id?: number, label?: string): Feature {
         if (!this.vertexHighlightLayer) {
             this.vertexHighlightLayer = new OlVectorLayer({
                 source: new OlVectorSource()
@@ -852,7 +854,10 @@ export default class Map {
             if (isTransparent) {
                 (<any> HighlightVertexStyle).point.opacity = 0;
             }
-            const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false);
+            if (label) {
+                (<any> HighlightVertexStyle).label.text = label;
+            }
+            const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false, true);
             this.vertexHighlightLayer.setStyle(styleFunc);
             this.vertexHighlightLayer.setMap(this.map);
         }
