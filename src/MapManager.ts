@@ -1006,14 +1006,17 @@ export default class MapManager {
     /**
      * Highlights vertex
      * @category Feature
+     * @param map - map instance
      * @param coordinate - coordinate
      * @param srsId - SRS Id of coordinate
      * @param isTransparent - whether highlight must be transparent
-     * @param id - vertex id if needed
+     * @param id - vertex id
+     * @param label - label for vertex
      * @return highlight feature
      */
-     public static highlightVertex(map: Map, coordinate: number[], srsId: number, isTransparent: boolean = false, id?: number): Feature {
-        return map.highlightVertex(coordinate, srsId, isTransparent, id);
+     public static highlightVertex(map: Map, coordinate: number[], srsId: number, 
+        isTransparent: boolean = false, id?: number, label?: string): Feature {
+        return map.highlightVertex(coordinate, srsId, isTransparent, id, label);
     }
 
     /**
