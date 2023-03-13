@@ -318,11 +318,7 @@ export default class StyleBuilder {
             // painting on unique attribute value
             this.paintOnUniqueAttributeValue(feature, style);
             // apply text 
-            if (useLabelTextOption) {
-                style.setText(this.style["Text"]);
-            } else {
-                this.applyText(feature, style, geomType, resolution);     
-            }
+            this.applyText(feature, style, geomType, resolution, useLabelTextOption);     
             return style;
         }
     }
@@ -333,10 +329,16 @@ export default class StyleBuilder {
      * @param style - style to apply the text value to
      * @param geomType - feature geometry type
      * @param resolution - current map view resolution
+     * @param useLabelTextOption - whether to use label text option instead of field option
      */
-    private applyText(feature: OlFeature, style: OlStyle, geomType: string, resolution: number): void {
+    private applyText(feature: OlFeature, style: OlStyle, geomType: string, resolution: number, useLabelTextOption = false): void {
         const textStyle: OlText = this.style["Text"];
         if (style && textStyle) {
+            if (useLabelTextOption) {
+                textStyle.setText(feature.get("label"));
+                style.setText(textStyle);
+                return;
+            }    
             if (!this.field) {
                 this.field = textStyle.getText();
             }

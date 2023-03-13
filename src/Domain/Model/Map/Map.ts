@@ -851,23 +851,22 @@ export default class Map {
             this.vertexHighlightLayer = new OlVectorLayer({
                 source: new OlVectorSource()
             });
-            if (isTransparent) {
-                (<any> HighlightVertexStyle).point.opacity = 0;
-            }
-            if (label) {
-                (<any> HighlightVertexStyle).label.text = label;
-            }
-            const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false, true);
-            this.vertexHighlightLayer.setStyle(styleFunc);
-            this.vertexHighlightLayer.setMap(this.map);
         }
+        if (isTransparent) {
+            (<any> HighlightVertexStyle).point.opacity = 0;
+        }
+        const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false, true);
+        this.vertexHighlightLayer.setStyle(styleFunc);
+        this.vertexHighlightLayer.setMap(this.map);
         const source = this.vertexHighlightLayer.getSource();
-        //source.clear();
         const feature = new OlFeature({
             geometry: new OlPoint(OlProj.transform(coordinate, "EPSG:" + srsId.toString(), "EPSG:" + this.srsId.toString()))
         });
         if (id) {
             feature.set("vertexId", id);
+        }
+        if (label) {
+            feature.set("label", label);
         }
         source.addFeature(feature);
         return new Feature(feature);
