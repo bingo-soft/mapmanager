@@ -194,7 +194,7 @@ export default class StyleBuilder {
      */
     private setTextStyle(opts: unknown): StyleBuilder {
         const overflow = typeof opts["overflow"] === "boolean" ? opts["overflow"] : opts["overflow"] === "true";
-        const rotateWithView = typeof opts["rotateWithView"] === "boolean" ? opts["rotateWithView"] : opts["rotateWithView"] === "true";
+        const rotateWithView = typeof opts["rotate_with_view"] === "boolean" ? opts["rotate_with_view"] : opts["rotate_with_view"] === "true";
         const style = new OlText({
             stroke: new OlStroke({
                 color: opts["color"],

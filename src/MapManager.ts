@@ -387,11 +387,14 @@ export default class MapManager {
                         builder.setLoaderOptions(opts["request"]);
                     }
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
-                        const layerSrs = "EPSG:" + builder.getLayer().getSRSId().toString();
+                        const layer = builder.getLayer();
+                        const layerSrs = "EPSG:" + layer.getSRSId().toString();
                         const mapSrs = projection.getCode();
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
+                        // request params might further be changed via layer.setLoaderOptions()
+                        opts["request"] = layer.getLoaderOptions();
                         let cqlFilter = "";
                         if (opts["request"]["cql_filter"]) {
                             cqlFilter = opts["request"]["cql_filter"] + " and ";
@@ -405,7 +408,6 @@ export default class MapManager {
                         const payload: ApiRequest = {
                             method: opts["request"]["method"],
                             params: opts["request"]["params"],
-                            //base_url: opts["request"]["base_url"] + "&srsname=" + layerSrs + "&cql_filter=" + cqlFilter,
                             base_url: opts["request"]["base_url"],
                             headers: opts["request"]["headers"],
                             data: opts["request"]["data"],
