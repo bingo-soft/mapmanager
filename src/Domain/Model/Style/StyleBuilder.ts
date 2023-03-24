@@ -8,6 +8,7 @@ import ObjectParser from "../../../Infrastructure/Util/ObjectParser";
 import StringUtil from "../../../Infrastructure/Util/StringUtil";
 import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import SourceType from "../Source/SourceType";
+import FeatureStyleBuilder from "./FeatureStyleBuilder";
 
 /** StyleBuilder */
 export default class StyleBuilder {
@@ -15,12 +16,13 @@ export default class StyleBuilder {
     private style: StyleType;
     private clusterStyle: OlStyle;
     private field: string;
+    private styleField: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
     private uniqueColorField: string;
     private colorUtil: ColorUtil;
     private showLabelMaxResolution: number;
     private static readonly SHOW_LABEL_MAX_RESOLUTION = 10;
-    private static readonly POSITIONS = {
+    private static readonly ANCHOR_POSITION = {
         "top": 0,
         "bottom": 1,
         "left": 0,
@@ -30,8 +32,9 @@ export default class StyleBuilder {
 
     /**
      * @param opts - options
+     * @param sourceType - soutce type
      */ 
-    constructor(opts?: unknown, sourceType?: SourceType) {
+    constructor(opts: unknown, sourceType?: SourceType) {
         this.sourceType = sourceType;
         this.style = {
             "Point": null,
@@ -40,10 +43,11 @@ export default class StyleBuilder {
             "MultiLineString": null,
             "Polygon": null,
             "MultiPolygon": null,
-            //"Circle": null,
             "GeometryCollection": null,
             "Text": null
         };
+        // TODO: конвертировать короткие стили в длинные, если надо
+        // opts = this.convertOptions(opts);
         this.applyOptions(opts);
     }
 
@@ -51,8 +55,11 @@ export default class StyleBuilder {
      * Applies options to style
      * @param opts - options
      */
-    private applyOptions(opts?: unknown): void {
+    private applyOptions(opts: unknown): void {
         if (typeof opts !== "undefined") {
+            if (Object.prototype.hasOwnProperty.call(opts, "style_field")) {
+                this.styleField = opts["style_field"];
+            }
             let hasUniqueStyle = false;
             if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
                 hasUniqueStyle = true;
@@ -120,7 +127,7 @@ export default class StyleBuilder {
                     opacity: opts["opacity"] ? opts["opacity"] / 100 : 1,
                     rotation: opts["rotation"] ? opts["rotation"] * Math.PI / 180 : 0,
                     offset: opts["offset"],
-                    anchor: opts["anchor"][0] && opts["anchor"][1] ? [StyleBuilder.POSITIONS[opts["anchor"][0]], StyleBuilder.POSITIONS[opts["anchor"][1]]] : [0.5, 0.5],
+                    anchor: opts["anchor"][0] && opts["anchor"][1] ? [StyleBuilder.ANCHOR_POSITION[opts["anchor"][0]], StyleBuilder.ANCHOR_POSITION[opts["anchor"][1]]] : [0.5, 0.5],
                     src: opts["image_path"],
                 })
             });
@@ -138,10 +145,19 @@ export default class StyleBuilder {
      * @return style builder instance
      */
     private setLinestringStyle(opts: unknown): StyleBuilder {
+        let color = opts["color"] ? opts["color"] : "#fff";
+        if (opts["opacity"]) {
+            color = ColorUtil.applyOpacity(color, opts["opacity"]);
+        }
         const style = new OlStyle({
             stroke: new OlStroke({
-                color: opts["color"], 
-                width: opts["stroke_width"]
+                color: color, 
+                width: opts["stroke_width"],
+                lineCap: opts["line_cap"],
+                lineJoin: opts["line_join"],
+                lineDash: opts["line_dash"],
+                lineDashOffset: opts["line_dash_offset"],
+                miterLimit: opts["miter_limit"]
             }),
         });
         this.style["LineString"] = style;
@@ -166,12 +182,12 @@ export default class StyleBuilder {
         } else {
             fill = new OlFillPattern({
                 pattern: fillStyle,
-                size: opts["pattern_stroke_width"] || 0,
+                size: opts["pattern_stroke_width"] || 1,
                 color: opts["pattern_color"] || "rgb(255, 255, 255)",
                 offset: opts["pattern_offset"] || 0,
-                scale: opts["pattern_scale"] || 0,
+                scale: opts["pattern_scale"] || 1,
                 fill: new OlFill({color: backgroundColor}),
-                spacing: opts["pattern_stroke_spacing"] || 0,
+                spacing: opts["pattern_stroke_spacing"] || 10,
                 angle: opts["pattern_stroke_rotation"] || 0
             });            
         }
@@ -303,9 +319,34 @@ export default class StyleBuilder {
                     }
                 }
             }
+            const featureProps = feature.getProperties();
+
+
+            /* const ft = feature.getGeometry().getType(); 
+            if (ft == "Point" || ft == "MultiPoint") {
+                featureProps["sf"] = 'point("mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png")';
+                //featureProps["sf"] = 'label("fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1)';
+            }
+            if (ft == "LineString" || ft == "MultiLineString") {
+                featureProps["sf"] = 'linestring("c":"#0000ffff","w":2,"lc":"butt","lj":"bevel","p":[1,3,3],"ldo":2,"ml":2)';
+            }
+            if (ft == "Polygon" || ft == "MultiPolygon") {
+                featureProps["sf"] = 'polygon("c":"#ED5F5F","w":1,"bc":"#ff0000","p":{"c":"#B1A5A5","w":2,"ss":20,"sr":0,"o":0,"s":1},"fs":"hatch")';
+//"polygon":{"color":"#ED5F5F","stroke_width":1,"opacity":50,"pattern_color":"#B1A5A5","pattern_stroke_width":2,"pattern_stroke_spacing":0,"pattern_stroke_rotation":0,"pattern_offset":0,"pattern_scale":1,"fill_style":"hatch"},                
+            }
+            feature.setProperties(featureProps); */
+
+
+            // feature based styles
+            if (this.styleField) {
+                const featureStyle = featureProps[this.styleField];
+                if (featureStyle && featureStyle.length) {
+                    const featureType = feature.getGeometry().getType(); 
+                    return new FeatureStyleBuilder(featureStyle, featureType).build();
+                }
+            }
             // common features
             if (useExternalStyleBuilder && typeof this.externalStyleBuilder === "function") {
-                const featureProps = feature.getProperties();
                 const featureStyle = this.externalStyleBuilder(featureProps);
                 this.applyOptions(featureStyle);
             }

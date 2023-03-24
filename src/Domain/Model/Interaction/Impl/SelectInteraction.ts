@@ -5,7 +5,7 @@ import { Layer as OlLayer } from "ol/layer";
 import OlVectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
 import { Geometry as OlGeometry, Circle as OlCircle } from "ol/geom";
-import { EventsKey as OlEventsKey } from "ol/events";
+import * as OlSphere from "ol/sphere";
 import {DragBox as OlDragBox, Select as OlSelect } from 'ol/interaction';
 import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
 import { always as OlEventConditionAlways, shiftKeyOnly as OlEventConditionShiftKeyOnly } from "ol/events/condition"
@@ -158,7 +158,8 @@ export default class SelectInteraction extends BaseInteraction {
                         drawingFeature = (<OlDrawEvent> e).feature;
                         geomChangelistener = (evt: OlBaseEvent): void => {
                             const geom: OlCircle = <OlCircle> evt.target;
-                            result = "R = " + geom.getRadius().toFixed(4).toString();
+                            const radius = OlSphere.getLength(fromCircle(geom)) / (2 * Math.PI);
+                            result = "R = " + radius.toString();
                             tooltipCoord = geom.getCenter();
                             tooltip.innerHTML = result;
                             overlay.setPosition(tooltipCoord);

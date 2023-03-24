@@ -401,7 +401,6 @@ export default class Feature {
     /**
      * Returns feature geometry as text
      * @param format - format to return in
-     * @param srsId - SRS Id of returning feature text representation
      * @param sourceSrsId - SRS Id of feature geometry
      * @param targetSrsId - SRS Id of returned text
      * @return text representing feature
