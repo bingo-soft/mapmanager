@@ -16,7 +16,8 @@ export default class StyleBuilder {
     private style: StyleType;
     private clusterStyle: OlStyle;
     private field: string;
-    private styleField: string;
+    private isStyleInFeatureAttribute: boolean;
+    private styleAttr: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
     private uniqueColorField: string;
     private colorUtil: ColorUtil;
@@ -57,8 +58,10 @@ export default class StyleBuilder {
      */
     private applyOptions(opts: unknown): void {
         if (typeof opts !== "undefined") {
-            if (Object.prototype.hasOwnProperty.call(opts, "style_field")) {
-                this.styleField = opts["style_field"];
+            this.isStyleInFeatureAttribute = false;
+            if (Object.prototype.hasOwnProperty.call(opts, "style_in_feature_attribute")) {
+                this.isStyleInFeatureAttribute = opts["style_in_feature_attribute"];
+                this.styleAttr = opts["style_attribute"];
             }
             let hasUniqueStyle = false;
             if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
@@ -336,10 +339,9 @@ export default class StyleBuilder {
             }
             feature.setProperties(featureProps); */
 
-
             // feature based styles
-            if (this.styleField) {
-                const featureStyle = featureProps[this.styleField];
+            if (this.isStyleInFeatureAttribute) {
+                const featureStyle = featureProps[this.styleAttr];
                 if (featureStyle && featureStyle.length) {
                     const featureType = feature.getGeometry().getType(); 
                     return new FeatureStyleBuilder(featureStyle, featureType).build();

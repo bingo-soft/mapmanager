@@ -262,8 +262,6 @@ export default class FeatureCollection {
         this.features.forEach((feature: Feature) => {
             olFeatures.push(feature.getFeature());
         });
-        console.log(sourceSrsId)
-        console.log(targetSrsId)
         return new OlGeoJSON().writeFeatures(olFeatures, {
             dataProjection: "EPSG:" + targetSrsId.toString(),
             featureProjection: "EPSG:" + sourceSrsId.toString()
