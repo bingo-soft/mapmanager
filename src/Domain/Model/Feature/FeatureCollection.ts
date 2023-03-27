@@ -16,8 +16,6 @@ import LayerInterface from "../Layer/LayerInterface";
 
 /** FeatureCollection */
 export default class FeatureCollection { 
-
-    private static readonly MAP_SRS_ID = 3857;
     
     private features: Feature[] = [];
     
@@ -158,15 +156,16 @@ export default class FeatureCollection {
 
     /**
      * Returns features of the collection as single geometry GeoJSON string
-     * @param srsId - SRS Id returned features
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text
      * @return GeoJSON string
      */
-     public getAsSingleGeometry(srsId: number): string {
+     public getAsSingleGeometry(sourceSrsId: number, targetSrsId: number): string {
         if (this.features.length) {
             const geom = this.features[0].getFeature().getGeometry();
             return new OlGeoJSON().writeGeometry(geom, {
-                dataProjection: "EPSG:" + srsId.toString()/* this.srs */,
-                featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
+                dataProjection: "EPSG:" + targetSrsId.toString(),
+                featureProjection: "EPSG:" + sourceSrsId.toString()
             });
         }
         return "";
@@ -174,10 +173,11 @@ export default class FeatureCollection {
 
     /**
      * Returns features of the collection as multi geometry GeoJSON string
-     * @param srsId - SRS Id returned features
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text
      * @return GeoJSON string
      */
-    public getAsMultiGeometry(srsId: number): string {
+    public getAsMultiGeometry(sourceSrsId: number, targetSrsId: number): string {
         let geomType: OlGeometryType; 
         if (this.features.length) {
             const coordsPoint: OlCoordinate[] = [];
@@ -224,8 +224,8 @@ export default class FeatureCollection {
                     break;
             }
             return new OlGeoJSON().writeGeometry(returnGeom, {
-                dataProjection: "EPSG:" + srsId.toString()/* this.srs */,
-                featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
+                dataProjection: "EPSG:" + targetSrsId.toString(),
+                featureProjection: "EPSG:" + sourceSrsId.toString()
             });
         } 
         return "";
@@ -233,21 +233,39 @@ export default class FeatureCollection {
 
     /**
      * Returns features of the collection as GeometryCollection GeoJSON string
-     * @param srsId - SRS Id returned features
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text
      * @return GeoJSON string
      */
-    public getAsGeometryCollection(srsId: number): string {
+    public getAsGeometryCollection(sourceSrsId: number, targetSrsId: number): string {
         if (this.features.length) {
             const geoms: OlGeometry[] = [];
             this.features.forEach((el): void => {
                 geoms.push(el.getFeature().getGeometry());
             });
             return new OlGeoJSON().writeGeometry(new OlGeometryCollection(geoms), {
-                dataProjection: "EPSG:" + srsId.toString()/* this.srs */,
-                featureProjection: "EPSG:" + FeatureCollection.MAP_SRS_ID // todo - наверное надо передавать сюда SRS карты, а не жестко конвертить в 3857
+                dataProjection: "EPSG:" + targetSrsId.toString(),
+                featureProjection: "EPSG:" + sourceSrsId.toString()
             });
         }
         return "";
+    }
+
+    /**
+     * Returns features of the collection as GeoJSON string
+     * @param sourceSrsId - SRS Id of features
+     * @param targetSrsId - SRS Id of returned text
+     * @return text representing feature
+     */
+    public getAsFeatureCollection(sourceSrsId: number, targetSrsId: number): string {
+        const olFeatures: OlFeature[] = [];
+        this.features.forEach((feature: Feature) => {
+            olFeatures.push(feature.getFeature());
+        });
+        return new OlGeoJSON().writeFeatures(olFeatures, {
+            dataProjection: "EPSG:" + targetSrsId.toString(),
+            featureProjection: "EPSG:" + sourceSrsId.toString()
+        });
     }
 
     /**

@@ -530,33 +530,60 @@ export default class MapManager {
      * Returns features as single geometry GeoJSON
      * @category Feature
      * @param features - feature collection
-     * @param srsId - SRS Id of returned features
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text
      * @return GeoJSON representing features as single geometry
      */
-    public static getFeaturesAsSingleGeometry(features: FeatureCollection, srsId: number): string {
-        return features.getAsSingleGeometry(srsId);
+    public static getFeaturesAsSingleGeometry(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
+        return features.getAsSingleGeometry(sourceSrsId, targetSrsId);
     }
 
     /**
      * Returns features as multi geometry GeoJSON
      * @category Layer
      * @param features - feature collection
-     * @param srsId - SRS Id of returned features
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text
      * @return GeoJSON representing features as multi geometry
      */
-    public static getFeaturesAsMultiGeometry(features: FeatureCollection, srsId: number): string {
-        return features.getAsMultiGeometry(srsId);
+    public static getFeaturesAsMultiGeometry(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
+        return features.getAsMultiGeometry(sourceSrsId, targetSrsId);
     }
 
     /**
      * Returns features as GeometryCollection GeoJSON
      * @category Layer
      * @param features - feature collection
-     * @param srsId - SRS Id of returned features
+     * @param sourceSrsId - SRS Id of feature geometry
+     * @param targetSrsId - SRS Id of returned text
      * @return GeoJSON representing features as GeometryCollection
      */
-    public static getFeaturesAsGeometryCollection(features: FeatureCollection, srsId: number): string {
-        return features.getAsGeometryCollection(srsId);
+    public static getFeaturesAsGeometryCollection(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
+        return features.getAsGeometryCollection(sourceSrsId, targetSrsId);
+    }
+
+    /**
+     * Returns features as GeoJSON string
+     * @category Layer
+     * @param features - feature collection
+     * @param sourceSrsId - SRS Id of features
+     * @param targetSrsId - SRS Id of returned text
+     * @return text representing feature
+     */
+    public static getFeaturesAsFeatureCollection(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
+        if (!targetSrsId) {
+            targetSrsId = sourceSrsId;
+        }
+        return features.getAsFeatureCollection(sourceSrsId, targetSrsId);
     }
     
     /**
