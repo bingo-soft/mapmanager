@@ -327,22 +327,24 @@ export default class StyleBuilder {
 
             /* const ft = feature.getGeometry().getType(); 
             if (ft == "Point" || ft == "MultiPoint") {
-                featureProps["sf"] = 'point("mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png")';
-                //featureProps["sf"] = 'label("fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1)';
+                //featureProps["system_style"] = '{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }';
+                featureProps["system_style"] = '{ "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1} }';
             }
             if (ft == "LineString" || ft == "MultiLineString") {
-                featureProps["sf"] = 'linestring("c":"#0000ffff","w":2,"lc":"butt","lj":"bevel","p":[1,3,3],"ldo":2,"ml":2)';
+                featureProps["system_style"] = '{ "linestring": {"c":"#0000ffff","w":2,"lc":"butt","lj":"bevel","p":[1,3,3],"ldo":2,"ml":2} }';
             }
             if (ft == "Polygon" || ft == "MultiPolygon") {
-                featureProps["sf"] = 'polygon("c":"#ED5F5F","w":1,"bc":"#ff0000","p":{"c":"#B1A5A5","w":2,"ss":20,"sr":0,"o":0,"s":1},"fs":"hatch")';
+                featureProps["system_style"] = '{ "polygon": {"c":"#ED5F5F","w":1,"bc":"#ff0000","p":{"c":"#B1A5A5","w":2,"ss":20,"sr":0,"o":0,"s":1},"fs":"hatch"} }';
 //"polygon":{"color":"#ED5F5F","stroke_width":1,"opacity":50,"pattern_color":"#B1A5A5","pattern_stroke_width":2,"pattern_stroke_spacing":0,"pattern_stroke_rotation":0,"pattern_offset":0,"pattern_scale":1,"fill_style":"hatch"},                
             }
-            feature.setProperties(featureProps); */
+            feature.setProperties(featureProps);
+            //this.isStyleInFeatureAttribute = true; */
+
 
             // feature based styles
             if (this.isStyleInFeatureAttribute) {
                 const featureStyle = featureProps[this.styleAttr];
-                if (featureStyle && featureStyle.length) {
+                if (featureStyle && Object.keys(featureStyle).length != 0) {
                     const featureType = feature.getGeometry().getType(); 
                     return new FeatureStyleBuilder(featureStyle, featureType).build();
                 }

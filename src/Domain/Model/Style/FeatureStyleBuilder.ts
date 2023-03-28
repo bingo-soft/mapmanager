@@ -37,33 +37,24 @@ export default class FeatureStyleBuilder {
 
     /**
      * Applies options to style
-     * @param opts - options
+     * @param style - style options
      * @param featureType - type of feature
      */
-    private applyStyle(style: string, featureType: string): void {
-        const a = style.split("(");
-        const styleValue = a[0].trim().toLowerCase();
-        const params = a[1].trim().slice(0, -1);
-        if (params.length == 0) {
-            return;
-        }
-        const opts = JSON.parse("{" + params + "}");
-        if (featureType == "Point" && styleValue == "point") {
-            this.setPointStyle(opts);
-        } else {
-            this.setTextStyle(opts);
+    private applyStyle(style: unknown, featureType: string): void {
+        if (featureType == "Point") {
+            style["point"] !== undefined ? this.setPointStyle(style["point"]) : this.setTextStyle(style["label"]);
         }
         if (featureType == "MultiPoint") {
-            this.setPointStyle(opts);
+            this.setPointStyle(style["point"]);
         }
         if (featureType == "LineString" || featureType == "MultiLineString") {
-            this.setLinestringStyle(opts);
+            this.setLinestringStyle(style["linestring"]);
         } 
         if (featureType == "Polygon" || featureType == "MultiPolygon") {
-            this.setPolygonStyle(opts);
+            this.setPolygonStyle(style["polygon"]);
         }
         if (featureType == "GeometryCollection") {
-            this.setGeometryCollectionStyle(opts); 
+            this.setGeometryCollectionStyle(style["polygon"]); 
         }
     }
 
