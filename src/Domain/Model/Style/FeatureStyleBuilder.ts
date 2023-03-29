@@ -31,7 +31,7 @@ export default class FeatureStyleBuilder {
      * @param opts - style text representation
      * @param featureType - type of feature
      */ 
-    constructor(opts: string, featureType: string) {
+    constructor(opts: unknown, featureType: string) {
         this.applyStyle(opts, featureType);
     }
 
@@ -40,13 +40,7 @@ export default class FeatureStyleBuilder {
      * @param style - style options
      * @param featureType - type of feature
      */
-    private applyStyle(opts: string, featureType: string): void {
-        let style = null;
-        try {   
-            style = JSON.parse(opts);
-        } catch(e) {
-            return;
-        }
+    private applyStyle(style: unknown, featureType: string): void {
         if (featureType == "Point") {
             style["point"] ? this.setPointStyle(style["point"]) : this.setTextStyle(style["label"]);
         }

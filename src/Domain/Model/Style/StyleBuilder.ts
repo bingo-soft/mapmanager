@@ -327,23 +327,23 @@ export default class StyleBuilder {
 
             /* const ft = feature.getGeometry().getType(); 
             if (ft == "Point" || ft == "MultiPoint") {
-                //featureProps["system_style"] = '{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }';
-                featureProps["system_style"] = '{ "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1} }';
+                //featureProps["system_style"] = JSON.parse('{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }');
+                featureProps["system_style"] = JSON.parse('{ "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1} }');
             }
             if (ft == "LineString" || ft == "MultiLineString") {
-                featureProps["system_style"] = `
+                featureProps["system_style"] = JSON.parse(`
                     { 
                         "linestring": {"c":"#0000ffff","w":2,"lc":"butt","lj":"bevel","p":[1,3,3],"ldo":2,"ml":2}
                     }
-                `;
+                `);
             }
             if (ft == "Polygon" || ft == "MultiPolygon") {
-                featureProps["system_style"] = `
+                featureProps["system_style"] = JSON.parse(`
                     {
                         "polygon": {"c":"#ED5F5F","w":1,"bc":"#ff0000","p":{"c":"#B1A5A5","w":2,"ss":20,"sr":0,"o":0,"s":1},"fs":"hatch"},
                         "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#00ff00","f":"#00ff00","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1 }
                     }
-                `;
+                `);
             }
             feature.setProperties(featureProps); */
 
