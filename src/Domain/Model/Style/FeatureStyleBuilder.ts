@@ -1,7 +1,7 @@
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlFillPattern from "ol-ext/style/FillPattern";
 
-/** StyleBuilder */
+/** FeatureStyleBuilder */
 export default class FeatureStyleBuilder {
     private style: OlStyle;
     private static readonly ANCHOR_POSITION = {
@@ -42,16 +42,16 @@ export default class FeatureStyleBuilder {
      */
     private applyStyle(style: unknown, featureType: string): void {
         if (featureType == "Point") {
-            style["point"] !== undefined ? this.setPointStyle(style["point"]) : this.setTextStyle(style["label"]);
+            style["point"] ? this.setPointStyle(style["point"]) : this.setTextStyle(style["label"]);
         }
         if (featureType == "MultiPoint") {
             this.setPointStyle(style["point"]);
         }
         if (featureType == "LineString" || featureType == "MultiLineString") {
-            this.setLinestringStyle(style["linestring"]);
+            this.setLinestringStyle(style["linestring"], style["label"]);
         } 
         if (featureType == "Polygon" || featureType == "MultiPolygon") {
-            this.setPolygonStyle(style["polygon"]);
+            this.setPolygonStyle(style["polygon"], style["label"]);
         }
         if (featureType == "GeometryCollection") {
             this.setGeometryCollectionStyle(style["polygon"]); 
@@ -95,53 +95,57 @@ export default class FeatureStyleBuilder {
 
     /**
      * Sets linestring style
-     * @param opts - options
+     * @param optsLinestring - linestring style options
+     * @param optsLabel - label style options
      */
-    private setLinestringStyle(opts: unknown): void {
+    private setLinestringStyle(optsLinestring: unknown, optsLabel: unknown): void {
         this.style = new OlStyle({
             stroke: new OlStroke({
-                color: opts["c"], 
-                width: opts["w"],
-                lineCap: opts["lc"],
-                lineJoin: opts["lj"],
-                lineDash: opts["p"],
-                lineDashOffset: opts["ldo"],
-                miterLimit: opts["ml"]
+                color: optsLinestring["c"], 
+                width: optsLinestring["w"],
+                lineCap: optsLinestring["lc"],
+                lineJoin: optsLinestring["lj"],
+                lineDash: optsLinestring["p"],
+                lineDashOffset: optsLinestring["ldo"],
+                miterLimit: optsLinestring["ml"]
             }),
+            text: this.createTextStyleInstance(optsLabel)
         });
     }
 
     /**
      * Sets polygon style
-     * @param opts - options
+     * @param optsPolygon - polygon style options
+     * @param optsLabel - label style options
      */
-    private setPolygonStyle(opts: unknown): void {
+    private setPolygonStyle(optsPolygon: unknown, optsLabel: unknown): void {
         let fill: OlFill | OlFillPattern = null;
-        const fillStyle = (opts["fs"] ? opts["fs"] : "empty").toLowerCase();
+        const fillStyle = (optsPolygon["fs"] ? optsPolygon["fs"] : "empty").toLowerCase();
         if (fillStyle == "empty") {
             fill = new OlFill({
-                color: opts["bc"]
+                color: optsPolygon["bc"]
             });
         } else {
             fill = new OlFillPattern({
                 pattern: fillStyle,
-                size: opts["p"]["w"] || 1,
-                color: opts["p"]["c"] || "rgb(255, 255, 255)",
-                offset: opts["p"]["o"] || 0,
-                scale: opts["p"]["s"] || 1,
+                size: optsPolygon["p"]["w"] || 1,
+                color: optsPolygon["p"]["c"] || "rgb(255, 255, 255)",
+                offset: optsPolygon["p"]["o"] || 0,
+                scale: optsPolygon["p"]["s"] || 1,
                 fill: new OlFill({
-                    color: opts["bc"]
+                    color: optsPolygon["bc"]
                 }),
-                spacing: opts["p"]["ss"] || 10,
-                angle: opts["p"]["sr"] || 0
+                spacing: optsPolygon["p"]["ss"] || 10,
+                angle: optsPolygon["p"]["sr"] || 0
             });
         }
         this.style = new OlStyle({
             stroke: new OlStroke({
-                color: opts["c"], 
-                width: opts["w"]
+                color: optsPolygon["c"], 
+                width: optsPolygon["w"]
             }),
-            fill: fill
+            fill: fill,
+            text: this.createTextStyleInstance(optsLabel)
         });
     }
 
@@ -150,9 +154,26 @@ export default class FeatureStyleBuilder {
      * @param opts - options
      */
     private setTextStyle(opts: unknown): void {
+        this.style = new OlStyle({
+            image: new OlCircleStyle({
+                radius: 0
+            }),
+            text: this.createTextStyleInstance(opts)
+        });
+    }
+
+    /**
+     * Creates and returns OL Text Style instance
+     * @param opts - options
+     * @return OL Text Style instance
+     */
+    private createTextStyleInstance(opts: unknown): OlText | null {
+        if (!opts) {
+            return null;
+        }
         const overflow = typeof opts["o"] === "boolean" ? opts["o"] : opts["o"] === "t";
         const rotateWithView = typeof opts["rwv"] === "boolean" ? opts["rwv"] : opts["rwv"] === "t";
-        const textStyle = new OlText({
+        return new OlText({
             stroke: new OlStroke({
                 color: opts["c"],
                 width: opts["w"]
@@ -172,12 +193,6 @@ export default class FeatureStyleBuilder {
             scale: opts["sc"],
             rotateWithView: rotateWithView,
             rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0,
-        });
-        this.style = new OlStyle({
-            image: new OlCircleStyle({
-                radius: 0
-            }),
-            text: textStyle
         });
     }
 
