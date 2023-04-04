@@ -1,6 +1,6 @@
 import * as turf from "@turf/turf"
 import booleanIntersects from "@turf/boolean-intersects"
-import OlVectorLayer from "ol/layer/Vector";
+import VectorLayer from "ol/layer/Vector";
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
 import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
@@ -22,6 +22,7 @@ import SourceChangedEvent from "../Source/SourceChangedEvent";
 import FeatureCollection from "./FeatureCollection";
 import Units from "./Units";
 import Geometry from "../../../Infrastructure/Util/Geometry";
+import { OlVectorLayer } from "../Type/Type";
 
 /** Feature */
 export default class Feature { 
@@ -651,8 +652,8 @@ export default class Feature {
             invalid = (<OlMultiLineString> geometry).getLineStrings().filter(linestring => linestring.getCoordinates().length == 0);
             return invalid.length == 0;
         } else if (geometry instanceof OlPolygon || geometry instanceof OlMultiPolygon) {
-            var unkinked = turf.unkinkPolygon(<any> new OlGeoJSON().writeFeatureObject(this.feature));
-            return unkinked && unkinked.features && unkinked.features.length != 0;
+            const unkinked = turf.unkinkPolygon(<any> new OlGeoJSON().writeFeatureObject(this.feature));
+            return unkinked && unkinked.features && unkinked.features.length == 1;
         } else {
             return false;
         }
@@ -669,7 +670,7 @@ export default class Feature {
         const layers = this.layer.getMap().getLayers();
         for (let i = 0; i < layers.length; ++i) {
             const olLayer = layers[i].getLayer();
-            if (olLayer instanceof OlVectorLayer) {
+            if (olLayer instanceof VectorLayer) {
                 const olFeatures = (<OlVectorLayer> olLayer).getSource().getFeatures();
                 for (let j = 0; j < olFeatures.length; ++j) {
                     const featureGeometryTurf = new OlGeoJSON().writeFeatureObject(olFeatures[j]).geometry;

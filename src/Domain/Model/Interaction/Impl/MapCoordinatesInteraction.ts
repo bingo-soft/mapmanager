@@ -22,7 +22,7 @@ export default class MapCoordinatesInteraction extends BaseInteraction {
         const olMap = map.getMap();
         const mapProj = olMap.getView().getProjection().getCode();
         this.eventHandlers = new EventHandlerCollection(olMap);
-        this.eventHandlers.add(type, "MapCoordinatesEventHandler", (e: OlMapBrowserEvent): void => {
+        this.eventHandlers.add(type, "MapCoordinatesEventHandler", (e: OlMapBrowserEvent<UIEvent>): void => {
             let coordinate = e.coordinate;
             if (srsId !== undefined) {
                 const retProj = "EPSG:" + srsId.toString();

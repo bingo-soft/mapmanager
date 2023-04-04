@@ -6,7 +6,7 @@ import OlView from "ol/View";
 import * as OlExtent from "ol/extent";
 import { OverviewMap as OlOverviewMapControl, Zoom as OlZoomControl, Control as OlControl, ScaleLine as OlScaleLine} from "ol/control";
 import OlBaseLayer from "ol/layer/Base";
-import OlVectorLayer from "ol/layer/Vector";
+import VectorLayerOl from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
 import { Polygon as OlPolygon } from "ol/geom";
@@ -20,7 +20,6 @@ import { GeometryCollection } from "ol/geom";
 import * as OlCoordinate from "ol/coordinate";
 import * as OlProj from "ol/proj";
 import OlOverlay from "ol/Overlay";
-import OlOverlayPositioning from "ol/OverlayPositioning"
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import { Select as OlSelect } from "ol/interaction";
 import { Pixel } from "ol/pixel";
@@ -57,6 +56,7 @@ import { SearchMarkerStyle } from "../Style/SearchMarkerStyle";
 import TemporaryLayerType from "./TemporaryLayerType";
 import ExportType from "./ExportType";
 import SnapInteraction from "../Interaction/Impl/SnapInteraction";
+import { OlVectorLayer } from "../Type/Type";
 
 
 /** Map */
@@ -187,12 +187,12 @@ export default class Map {
         // OL event handlers init
         this.eventHandlers = new EventHandlerCollection(this.map);
         this.eventHandlers.add(EventType.Click, "MapClickEventHandler", (e: OlBaseEvent): void => {
-            if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent>e).pixel)) {
+            if (!this.map.hasFeatureAtPixel((<OlMapBrowserEvent<UIEvent>>e).pixel)) {
                 this.clearSelectedFeatures();
             }
         });
         this.eventHandlers.add(EventType.PointerMove, "MapPointerMoveEventHandler", (e: OlBaseEvent): void => {
-            const pixel = (<OlMapBrowserEvent>e).pixel;
+            const pixel = (<OlMapBrowserEvent<UIEvent>>e).pixel;
             this.map.getViewport().style.cursor = this.map.hasFeatureAtPixel(pixel) ? CursorType.Pointer : this.cursor;
             // show popup
             this.showFeaturePopup(pixel);
@@ -819,7 +819,7 @@ export default class Map {
             element: element,
             offset: offset,
             position: position,
-            positioning: OlOverlayPositioning.BOTTOM_CENTER
+            positioning: "bottom-center"
         });
         this.map.addOverlay(overlay);
         this.measureOverlays.push(overlay);
@@ -848,7 +848,7 @@ export default class Map {
     public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number, 
         isTransparent: boolean = false, id?: number, label?: string): Feature {
         if (!this.vertexHighlightLayer) {
-            this.vertexHighlightLayer = new OlVectorLayer({
+            this.vertexHighlightLayer = new VectorLayerOl({
                 source: new OlVectorSource()
             });
         }
@@ -907,7 +907,7 @@ export default class Map {
         const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(extentFeature).geometry;
         const extent = extentFeature.getGeometry().getExtent();
         olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
-            if (olLayer instanceof OlVectorLayer) {
+            if (olLayer instanceof VectorLayerOl) {
                 if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                     (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                         const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);

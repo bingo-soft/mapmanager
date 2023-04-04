@@ -2,7 +2,7 @@ import * as turf from "@turf/turf"
 import booleanIntersects from "@turf/boolean-intersects" 
 import OlBaseLayer from "ol/layer/Base";
 import { Layer as OlLayer } from "ol/layer";
-import OlVectorLayer from "ol/layer/Vector";
+import VectorLayer from "ol/layer/Vector";
 import OlFeature from "ol/Feature";
 import { Geometry as OlGeometry, Circle as OlCircle } from "ol/geom";
 import * as OlSphere from "ol/sphere";
@@ -11,7 +11,6 @@ import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
 import { always as OlEventConditionAlways, shiftKeyOnly as OlEventConditionShiftKeyOnly } from "ol/events/condition"
 import { GeoJSON as OlGeoJSON }  from "ol/format";
 import OlCollection from 'ol/Collection';
-import OlGeometryType from "ol/geom/GeometryType";
 import OlBaseEvent from "ol/events/Event";
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
@@ -25,6 +24,7 @@ import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCol
 import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
 import SourceType from "../../Source/SourceType";
+import { OlVectorLayer } from "../../Type/Type";
 
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
@@ -93,7 +93,7 @@ export default class SelectInteraction extends BaseInteraction {
                     const extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
                     this.features.clear();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
-                        if (olLayer instanceof OlVectorLayer) {
+                        if (olLayer instanceof VectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) =>  {
                                     this.addToSelection(map, olLayer, olFeature);
@@ -112,7 +112,7 @@ export default class SelectInteraction extends BaseInteraction {
             case SelectionType.Polygon:
                 this.interaction = new OlDraw({
                     features: new OlCollection(),
-                    type: OlGeometryType.POLYGON
+                    type: "Polygon"
                 });
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.DrawEnd, "SelectByPolygonEventHandler", (e: OlBaseEvent): void => {
@@ -121,7 +121,7 @@ export default class SelectInteraction extends BaseInteraction {
                     const extent = extentFeature.getGeometry().getExtent();
                     this.features.clear();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
-                        if (olLayer instanceof OlVectorLayer) {
+                        if (olLayer instanceof VectorLayer) {
                             if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                                     const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
@@ -144,7 +144,7 @@ export default class SelectInteraction extends BaseInteraction {
                 case SelectionType.Circle:
                     this.interaction = new OlDraw({
                         features: new OlCollection(),
-                        type: OlGeometryType.CIRCLE,
+                        type: "Circle",
                     });
                     this.eventHandlers = new EventHandlerCollection(this.interaction);
 
@@ -179,7 +179,7 @@ export default class SelectInteraction extends BaseInteraction {
                         const extent = circleFeature.getGeometry().getExtent();
                         this.features.clear();
                         olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
-                            if (olLayer instanceof OlVectorLayer) {
+                            if (olLayer instanceof VectorLayer) {
                                 if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
                                     (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                                         const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
