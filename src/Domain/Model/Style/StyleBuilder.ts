@@ -15,7 +15,7 @@ export default class StyleBuilder {
     private sourceType: SourceType;
     private style: StyleType;
     private clusterStyle: OlStyle;
-    private field: string;
+    private field: string | string[];
     private isStyleInFeatureAttribute: boolean;
     private styleAttr: string;
     private externalStyleBuilder: (featureProps: unknown) => unknown;
@@ -327,18 +327,18 @@ export default class StyleBuilder {
 
             /* const ft = feature.getGeometry().getType(); 
             if (ft == "Point" || ft == "MultiPoint") {
-                //featureProps["system_style"] = JSON.parse('{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }');
-                featureProps["system_style"] = JSON.parse('{ "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1} }');
+                //featureProps["style_3402_"] = JSON.parse('{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }');
+                featureProps["style_3402_"] = JSON.parse('{ "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1} }');
             }
             if (ft == "LineString" || ft == "MultiLineString") {
-                featureProps["system_style"] = JSON.parse(`
+                featureProps["style_3402_"] = JSON.parse(`
                     { 
                         "linestring": {"c":"#0000ffff","w":2,"lc":"butt","lj":"bevel","p":[1,3,3],"ldo":2,"ml":2}
                     }
                 `);
             }
             if (ft == "Polygon" || ft == "MultiPolygon") {
-                featureProps["system_style"] = JSON.parse(`
+                featureProps["style_3402_"] = JSON.parse(`
                     {
                         "polygon": {"c":"#ED5F5F","w":1,"bc":"#ff0000","p":{"c":"#B1A5A5","w":2,"ss":20,"sr":0,"o":0,"s":1},"fs":"hatch"},
                         "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"p","r":0,"rwv":"f","c":"#00ff00","f":"#00ff00","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1 }
@@ -349,7 +349,7 @@ export default class StyleBuilder {
 
 
             // feature based styles
-            if (this.isStyleInFeatureAttribute) {
+            if (this.isStyleInFeatureAttribute && featureProps) {
                 const featureStyle = featureProps[this.styleAttr];
                 if (featureStyle && Object.keys(featureStyle).length != 0) {
                     const featureType = feature.getGeometry().getType(); 
@@ -365,7 +365,7 @@ export default class StyleBuilder {
             if (this.style[geomType]) {
                 style = this.style[geomType];
             } else {
-                (<OlStyle | OlStyle[]> style) = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style
+                (<void | OlStyle | OlStyle[]> style) = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style
             }
             // painting on unique attribute value
             this.paintOnUniqueAttributeValue(feature, style);
@@ -396,7 +396,7 @@ export default class StyleBuilder {
             }
             const properties = feature.getProperties();
             if (properties) {
-                let textValue: string = properties[this.field];
+                let textValue: string = properties[<string> this.field];
                 if (textValue) { 
                     if (geomType != "Polygon" && geomType != "MultiPolygon") {
                         textValue = StringUtil.adjustText(textValue, resolution, this.showLabelMaxResolution);

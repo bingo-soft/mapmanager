@@ -2,7 +2,6 @@ import OlFeature from "ol/Feature";
 import OlGeometry from "ol/geom/Geometry";
 import OlGeometryCollection from "ol/geom/GeometryCollection";
 import OlGeoJSON from "ol/format/GeoJSON";
-import OlGeometryType from "ol/geom/GeometryType";
 import { Coordinate as OlCoordinate } from "ol/coordinate";
 import OlPoint from "ol/geom/Point";
 import OlLineString from "ol/geom/LineString";
@@ -12,7 +11,6 @@ import OlMultiLineString from "ol/geom/MultiLineString";
 import OlMultiPolygon from "ol/geom/MultiPolygon";
 import Feature from "./Feature";
 import LayerInterface from "../Layer/LayerInterface";
-
 
 /** FeatureCollection */
 export default class FeatureCollection { 
@@ -178,7 +176,7 @@ export default class FeatureCollection {
      * @return GeoJSON string
      */
     public getAsMultiGeometry(sourceSrsId: number, targetSrsId: number): string {
-        let geomType: OlGeometryType; 
+        let geomType: string; 
         if (this.features.length) {
             const coordsPoint: OlCoordinate[] = [];
             const coordsLineString: OlCoordinate[][] = [];
@@ -186,21 +184,21 @@ export default class FeatureCollection {
             this.features.forEach((el): void => {
                 const geom = el.getFeature().getGeometry();
                 geomType = geom.getType();
-                if (geomType == OlGeometryType.POINT) {
+                if (geomType == "Point") {
                     coordsPoint.push((<OlPoint> geom).getCoordinates());
-                } else if (geomType == OlGeometryType.MULTI_POINT) {
+                } else if (geomType == "MultiPoint") {
                     (<OlMultiPoint> geom).getCoordinates().forEach((coord: OlCoordinate): void => {
                         coordsPoint.push(coord);
                     });
-                } else if (geomType == OlGeometryType.LINE_STRING) {
+                } else if (geomType == "LineString") {
                     coordsLineString.push((<OlLineString> geom).getCoordinates());
-                } else if (geomType == OlGeometryType.MULTI_LINE_STRING) {
+                } else if (geomType == "MultiLineString") {
                     (<OlMultiLineString> geom).getCoordinates().forEach((coord: OlCoordinate[]): void => {
                         coordsLineString.push(coord);
                     });
-                } else if (geomType == OlGeometryType.POLYGON) {
+                } else if (geomType == "Polygon") {
                     coordsPolygon.push((<OlPolygon> geom).getCoordinates());
-                } else if (geomType == OlGeometryType.MULTI_POLYGON) {
+                } else if (geomType == "MultiPolygon") {
                     (<OlMultiPolygon> geom).getCoordinates().forEach((coord: OlCoordinate[][]): void => {
                         coordsPolygon.push(coord);
                     });
@@ -208,16 +206,16 @@ export default class FeatureCollection {
             });
             let returnGeom: OlGeometry = null;
             switch(geomType) {
-                case OlGeometryType.POINT:
-                case OlGeometryType.MULTI_POINT:
+                case "Point":
+                case "MultiPoint":
                     returnGeom = new OlMultiPoint(coordsPoint);
                     break;
-                case OlGeometryType.LINE_STRING:
-                case OlGeometryType.MULTI_LINE_STRING:
+                case "LineString":
+                case "MultiLineString":
                     returnGeom = new OlMultiLineString(coordsLineString);
                     break;
-                case OlGeometryType.POLYGON:
-                case OlGeometryType.MULTI_POLYGON:
+                case "Polygon":
+                case "MultiPolygon":
                     returnGeom = new OlMultiPolygon(coordsPolygon);
                     break;
                 default:

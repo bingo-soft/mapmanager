@@ -1,20 +1,18 @@
 import { Layer as OlLayer } from "ol/layer";
-import { Vector as OlVectorLayer } from "ol/layer";
+import { Vector as VectorLayerOl } from "ol/layer";
 import { Vector as OlVectorSource, Cluster as OlClusterSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
-import BaseVectorLayer from "ol/layer/BaseVector";
 import OlProjection from "ol/proj/Projection";
 import { Extent as OlExtent } from "ol/extent";
 import SourceChangedEvent from "../../Source/SourceChangedEvent";
-import SourceType from "../../Source/SourceType";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
 import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
-import GeometryItem from "../../Feature/GeometryItem";
 import LoaderFunction from "../LoaderFunctionType";
 import { FeaturePopupCssStyle } from "../../Style/FeaturePopupCssStyle";
+import { OlBaseVectorLayer, OlVectorLayer } from "../../Type/Type";
 
 
 /** VectorLayer */
@@ -34,7 +32,7 @@ export default class VectorLayer extends AbstractLayer{
      */
     constructor(layer?: OlLayer, opts?: unknown) { 
         super();
-        this.layer = layer ? layer : new OlVectorLayer(/* {declutter: true} */);
+        this.layer = layer ? layer : new VectorLayerOl(/* {declutter: true} */);
         this.srsId = VectorLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
@@ -79,7 +77,7 @@ export default class VectorLayer extends AbstractLayer{
      * @param style - style function
      */
     public setStyle(style: StyleFunction): void {
-        (<BaseVectorLayer> this.layer).setStyle(style);
+        (<OlBaseVectorLayer> this.layer).setStyle(style);
     }
 
     /**

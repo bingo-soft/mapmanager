@@ -1,8 +1,8 @@
 import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
-import OlVectorLayer from "ol/layer/Vector";
+//import OlVectorLayer from "ol/layer/Vector";
 import OlCollection from 'ol/Collection';
-import OlGeometryType from "ol/geom/GeometryType";
 import OlBaseEvent from "ol/events/Event";
+import { Type as OlGeometryType } from "ol/geom/Geometry";
 import BaseInteraction from "./BaseInteraction";
 import LayerInterface from "../../Layer/LayerInterface";
 import Feature from "../../Feature/Feature";
@@ -12,6 +12,7 @@ import EventType from "../../EventHandlerCollection/EventType";
 import EventHandlerCollection from "../../EventHandlerCollection/EventHandlerCollection";
 import { DrawCallbackFunction } from "../InteractionCallbackType";
 import SourceChangedEvent from "../../Source/SourceChangedEvent";
+import { OlVectorLayer } from "../../Type/Type";
 
 /** DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
