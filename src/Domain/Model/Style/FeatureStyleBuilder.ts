@@ -99,13 +99,36 @@ export default class FeatureStyleBuilder {
      * @param optsLabel - label style options
      */
     private setLinestringStyle(optsLinestring: unknown, optsLabel: unknown): void {
+        const patternArr = [];
+        let patternStyle = null;
+        let patternTotalLength = 0;
+        const pattern = optsLinestring["p"];
+        if (pattern) {
+            pattern.forEach((item: unknown) => {
+                if (item["tp"] == "t") {
+                    //patternStyle = item["s"];
+                    patternStyle = { "fnt": item["fs"] + "px " + item["fn"], "l": item["v"] }
+                } else {
+                    patternArr.push(item["w"]);
+                    patternTotalLength += parseInt(item["w"]);
+                }
+            });
+        }
+        if (patternStyle) {
+            optsLabel = patternStyle;
+            optsLabel["p"] = "l";
+            optsLabel["c"] = optsLinestring["c"];
+            optsLabel["f"] = optsLinestring["c"];
+            optsLabel["w"] = 1;
+            optsLabel["rp"] = patternTotalLength;
+        }
         this.style = new OlStyle({
             stroke: new OlStroke({
                 color: optsLinestring["c"], 
                 width: optsLinestring["w"],
                 lineCap: optsLinestring["lc"],
                 lineJoin: optsLinestring["lj"],
-                lineDash: optsLinestring["p"],
+                lineDash: patternArr,
                 lineDashOffset: optsLinestring["ldo"],
                 miterLimit: optsLinestring["ml"]
             }),
@@ -173,6 +196,7 @@ export default class FeatureStyleBuilder {
         }
         const overflow = typeof opts["o"] === "boolean" ? opts["o"] : opts["o"] === "t";
         const rotateWithView = typeof opts["rwv"] === "boolean" ? opts["rwv"] : opts["rwv"] === "t";
+        const placement = opts["p"] && opts["p"].toLowerCase() == "p" ? "point" : "line";
         return new OlText({
             stroke: new OlStroke({
                 color: opts["c"],
@@ -189,10 +213,11 @@ export default class FeatureStyleBuilder {
             offsetX: opts["off"] && opts["off"][0] ? opts["off"][0] : null,
             offsetY: opts["off"] && opts["off"][1] ? opts["off"][1] : null,
             overflow: overflow,
-            placement: opts["p"],
+            placement: placement,
+            repeat: opts["rp"],
             scale: opts["sc"],
             rotateWithView: rotateWithView,
-            rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0,
+            rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0
         });
     }
 
