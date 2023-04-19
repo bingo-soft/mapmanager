@@ -1,16 +1,19 @@
 import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
+import OlFeature from "ol/Feature";
+import { LoadFunction, UrlFunction } from "ol/Tile";
+import OlGeoJSON from "ol/format/GeoJSON";
 import SourceType from "../Source/SourceType";
 import SourceInterface from "../Source/SourceInterface";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
 import StyleFunction from "../Style/StyleFunctionType";
 import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
-import GeometryItem from "../Feature/GeometryItem";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import Map from "../Map/Map";
 import LoaderFunction from "./LoaderFunctionType";
+
 
 /** LayerInterface */
 export default interface LayerInterface
@@ -109,6 +112,38 @@ export default interface LayerInterface
      * Sets layer's options
      */
     setLoaderOptions(options: unknown): void;
+
+    /**
+     * Sets layer's tile url function
+     * @param loader - loader function
+     * @return layer builder instance
+     */
+    setTileUrlFunction(loader: UrlFunction): void;
+
+    /**
+     * Sets layer's tile loader
+     * @param loader - loader function
+     * @return layer builder instance
+     */
+    setTileLoadFunction(loader: LoadFunction): void;
+
+     /**
+     * Sets layer's tile index
+     * @param json - json to create an index from
+     */
+     setTileIndex(json: unknown);
+
+    /**
+     * Returns layer's tile index
+     * @return layer's tile index
+     */
+    getTileIndex(): unknown;
+
+    /**
+     * Returns layer's tile format
+     * @return layer's tile format
+     */
+    getFormat(): OlGeoJSON;
     
     /**
      * Sets layer source url
@@ -139,6 +174,12 @@ export default interface LayerInterface
      * @param style - style function
      */
     setStyle(style: StyleFunction): void;
+
+    /**
+     * Adds features to layer
+     * @param features - features as an array of OL feature instances or as a GeoJSON string
+     */
+    addFeatures(features: OlFeature[] | string): void;
 
     /**
      * Returns collection of dirty features

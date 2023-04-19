@@ -240,7 +240,7 @@ export default class VectorLayer extends AbstractLayer{
      * Returns feature popup CSS
      * @return feature popup CSS
      */
-     public getFeaturePopupCss(): string  {
+    public getFeaturePopupCss(): string  {
         return this.featurePopupCss;
     }
     

@@ -26,6 +26,7 @@ export default class FeatureStyleBuilder {
         "h": "hanging",
         "i": "ideographic"
     }
+    private static readonly DEFAULT_FONT_SIZE = 18;
 
     /**
      * @param opts - style text representation
@@ -104,6 +105,7 @@ export default class FeatureStyleBuilder {
         let patternTotalLength = 0;
         const pattern = optsLinestring["p"];
         if (pattern) {
+            //console.log("pattern", pattern)
             pattern.forEach((item: unknown) => {
                 if (item["tp"] == "t") {
                     //patternStyle = item["s"];
@@ -115,12 +117,14 @@ export default class FeatureStyleBuilder {
             });
         }
         if (patternStyle) {
+            //console.log("patternStyle", patternStyle)
             optsLabel = patternStyle;
             optsLabel["p"] = "l";
             optsLabel["c"] = optsLinestring["c"];
             optsLabel["f"] = optsLinestring["c"];
             optsLabel["w"] = 1;
             optsLabel["rp"] = patternTotalLength;
+            //console.log("optsLabel", optsLabel)
         }
         this.style = new OlStyle({
             stroke: new OlStroke({
@@ -197,6 +201,11 @@ export default class FeatureStyleBuilder {
         const overflow = typeof opts["o"] === "boolean" ? opts["o"] : opts["o"] === "t";
         const rotateWithView = typeof opts["rwv"] === "boolean" ? opts["rwv"] : opts["rwv"] === "t";
         const placement = opts["p"] && opts["p"].toLowerCase() == "p" ? "point" : "line";
+        const font = this.buildFontString(opts["fs"], opts["fn"], opts["resolution"]);
+        let text = opts["l"];
+        if (Array.isArray(text)) {
+            text = this.buildFontArray(text, opts["resolution"]);
+        }
         return new OlText({
             stroke: new OlStroke({
                 color: opts["c"],
@@ -205,8 +214,8 @@ export default class FeatureStyleBuilder {
             fill: new OlFill({
                 color: opts["f"]
             }),
-            font: opts["fnt"],
-            text: opts["l"],
+            font: font,
+            text: text,
             textAlign: FeatureStyleBuilder.TEXT_ALIGN[opts["ta"]],
             textBaseline: FeatureStyleBuilder.TEXT_BASELINE[opts["tb"]],
             maxAngle: opts["ma"] ? opts["ma"] * Math.PI / 180 : 0,
@@ -246,6 +255,42 @@ export default class FeatureStyleBuilder {
                 color: opts["bc"]
             }),
         });
+    }
+
+    /**
+     * Builds font array depending on map resolution
+     * @param value - array
+     * @param resolution - map resolution
+     * @return built array
+     */
+    private buildFontArray(value: any[], resolution: number): string[] {
+        const result = [];
+        for (let i = 0; i < value.length; i++) {
+            if (i + 2 > value.length) {
+                break;
+            }
+            if (i % 3 == 0) {
+                result.push(value[i]);
+                const fontString = this.buildFontString(value[i+1], value[i+2], resolution);
+                result.push(fontString);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Builds font string depending on map resolution
+     * @param size - font size
+     * @param name - font name
+     * @param resolution - map resolution
+     * @return font string in CSS format
+     */
+    private buildFontString(size: number, name: string, resolution: number): string {
+        size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
+        name = name || "Courier New";
+        size = size / resolution / 8;
+        size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
+        return size.toString() + "px " + name;   
     }
 
     /**

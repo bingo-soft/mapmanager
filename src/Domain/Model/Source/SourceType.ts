@@ -1,9 +1,10 @@
 enum SourceType {
     Vector = "vector",
+    VectorTile = "vectortile",
+    Cluster = "cluster",
     TileWMS = "tilewms",
     XYZ = "xyz",
     TileArcGISRest = "tilearcgisrest",
-    Cluster = "cluster"
 }
 
 export default SourceType;

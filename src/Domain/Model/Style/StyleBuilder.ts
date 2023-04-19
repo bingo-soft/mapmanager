@@ -350,7 +350,6 @@ export default class StyleBuilder {
             }
             feature.setProperties(featureProps); */
 
-
             // feature based styles
             if (this.isStyleInFeatureAttribute && featureProps) {
                 const featureStyle = featureProps[this.styleAttr];
@@ -364,8 +363,9 @@ export default class StyleBuilder {
                         featureStyle["label"] = JSON.parse('{"fnt":"12px Arial","p":"l","c":"#ff0000","f":"#ff0000","w":1,"l":"'+ featureProps["handle"] +'"}');
                     } */
 
-
-
+                    if (featureStyle["label"]) {
+                        featureStyle["label"]["resolution"] = resolution;
+                    }
                     return new FeatureStyleBuilder(featureStyle, featureType).build();
                 }
             }

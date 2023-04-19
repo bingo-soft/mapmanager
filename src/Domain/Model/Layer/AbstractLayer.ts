@@ -1,5 +1,8 @@
 import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
+import { LoadFunction, UrlFunction } from "ol/Tile";
+import OlFeature from "ol/Feature";
+import OlGeoJSON from "ol/format/GeoJSON";
 import LayerInterface from "./LayerInterface";
 import SourceType from "../Source/SourceType";
 import SourceInterface from "../Source/SourceInterface";
@@ -10,9 +13,9 @@ import FeatureCollection from "../Feature/FeatureCollection";
 import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
 import EventBus from "../EventHandlerCollection/EventBus";
-import GeometryItem from "../Feature/GeometryItem";
 import Map from "../Map/Map";
 import LoaderFunction from "./LoaderFunctionType";
+
 
 /** AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
@@ -160,10 +163,58 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Sets layer's tile load function
+     * @param loader - tile load function
+     */
+    public setTileLoadFunction(loader: LoadFunction): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets layer's tile url function
+     * @param loader - tile url function
+     */
+    public setTileUrlFunction(loader: UrlFunction): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets layer's tile index
+     * @param json - json to create an index from
+     */
+    public setTileIndex(json: unknown): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns layer's tile index
+     * @return layer's tile index
+     */
+    public getTileIndex(): unknown {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns layer's tile format
+     * @return layer's tile format
+     */
+    public getFormat(): OlGeoJSON {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Sets layer's source url
      * @param url - source url
      */
     public setUrl(url: string): void {
+        throw new MethodNotImplemented();
+    }
+
+     /**
+     * Adds features to layer
+     * @param features - features as an array of OL feature instances or as a GeoJSON string
+     */
+    public addFeatures(features: OlFeature[] | string): void{
         throw new MethodNotImplemented();
     }
 
