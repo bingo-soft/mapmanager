@@ -4,11 +4,15 @@ import { register as OlProjRegister } from 'ol/proj/proj4';
 import OlProjection from "ol/proj/Projection";
 import { Extent as OlExtent } from "ol/extent";
 import * as proj4 from "proj4"
+import OlVectorTileSource from "ol/source/VectorTile";
+import OlVectorTile from "ol/VectorTile";
+import { TileCoord as OlTilecoord } from 'ol/tilecoord';
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
 import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
 import TileLayer from "./Domain/Model/Layer/Impl/TileLayer"
+import VectorTileLayer from "./Domain/Model/Layer/Impl/VectorTileLayer";
 import LayerBuilder from "./Domain/Model/Layer/LayerBuilder"
 import SourceType from "./Domain/Model/Source/SourceType"
 import VectorLayerFeaturesLoadQuery from "./Application/Query/VectorLayerFeaturesLoadQuery"
@@ -32,6 +36,8 @@ import { HttpMethod } from "./Infrastructure/Http/HttpMethod";
 import ExportType from "./Domain/Model/Map/ExportType";
 import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 import Units from "./Domain/Model/Feature/Units";
+import StringUtil from "./Infrastructure/Util/StringUtil";
+
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -359,6 +365,10 @@ export default class MapManager {
                 builder = new LayerBuilder(new VectorLayer(null, opts));
                 builder.setSource(SourceType.Vector);
                 break;
+            case SourceType.VectorTile:
+                builder = new LayerBuilder(new VectorTileLayer(null, opts));
+                builder.setSource(SourceType.VectorTile, opts);
+                break;
             case SourceType.Cluster:
                 builder = new LayerBuilder(new VectorLayer(null, opts));
                 builder.setSource(SourceType.Cluster, opts);
@@ -430,7 +440,34 @@ export default class MapManager {
                         return await query.execute(payload);
                     });
             }
-            if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
+            if (type == SourceType.VectorTile) {
+                /* if (opts["data"]) {
+                    builder.setTileIndex(JSON.parse(opts["data"]));
+                } */
+                builder.setTileUrlFunction((tileCoord: OlTilecoord) => {
+                    return JSON.stringify(tileCoord);
+                });
+                builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
+                    const tileCoord = JSON.parse(url);
+                    const tileIndex: any = builder.getLayer().getTileIndex();
+                    const data = tileIndex.getTile(
+                        tileCoord[0],
+                        tileCoord[1],
+                        tileCoord[2]
+                    );
+                    const geojson = JSON.stringify({
+                        type: 'FeatureCollection',
+                        features: data ? data.features : [],
+                    }, StringUtil.replacer);
+                    const format: any = builder.getLayer().getFormat();
+                    const features = format.readFeatures(geojson, {
+                        extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
+                        featureProjection: "EPSG:3857", /// hardcode!!!
+                    });
+                    tile.setFeatures(features);
+                });
+            }
+            if ((type == SourceType.Vector || type == SourceType.VectorTile || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
@@ -452,21 +489,20 @@ export default class MapManager {
     }
 
     /**
-     * Creates layer from GeoJSON features
+     * Creates vector layer from GeoJSON features
      * @category Layer
      * @param geoJSON - a string representing features
      * @param opts - options
      * @return created layer instance
      */
     public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
-        const layer = <VectorLayer> this.createLayer(SourceType.Vector, opts);
-        geoJSON = Geometry.flattenGeometry(geoJSON);
-        layer.addFeatures(geoJSON);
+        const layer = MapManager.createLayer(SourceType.Vector, opts);
+        layer.addFeatures(Geometry.flattenGeometry(geoJSON));
         return layer;
     }
 
     /**
-     * Adds features from GeoJSON string to layer
+     * Adds features from GeoJSON string to vector layer
      * @category Layer
      * @param layer - layer to add to
      * @param geoJSON - GeoJSON string representing features
@@ -474,6 +510,33 @@ export default class MapManager {
     public static addToLayerFromGeoJSON(layer: LayerInterface, geoJSON: string): void {
         if (layer instanceof VectorLayer) {
             layer.addFeatures(Geometry.flattenGeometry(geoJSON));
+        } else {
+            throw new MethodNotImplemented();
+        }
+    }
+
+    /**
+     * Creates vector tile layer from GeoJSON features
+     * @category Layer
+     * @param geoJSON - a string representing features
+     * @param opts - options
+     * @return created layer instance
+     */
+    public static createVectorTileLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
+        const layer = MapManager.createLayer(SourceType.VectorTile, opts);
+        layer.setTileIndex(JSON.parse(geoJSON));
+        return layer;
+    }
+
+    /**
+     * Sets features from GeoJSON string to vector tile layer
+     * @category Layer
+     * @param layer - layer to add to
+     * @param geoJSON - GeoJSON string representing features
+     */
+    public static setVectorTileLayerGeoJSON(layer: LayerInterface, geoJSON: string): void {
+        if (layer instanceof VectorTileLayer) {
+            layer.setTileIndex(JSON.parse(geoJSON));
         } else {
             throw new MethodNotImplemented();
         }

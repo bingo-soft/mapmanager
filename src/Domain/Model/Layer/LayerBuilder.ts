@@ -1,4 +1,6 @@
 import OlBaseEvent from "ol/events/Event";
+import { LoadFunction, UrlFunction } from "ol/Tile";
+import { Source as OlSource } from "ol/source";
 import LayerInterface from "./LayerInterface";
 import SourceType from "../Source/SourceType";
 import VectorSource from "../Source/Impl/VectorSource";
@@ -10,6 +12,7 @@ import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import LoaderFunction from "./LoaderFunctionType";
+import VectorTileSource from "../Source/Impl/VectorTileSource";
 
 
 /** LayerBuilder */
@@ -33,7 +36,7 @@ export default class LayerBuilder {
     }
 
     /**
-     * Sets layer's source type
+     * Sets layer's source
      * @param type - source type
      * @param opts - options
      * @return layer builder instance
@@ -43,6 +46,9 @@ export default class LayerBuilder {
         switch (type) {
             case SourceType.Vector:
                 this.layer.setSource(new VectorSource());
+                break;
+            case SourceType.VectorTile:
+                this.layer.setSource(new VectorTileSource());
                 break;
             case SourceType.Cluster:
                 const distance = opts["style"] && opts["style"]["point"] ? opts["style"]["point"]["cluster_distance"] : null;
@@ -61,6 +67,14 @@ export default class LayerBuilder {
                 break;
         }
         return this;
+    }
+
+    /**
+     * Returns layer's source
+     * @return source
+     */
+    public getSource(): OlSource {
+        return this.layer.getLayer().getSource();
     }
 
     public setEventBus(eventBus: EventBus): void {
@@ -93,6 +107,35 @@ export default class LayerBuilder {
      */
      public setLoaderOptions(options: unknown): LayerBuilder {
         this.layer.setLoaderOptions(options);
+        return this;
+    }
+
+    /**
+     * Sets layer's tile url function
+     * @param loader - tile url function
+     * @return layer builder instance
+     */
+    public setTileUrlFunction(loader: UrlFunction): LayerBuilder {
+        this.layer.setTileUrlFunction(loader);
+        return this;
+    }
+
+    /**
+     * Sets layer's tile loader
+     * @param loader - loader function
+     * @return layer builder instance
+     */
+    public setTileLoadFunction(loader: LoadFunction): LayerBuilder {
+        this.layer.setTileLoadFunction(loader);
+        return this;
+    }
+
+    /**
+     * Sets layer's tile index
+     * @param json - json
+     */
+    public setTileIndex(json: unknown): LayerBuilder {
+        this.layer.setTileIndex(json);
         return this;
     }
 
@@ -154,7 +197,7 @@ export default class LayerBuilder {
                 }
             }
             const layerType = this.layer.getType();
-            if (layerType == SourceType.Vector || layerType == SourceType.Cluster) {
+            if (layerType == SourceType.Vector || layerType == SourceType.VectorTile || layerType == SourceType.Cluster) {
                 this.layer.setEventHandler(EventType.Change, "LayerVectorLoadEventHanler", listenerVector);
             } else {
                 this.layer.setEventHandler(EventType.TileLoadStart, "LayerTileLoadStartEventHanler", () => {
