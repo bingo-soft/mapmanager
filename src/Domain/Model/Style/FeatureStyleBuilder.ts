@@ -105,10 +105,9 @@ export default class FeatureStyleBuilder {
         let patternTotalLength = 0;
         const pattern = optsLinestring["p"];
         if (pattern) {
-            //console.log("pattern", pattern)
             pattern.forEach((item: unknown) => {
                 if (item["tp"] == "t") {
-                    //patternStyle = item["s"];
+                    //patternStyle = { "fs": item["fs"], "fn": item["fn"], "l": item["v"] }
                     patternStyle = { "fnt": item["fs"] + "px " + item["fn"], "l": item["v"] }
                 } else {
                     patternArr.push(item["w"]);
@@ -117,14 +116,13 @@ export default class FeatureStyleBuilder {
             });
         }
         if (patternStyle) {
-            //console.log("patternStyle", patternStyle)
             optsLabel = patternStyle;
             optsLabel["p"] = "l";
             optsLabel["c"] = optsLinestring["c"];
             optsLabel["f"] = optsLinestring["c"];
             optsLabel["w"] = 1;
             optsLabel["rp"] = patternTotalLength;
-            //console.log("optsLabel", optsLabel)
+            optsLabel["resolution"] = optsLinestring["resolution"];
         }
         this.style = new OlStyle({
             stroke: new OlStroke({
@@ -201,7 +199,10 @@ export default class FeatureStyleBuilder {
         const overflow = typeof opts["o"] === "boolean" ? opts["o"] : opts["o"] === "t";
         const rotateWithView = typeof opts["rwv"] === "boolean" ? opts["rwv"] : opts["rwv"] === "t";
         const placement = opts["p"] && opts["p"].toLowerCase() == "p" ? "point" : "line";
-        const font = this.buildFontString(opts["fs"], opts["fn"], opts["resolution"]);
+        let font = opts["fnt"]; 
+        if (opts["resolution"]) {
+            font = this.buildFontString(opts["fs"], opts["fn"], opts["resolution"]);
+        }
         let text = opts["l"];
         if (Array.isArray(text)) {
             text = this.buildFontArray(text, opts["resolution"]);
@@ -288,7 +289,7 @@ export default class FeatureStyleBuilder {
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
         name = name || "Courier New";
-        size = size / resolution / 8;
+        size = size / resolution / 32;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         return size.toString() + "px " + name;   
     }

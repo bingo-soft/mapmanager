@@ -9,6 +9,7 @@ import StringUtil from "../../../Infrastructure/Util/StringUtil";
 import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import SourceType from "../Source/SourceType";
 import FeatureStyleBuilder from "./FeatureStyleBuilder";
+import CustomFillPattern from "./CustomFillPattern";
 
 /** StyleBuilder */
 export default class StyleBuilder {
@@ -182,6 +183,13 @@ export default class StyleBuilder {
         }
         if (fillStyle == "empty") {
             fill = new OlFill({color: backgroundColor});
+        } else if (fillStyle == "hatch_dash_dot")  {
+            fill = new CustomFillPattern({
+                pattern: fillStyle,
+                size: opts["pattern_stroke_width"] || 1,
+                color: opts["pattern_color"] || "rgb(255, 255, 255)",
+                fill: new OlFill({color: backgroundColor}),
+            });
         } else {
             fill = new OlFillPattern({
                 pattern: fillStyle,
@@ -192,7 +200,7 @@ export default class StyleBuilder {
                 fill: new OlFill({color: backgroundColor}),
                 spacing: opts["pattern_stroke_spacing"] || 10,
                 angle: opts["pattern_stroke_rotation"] || 0
-            });            
+            });
         }
         const style = new OlStyle({
             stroke: new OlStroke({
@@ -365,6 +373,9 @@ export default class StyleBuilder {
 
                     if (featureStyle["label"]) {
                         featureStyle["label"]["resolution"] = resolution;
+                    }
+                    if (featureStyle["linestring"]) {
+                        featureStyle["linestring"]["resolution"] = resolution;
                     }
                     return new FeatureStyleBuilder(featureStyle, featureType).build();
                 }

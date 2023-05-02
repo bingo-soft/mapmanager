@@ -1,5 +1,6 @@
 import OlFillPattern from "ol-ext/style/FillPattern";
 import { Fill as OlFill, Icon as OlIcon } from "ol/style";
+import CustomFillPattern from "../../Domain/Model/Style/CustomFillPattern";
 
 /** Pattern */
 export default class Pattern { 
@@ -13,6 +14,10 @@ export default class Pattern {
         ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
         for (const i in OlFillPattern.prototype.patterns) {
             const p = new OlFillPattern({ pattern: i });
+            ret.set(i, p.getImage().toDataURL());
+        }
+        for (const i in CustomFillPattern.getPatterns()) {
+            const p = new CustomFillPattern({ pattern: i });
             ret.set(i, p.getImage().toDataURL());
         }
         return ret;
@@ -43,6 +48,13 @@ export default class Pattern {
             p = new OlFillPattern({
                 pattern: patternName,
                 fill: new OlFill({ color: options["background_color"] })
+            });
+        } else if (patternName == "hatch_dash_dot") {
+            p = new CustomFillPattern({
+                pattern: patternName,
+                size: opts["pattern_stroke_width"] || 1,
+                color: opts["pattern_color"] || "rgb(255, 255, 255)",
+                fill: new OlFill({ color: options["background_color"] }),
             });
         } else {
             p = new OlFillPattern({
