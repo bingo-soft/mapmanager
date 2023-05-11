@@ -469,6 +469,9 @@ export default class MapManager {
             }
             if ((type == SourceType.Vector || type == SourceType.VectorTile || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
+                if (Object.prototype.hasOwnProperty.call(opts["style"], "highlight")) {
+                    builder.setVertexHighlightStyle(opts["style"]["highlight"]);
+                }
             }
             if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
                 builder.setUrl(opts["url"]);
@@ -1101,14 +1104,14 @@ export default class MapManager {
      * @param map - map instance
      * @param coordinate - coordinate
      * @param srsId - SRS Id of coordinate
-     * @param isTransparent - whether highlight must be transparent
+     * @param style - highlight style
      * @param id - vertex id
      * @param label - label for vertex
      * @return highlight feature
      */
-     public static highlightVertex(map: Map, coordinate: number[], srsId: number, 
-        isTransparent: boolean = false, id?: number, label?: string): Feature {
-        return map.highlightVertex(coordinate, srsId, isTransparent, id, label);
+    public static highlightVertex(map: Map, coordinate: number[], srsId: number, 
+        style: unknown = null, id?: number, label?: string): Feature {
+        return map.highlightVertex(coordinate, srsId, style, id, label);
     }
 
     /**

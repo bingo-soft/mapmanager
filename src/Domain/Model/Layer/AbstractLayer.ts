@@ -339,6 +339,22 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Returns vertex highlight style
+     * @return vertex highlight style
+     */
+    public getVertexHighlightStyle(): unknown  {
+        throw new MethodNotImplemented();
+    }
+    
+    /**
+     * Sets vertex highlight style
+     * @param style - vertex highlight style
+     */
+    public setVertexHighlightStyle(style: unknown): void  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Returns loading tiles count
      * @return loading tiles count
      */

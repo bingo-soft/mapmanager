@@ -131,7 +131,7 @@ export default class StyleBuilder {
                     opacity: opts["opacity"] ? opts["opacity"] / 100 : 1,
                     rotation: opts["rotation"] ? opts["rotation"] * Math.PI / 180 : 0,
                     offset: opts["offset"],
-                    anchor: opts["anchor"][0] && opts["anchor"][1] ? [StyleBuilder.ANCHOR_POSITION[opts["anchor"][0]], StyleBuilder.ANCHOR_POSITION[opts["anchor"][1]]] : [0.5, 0.5],
+                    anchor: opts["anchor"] && opts["anchor"][0] && opts["anchor"][1] ? [StyleBuilder.ANCHOR_POSITION[opts["anchor"][0]], StyleBuilder.ANCHOR_POSITION[opts["anchor"][1]]] : [0.5, 0.5],
                     src: opts["image_path"],
                 })
             });

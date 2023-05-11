@@ -184,6 +184,14 @@ export default class LayerBuilder {
     }
 
     /**
+     * Sets vertex highlight style
+     * @param style - vertex highlight style
+     */
+    public setVertexHighlightStyle(style: unknown): void  {
+        this.layer.setVertexHighlightStyle(style);
+    }
+
+    /**
      * Sets layer's load callback
      * @param callback - callback
      * @return layer builder instance
