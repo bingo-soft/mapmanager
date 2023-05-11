@@ -248,6 +248,18 @@ export default interface LayerInterface
     setFeaturePopupCss(css: string): void;
 
     /**
+     * Returns vertex highlight style
+     * @return vertex highlight style
+     */
+    getVertexHighlightStyle(): unknown;
+    
+    /**
+     * Sets vertex highlight style
+     * @param style - vertex highlight style
+     */
+    setVertexHighlightStyle(style: unknown): void;
+
+    /**
      * Returns loading tiles count
      * @return loading tiles count
      */

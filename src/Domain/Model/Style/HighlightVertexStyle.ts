@@ -1,9 +1,9 @@
 export const HighlightVertexStyle: unknown = {
     "point": {
         "marker_type": "simple_point",
-        "color": "#FF00FF",
-        "opacity": 70,
-        "size": 5
+        "color": "#000",
+        "opacity": 100,
+        "size": 3
     },
     "label": {
         "font": "9px Verdana",

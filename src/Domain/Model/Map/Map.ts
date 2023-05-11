@@ -846,16 +846,14 @@ export default class Map {
      * @return highlight feature
      */
     public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number, 
-        isTransparent: boolean = false, id?: number, label?: string): Feature {
+        style: unknown = null, id?: number, label?: string): Feature {
         if (!this.vertexHighlightLayer) {
             this.vertexHighlightLayer = new VectorLayerOl({
                 source: new OlVectorSource()
             });
         }
-        if (isTransparent) {
-            (<any> HighlightVertexStyle).point.opacity = 0;
-        }
-        const styleFunc = new StyleBuilder(HighlightVertexStyle).build(false, true);
+        const styleToBuild = style && Object.keys(style).length != 0 ? style : HighlightVertexStyle;
+        const styleFunc = new StyleBuilder(styleToBuild).build(false, true);
         this.vertexHighlightLayer.setStyle(styleFunc);
         this.vertexHighlightLayer.setMap(this.map);
         const source = this.vertexHighlightLayer.getSource();

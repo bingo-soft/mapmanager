@@ -23,6 +23,7 @@ export default class VectorLayer extends AbstractLayer{
     private removedFeatures: FeatureCollection = new FeatureCollection([]);
     private featurePopupTemplate = "";
     private featurePopupCss = "";
+    private vertexHighlightStyle = null;
     
     private static readonly DEFAULT_SRS_ID = 3857;
     
@@ -254,5 +255,21 @@ export default class VectorLayer extends AbstractLayer{
         } else {
             this.featurePopupCss = FeaturePopupCssStyle;
         }
+    }
+
+    /**
+     * Returns vertex highlight style
+     * @return vertex highlight style
+     */
+    public getVertexHighlightStyle(): unknown  {
+        return this.vertexHighlightStyle;
+    }
+    
+    /**
+     * Sets vertex highlight style
+     * @param style - vertex highlight style
+     */
+    public setVertexHighlightStyle(style: unknown): void  {
+        this.vertexHighlightStyle = style
     }
   }
