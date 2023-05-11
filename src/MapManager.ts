@@ -594,7 +594,7 @@ export default class MapManager {
      * @category Feature
      * @param features - feature collection
      * @param sourceSrsId - SRS Id of feature geometry
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return GeoJSON representing features as single geometry
      */
     public static getFeaturesAsSingleGeometry(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
@@ -609,7 +609,7 @@ export default class MapManager {
      * @category Layer
      * @param features - feature collection
      * @param sourceSrsId - SRS Id of feature geometry
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return GeoJSON representing features as multi geometry
      */
     public static getFeaturesAsMultiGeometry(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
@@ -624,7 +624,7 @@ export default class MapManager {
      * @category Layer
      * @param features - feature collection
      * @param sourceSrsId - SRS Id of feature geometry
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return GeoJSON representing features as GeometryCollection
      */
     public static getFeaturesAsGeometryCollection(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
@@ -639,7 +639,7 @@ export default class MapManager {
      * @category Layer
      * @param features - feature collection
      * @param sourceSrsId - SRS Id of features
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return text representing feature
      */
     public static getFeaturesAsFeatureCollection(features: FeatureCollection, sourceSrsId: number, targetSrsId?: number): string {
