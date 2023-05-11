@@ -12,7 +12,7 @@ export default class Pattern {
     public static getDefaultFillPatterns(): Map<string, string> {
         const ret: Map<string, string> = new Map();
         ret.set("empty", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==");
-        for (const i in OlFillPattern.prototype.patterns) {
+        for (const i in OlFillPattern.patterns) { 
             const p = new OlFillPattern({ pattern: i });
             ret.set(i, p.getImage().toDataURL());
         }

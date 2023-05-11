@@ -155,7 +155,7 @@ export default class FeatureCollection {
     /**
      * Returns features of the collection as single geometry GeoJSON string
      * @param sourceSrsId - SRS Id of feature geometry
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return GeoJSON string
      */
      public getAsSingleGeometry(sourceSrsId: number, targetSrsId: number): string {
@@ -172,7 +172,7 @@ export default class FeatureCollection {
     /**
      * Returns features of the collection as multi geometry GeoJSON string
      * @param sourceSrsId - SRS Id of feature geometry
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return GeoJSON string
      */
     public getAsMultiGeometry(sourceSrsId: number, targetSrsId: number): string {
@@ -232,7 +232,7 @@ export default class FeatureCollection {
     /**
      * Returns features of the collection as GeometryCollection GeoJSON string
      * @param sourceSrsId - SRS Id of feature geometry
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return GeoJSON string
      */
     public getAsGeometryCollection(sourceSrsId: number, targetSrsId: number): string {
@@ -252,7 +252,7 @@ export default class FeatureCollection {
     /**
      * Returns features of the collection as GeoJSON string
      * @param sourceSrsId - SRS Id of features
-     * @param targetSrsId - SRS Id of returned text
+     * @param targetSrsId - SRS Id of returned text, defaults to sourceSrsId if omitted
      * @return text representing feature
      */
     public getAsFeatureCollection(sourceSrsId: number, targetSrsId: number): string {
