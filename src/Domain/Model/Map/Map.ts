@@ -542,6 +542,7 @@ export default class Map {
                 point1, point2, point3, point4, point1 
             ]])
         });
+        feature.set("label", opts["label"]["text"]);
         const styleFunc = new StyleBuilder(opts).build(false, true);
         feature.setStyle(styleFunc);
         (<OlVectorLayer> tempLayer.getLayer()).getSource().addFeature(feature);
