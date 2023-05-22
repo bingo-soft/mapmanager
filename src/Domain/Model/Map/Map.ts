@@ -1004,7 +1004,11 @@ export default class Map {
      */
     public export(exportType: ExportType = ExportType.Printer, isDownload: boolean): Promise<unknown> {
         return new Promise((resolve): void => {
-            this.map.updateSize();
+            //this.map.updateSize();
+            const view = this.map.getView();
+            const zoom = this.map.getView().getZoom()
+            view.setZoom(zoom + 1);
+            view.setZoom(zoom);
             this.map.once("rendercomplete", () => {
                 // get map canvas through iterating its layers
                 const mapCanvas = document.createElement("canvas");
@@ -1047,7 +1051,7 @@ export default class Map {
                 //const mimeType = (exportType == ExportType.Printer || exportType == ExportType.PNG) ? "image/png" : "image/tiff";
                 const mimeType = "image/png";
                 img.src = mapCanvas.toDataURL(mimeType); 
-                img.onload = (): void => {
+                img.onload = (): void => { 
                     if (exportType == ExportType.Printer) {
                         iframe.contentWindow.print();
                         iframe.contentWindow.document.body.appendChild(img);
@@ -1062,7 +1066,7 @@ export default class Map {
                             ret.xmax = topRight[0];
                             ret.ymax = topRight[1];
                         }
-                        mapCanvas.toBlob((blob: Blob): void => {
+                        mapCanvas.toBlob((blob: Blob): void => { console.log(isDownload);
                             if (exportType == ExportType.PNG && isDownload) {
                                 const link = document.createElement("a");
                                 link.style.display = "none";
