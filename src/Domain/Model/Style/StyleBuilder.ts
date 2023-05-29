@@ -410,8 +410,8 @@ export default class StyleBuilder {
     private applyText(feature: OlFeature, style: OlStyle, geomType: string, resolution: number, useLabelTextOption = false): void {
         const textStyle: OlText = this.style["Text"];
         if (style && textStyle) {
-            if (useLabelTextOption) {
-                textStyle.setText(feature.get("label"));
+            if (useLabelTextOption && feature.get("label")) {
+                textStyle.setText(feature.get("label").toString());
                 style.setText(textStyle);
                 return;
             }    
@@ -419,8 +419,8 @@ export default class StyleBuilder {
                 this.field = textStyle.getText();
             }
             const properties = feature.getProperties();
-            if (properties) {
-                let textValue: string = properties[<string> this.field];
+            if (properties && properties[<string> this.field]) {
+                let textValue: string = properties[<string> this.field].toString();
                 if (textValue) { 
                     if (geomType != "Polygon" && geomType != "MultiPolygon") {
                         textValue = StringUtil.adjustText(textValue, resolution, this.showLabelMaxResolution);
