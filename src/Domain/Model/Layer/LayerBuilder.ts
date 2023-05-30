@@ -48,7 +48,7 @@ export default class LayerBuilder {
                 this.layer.setSource(new VectorSource());
                 break;
             case SourceType.VectorTile:
-                this.layer.setSource(new VectorTileSource());
+                this.layer.setSource(new VectorTileSource(opts["format"]));
                 break;
             case SourceType.Cluster:
                 const distance = opts["style"] && opts["style"]["point"] ? opts["style"]["point"]["cluster_distance"] : null;
@@ -136,6 +136,16 @@ export default class LayerBuilder {
      */
     public setTileIndex(json: unknown): LayerBuilder {
         this.layer.setTileIndex(json);
+        return this;
+    }
+
+    /**
+     * Sets layer's source format
+     * @param format - source format
+     * @return layer builder instance
+     */
+    public setFormat(format: string): LayerBuilder {
+        this.layer.setFormat(format);
         return this;
     }
 

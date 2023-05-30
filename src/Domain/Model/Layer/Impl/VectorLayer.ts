@@ -270,6 +270,6 @@ export default class VectorLayer extends AbstractLayer{
      * @param style - vertex highlight style
      */
     public setVertexHighlightStyle(style: unknown): void  {
-        this.vertexHighlightStyle = style
+        this.vertexHighlightStyle = style;
     }
   }

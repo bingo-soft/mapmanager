@@ -37,6 +37,7 @@ import ExportType from "./Domain/Model/Map/ExportType";
 import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 import Units from "./Domain/Model/Feature/Units";
 import StringUtil from "./Infrastructure/Util/StringUtil";
+import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat";
 
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
@@ -441,31 +442,32 @@ export default class MapManager {
                     });
             }
             if (type == SourceType.VectorTile) {
-                /* if (opts["data"]) {
-                    builder.setTileIndex(JSON.parse(opts["data"]));
-                } */
-                builder.setTileUrlFunction((tileCoord: OlTilecoord) => {
-                    return JSON.stringify(tileCoord);
-                });
-                builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
-                    const tileCoord = JSON.parse(url);
-                    const tileIndex: any = builder.getLayer().getTileIndex();
-                    const data = tileIndex.getTile(
-                        tileCoord[0],
-                        tileCoord[1],
-                        tileCoord[2]
-                    );
-                    const geojson = JSON.stringify({
-                        type: 'FeatureCollection',
-                        features: data ? data.features : [],
-                    }, StringUtil.replacer);
-                    const format: any = builder.getLayer().getFormat();
-                    const features = format.readFeatures(geojson, {
-                        extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
-                        featureProjection: "EPSG:3857", /// hardcode!!!
+                const format = opts["format"] ? opts["format"] : VectorTileSourceFormat.GeoJSON;
+                builder.setFormat(format);
+                if (format == VectorTileSourceFormat.GeoJSON) {
+                    builder.setTileUrlFunction((tileCoord: OlTilecoord) => {
+                        return JSON.stringify(tileCoord);
                     });
-                    tile.setFeatures(features);
-                });
+                    builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
+                        const tileCoord = JSON.parse(url);
+                        const tileIndex: any = builder.getLayer().getTileIndex();
+                        const data = tileIndex.getTile(
+                            tileCoord[0],
+                            tileCoord[1],
+                            tileCoord[2]
+                        );
+                        const geojson = JSON.stringify({
+                            type: 'FeatureCollection',
+                            features: data ? data.features : [],
+                        }, StringUtil.replacer);
+                        const format: any = builder.getLayer().getFormat();
+                        const features = format.readFeatures(geojson, {
+                            extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
+                            featureProjection: "EPSG:3857", /// hardcode!!!
+                        });
+                        tile.setFeatures(features);
+                    });
+                }
             }
             if ((type == SourceType.Vector || type == SourceType.VectorTile || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);

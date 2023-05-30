@@ -4,24 +4,21 @@ import OlVectorTileSource from "ol/source/VectorTile";
 import { LoadFunction, UrlFunction } from "ol/Tile";
 import { Layer as OlLayer } from "ol/layer";
 import OlGeoJSON from "ol/format/GeoJSON";
+import OlMVT from "ol/format/MVT";
 import OlProjection from "ol/proj/Projection";
 import AbstractLayer from "../AbstractLayer";
 import StyleFunction from "../../Style/StyleFunctionType";
 import { FeaturePopupCssStyle } from "../../Style/FeaturePopupCssStyle";
 import { OlBaseVectorLayer, OlVectorLayer } from "../../Type/Type";
+import VectorTileSourceFormat from '../../Source/VectorTileSourceFormat';
 
 /** VectorTileLayer */
 export default class VectorTileLayer extends AbstractLayer{
     private featurePopupTemplate = "";
     private featurePopupCss = "";
     private tileIndex;
-    private format = new OlGeoJSON({
-        dataProjection: new OlProjection({
-            code: 'TILE_PIXELS',
-            units: 'tile-pixels',
-            extent: [0, 0, 4096, 4096],
-        }),
-    });;
+    private format;
+    private vertexHighlightStyle = null;
     
     private static readonly DEFAULT_SRS_ID = 4326;
     
@@ -33,16 +30,46 @@ export default class VectorTileLayer extends AbstractLayer{
         super();
         this.layer = layer ? layer : new OlVectorTileLayer();
         this.srsId = VectorTileLayer.DEFAULT_SRS_ID;
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
-            const srsH: unknown = opts["srs_handling"];
-            this.srsId = (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
+        if (typeof opts !== "undefined") {
+            if (Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
+                const srsH: unknown = opts["srs_handling"];
+                this.srsId = (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
+                this.layer.setMinZoom(opts["min_zoom"]-1);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
+                this.layer.setMaxZoom(opts["max_zoom"]);
+            }
+            //this.setFormat(opts["format"]);
         }
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
-            this.layer.setMinZoom(opts["min_zoom"]-1);
+    }
+
+    /**
+     * Sets layer's source format
+     * @param format - source format
+     */
+    public setFormat(format: string): void {
+        format = format ? format : VectorTileSourceFormat.GeoJSON;
+        if (format == VectorTileSourceFormat.GeoJSON) {
+            this.format = new OlGeoJSON({
+                dataProjection: new OlProjection({
+                    code: 'TILE_PIXELS',
+                    units: 'tile-pixels',
+                    extent: [0, 0, 4096, 4096],
+                }),
+            });
+        } else if (format == VectorTileSourceFormat.MVT) {
+            this.format = new OlMVT();
         }
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
-            this.layer.setMaxZoom(opts["max_zoom"]);
-        }
+    }
+
+    /**
+     * Sets layer's source url
+     * @param url - source url
+     */
+    public setUrl(url: string): void { console.log ("url2", url);
+        (<OlVectorTileSource> this.layer.getSource()).setUrl(url);
     }
 
     /**
@@ -130,6 +157,14 @@ export default class VectorTileLayer extends AbstractLayer{
         } else {
             this.featurePopupCss = FeaturePopupCssStyle;
         }
+    }
+
+    /**
+     * Sets vertex highlight style
+     * @param style - vertex highlight style
+     */
+    public setVertexHighlightStyle(style: unknown): void  {
+        this.vertexHighlightStyle = style;
     }
 
 }
