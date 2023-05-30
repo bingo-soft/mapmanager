@@ -144,6 +144,12 @@ export default interface LayerInterface
      * @return layer's tile format
      */
     getFormat(): OlGeoJSON;
+
+    /**
+     * Sets layer's tile format
+     * @param format - format
+     */
+    setFormat(format: string): void;
     
     /**
      * Sets layer source url

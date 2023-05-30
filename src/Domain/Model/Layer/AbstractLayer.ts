@@ -203,6 +203,14 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Sets layer's tile format
+     * @param format - format
+     */
+    public setFormat(format: string): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Sets layer's source url
      * @param url - source url
      */
