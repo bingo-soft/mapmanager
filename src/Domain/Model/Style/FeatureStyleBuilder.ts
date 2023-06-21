@@ -1,3 +1,4 @@
+//import OlMap from "ol/Map";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlFillPattern from "ol-ext/style/FillPattern";
 
@@ -26,7 +27,7 @@ export default class FeatureStyleBuilder {
         "h": "hanging",
         "i": "ideographic"
     }
-    private static readonly DEFAULT_FONT_SIZE = 18;
+    private static readonly DEFAULT_FONT_SIZE = 12;
 
     /**
      * @param opts - style text representation
@@ -43,18 +44,22 @@ export default class FeatureStyleBuilder {
      */
     private applyStyle(style: unknown, featureType: string): void {
         if (featureType == "Point") {
-            style["point"] ? this.setPointStyle(style["point"]) : this.setTextStyle(style["label"]);
+            if (style["point"]) {
+                this.setPointStyle(style["point"]);
+            } else if (style["label"]) {
+                this.setTextStyle(style["label"]);
+            }
         }
-        if (featureType == "MultiPoint") {
+        if (featureType == "MultiPoint" && style["point"]) {
             this.setPointStyle(style["point"]);
         }
-        if (featureType == "LineString" || featureType == "MultiLineString") {
+        if ((featureType == "LineString" || featureType == "MultiLineString") && style["linestring"]) {
             this.setLinestringStyle(style["linestring"], style["label"]);
         } 
-        if (featureType == "Polygon" || featureType == "MultiPolygon") {
+        if ((featureType == "Polygon" || featureType == "MultiPolygon") && style["polygon"]) {
             this.setPolygonStyle(style["polygon"], style["label"]);
         }
-        if (featureType == "GeometryCollection") {
+        if (featureType == "GeometryCollection" && style["polygon"]) {
             this.setGeometryCollectionStyle(style["polygon"]); 
         }
     }
@@ -288,9 +293,17 @@ export default class FeatureStyleBuilder {
      */
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
+       /*  var zoom = (<OlMap> _MAP_INSTANCE_).getView().getZoom();
+        console.log("zoom", zoom) */
+        //var dsize = (100 / resolution) * zoom;
+        //var size = Math.round(dsize) + "px" //dom.size.value;
         name = name || "Courier New";
-        size = size / resolution / 32;
+        size = size / resolution * 2.5/* / 32 */;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
+        if (size > 35) {
+            size = 35;
+        }
+        //console.log(size);
         return size.toString() + "px " + name;   
     }
 
@@ -299,7 +312,7 @@ export default class FeatureStyleBuilder {
      * @return style
      */
     public build(): OlStyle {
-        return this.style;
+         return this.style;
     }
    
 }

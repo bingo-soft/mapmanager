@@ -1093,7 +1093,7 @@ export default class MapManager {
      */
     public static setStyle(features: FeatureCollection, style: unknown): void {
         if (features && features.getLength()) {
-            const styleFunc = new StyleBuilder(style).build(false);
+            const styleFunc = new StyleBuilder(style).build();
             features.forEach((feature: Feature): void => {
                 feature.setStyle(styleFunc);
             });

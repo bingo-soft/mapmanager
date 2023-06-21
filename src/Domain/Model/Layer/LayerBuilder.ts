@@ -173,7 +173,7 @@ export default class LayerBuilder {
      * @return layer builder instance
      */
     public setStyle(opts?: unknown): LayerBuilder {
-        this.layer.setStyle((new StyleBuilder(opts, this.layer.getType())).build(false));
+        this.layer.setStyle((new StyleBuilder(opts, this.layer.getType())).build());
         return this;
     }
 
