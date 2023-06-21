@@ -313,7 +313,7 @@ export default class StyleBuilder {
      * @param useLabelTextOption - whether to use label text option instead of field option
      * @return style function
      */
-    public build(useExternalStyleBuilder = true, useLabelTextOption = false): StyleFunction {
+    public build(useExternalStyleBuilder = false, useLabelTextOption = false): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
             let style: OlStyle;
             // clustered features

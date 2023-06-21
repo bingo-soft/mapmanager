@@ -121,7 +121,7 @@ export default class Feature {
      */
     public highlight(): void {
         this.featureStyle = (<OlStyle> this.feature.getStyle());
-        const styleFunc = new StyleBuilder(HighlightFeatureStyle).build(false);
+        const styleFunc = new StyleBuilder(HighlightFeatureStyle).build();
         this.setStyle(styleFunc);
     }
 

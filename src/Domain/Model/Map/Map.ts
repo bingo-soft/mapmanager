@@ -166,6 +166,8 @@ export default class Map {
                 zoom: zoom
             })
         });
+        //_MAP_INSTANCE_ = this.map;
+
         // cursor init
         this.cursor = CursorType.Default;
         // interaction init
@@ -1090,7 +1092,7 @@ export default class Map {
      * @param coordinate - coordinate
      */
     private showMarker(coordinate: OlCoordinate.Coordinate): void {
-        const style = new StyleBuilder(SearchMarkerStyle).build(false);
+        const style = new StyleBuilder(SearchMarkerStyle).build();
         const marker = new OlFeature(new OlPoint(coordinate));
         marker.setStyle(style);
         const layer = this.createTemporaryLayer(TemporaryLayerType.CenterMarker);
