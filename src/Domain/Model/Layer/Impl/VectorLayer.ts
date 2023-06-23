@@ -33,7 +33,9 @@ export default class VectorLayer extends AbstractLayer{
      */
     constructor(layer?: OlLayer, opts?: unknown) { 
         super();
-        this.layer = layer ? layer : new VectorLayerOl(/* {declutter: true} */);
+        this.layer = layer ? layer : new VectorLayerOl({
+            declutter: true
+        });
         this.srsId = VectorLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
             const srsH: unknown = opts["srs_handling"];
@@ -63,6 +65,14 @@ export default class VectorLayer extends AbstractLayer{
                 featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
             }));
         });
+    }
+
+    /**
+     * Returns layer's URL
+     * @return layer's URL
+     */
+    public getUrl(): string {
+        return (<OlVectorSource> this.layer.getSource()).getUrl().toString();
     }
 
     /**

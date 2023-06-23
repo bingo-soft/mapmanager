@@ -28,7 +28,9 @@ export default class VectorTileLayer extends AbstractLayer{
      */
     constructor(layer?: OlLayer, opts?: unknown) { 
         super();
-        this.layer = layer ? layer : new OlVectorTileLayer();
+        this.layer = layer ? layer : new OlVectorTileLayer({
+            declutter: true
+        });
         this.srsId = VectorTileLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {

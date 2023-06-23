@@ -22,7 +22,7 @@ export default abstract class AbstractLayer implements LayerInterface
 {
     protected type: SourceType;
     protected layer: OlLayer;
-    protected properties: unknown;
+    protected properties: unknown = {};
     protected srsId: number;
     protected eventHandlers: EventHandlerCollection;
     protected eventBus: EventBus;
@@ -207,6 +207,14 @@ export default abstract class AbstractLayer implements LayerInterface
      * @param format - format
      */
     public setFormat(format: string): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns layer's URL
+     * @return layer's URL
+     */
+    getUrl(): string {
         throw new MethodNotImplemented();
     }
 

@@ -13,12 +13,25 @@ export default class TileLayer extends AbstractLayer {
     constructor(opts?: unknown) {
         super();
         this.layer = new OlTileLayer();
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
-            this.layer.setMinZoom(opts["min_zoom"]-1);
+        if (typeof opts !== "undefined") {
+            if (Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
+                this.layer.setMinZoom(opts["min_zoom"]-1);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
+                this.layer.setMaxZoom(opts["max_zoom"]);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "url")) {
+                this.properties["urlParts"] = new URL(opts["url"]); 
+            }
         }
-        if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
-            this.layer.setMaxZoom(opts["max_zoom"]);
-        }
+    }
+
+    /**
+     * Returns layer's sourceURL
+     * @return layer's source URL
+     */
+    public getUrl(): string {
+        return (<OlTileImage> this.layer.getSource()).getUrls()[0];
     }
 
     /**

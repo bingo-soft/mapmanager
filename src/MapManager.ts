@@ -7,6 +7,7 @@ import * as proj4 from "proj4"
 import OlVectorTileSource from "ol/source/VectorTile";
 import OlVectorTile from "ol/VectorTile";
 import { TileCoord as OlTilecoord } from 'ol/tilecoord';
+import OlFeature from "ol/Feature";
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
@@ -38,6 +39,7 @@ import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 import Units from "./Domain/Model/Feature/Units";
 import StringUtil from "./Infrastructure/Util/StringUtil";
 import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat";
+import { log } from "console";
 
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
@@ -468,6 +470,26 @@ export default class MapManager {
                         tile.setFeatures(features);
                     });
                 }
+
+                /* else if (format == VectorTileSourceFormat.MVT) {
+                    builder.setTileLoadFunction((tile: OlVectorTile, url: string) => { console.log(url);
+                        tile.setLoader(function(extent, resolution, projection) {
+                            fetch(url).then(function(response) {
+                              response.arrayBuffer().then(function(data) {
+                                const format = tile.getFormat() // ol/format/MVT configured as source format
+                                const features = format.readFeatures(data, {
+                                  extent: extent,
+                                  featureProjection: projection
+                                });
+                                tile.setFeatures(<OlFeature[]> features);
+                              });
+                            });
+                        });
+                    });
+                } */
+
+
+
             }
             if ((type == SourceType.Vector || type == SourceType.VectorTile || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
@@ -737,45 +759,48 @@ export default class MapManager {
      * @param zoom - zoom after fit
      */
     public static async fitLayer(map: Map, layer: LayerInterface, zoom?: number): Promise<void> {
-        if (layer.getType() != SourceType.Vector) {
-            //throw new MethodNotImplemented();
-            return;
-        }
-        const loaderOptions = layer.getLoaderOptions();
-        // layer was created via createLayerFromGeoJSON() so it has no loaderOptions
-        if (!loaderOptions || !loaderOptions["base_url"]) {
+        if (layer.getType() == SourceType.TileWMS) {
             map.fitLayer(layer, zoom);
             return;
-        }
-        let url = loaderOptions["base_url"];
-        const isStandartWFS = url.toLowerCase().includes("service=wfs");
-        // layer is a WFS layer so it has a "service=wfs" substring in base_url
-        if (isStandartWFS) {
-            map.fitLayer(layer, zoom);
-        } else { 
-            url += "/extent";
-            const data = loaderOptions["data"];
-            const payload: ApiRequest = {
-                method: HttpMethod.POST,
-                base_url: url,
-                data: data,
-                axios_params: {
-                    hideNotification: true
-                }        
-            };
-            const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-            const response = await query.execute(payload);
-            if (response["extent"] && response["extent"].length == 4) {
-                let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
-                //extent = OlExtent.buffer(extent, 10);
-                if (!extent.includes(NaN)) {
-                    const olView = map.getMap().getView();
-                    olView.fit(extent);
-                    if (typeof zoom !== "undefined") {
-                        olView.setZoom(zoom);
+        } else if (layer.getType() != SourceType.Vector) {
+            const loaderOptions = layer.getLoaderOptions();
+            // layer was created via createLayerFromGeoJSON() so it has no loaderOptions
+            if (!loaderOptions || !loaderOptions["base_url"]) {
+                map.fitLayer(layer, zoom);
+                return;
+            }
+            let url = loaderOptions["base_url"];
+            const isStandartWFS = url.toLowerCase().includes("service=wfs");
+            // layer is a WFS layer so it has a "service=wfs" substring in base_url
+            if (isStandartWFS) {
+                map.fitLayer(layer, zoom);
+            } else { 
+                url += "/extent";
+                const data = loaderOptions["data"];
+                const payload: ApiRequest = {
+                    method: HttpMethod.POST,
+                    base_url: url,
+                    data: data,
+                    axios_params: {
+                        hideNotification: true
+                    }        
+                };
+                const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                const response = await query.execute(payload);
+                if (response["extent"] && response["extent"].length == 4) {
+                    let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
+                    //extent = OlExtent.buffer(extent, 10);
+                    if (!extent.includes(NaN)) {
+                        const olView = map.getMap().getView();
+                        olView.fit(extent);
+                        if (typeof zoom !== "undefined") {
+                            olView.setZoom(zoom);
+                        }
                     }
                 }
             }
+        } else {
+            
         }
     }
 
