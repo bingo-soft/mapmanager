@@ -749,9 +749,49 @@ export default class Map {
      * @param zoom - zoom to set after fit
      */
     public fitLayer(layer: LayerInterface, zoom?: number): void {
-        const features = (<OlVectorSource> layer.getSource()).getFeatures();
-        if (features) {
-            this.fitFeatures(new FeatureCollection(features), zoom);
+        if (layer.getType() == SourceType.Vector || layer.getType() == SourceType.VectorTile) {
+            const features = (<OlVectorSource> layer.getSource()).getFeatures();
+            if (features) {
+                this.fitFeatures(new FeatureCollection(features), zoom);
+            }
+        }
+        if (layer.getType() == SourceType.TileWMS) {
+            // urlParts is set in TileLayer.ts constructor
+            const urlParts = layer.getProperties()["urlParts"];
+            const layerNames = urlParts.searchParams.get('layers').split(",");
+            if (layerNames.length > 1) {
+                return;
+            }
+            const layerName = layerNames[0].split(":")[1];
+            const getCapabilitiesUrl = `${urlParts.origin }${urlParts.pathname}?service=${urlParts.searchParams.get('service')}&version=${urlParts.searchParams.get('version')}&request=GetCapabilities`
+            fetch(getCapabilitiesUrl)
+            .then(r => r.text())
+            .then((text) => {
+                const parser = new DOMParser();
+                const result = parser.parseFromString(text, "application/xml");
+                if (result) {
+                    const layers = result.querySelector("Capability Layer");
+                    const layer = Array.from(layers.querySelectorAll("Layer")).find(el => el.textContent.includes(layerName));
+                    if (layer) {
+                        const latLonBbox = layer.querySelector("LatLonBoundingBox");
+                        if (latLonBbox) {
+                            const extent = [
+                                parseFloat(latLonBbox.getAttribute("minx")),
+                                parseFloat(latLonBbox.getAttribute("miny")),
+                                parseFloat(latLonBbox.getAttribute("maxx")),
+                                parseFloat(latLonBbox.getAttribute("maxy"))
+                            ];
+                            let extent_3857: OlExtent.Extent = OlProj.transformExtent(extent, "EPSG:4326", "EPSG:" + this.getSRSId());
+                            extent_3857 = OlExtent.buffer(extent_3857, 10);
+                            const olView = this.getMap().getView();
+                            olView.fit(extent_3857);
+                            if (typeof zoom !== "undefined") {
+                                olView.setZoom(zoom);
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 

@@ -150,6 +150,12 @@ export default interface LayerInterface
      * @param format - format
      */
     setFormat(format: string): void;
+
+    /**
+     * Returns layer's URL
+     * @return layer's URL
+     */
+    getUrl(): string;
     
     /**
      * Sets layer source url
