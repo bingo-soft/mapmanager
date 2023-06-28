@@ -31,10 +31,10 @@ export default class VectorLayer extends AbstractLayer{
      * @param layer - OL layer
      * @param opts - options
      */
-    constructor(layer?: OlLayer, opts?: unknown) { 
+    constructor(layer?: OlLayer, opts?: unknown) {
         super();
         this.layer = layer ? layer : new VectorLayerOl({
-            declutter: true
+            //declutter: true
         });
         this.srsId = VectorLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined" && Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {

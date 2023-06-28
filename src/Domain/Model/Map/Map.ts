@@ -321,6 +321,20 @@ export default class Map {
     }
 
     /**
+     * Sets scale of the map.
+     * @param scale - scale value
+     */
+    public setScale(scale: number): void {
+        let coeff = 0.0004992;
+        let mpu = this.getMap().getView().getProjection().getMetersPerUnit();
+        if (mpu != 1) {
+            mpu *= 1.38987336;
+        }
+        coeff = coeff / mpu;
+        this.map.getView().setResolution(scale * coeff);
+    }
+
+    /**
      * Sets cursor of the map.
      * @param cursor - cursor type
      */ 

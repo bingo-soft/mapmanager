@@ -26,10 +26,10 @@ export default class VectorTileLayer extends AbstractLayer{
      * @param layer - OL layer
      * @param opts - options
      */
-    constructor(layer?: OlLayer, opts?: unknown) { 
+    constructor(layer?: OlLayer, opts?: unknown) {
         super();
         this.layer = layer ? layer : new OlVectorTileLayer({
-            declutter: true
+            //declutter: true
         });
         this.srsId = VectorTileLayer.DEFAULT_SRS_ID;
         if (typeof opts !== "undefined") {
