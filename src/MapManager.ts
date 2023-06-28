@@ -138,6 +138,16 @@ export default class MapManager {
     }
 
     /**
+     * Sets scale of the map.
+     * @category Map
+     * @param map - map instance
+     * @param scale - scale value (e.g. 500 for 1:500)
+     */
+    public static setScale(map: Map, scale: number): void {
+        map.setScale(scale);
+    }
+
+    /**
      * Sets cursor of the map.
      * @category Map
      * @param map - map instance

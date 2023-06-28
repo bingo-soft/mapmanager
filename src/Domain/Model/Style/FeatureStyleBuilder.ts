@@ -55,7 +55,7 @@ export default class FeatureStyleBuilder {
         }
         if ((featureType == "LineString" || featureType == "MultiLineString") && style["linestring"]) {
             this.setLinestringStyle(style["linestring"], style["label"]);
-        } 
+        }
         if ((featureType == "Polygon" || featureType == "MultiPolygon") && style["polygon"]) {
             this.setPolygonStyle(style["polygon"], style["label"]);
         }
@@ -131,8 +131,8 @@ export default class FeatureStyleBuilder {
         }
         this.style = new OlStyle({
             stroke: new OlStroke({
-                color: optsLinestring["c"], 
-                width: optsLinestring["w"],
+                color: optsLinestring["c"] || "#000", 
+                width: optsLinestring["w"] || 1,
                 lineCap: optsLinestring["lc"],
                 lineJoin: optsLinestring["lj"],
                 lineDash: patternArr,
@@ -171,8 +171,8 @@ export default class FeatureStyleBuilder {
         }
         this.style = new OlStyle({
             stroke: new OlStroke({
-                color: optsPolygon["c"], 
-                width: optsPolygon["w"]
+                color: optsPolygon["c"] || "#000", 
+                width: optsPolygon["w"] || 1
             }),
             fill: fill,
             text: this.createTextStyleInstance(optsLabel)
@@ -293,17 +293,12 @@ export default class FeatureStyleBuilder {
      */
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
-       /*  var zoom = (<OlMap> _MAP_INSTANCE_).getView().getZoom();
-        console.log("zoom", zoom) */
-        //var dsize = (100 / resolution) * zoom;
-        //var size = Math.round(dsize) + "px" //dom.size.value;
         name = name || "Courier New";
         size = size / resolution * 2.5/* / 32 */;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         if (size > 35) {
             size = 35;
         }
-        //console.log(size);
         return size.toString() + "px " + name;   
     }
 

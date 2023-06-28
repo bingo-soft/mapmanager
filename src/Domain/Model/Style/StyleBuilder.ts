@@ -332,7 +332,7 @@ export default class StyleBuilder {
             }
             const featureProps = feature.getProperties();
 
-
+            
             /* const ft = feature.getGeometry().getType(); 
             if (ft == "Point" || ft == "MultiPoint") {
                 //featureProps["style_3402_"] = JSON.parse('{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }');
@@ -394,7 +394,7 @@ export default class StyleBuilder {
             // painting on unique attribute value
             this.paintOnUniqueAttributeValue(feature, style);
             // apply text 
-            this.applyText(feature, style, geomType, resolution, useLabelTextOption);     
+            this.applyText(feature, style, geomType, resolution, useLabelTextOption);
             return style;
         }
     }
