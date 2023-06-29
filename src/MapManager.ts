@@ -161,7 +161,7 @@ export default class MapManager {
      * @param map - map instance
      * @param exportType - type of export, defaults to ExportType.Printer
      * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works for PNG only, defaults to true
-     * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64
+     * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64, defaults to true
      * @return in case of PNG or GeoTIFF a promise with the file information 
      */
     public static async export(map: Map, exportType: ExportType = ExportType.Printer, isDownload: boolean = true, isBlob: boolean = true): Promise<unknown> {
@@ -404,10 +404,10 @@ export default class MapManager {
             if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
             }
+            if (typeof opts["request"] !== "undefined") {
+                builder.setLoaderOptions(opts["request"]);
+            }
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
-                    if (opts["request"]) {
-                        builder.setLoaderOptions(opts["request"]);
-                    }
                     builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layer = builder.getLayer();
                         const layerSrs = "EPSG:" + layer.getSRSId().toString();
@@ -453,6 +453,7 @@ export default class MapManager {
                     });
             }
             if (type == SourceType.VectorTile) {
+                builder.setUrl(opts["request"]["base_url"]);
                 const format = opts["format"] ? opts["format"] : VectorTileSourceFormat.GeoJSON;
                 builder.setFormat(format);
                 if (format == VectorTileSourceFormat.GeoJSON) {
@@ -478,27 +479,26 @@ export default class MapManager {
                         });
                         tile.setFeatures(features);
                     });
-                }
-
-                /* else if (format == VectorTileSourceFormat.MVT) {
-                    builder.setTileLoadFunction((tile: OlVectorTile, url: string) => { console.log(url);
+                } else {
+                    builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
                         tile.setLoader(function(extent, resolution, projection) {
-                            fetch(url).then(function(response) {
-                              response.arrayBuffer().then(function(data) {
-                                const format = tile.getFormat() // ol/format/MVT configured as source format
-                                const features = format.readFeatures(data, {
-                                  extent: extent,
-                                  featureProjection: projection
+                            fetch(url, {
+                                headers: opts["request"]["headers"]
+                            })
+                            .then(function(response) {
+                                response.arrayBuffer()
+                                .then(function(data) {
+                                    const format = tile.getFormat();
+                                    const features = format.readFeatures(data, {
+                                        extent: extent,
+                                        featureProjection: projection
+                                    });
+                                    tile.setFeatures(<OlFeature[]> features);
                                 });
-                                tile.setFeatures(<OlFeature[]> features);
-                              });
                             });
                         });
                     });
-                } */
-
-
-
+                }
             }
             if ((type == SourceType.Vector || type == SourceType.VectorTile || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
                 builder.setStyle(opts["style"]);
@@ -506,12 +506,9 @@ export default class MapManager {
                     builder.setVertexHighlightStyle(opts["style"]["highlight"]);
                 }
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "url")) { 
-                builder.setUrl(opts["url"]);
-                builder.setLoaderOptions({"base_url": opts["url"]});
-            }
-            if (type == SourceType.TileWMS && Object.prototype.hasOwnProperty.call(opts, "params")) { 
-                builder.setParams(opts["params"]);
+            if (type == SourceType.TileWMS || type == SourceType.TileArcGISRest || type == SourceType.XYZ) { 
+                builder.setParams(opts["request"]["params"]);
+                builder.setUrl(opts["request"]["base_url"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "feature_popup_template")) {
                 builder.setFeaturePopupTemplate(opts["feature_popup_template"]);

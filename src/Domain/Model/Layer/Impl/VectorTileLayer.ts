@@ -70,7 +70,7 @@ export default class VectorTileLayer extends AbstractLayer{
      * Sets layer's source url
      * @param url - source url
      */
-    public setUrl(url: string): void { console.log ("url2", url);
+    public setUrl(url: string): void {
         (<OlVectorTileSource> this.layer.getSource()).setUrl(url);
     }
 
