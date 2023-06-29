@@ -39,8 +39,6 @@ import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 import Units from "./Domain/Model/Feature/Units";
 import StringUtil from "./Infrastructure/Util/StringUtil";
 import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat";
-import { log } from "console";
-
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
