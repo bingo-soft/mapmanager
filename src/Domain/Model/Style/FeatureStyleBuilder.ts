@@ -28,6 +28,7 @@ export default class FeatureStyleBuilder {
         "i": "ideographic"
     }
     private static readonly DEFAULT_FONT_SIZE = 12;
+    private static readonly DEFAULT_FONT_NAME = "Courier New";
 
     /**
      * @param opts - style text representation
@@ -293,7 +294,7 @@ export default class FeatureStyleBuilder {
      */
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
-        name = name || "Courier New";
+        name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
         size = size / resolution * 2.5/* / 32 */;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         if (size > 35) {

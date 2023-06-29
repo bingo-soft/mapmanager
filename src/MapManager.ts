@@ -163,10 +163,11 @@ export default class MapManager {
      * @param map - map instance
      * @param exportType - type of export, defaults to ExportType.Printer
      * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works for PNG only, defaults to true
+     * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64
      * @return in case of PNG or GeoTIFF a promise with the file information 
      */
-    public static async export(map: Map, exportType: ExportType = ExportType.Printer, isDownload: boolean = true): Promise<unknown> {
-        return await map.export(exportType, isDownload);
+    public static async export(map: Map, exportType: ExportType = ExportType.Printer, isDownload: boolean = true, isBlob: boolean = true): Promise<unknown> {
+        return await map.export(exportType, isDownload, isBlob);
     }
 
     /**

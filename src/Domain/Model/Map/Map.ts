@@ -1056,9 +1056,10 @@ export default class Map {
      * Exports map
      * @param exportType - type of export, defaults to ExportType.Printer
      * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works only in case of PNG
+     * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64
      * @return in case of PNG or GeoTIFF a promise with the file information
      */
-    public export(exportType: ExportType = ExportType.Printer, isDownload: boolean): Promise<unknown> {
+    public export(exportType: ExportType = ExportType.Printer, isDownload: boolean, isBlob: boolean): Promise<unknown> {
         return new Promise((resolve): void => {
             //this.map.updateSize();
             const view = this.map.getView();
@@ -1104,8 +1105,8 @@ export default class Map {
 
                 const img = document.createElement("img");
                 img.setAttribute("crossorigin", "anonymous");
-                //const mimeType = (exportType == ExportType.Printer || exportType == ExportType.PNG) ? "image/png" : "image/tiff";
-                const mimeType = "image/png";
+                const mimeType = (exportType == ExportType.Printer || exportType == ExportType.PNG) ? "image/png" : "image/tiff";
+                //const mimeType = "image/png";
                 img.src = mapCanvas.toDataURL(mimeType); 
                 img.onload = (): void => { 
                     if (exportType == ExportType.Printer) {
@@ -1113,27 +1114,34 @@ export default class Map {
                         iframe.contentWindow.document.body.appendChild(img);
                     } else {
                         const ret = {file: null, xmin: null, ymin: null, xmax: null, ymax: null};
-                        if (exportType == ExportType.GeoTIFF) {
-                            const extent = this.map.getView().calculateExtent();
-                            const bottomLeft = OlExtent.getBottomLeft(extent);
-                            const topRight = OlExtent.getTopRight(extent);
-                            ret.xmin = bottomLeft[0];
-                            ret.ymin = bottomLeft[1];
-                            ret.xmax = topRight[0];
-                            ret.ymax = topRight[1];
-                        }
-                        mapCanvas.toBlob((blob: Blob): void => { console.log(isDownload);
+                        const extent = this.map.getView().calculateExtent();
+                        const bottomLeft = OlExtent.getBottomLeft(extent);
+                        const topRight = OlExtent.getTopRight(extent);
+                        ret.xmin = bottomLeft[0];
+                        ret.ymin = bottomLeft[1];
+                        ret.xmax = topRight[0];
+                        ret.ymax = topRight[1];
+                         mapCanvas.toBlob((blob: Blob): void => {
+                            ret.file = isBlob ? blob : URL.createObjectURL(blob);
+                            if (isBlob) {
+                                ret.file = blob;
+                                resolve(ret);
+                            } else {
+                                const reader = new FileReader();
+                                reader.readAsDataURL(blob); 
+                                reader.onloadend = function() {
+                                    ret.file = reader.result;          
+                                    resolve(ret);
+                                }
+                            }
                             if (exportType == ExportType.PNG && isDownload) {
                                 const link = document.createElement("a");
                                 link.style.display = "none";
                                 link.href = URL.createObjectURL(blob);
                                 link.download = "map.png";
                                 link.click();
-                            } else {
-                                ret.file = blob;
-                                resolve(ret);  
                             }
-                        }, mimeType);    
+                        }, mimeType);  
                     }
                 }
                 iframe.contentWindow.document.body.appendChild(img);
