@@ -1056,7 +1056,7 @@ export default class Map {
      * Exports map
      * @param exportType - type of export, defaults to ExportType.Printer
      * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works only in case of PNG
-     * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64
+     * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64, defaults to true
      * @return in case of PNG or GeoTIFF a promise with the file information
      */
     public export(exportType: ExportType = ExportType.Printer, isDownload: boolean, isBlob: boolean): Promise<unknown> {

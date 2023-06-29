@@ -20,8 +20,8 @@ export default class TileLayer extends AbstractLayer {
             if (Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
                 this.layer.setMaxZoom(opts["max_zoom"]);
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "url")) {
-                this.properties["urlParts"] = new URL(opts["url"]); 
+            if (Object.prototype.hasOwnProperty.call(opts, "request") && Object.prototype.hasOwnProperty.call(opts["request"], "base_url")) {
+                this.properties["urlParts"] = new URL(opts["request"]["base_url"]); 
             }
         }
     }
