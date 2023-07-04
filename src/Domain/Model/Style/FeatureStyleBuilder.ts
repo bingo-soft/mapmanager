@@ -224,7 +224,7 @@ export default class FeatureStyleBuilder {
             font: font,
             text: text,
             textAlign: FeatureStyleBuilder.TEXT_ALIGN[opts["ta"]],
-            textBaseline: FeatureStyleBuilder.TEXT_BASELINE[opts["tb"]],
+            textBaseline: FeatureStyleBuilder.TEXT_BASELINE[opts["tb"]], // "alphabetic",
             maxAngle: opts["ma"] ? opts["ma"] * Math.PI / 180 : 0,
             offsetX: opts["off"] && opts["off"][0] ? opts["off"][0] : null,
             offsetY: opts["off"] && opts["off"][1] ? opts["off"][1] : null,
@@ -233,7 +233,9 @@ export default class FeatureStyleBuilder {
             repeat: opts["rp"],
             scale: opts["sc"],
             rotateWithView: rotateWithView,
-            rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0
+            rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0,
+
+            //padding: [20, 0, 0, 0]
         });
     }
 
@@ -294,12 +296,9 @@ export default class FeatureStyleBuilder {
      */
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
-        name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
+        name = /* name ||  */FeatureStyleBuilder.DEFAULT_FONT_NAME;
         size = size / resolution * 2.5/* / 32 */;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
-        if (size > 35) {
-            size = 35;
-        }
         return size.toString() + "px " + name;   
     }
 
