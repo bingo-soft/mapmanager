@@ -296,7 +296,7 @@ export default class FeatureStyleBuilder {
      */
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
-        name = /* name ||  */FeatureStyleBuilder.DEFAULT_FONT_NAME;
+        name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
         size = size / resolution * 2.5/* / 32 */;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         return size.toString() + "px " + name;   
