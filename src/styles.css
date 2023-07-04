@@ -1,0 +1,9 @@
+.olscale {
+    background-color: initial;
+    right: 30px;
+    bottom: 30px;
+}
+
+.olscale input {
+    width: 80px;
+}

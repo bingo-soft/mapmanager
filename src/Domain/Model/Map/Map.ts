@@ -23,6 +23,7 @@ import OlOverlay from "ol/Overlay";
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import { Select as OlSelect } from "ol/interaction";
 import { Pixel } from "ol/pixel";
+import OlScale from "ol-ext/control/Scale";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -57,6 +58,8 @@ import TemporaryLayerType from "./TemporaryLayerType";
 import ExportType from "./ExportType";
 import SnapInteraction from "../Interaction/Impl/SnapInteraction";
 import { OlVectorLayer } from "../Type/Type";
+import Display from "../../../Infrastructure/Util/Display";
+import "../../../styles.css";
 
 
 /** Map */
@@ -136,19 +139,44 @@ export default class Map {
         // Ol map controls init
         const controls: OlControl[] = [];
         if (Object.prototype.hasOwnProperty.call(opts, "controls")) {
-            if (opts["controls"].includes("zoom")) {
-                const olZoomControl = new OlZoomControl();
-                controls.push(olZoomControl);
-            }
-            if (opts["controls"].includes("scaleline")) {
-                const olScaleLineControl = new OlScaleLine({
-                    units: "metric",
-                    bar: true,
-                    steps: 1,
-                    text: true
-                });
-                controls.push(olScaleLineControl);
-            }
+            const controlsReal = [];
+            opts["controls"].forEach((item: unknown) => {
+                if (typeof item == "string") {
+                    controlsReal.push({
+                        "name": item
+                    });
+                } else {
+                    controlsReal.push(item);
+                }
+            });
+            controlsReal.forEach((item: unknown) => {
+                const controlName = item["name"].toLowerCase().trim();
+                if (controlName == "zoom") {
+                    const olZoomControl = new OlZoomControl({
+                        className: item["className"]
+                    });
+                    controls.push(olZoomControl);
+                }
+                const dpi = Display.calcScreenDPI();
+                if (controlName == "scaleline") {
+                    const olScaleLineControl = new OlScaleLine({
+                        units: "metric",
+                        bar: true,
+                        steps: 1,
+                        text: true,
+                        dpi: dpi,
+                        className: item["className"]
+                    });
+                    controls.push(olScaleLineControl);
+                }
+                if (controlName == "scale") {
+                    const olScaleControl = new OlScale({
+                        ppi: dpi, // 90.71428571428571
+                        className: item["className"]
+                    });
+                    controls.push(olScaleControl);
+                }
+            });
         }
         // Ol map init
         this.srsId = srsId;
