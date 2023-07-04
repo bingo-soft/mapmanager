@@ -59,6 +59,7 @@ import ExportType from "./ExportType";
 import SnapInteraction from "../Interaction/Impl/SnapInteraction";
 import { OlVectorLayer } from "../Type/Type";
 import Display from "../../../Infrastructure/Util/Display";
+import ScaleControl from "./ScaleControl";
 import "../../../styles.css";
 
 
@@ -170,11 +171,11 @@ export default class Map {
                     controls.push(olScaleLineControl);
                 }
                 if (controlName == "scale") {
-                    const olScaleControl = new OlScale({
+                    const olScaleControl = new ScaleControl({
                         ppi: dpi, // 90.71428571428571
                         className: item["className"]
                     });
-                    controls.push(olScaleControl);
+                    controls.push(<any> olScaleControl);
                 }
             });
         }
