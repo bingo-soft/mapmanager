@@ -164,7 +164,7 @@ export default class Map {
                         units: "metric",
                         bar: true,
                         steps: 1,
-                        text: true,
+                        text: item["text"],
                         dpi: dpi,
                         className: item["className"]
                     });
