@@ -173,7 +173,8 @@ export default class Map {
                 if (controlName == "scale") {
                     const olScaleControl = new ScaleControl({
                         ppi: dpi, // 90.71428571428571
-                        className: item["className"]
+                        className: item["className"],
+                        scales: item["scales"]
                     });
                     controls.push(<any> olScaleControl);
                 }
