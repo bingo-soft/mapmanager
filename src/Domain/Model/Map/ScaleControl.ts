@@ -44,13 +44,15 @@ export default class ScaleControl extends ol_control_Control {
             e.target.value = "1 : ";
         });
         this._input.addEventListener("change", this.setScale.bind(this));
-        this._input.value = '-';
+        //this._input.value = '-';
         element.setAttribute('class', classNames);
         this._input.readOnly = options.editable === false;
         element.appendChild(this._input);
 
         const datalist = document.createElement("datalist");
         datalist.setAttribute("id", "scales");
+        datalist.setAttribute("autocomplete", "off");
+        datalist.setAttribute("autocorrect", "off");
         const scales = options.scales;
         scales.forEach((item: string): void => {
             const datalistOption = document.createElement("option");

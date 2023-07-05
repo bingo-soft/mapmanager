@@ -3,7 +3,9 @@
     right: 30px;
     bottom: 30px;
 }
-
 .olscale input {
     width: 110px;
+}
+.olscale input:focus {
+    outline: none;
 }
