@@ -5,6 +5,7 @@ enum SourceType {
     TileWMS = "tilewms",
     XYZ = "xyz",
     TileArcGISRest = "tilearcgisrest",
+    ImageArcGISRest = "imagearcgisrest"
 }
 
 export default SourceType;

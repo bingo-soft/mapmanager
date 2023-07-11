@@ -6,6 +6,7 @@ import SourceType from "../Source/SourceType";
 import VectorSource from "../Source/Impl/VectorSource";
 import XYZSource from "../Source/Impl/XYZSource";
 import TileArcGISRestSource from "../Source/Impl/TileArcGISRestSource";
+import ImageArcGISRestSource from "../Source/Impl/ImageArcGISRestSource";
 import TileWMSSource from "../Source/Impl/TileWMSSource";
 import ClusterSource from "../Source/Impl/ClusterSource";
 import StyleBuilder from "../Style/StyleBuilder";
@@ -62,6 +63,9 @@ export default class LayerBuilder {
                 break;
             case SourceType.TileArcGISRest:
                 this.layer.setSource(new TileArcGISRestSource());
+                break;
+            case SourceType.ImageArcGISRest:
+                this.layer.setSource(new ImageArcGISRestSource());
                 break;
             default:
                 break;

@@ -1,18 +1,14 @@
-import { Tile as OlTileLayer } from "ol/layer";
-import { TileImage as OlTileImage } from "ol/source";
-import OlTileWMSSource from "ol/source/TileWMS";
-import OlTileArcGISRestSource from "ol/source/TileArcGISRest";
+import { Image as OlImageLayer } from "ol/layer";
 import AbstractLayer from "../AbstractLayer";
-import SourceType from "../../Source/SourceType";
 
-/** TileLayer */
-export default class TileLayer extends AbstractLayer {
+/** ImageLayer */
+export default class ImageLayer extends AbstractLayer {
     private loadingTiles = 0;
     private loadedTiles = 0;
     
     constructor(opts?: unknown) {
         super();
-        this.layer = new OlTileLayer();
+        this.layer = new OlImageLayer();
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
                 this.layer.setMinZoom(opts["min_zoom"]-1);
@@ -31,7 +27,7 @@ export default class TileLayer extends AbstractLayer {
      * @return layer's source url
      */
     public getUrl(): string {
-        return (<OlTileImage> this.layer.getSource()).getUrls()[0];
+        return (<any> this.layer.getSource()).getUrl();
     }
 
     /**
@@ -39,7 +35,8 @@ export default class TileLayer extends AbstractLayer {
      * @param url - source url
      */
     public setUrl(url: string): void {
-        (<OlTileImage> this.layer.getSource()).setUrl(url);
+        (<any> this.layer.getSource()).setUrl(url);
+        console.log(this.layer.getSource())
     }
 
     /**
@@ -47,12 +44,7 @@ export default class TileLayer extends AbstractLayer {
      * @param - params
      */
     public setParams(params: unknown): void {
-        if (this.type == SourceType.TileWMS) {
-            (<OlTileWMSSource> this.layer.getSource()).updateParams(params);
-        }
-        if (this.type == SourceType.TileArcGISRest) {
-            (<OlTileArcGISRestSource> this.layer.getSource()).updateParams(params);
-        }
+        (<any> this.layer.getSource()).updateParams(params);
     }
 
     /**
