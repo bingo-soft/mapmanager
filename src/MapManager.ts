@@ -13,6 +13,7 @@ import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
 import VectorLayer from "./Domain/Model/Layer/Impl/VectorLayer"
 import TileLayer from "./Domain/Model/Layer/Impl/TileLayer"
+import ImageLayer from "./Domain/Model/Layer/Impl/ImageLayer"
 import VectorTileLayer from "./Domain/Model/Layer/Impl/VectorTileLayer";
 import LayerBuilder from "./Domain/Model/Layer/LayerBuilder"
 import SourceType from "./Domain/Model/Source/SourceType"
@@ -39,6 +40,7 @@ import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 import Units from "./Domain/Model/Feature/Units";
 import StringUtil from "./Infrastructure/Util/StringUtil";
 import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat";
+
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
@@ -397,6 +399,10 @@ export default class MapManager {
                 builder = new LayerBuilder(new TileLayer(opts));
                 builder.setSource(SourceType.TileArcGISRest);  
                 break;
+            case SourceType.ImageArcGISRest:
+                builder = new LayerBuilder(new ImageLayer(opts));
+                builder.setSource(SourceType.ImageArcGISRest);  
+                break;
             default:
                 break;
         }
@@ -506,7 +512,7 @@ export default class MapManager {
                     builder.setVertexHighlightStyle(opts["style"]["highlight"]);
                 }
             }
-            if (type == SourceType.TileWMS || type == SourceType.TileArcGISRest || type == SourceType.XYZ) { 
+            if (type == SourceType.TileWMS || type == SourceType.TileArcGISRest || type == SourceType.ImageArcGISRest || type == SourceType.XYZ) { 
                 builder.setParams(opts["request"]["params"]);
                 builder.setUrl(opts["request"]["base_url"]);
             }

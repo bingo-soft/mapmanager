@@ -1,13 +1,13 @@
-import OlTileArcGISRestSource from "ol/source/TileArcGISRest";
+import OlImageArcGISRestSource from "ol/source/ImageArcGISRest";
 import BaseSource from "../BaseSource";
 import SourceType from "../SourceType";
 
-/** TileArcGISRestSource */
-export default class TileArcGISRestSource extends BaseSource {
+/** ImageArcGISRestSource */
+export default class ImageArcGISRestSource extends BaseSource {
     
     constructor() {
         super();
-        this.source = new OlTileArcGISRestSource({
+        this.source = new OlImageArcGISRestSource({
             crossOrigin: "anonymous"
         });
     }
@@ -17,7 +17,7 @@ export default class TileArcGISRestSource extends BaseSource {
      * @return type of source
      */
     public getType(): SourceType {
-        return SourceType.TileArcGISRest;
+        return SourceType.ImageArcGISRest;
     }
 
     
