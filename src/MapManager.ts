@@ -2,7 +2,7 @@ import { Vector as OlVectorSource } from "ol/source";
 import * as OlProj from "ol/proj";
 import { register as OlProjRegister } from 'ol/proj/proj4';
 import OlProjection from "ol/proj/Projection";
-import { Extent as OlExtent } from "ol/extent";
+import * as OlExtent from "ol/extent";
 import * as proj4 from "proj4"
 import OlVectorTileSource from "ol/source/VectorTile";
 import OlVectorTile from "ol/VectorTile";
@@ -414,7 +414,7 @@ export default class MapManager {
                 builder.setLoaderOptions(opts["request"]);
             }
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
-                    builder.setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection): Promise<string> => {
+                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layer = builder.getLayer();
                         const layerSrs = "EPSG:" + layer.getSRSId().toString();
                         const mapSrs = projection.getCode();
@@ -774,7 +774,7 @@ export default class MapManager {
         if (layer.getType() == SourceType.TileWMS) {
             map.fitLayer(layer, zoom);
             return;
-        } else if (layer.getType() != SourceType.Vector) {
+        } else if (layer.getType() == SourceType.Vector) {
             const loaderOptions = layer.getLoaderOptions();
             // layer was created via createLayerFromGeoJSON() so it has no loaderOptions
             if (!loaderOptions || !loaderOptions["base_url"]) {
@@ -800,8 +800,8 @@ export default class MapManager {
                 const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                 const response = await query.execute(payload);
                 if (response["extent"] && response["extent"].length == 4) {
-                    let extent = OlProj.transformExtent(<OlExtent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
-                    //extent = OlExtent.buffer(extent, 10);
+                    let extent = OlProj.transformExtent(<OlExtent.Extent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
+                    extent = OlExtent.buffer(extent, 10);
                     if (!extent.includes(NaN)) {
                         const olView = map.getMap().getView();
                         olView.fit(extent);
@@ -811,8 +811,6 @@ export default class MapManager {
                     }
                 }
             }
-        } else {
-            
         }
     }
 
@@ -1285,7 +1283,7 @@ export default class MapManager {
         proj4.default.defs(code, definition);
         OlProjRegister(proj4.default);
         if (extent && extent.length == 4) {
-            OlProj.get(code).setExtent(<OlExtent> extent);
+            OlProj.get(code).setExtent(<OlExtent.Extent> extent);
         }
     }
 
