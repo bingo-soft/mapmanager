@@ -106,17 +106,14 @@ export default class FeatureStyleBuilder {
      * @param optsLabel - label style options
      */
     private setLinestringStyle(optsLinestring: unknown, optsLabel: unknown): void {
-        const patternArr = [];
         let patternStyle = null;
         let patternTotalLength = 0;
         const pattern = optsLinestring["p"];
         if (pattern) {
             pattern.forEach((item: unknown) => {
                 if (item["tp"] == "t") {
-                    //patternStyle = { "fs": item["fs"], "fn": item["fn"], "l": item["v"] }
                     patternStyle = { "fnt": item["fs"] + "px " + item["fn"], "l": item["v"] }
                 } else {
-                    patternArr.push(item["w"]);
                     patternTotalLength += parseInt(item["w"]);
                 }
             });
@@ -131,15 +128,7 @@ export default class FeatureStyleBuilder {
             optsLabel["resolution"] = optsLinestring["resolution"];
         }
         this.style = new OlStyle({
-            stroke: new OlStroke({
-                color: optsLinestring["c"] || "#000", 
-                width: optsLinestring["w"] || 1,
-                lineCap: optsLinestring["lc"],
-                lineJoin: optsLinestring["lj"],
-                lineDash: patternArr,
-                lineDashOffset: optsLinestring["ldo"],
-                miterLimit: optsLinestring["ml"]
-            }),
+            stroke: this.createStrokeStyleInstance(optsLinestring),
             text: this.createTextStyleInstance(optsLabel)
         });
     }
@@ -171,10 +160,7 @@ export default class FeatureStyleBuilder {
             });
         }
         this.style = new OlStyle({
-            stroke: new OlStroke({
-                color: optsPolygon["c"] || "#000", 
-                width: optsPolygon["w"] || 1
-            }),
+            stroke: optsPolygon["st"] ? this.createStrokeStyleInstance(optsPolygon["st"]) : null,
             fill: fill,
             text: this.createTextStyleInstance(optsLabel)
         });
@@ -198,7 +184,7 @@ export default class FeatureStyleBuilder {
      * @param opts - options
      * @return OL Text Style instance
      */
-    private createTextStyleInstance(opts: unknown): OlText | null {
+    private createTextStyleInstance(opts: unknown): OlText {
         if (!opts) {
             return null;
         }
@@ -234,9 +220,34 @@ export default class FeatureStyleBuilder {
             scale: opts["sc"],
             rotateWithView: rotateWithView,
             rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0,
-
-            //padding: [20, 0, 0, 0]
         });
+    }
+
+    /**
+     * Creates and returns OL stroke instance
+     * @param optsLinestring - linestring style options
+     */
+    private createStrokeStyleInstance(optsLinestring: unknown): OlStroke {
+        const patternArr = [];
+        let patternTotalLength = 0;
+        const pattern = optsLinestring["p"];
+        if (pattern) {
+            pattern.forEach((item: unknown) => {
+                if (item["tp"] != "t") {
+                    patternArr.push(item["w"]);
+                    patternTotalLength += parseInt(item["w"]);
+                }
+            });
+        }
+        return new OlStroke({
+            color: optsLinestring["c"] || "#000", 
+            width: optsLinestring["w"] || 1,
+            lineCap: optsLinestring["lc"],
+            lineJoin: optsLinestring["lj"],
+            lineDash: patternArr,
+            lineDashOffset: optsLinestring["ldo"],
+            miterLimit: optsLinestring["ml"]
+        })
     }
 
     /**
@@ -297,7 +308,8 @@ export default class FeatureStyleBuilder {
     private buildFontString(size: number, name: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
         name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
-        size = size / resolution * 2.5/* / 32 */;
+        size = size / resolution * 2.5;
+        //size = size / resolution / 32;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         return size.toString() + "px " + name;   
     }
