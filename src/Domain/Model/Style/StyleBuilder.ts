@@ -360,7 +360,9 @@ export default class StyleBuilder {
 
             // feature based styles
             if (this.isStyleInFeatureAttribute && featureProps) {
-                const featureStyle = featureProps[this.styleAttr];
+                const featureStyle = typeof featureProps[this.styleAttr] === 'string'
+                  ? JSON.parse(featureProps[this.styleAttr]) : featureProps[this.styleAttr];
+
                 if (featureStyle && Object.keys(featureStyle).length != 0) {
                     const featureType = feature.getGeometry().getType(); 
 
