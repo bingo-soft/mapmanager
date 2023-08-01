@@ -1098,28 +1098,38 @@ export default class Map {
             view.setZoom(zoom);
             this.map.once("rendercomplete", () => {
                 // get map canvas through iterating its layers
-                const mapCanvas = document.createElement("canvas");
+                const mapCanvas = document.createElement('canvas');
                 const size = this.map.getSize();
                 mapCanvas.width = size[0];
                 mapCanvas.height = size[1];
-                const mapContext = mapCanvas.getContext("2d");
-                const layers = document.getElementsByClassName("ol-layer");
-                Array.prototype.forEach.call(layers, (layer: any) => {
-                    const canvas = layer.children[0];
-                    if (canvas.width > 0) {
-                        const opacity = canvas.parentNode.style.opacity;
-                        mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
-                        const transform = canvas.style.transform;
-                        // Get the transform parameters from the style's transform matrix
-                        const matrix = transform
-                            .match(/^matrix\(([^\(]*)\)$/)[1]
-                            .split(',')
-                            .map(Number);
-                        // Apply the transform to the export map context
-                        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
-                        mapContext.drawImage(canvas, 0, 0);
+                const mapContext = mapCanvas.getContext('2d');
+                Array.prototype.forEach.call(
+                    this.map.getViewport().querySelectorAll('.ol-layer canvas, canvas.ol-layer'),
+                    (canvas: any) => {
+                        if (canvas.width > 0) {
+                            const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
+                            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                            let matrix;
+                            const transform = canvas.style.transform;
+                            if (transform) {
+                                // Get the transform parameters from the style's transform matrix
+                                matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
+                            } else {
+                                matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
+                            }
+                            // Apply the transform to the export map context
+                            CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                            const backgroundColor = canvas.parentNode.style.backgroundColor;
+                            if (backgroundColor) {
+                                mapContext.fillStyle = backgroundColor;
+                                mapContext.fillRect(0, 0, canvas.width, canvas.height);
+                            }
+                            mapContext.drawImage(canvas, 0, 0);
+                        }
                     }
-                });
+                );
+                mapContext.globalAlpha = 1;
+                mapContext.setTransform(1, 0, 0, 1, 0, 0);
                 
                 let printContainer = document.getElementById("print-container");
                 if (printContainer) {
@@ -1137,7 +1147,8 @@ export default class Map {
                 img.setAttribute("crossorigin", "anonymous");
                 const mimeType = (exportType == ExportType.Printer || exportType == ExportType.PNG) ? "image/png" : "image/tiff";
                 //const mimeType = "image/png";
-                img.src = mapCanvas.toDataURL(mimeType); 
+                img.src = mapCanvas.toDataURL(mimeType);
+
                 img.onload = (): void => { 
                     if (exportType == ExportType.Printer) {
                         iframe.contentWindow.print();
