@@ -488,9 +488,18 @@ export default class MapManager {
                 } else {
                     builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
                         tile.setLoader(function(extent, resolution, projection) {
-                            fetch(url, {
-                                headers: opts["request"]["headers"]
-                            })
+                            const fetchOpts = {
+                                method: opts["request"]["method"],
+                                headers: opts["request"]["headers"],
+                            }
+                            if (opts["request"]["method"].toLowerCase() == "post") {
+                                if (opts["request"]["data"]) {
+                                    const data = new FormData();
+                                    data.append("data", JSON.stringify(opts["request"]["data"]));
+                                    fetchOpts["body"] = data;
+                                }
+                            }
+                            fetch(url, fetchOpts)
                             .then(function(response) {
                                 response.arrayBuffer()
                                 .then(function(data) {
