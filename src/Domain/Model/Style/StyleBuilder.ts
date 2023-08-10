@@ -23,6 +23,7 @@ export default class StyleBuilder {
     private uniqueColorField: string;
     private colorUtil: ColorUtil;
     private showLabelMaxResolution: number;
+    private pointIconFunction: (url: string) => string;
     private static readonly SHOW_LABEL_MAX_RESOLUTION = 10;
     private static readonly ANCHOR_POSITION = {
         "top": 0,
@@ -63,6 +64,9 @@ export default class StyleBuilder {
             if (Object.prototype.hasOwnProperty.call(opts, "style_in_feature_attribute")) {
                 this.isStyleInFeatureAttribute = opts["style_in_feature_attribute"];
                 this.styleAttr = opts["style_attribute"];
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "point_icon_function")) {
+                this.pointIconFunction = opts["point_icon_function"];
             }
             let hasUniqueStyle = false;
             if (Object.prototype.hasOwnProperty.call(opts, "unique_values") && Object.keys(opts["unique_values"]).length != 0) {
@@ -379,7 +383,10 @@ export default class StyleBuilder {
                     if (featureStyle["linestring"]) {
                         featureStyle["linestring"]["resolution"] = resolution;
                     }
-                    return new FeatureStyleBuilder(featureStyle, featureType).build();
+                    if (featureStyle["point"]) {
+                        featureStyle["point"]["resolution"] = resolution;
+                    }
+                    return new FeatureStyleBuilder(featureStyle, featureType, this.pointIconFunction).build();
                 }
             }
             // common features

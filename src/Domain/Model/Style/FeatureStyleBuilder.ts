@@ -34,8 +34,8 @@ export default class FeatureStyleBuilder {
      * @param opts - style text representation
      * @param featureType - type of feature
      */ 
-    constructor(opts: unknown, featureType: string) {
-        this.applyStyle(opts, featureType);
+    constructor(opts: unknown, featureType: string, pointIconFunction?: (url: string) => string) {
+        this.applyStyle(opts, featureType, pointIconFunction);
     }
 
     /**
@@ -43,16 +43,16 @@ export default class FeatureStyleBuilder {
      * @param style - style options
      * @param featureType - type of feature
      */
-    private applyStyle(style: unknown, featureType: string): void {
+    private applyStyle(style: unknown, featureType: string, pointIconFunction?: (url: string) => string): void {
         if (featureType == "Point") {
             if (style["point"]) {
-                this.setPointStyle(style["point"]);
+                this.setPointStyle(style["point"], pointIconFunction);
             } else if (style["label"]) {
                 this.setTextStyle(style["label"]);
             }
         }
         if (featureType == "MultiPoint" && style["point"]) {
-            this.setPointStyle(style["point"]);
+            this.setPointStyle(style["point"], pointIconFunction);
         }
         if ((featureType == "LineString" || featureType == "MultiLineString") && style["linestring"]) {
             this.setLinestringStyle(style["linestring"], style["label"]);
@@ -69,7 +69,7 @@ export default class FeatureStyleBuilder {
      * Sets point style
      * @param opts - options
      */
-    private setPointStyle(opts: unknown): void {
+    private setPointStyle(opts: unknown, pointIconFunction?: (url: string) => string): Promise<void> {
         let style: OlStyle = null;
         if (opts["mt"] == "s") {
             style = new OlStyle({
@@ -85,13 +85,20 @@ export default class FeatureStyleBuilder {
                 }),
             });
         } else if (opts["mt"] == "i") {
+            let sizes = [16, 16];
+            if (opts["w"] && opts["w"][0] && opts["w"][1]) {
+                sizes = this.buildIconSizes(opts["w"], opts["resolution"]);
+            }
             style = new OlStyle({
                 image: new OlIcon({
                     rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0,
                     offset: opts["off"],
-                    anchor: opts["ach"][0] && opts["ach"][1] ? 
-                        [FeatureStyleBuilder.ANCHOR_POSITION[opts["ach"][0]], FeatureStyleBuilder.ANCHOR_POSITION[opts["ach"][1]]] : [0.5, 0.5],
-                    src: opts["if"],
+                    anchor: opts["ach"] && opts["ach"][0] && opts["ach"][1] ? 
+                        [FeatureStyleBuilder.ANCHOR_POSITION[opts["ach"][0]], FeatureStyleBuilder.ANCHOR_POSITION[opts["ach"][1]]] : [0.5, 0.5], 
+                    width: sizes[0],  // opts["w"] && opts["w"][0] ? opts["w"][0] : undefined,
+                    height: sizes[1], // opts["w"] && opts["w"][1] ? opts["w"][1] : undefined,
+                    src: pointIconFunction ? pointIconFunction(opts["if"]) : "", //opts["if"],
+                    //scale: 0.5
                 })
             });
         } else {
@@ -312,6 +319,16 @@ export default class FeatureStyleBuilder {
         //size = size / resolution / 32;
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         return size.toString() + "px " + name;   
+    }
+
+    /**
+     * Returns an array of width and height depending on map resolution
+     * @param sizes - array of width and height
+     * @param resolution - map resolution
+     * @return array of width and height
+     */
+    private buildIconSizes(size: number[], resolution: number): number[] {
+        return [size[0] / resolution / 2.5, size[1] / resolution / 2.5];   
     }
 
     /**
