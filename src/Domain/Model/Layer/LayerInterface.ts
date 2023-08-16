@@ -13,6 +13,7 @@ import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import Map from "../Map/Map";
 import LoaderFunction from "./LoaderFunctionType";
+import FeatureClickFunction from "./FeatureClickFunctionType";
 
 
 /** LayerInterface */
@@ -104,14 +105,14 @@ export default interface LayerInterface
 
     /**
      * Returns layer's options
-     * @return data
+     * @return layer's options
      */
-    getLoaderOptions(): unknown;
+    getOptions(): unknown;
 
     /**
      * Sets layer's options
      */
-    setLoaderOptions(options: unknown): void;
+    setOptions(options: unknown): void;
 
     /**
      * Sets layer's tile url function
@@ -258,6 +259,12 @@ export default interface LayerInterface
      * @param css - feature popup CSS
      */
     setFeaturePopupCss(css: string): void;
+
+    /**
+     * Sets feature click callback 
+     * @param callback - feature callback function
+     */
+    setFeatureClickCallback(callback: FeatureClickFunction): void;
 
     /**
      * Returns vertex highlight style

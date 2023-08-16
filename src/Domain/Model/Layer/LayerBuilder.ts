@@ -15,7 +15,6 @@ import EventType from "../EventHandlerCollection/EventType";
 import LoaderFunction from "./LoaderFunctionType";
 import VectorTileSource from "../Source/Impl/VectorTileSource";
 
-
 /** LayerBuilder */
 export default class LayerBuilder {
     
@@ -109,8 +108,8 @@ export default class LayerBuilder {
      * @param options - options
      * @return layer builder instance
      */
-     public setLoaderOptions(options: unknown): LayerBuilder {
-        this.layer.setLoaderOptions(options);
+    public setOptions(options: unknown): LayerBuilder {
+        this.layer.setOptions(options);
         return this;
     }
 
