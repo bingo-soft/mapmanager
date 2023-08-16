@@ -15,6 +15,7 @@ import EventType from "../EventHandlerCollection/EventType";
 import EventBus from "../EventHandlerCollection/EventBus";
 import Map from "../Map/Map";
 import LoaderFunction from "./LoaderFunctionType";
+import FeatureClickFunction from "./FeatureClickFunctionType";
 
 
 /** AbstractLayer */
@@ -27,7 +28,7 @@ export default abstract class AbstractLayer implements LayerInterface
     protected eventHandlers: EventHandlerCollection;
     protected eventBus: EventBus;
     protected map: Map;
-    protected loaderOptions: unknown;
+    protected options: unknown;
 
     /**
      * Returns map instance
@@ -148,18 +149,17 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Returns layer's options
-     * @return layer's SRS
+     * @return layer's options
      */
-    public getLoaderOptions(): unknown {
-        return this.loaderOptions;
+    public getOptions(): unknown {
+        return this.options;
     }
 
     /**
      * Sets layer's options
-     * @return layer's SRS
      */
-    public setLoaderOptions(options: unknown): void {
-        this.loaderOptions = options;
+    public setOptions(options: unknown): void {
+        this.options = options;
     }
 
     /**
@@ -351,6 +351,14 @@ export default abstract class AbstractLayer implements LayerInterface
      * @param css - feature popup CSS
      */
     public setFeaturePopupCss(css: string): void  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets feature click callback 
+     * @param callback - feature callback function
+     */
+    public setFeatureClickCallback(callback: FeatureClickFunction): void  {
         throw new MethodNotImplemented();
     }
 

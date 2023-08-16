@@ -688,7 +688,7 @@ export default class Map {
 
     /**
      * Returns map layers.
-     * @param type - type
+     * @param type - layer type
      * @return map layers
      */
     public getLayers(type?: SourceType): LayerInterface[] {

@@ -40,6 +40,7 @@ import MethodNotImplemented from "./Domain/Exception/MethodNotImplemented";
 import Units from "./Domain/Model/Feature/Units";
 import StringUtil from "./Infrastructure/Util/StringUtil";
 import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat";
+import FeatureClickFunction from "./Domain/Model/Layer/FeatureClickFunctionType";
 
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
@@ -179,6 +180,18 @@ export default class MapManager {
      */
     public static addText(map: Map, coordinates: number[], opts: unknown): void {
         map.addText(coordinates, opts);
+    }
+
+    /**
+     * Sets feature click callback for all map's VectorTile layers
+     * @category Map
+     * @param map - map instance
+     * @param callback - feature callback function
+     */
+    public static setFeatureClickCallback(map: Map, callback: FeatureClickFunction): void {
+        map.getLayers(SourceType.VectorTile).forEach((layer: LayerInterface): void => {
+            layer.setFeatureClickCallback(callback);
+        });
     }
    
     /**
@@ -410,9 +423,7 @@ export default class MapManager {
             if (typeof opts["properties"] !== "undefined") { 
                 builder.setProperties(opts["properties"]);
             }
-            if (typeof opts["request"] !== "undefined") {
-                builder.setLoaderOptions(opts["request"]);
-            }
+            builder.setOptions(opts);
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
                     builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection): Promise<string> => {
                         const layer = builder.getLayer();
@@ -421,8 +432,8 @@ export default class MapManager {
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
-                        // request params might further be changed via layer.setLoaderOptions()
-                        opts["request"] = layer.getLoaderOptions();
+                        // request params might further be changed via layer.setOptions()
+                        opts["request"] = layer.getOptions()["request"] ;
                         let cqlFilter = "";
                         if (opts["request"]["cql_filter"]) {
                             cqlFilter = opts["request"]["cql_filter"] + " and ";
@@ -505,6 +516,7 @@ export default class MapManager {
                                 response.arrayBuffer()
                                 .then(function(data) {
                                     const format = tile.getFormat();
+                                    //const format = new MVT({featureClass: OlFeature});
                                     const features = format.readFeatures(data, {
                                         extent: extent,
                                         featureProjection: projection
@@ -614,7 +626,7 @@ export default class MapManager {
         if (layer.getType() != SourceType.Vector) {
             throw new MethodNotImplemented();
         }
-        const loaderOptions = layer.getLoaderOptions();
+        const loaderOptions = layer.getOptions()["request"];
         if (!loaderOptions || !loaderOptions["base_url"]) {
             return Promise.resolve((<OlVectorSource> layer.getLayer().getSource()).getFeatures().length);
         }
@@ -785,7 +797,7 @@ export default class MapManager {
             map.fitLayer(layer, zoom);
             return;
         } else if (layer.getType() == SourceType.Vector) {
-            const loaderOptions = layer.getLoaderOptions();
+            const loaderOptions = layer.getOptions()["request"];
             // layer was created via createLayerFromGeoJSON() so it has no loaderOptions
             if (!loaderOptions || !loaderOptions["base_url"]) {
                 map.fitLayer(layer, zoom);

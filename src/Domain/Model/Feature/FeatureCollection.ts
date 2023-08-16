@@ -21,7 +21,10 @@ export default class FeatureCollection {
      * @param features - array of features
      * @param layer - layer of features
      */
-    constructor(features: OlFeature[] | Feature[], layer?: LayerInterface) {
+    constructor(features?: OlFeature[] | Feature[], layer?: LayerInterface) {
+        if (!features || features.length == 0) {
+            return;
+        }
         if (features[0]) {
             if (features[0] instanceof OlFeature) {
                 (<OlFeature[]> features).forEach((el: OlFeature): void => {

@@ -42,6 +42,10 @@ export default class EventHandlerCollection {
      * @param id - id of handler
      */
     public remove(id: string): void {
+        const element = this.handlers.get(id);
+        if (!element) {
+            return;
+        }
         const type = this.handlers.get(id).type;
         const handler = this.handlers.get(id).handler;
         this.target.removeEventListener(type, <OlListener> handler);
