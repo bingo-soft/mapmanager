@@ -1,6 +1,8 @@
 //import OlMap from "ol/Map";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlFillPattern from "ol-ext/style/FillPattern";
+import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
+import CustomFillPattern from "./CustomFillPattern";
 
 /** FeatureStyleBuilder */
 export default class FeatureStyleBuilder {
@@ -148,9 +150,21 @@ export default class FeatureStyleBuilder {
     private setPolygonStyle(optsPolygon: unknown, optsLabel: unknown): void {
         let fill: OlFill | OlFillPattern = null;
         const fillStyle = (optsPolygon["fs"] ? optsPolygon["fs"] : "empty").toLowerCase();
+        let backgroundColor = optsPolygon["bc"] ? optsPolygon["bc"] : "#fff";
+        if (optsPolygon["o"]) {
+            backgroundColor = ColorUtil.applyOpacity(backgroundColor, optsPolygon["o"]);
+        }
         if (fillStyle == "empty") {
             fill = new OlFill({
-                color: optsPolygon["bc"]
+                color: backgroundColor
+            });
+        } else if (fillStyle == "hatch_dash_dot" || fillStyle == "image")  {
+            fill = new CustomFillPattern({
+                pattern: fillStyle,
+                size: optsPolygon["p"]["w"] || 1,
+                color: optsPolygon["p"]["c"] || "rgb(255, 255, 255)",
+                fill: new OlFill({color: backgroundColor}),
+                imageFile: optsPolygon["p"]["if"] || null
             });
         } else {
             fill = new OlFillPattern({
@@ -160,7 +174,7 @@ export default class FeatureStyleBuilder {
                 offset: optsPolygon["p"]["o"] || 0,
                 scale: optsPolygon["p"]["s"] || 1,
                 fill: new OlFill({
-                    color: optsPolygon["bc"]
+                    color: backgroundColor
                 }),
                 spacing: optsPolygon["p"]["ss"] || 10,
                 angle: optsPolygon["p"]["sr"] || 0

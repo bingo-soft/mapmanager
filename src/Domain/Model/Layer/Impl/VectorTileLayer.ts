@@ -1,6 +1,4 @@
 import geojsonvt from 'geojson-vt';
-import OlBaseEvent from "ol/events/Event";
-import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import OlVectorTileLayer from "ol/layer/VectorTile";
 import OlVectorTileSource from "ol/source/VectorTile";
 import { LoadFunction, UrlFunction } from "ol/Tile";
@@ -166,27 +164,6 @@ export default class VectorTileLayer extends AbstractLayer{
         } else {
             this.featurePopupCss = FeaturePopupCssStyle;
         }
-    }
-
-    /**
-     * Sets feature click callback 
-     * @param callback - feature callback function
-     */
-    public setFeatureClickCallback(callback: FeatureClickFunction): void {
-        const listener = (e: OlBaseEvent) => {
-            const features = new FeatureCollection();
-            const olMap = this.getMap().getMap();
-            olMap.forEachFeatureAtPixel((<OlMapBrowserEvent<UIEvent>>e).pixel, (feature: OlFeature) => {
-                features.add(new Feature(feature));
-            });
-            callback(features);
-        }
-        const map = this.getMap();
-        if (typeof callback !== "function") {
-            map.getEventHandlers().remove("VTFeatureClickEventHandler"); 
-            return;
-        }
-        map.getEventHandlers().add(EventType.Click, "VTFeatureClickEventHandler", listener); 
     }
 
     /**

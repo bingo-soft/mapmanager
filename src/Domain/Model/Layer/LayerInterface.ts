@@ -261,12 +261,6 @@ export default interface LayerInterface
     setFeaturePopupCss(css: string): void;
 
     /**
-     * Sets feature click callback 
-     * @param callback - feature callback function
-     */
-    setFeatureClickCallback(callback: FeatureClickFunction): void;
-
-    /**
      * Returns vertex highlight style
      * @return vertex highlight style
      */

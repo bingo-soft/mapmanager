@@ -49,12 +49,13 @@ export default class Pattern {
                 pattern: patternName,
                 fill: new OlFill({ color: options["background_color"] })
             });
-        } else if (patternName == "hatch_dash_dot") {
+        } else if (patternName == "hatch_dash_dot" || patternName == "image") {
             p = new CustomFillPattern({
                 pattern: patternName,
                 size: opts["pattern_stroke_width"] || 1,
                 color: opts["pattern_color"] || "rgb(255, 255, 255)",
                 fill: new OlFill({ color: options["background_color"] }),
+                imageFile: opts["pattern_image_file"] || null
             });
         } else {
             p = new OlFillPattern({
