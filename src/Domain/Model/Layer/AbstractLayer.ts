@@ -355,14 +355,6 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Sets feature click callback 
-     * @param callback - feature callback function
-     */
-    public setFeatureClickCallback(callback: FeatureClickFunction): void  {
-        throw new MethodNotImplemented();
-    }
-
-    /**
      * Returns vertex highlight style
      * @return vertex highlight style
      */

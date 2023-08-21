@@ -8,6 +8,8 @@ import OlVectorTileSource from "ol/source/VectorTile";
 import OlVectorTile from "ol/VectorTile";
 import { TileCoord as OlTilecoord } from 'ol/tilecoord';
 import OlFeature from "ol/Feature";
+import OlBaseEvent from "ol/events/Event";
+import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
@@ -183,15 +185,25 @@ export default class MapManager {
     }
 
     /**
-     * Sets feature click callback for all map's VectorTile layers
+     * Sets feature click callback for map
      * @category Map
      * @param map - map instance
      * @param callback - feature callback function
      */
     public static setFeatureClickCallback(map: Map, callback: FeatureClickFunction): void {
-        map.getLayers(SourceType.VectorTile).forEach((layer: LayerInterface): void => {
-            layer.setFeatureClickCallback(callback);
-        });
+        const listener = (e: OlBaseEvent) => {
+            const features = new FeatureCollection();
+            const olMap = map.getMap();
+            olMap.forEachFeatureAtPixel((<OlMapBrowserEvent<UIEvent>>e).pixel, (feature: OlFeature) => {
+                features.add(new Feature(feature));
+            });
+            callback(features);
+        }
+        if (typeof callback !== "function") {
+            map.getEventHandlers().remove("VTFeatureClickEventHandler"); 
+            return;
+        }
+        map.getEventHandlers().add(EventType.Click, "VTFeatureClickEventHandler", listener); 
     }
    
     /**

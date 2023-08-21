@@ -21,18 +21,31 @@ export default class CustomFillPattern extends OlStyleFill {
         }
         c.strokeStyle = olColorAsString(options.color || "#000");
         c.lineWidth = options.size || 1;
+        let pattern;
+        //const canvas = document.createElement("canvas");
+        //const ctx = canvas.getContext("2d");
         switch (options.pattern) {
             case "hatch_dash_dot":
                 this.createHatchDashDotPattern(c);
+                pattern = c.createPattern(this.canvas, "repeat");
+                this.setColor(pattern);
+                break;
+            case "image":
+                const image = new Image();
+                image.src = options.imageFile;
+                image.onload = () => {
+                    this.canvas.width = image.width;
+                    this.canvas.height = image.height;
+                    pattern = c.createPattern(image, "repeat");
+                    this.setColor(pattern);
+                };
+                this.setColor(pattern);
                 break;
             default:
                 break
 
         }
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const pattern = ctx.createPattern(this.canvas, 'repeat');
-        this.setColor(pattern);
+        
     }
 
     public static getPatterns() {
@@ -60,5 +73,4 @@ export default class CustomFillPattern extends OlStyleFill {
         context.lineTo(35, 23);
         context.stroke();
     }
-
 }
