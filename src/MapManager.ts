@@ -197,13 +197,16 @@ export default class MapManager {
             olMap.forEachFeatureAtPixel((<OlMapBrowserEvent<UIEvent>>e).pixel, (feature: OlFeature) => {
                 features.add(new Feature(feature));
             });
-            callback(features);
+            if (typeof callback === "function") {
+                callback(features);
+            }
         }
-        if (typeof callback !== "function") {
+        const vtLayers = map.getLayers(SourceType.VectorTile);
+        if (vtLayers.length == 0) {
             map.getEventHandlers().remove("VTFeatureClickEventHandler"); 
-            return;
+        } else if (vtLayers.length == 1) {
+            map.getEventHandlers().add(EventType.Click, "VTFeatureClickEventHandler", listener); 
         }
-        map.getEventHandlers().add(EventType.Click, "VTFeatureClickEventHandler", listener); 
     }
    
     /**
