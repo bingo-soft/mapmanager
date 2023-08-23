@@ -187,13 +187,13 @@ export default class StyleBuilder {
         }
         if (fillStyle == "empty") {
             fill = new OlFill({color: backgroundColor});
-        } else if (fillStyle == "hatch_dash_dot" || fillStyle == "image")  {
+        } else if (fillStyle == "hatch_dash_dot"/*  || fillStyle == "image" */)  {
             fill = new CustomFillPattern({
                 pattern: fillStyle,
                 size: opts["pattern_stroke_width"] || 1,
                 color: opts["pattern_color"] || "rgb(255, 255, 255)",
-                fill: new OlFill({color: backgroundColor}),
-                imageFile: opts["pattern_image_file"] || null
+                fill: new OlFill({color: backgroundColor})/* ,
+                imageFile: opts["pattern_image_file"] || null */
             });
         } else {
             fill = new OlFillPattern({
@@ -204,7 +204,8 @@ export default class StyleBuilder {
                 scale: opts["pattern_scale"] || 1,
                 fill: new OlFill({color: backgroundColor}),
                 spacing: opts["pattern_stroke_spacing"] || 10,
-                angle: opts["pattern_stroke_rotation"] || 0
+                angle: opts["pattern_stroke_rotation"] || 0,
+                image: opts["pattern_image_file"] ? new OlIcon({ src: opts["pattern_image_file"] }) : null
             });
         }
         const style = new OlStyle({

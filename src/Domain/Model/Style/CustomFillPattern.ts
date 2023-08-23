@@ -30,17 +30,22 @@ export default class CustomFillPattern extends OlStyleFill {
                 pattern = c.createPattern(this.canvas, "repeat");
                 this.setColor(pattern);
                 break;
-            case "image":
+            /* case "image":
                 const image = new Image();
                 image.src = options.imageFile;
                 image.onload = () => {
                     this.canvas.width = image.width;
                     this.canvas.height = image.height;
+                    //console.log(image.width)
+                    //console.log(image.height)
                     pattern = c.createPattern(image, "repeat");
-                    this.setColor(pattern);
+                    //this.setColor(pattern);
+                    //this.setColor("#770000");
+                    c.fillStyle = pattern;
+                    c.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    console.log(this.getColor())
                 };
-                this.setColor(pattern);
-                break;
+                break; */
             default:
                 break
 

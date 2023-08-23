@@ -158,13 +158,13 @@ export default class FeatureStyleBuilder {
             fill = new OlFill({
                 color: backgroundColor
             });
-        } else if (fillStyle == "hatch_dash_dot" || fillStyle == "image")  {
+        } else if (fillStyle == "hatch_dash_dot" /* || fillStyle == "image" */)  {
             fill = new CustomFillPattern({
                 pattern: fillStyle,
                 size: optsPolygon["p"]["w"] || 1,
                 color: optsPolygon["p"]["c"] || "rgb(255, 255, 255)",
-                fill: new OlFill({color: backgroundColor}),
-                imageFile: optsPolygon["p"]["if"] || null
+                fill: new OlFill({color: backgroundColor})/* ,
+                imageFile: optsPolygon["p"]["if"] || null */
             });
         } else {
             fill = new OlFillPattern({
@@ -173,11 +173,10 @@ export default class FeatureStyleBuilder {
                 color: optsPolygon["p"]["c"] || "rgb(255, 255, 255)",
                 offset: optsPolygon["p"]["o"] || 0,
                 scale: optsPolygon["p"]["s"] || 1,
-                fill: new OlFill({
-                    color: backgroundColor
-                }),
+                fill: new OlFill({ color: backgroundColor }),
                 spacing: optsPolygon["p"]["ss"] || 10,
-                angle: optsPolygon["p"]["sr"] || 0
+                angle: optsPolygon["p"]["sr"] || 0,
+                image: optsPolygon["p"]["if"] ? new OlIcon({ src: optsPolygon["p"]["if"] }) : null
             });
         }
         this.style = new OlStyle({
