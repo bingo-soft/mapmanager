@@ -1085,7 +1085,7 @@ export default class Map {
     /**
      * Exports map
      * @param exportType - type of export, defaults to ExportType.Printer
-     * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works only in case of PNG
+     * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works only in case of PNG or JPG
      * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64, defaults to true
      * @return in case of PNG or GeoTIFF a promise with the file information
      */
@@ -1145,8 +1145,15 @@ export default class Map {
 
                 const img = document.createElement("img");
                 img.setAttribute("crossorigin", "anonymous");
-                const mimeType = (exportType == ExportType.Printer || exportType == ExportType.PNG) ? "image/png" : "image/tiff";
-                //const mimeType = "image/png";
+                
+                let mimeType = "";
+                if (exportType == ExportType.Printer || exportType == ExportType.PNG) {
+                    mimeType = "image/png";
+                } else if (exportType == ExportType.JPG) {
+                    mimeType = "image/jpeg";
+                } else {
+                    mimeType = "image/tiff";
+                }
                 img.src = mapCanvas.toDataURL(mimeType);
 
                 img.onload = (): void => { 
@@ -1175,11 +1182,11 @@ export default class Map {
                                     resolve(ret);
                                 }
                             }
-                            if (exportType == ExportType.PNG && isDownload) {
+                            if ((exportType == ExportType.PNG || exportType == ExportType.JPG) && isDownload) {
                                 const link = document.createElement("a");
                                 link.style.display = "none";
                                 link.href = URL.createObjectURL(blob);
-                                link.download = "map.png";
+                                link.download = exportType == ExportType.PNG ? "map.png" : "map.jpg";
                                 link.click();
                             }
                         }, mimeType);  

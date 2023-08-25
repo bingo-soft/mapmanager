@@ -1,7 +1,8 @@
 enum ExportType {
     Printer = "printer",
     GeoTIFF = "geotiff",
-    PNG = "png"
+    PNG = "png",
+    JPG = "jpg"
 }
 
 export default ExportType;
