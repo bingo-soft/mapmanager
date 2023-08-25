@@ -165,7 +165,7 @@ export default class MapManager {
      * @category Map
      * @param map - map instance
      * @param exportType - type of export, defaults to ExportType.Printer
-     * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works for PNG only, defaults to true
+     * @param isDownload - parameter indicating whether the file should be downloaded by a browser, works for PNG and JPEG only, defaults to true
      * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64, defaults to true
      * @return in case of PNG or GeoTIFF a promise with the file information 
      */
