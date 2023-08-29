@@ -521,8 +521,9 @@ export default class MapManager {
                             if (opts["request"]["method"].toLowerCase() == "post") {
                                 if (opts["request"]["data"]) {
                                     const data = new FormData();
-                                    data.append("filter", JSON.stringify(opts["request"]["data"]["filter"]));
-                                    data.append("properties", JSON.stringify(opts["request"]["data"]["properties"]));
+                                    Object.keys(opts["request"]["data"]).forEach((key: string): void => {
+                                        data.append(key, JSON.stringify(opts["request"]["data"][key]));
+                                    });
                                     fetchOpts["body"] = data;
                                 }
                             }
