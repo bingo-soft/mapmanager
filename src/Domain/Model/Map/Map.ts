@@ -336,10 +336,10 @@ export default class Map {
                 return;
             }
             const zoom = this.map.getView().getZoom();
-            if (this.zoom != zoom) {
-                this.zoom = zoom; 
+            /* if (this.zoom != zoom) {
+                this.zoom = zoom;  */
                 callback(zoom);
-            }
+            /* } */
         });
     }
 
