@@ -43,6 +43,7 @@ import Units from "./Domain/Model/Feature/Units";
 import StringUtil from "./Infrastructure/Util/StringUtil";
 import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat";
 import FeatureClickFunction from "./Domain/Model/Layer/FeatureClickFunctionType";
+import { ZoomCallbackFunction } from "./Domain/Model/Interaction/InteractionCallbackType";
 
 
 /** A common class which simplifies usage of OpenLayers in GIS projects */
@@ -127,7 +128,7 @@ export default class MapManager {
      * @param map - map instance
      * @param callback - callback function to set
      */
-    public static setZoomCallback(map: Map, callback: (zoom: number) => void): void {
+    public static setZoomCallback(map: Map, callback: ZoomCallbackFunction): void {
         map.setZoomCallback(callback);
     }
 
