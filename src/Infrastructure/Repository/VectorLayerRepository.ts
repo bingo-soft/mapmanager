@@ -10,7 +10,7 @@ export default class VectorLayerRepository implements VectorLayerRepositoryInter
      * @param request - request params
      * @return result of API request
      */
-    public get(request: unknown): Promise<string> {
+    public get(request: unknown): Promise<any> {
         return ApiClient.request(<ApiRequest> request);
     }
 }

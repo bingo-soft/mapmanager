@@ -514,10 +514,17 @@ export default class MapManager {
                     });
                 } else {
                     builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
-                        tile.setLoader(function(extent, resolution, projection) {
-                            const fetchOpts = {
+                        tile.setLoader(async function(extent, resolution, projection) {
+                            const payload = {
+                                base_url: url,
                                 method: opts["request"]["method"],
                                 headers: opts["request"]["headers"],
+                                data: opts["request"]["data"],
+                                responseType: "arraybuffer",
+                                request_on_fullfilled: opts["request"]["request_on_fullfilled"],
+                                response_on_fullfilled: opts["request"]["response_on_fullfilled"],
+                                request_on_rejected: opts["request"]["request_on_rejected"],
+                                response_on_rejected: opts["request"]["response_on_rejected"]
                             }
                             if (opts["request"]["method"].toLowerCase() == "post") {
                                 if (opts["request"]["data"]) {
@@ -525,21 +532,18 @@ export default class MapManager {
                                     Object.keys(opts["request"]["data"]).forEach((key: string): void => {
                                         data.append(key, JSON.stringify(opts["request"]["data"][key]));
                                     });
-                                    fetchOpts["body"] = data;
+                                    payload["data"] = data;
                                 }
                             }
-                            fetch(url, fetchOpts)
-                            .then(function(response) {
-                                response.arrayBuffer()
-                                .then(function(data) {
-                                    const format = tile.getFormat();
-                                    //const format = new MVT({featureClass: OlFeature});
-                                    const features = format.readFeatures(data, {
-                                        extent: extent,
-                                        featureProjection: projection
-                                    });
-                                    tile.setFeatures(<OlFeature[]> features);
+                            const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                            await query.execute(payload)
+                            .then(function(data) {
+                                const format = tile.getFormat();
+                                const features = format.readFeatures(data, {
+                                    extent: extent,
+                                    featureProjection: projection
                                 });
+                                tile.setFeatures(<OlFeature[]> features);
                             });
                         });
                     });

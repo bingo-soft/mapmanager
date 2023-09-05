@@ -6,5 +6,5 @@ export default interface VectorLayerRepositoryInterface
      * @param request - request params
      * @return result of API request
      */
-    get(request: unknown): Promise<string>;
+    get(request: unknown): Promise<any>;
 }
