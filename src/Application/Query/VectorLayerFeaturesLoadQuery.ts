@@ -14,9 +14,9 @@ export default class VectorLayerFeaturesLoadQuery {
     /**
      * Executes a request
      * @param request - request object
-     * @return layer features in GeoJSON
+     * @return layer features in GeoJSON in case of vector layers, arraybuffer in case of vector tile layers
      */
-    public execute(request: unknown): Promise<string> {
+    public execute(request: unknown): Promise<any> {
         return this.repository.get(request);
     }
 }
