@@ -339,22 +339,23 @@ export default class StyleBuilder {
             const featureProps = feature.getProperties();
 
             
-            /* const ft = feature.getGeometry().getType(); 
-            if (ft == "Point" || ft == "MultiPoint") {
+            /* const ft = feature.getGeometry().getType();  */
+            /* if (ft == "Point" || ft == "MultiPoint") {
                 //featureProps["style_3402_"] = JSON.parse('{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }');
                 featureProps["system_style"] = JSON.parse('{ "label": {"fnt":"12px Arial","off":[0,0],"o":"f","p":"p","r":45,"rwv":"f","c":"#ff0000","f":"#ff0000","w":1,"l":["foo ","bold 14px sans-serif","\\n","","bar ","italic 16px sans-serif","baz","18px sans-serif"],"ta":"l","tb":"m","ma":1,"sc":1} }');
-            }
-            if (ft == "LineString" || ft == "MultiLineString") {
+            } */
+            /* if (ft == "LineString" || ft == "MultiLineString") {
+                // если указан "p" (паттерн), то "label" игнорируется
                 featureProps["system_style"] = JSON.parse(`
                     { 
-                        "linestring": {"c":"#0000ffff","w":2,"lc":"butt","lj":"bevel",
-                        "p": [ { "tp": "l", "w": 7 }, { "tp": "t", "w": 4, "v": "/", "fn": "Arial", "fs": 28 }, { "tp": "s", "w": 5 } ],
-                        "ldo":2,"ml":2},
+                        "linestring": {"c":"#0000ffff","w":2,"lc":"round","lj":"bevel",
+                            "p": [ { "tp": "l", "w": 7 }, { "tp": "t", "w": 4, "v": "X", "fn": "Arial", "fs": 28 }, { "tp": "s", "w": 5 } ],
+                            "ldo":2,"ml":2},
                         "label": {"fnt":"italic bold 10px Arial","off":[0,0],"o":"f","p":"l","r":0,"rwv":"f","c":"#00ff00","f":"#00ff00","w":1,"l":"Hello","ta":"l","tb":"m","ma":1,"sc":1 }
                     }
                 `);
-            }
-            if (ft == "Polygon" || ft == "MultiPolygon") {
+            } */
+            /* if (ft == "Polygon" || ft == "MultiPolygon") {
                 featureProps["system_style"] = JSON.parse(`
                     {
                         "polygon": {"c":"#ED5F5F","w":1,"bc":"#ff0000","p":{"c":"#B1A5A5","w":2,"ss":20,"sr":0,"o":0,"s":1},"fs":"hatch"},
