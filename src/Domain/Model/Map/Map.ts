@@ -193,7 +193,8 @@ export default class Map {
             view: new OlView({
                 projection: "EPSG:" + this.srsId.toString(),
                 center: center,
-                zoom: zoom
+                zoom: zoom,
+                multiWorld: true
             })
         });
         //_MAP_INSTANCE_ = this.map;
