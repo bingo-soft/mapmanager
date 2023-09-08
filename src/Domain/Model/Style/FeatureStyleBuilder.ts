@@ -133,7 +133,7 @@ export default class FeatureStyleBuilder {
             optsLabel["c"] = optsLinestring["c"];
             optsLabel["f"] = optsLinestring["c"];
             optsLabel["w"] = 1;
-            optsLabel["rp"] = patternTotalLength;
+            optsLabel["rp"] = patternTotalLength != 0 ? patternTotalLength  + 5 : 30;
             optsLabel["resolution"] = optsLinestring["resolution"];
         }
         this.style = new OlStyle({

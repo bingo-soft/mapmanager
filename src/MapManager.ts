@@ -448,15 +448,6 @@ export default class MapManager {
                         if (layerSrs != mapSrs) {
                             extent = OlProj.transformExtent(extent, mapSrs, layerSrs);
                         }
-                        const maxExtentWidth = projection.getWorldExtent()[2] - projection.getWorldExtent()[0]
-                        if (extent[0] < -maxExtentWidth) {
-                          extent[0] += maxExtentWidth
-                          extent[2] += maxExtentWidth
-                        }
-                        if (extent[2] > maxExtentWidth) {
-                          extent[0] -= maxExtentWidth
-                          extent[2] -= maxExtentWidth
-                        }
                         // request params might further be changed via layer.setOptions()
                         opts["request"] = layer.getOptions()["request"] ;
                         let cqlFilter = "";
