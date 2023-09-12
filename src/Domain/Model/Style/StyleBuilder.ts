@@ -10,10 +10,11 @@ import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import SourceType from "../Source/SourceType";
 import FeatureStyleBuilder from "./FeatureStyleBuilder";
 import CustomFillPattern from "./CustomFillPattern";
+import LayerInterface from "../Layer/LayerInterface";
 
 /** StyleBuilder */
 export default class StyleBuilder {
-    private sourceType: SourceType;
+    private layer: LayerInterface;
     private style: StyleType;
     private clusterStyle: OlStyle;
     private field: string | string[];
@@ -35,10 +36,14 @@ export default class StyleBuilder {
 
     /**
      * @param opts - options
-     * @param sourceType - soutce type
+     * @param layer - layer
      */ 
-    constructor(opts: unknown, sourceType?: SourceType) {
-        this.sourceType = sourceType;
+    /* constructor(opts: unknown, sourceType?: SourceType) {
+        this.sourceType = sourceType; */
+    constructor(opts: unknown, layer?: LayerInterface) {
+        if (layer) {
+            this.layer = layer;
+        }
         this.style = {
             "Point": null,
             "MultiPoint": null,
@@ -79,7 +84,7 @@ export default class StyleBuilder {
                     opts["point"]["color"] = opts["unique_values"]["start_color"];
                 }
                 this.setPointStyle(opts["point"]);
-                if (this.sourceType == SourceType.Cluster) {
+                if (this.layer.getType() == SourceType.Cluster) {
                     this.setClusterStyle(opts["point"]);
                 }
             }
@@ -337,8 +342,6 @@ export default class StyleBuilder {
                 }
             }
             const featureProps = feature.getProperties();
-
-            
             /* const ft = feature.getGeometry().getType();  */
             /* if (ft == "Point" || ft == "MultiPoint") {
                 //featureProps["style_3402_"] = JSON.parse('{ "point": {"mt":"i","c":"#ff000077","w":15,"r":1,"off":[0,0],"ach":["c","c"],"if":"car-icon.png"} }');

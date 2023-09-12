@@ -862,7 +862,39 @@ export default class MapManager {
     }
 
     /**
+     * Returns layer properties
+     * @category Layer
+     * @param layer - layer
+     * @return layer properties
+     */
+    public static getProperties(layer: LayerInterface): unknown { 
+        return layer.getProperties();
+    }
+
+    /**
+     * Sets layer properties
+     * @category Layer
+     * @param layer - property layer
+     * @param properties - properties
+     */
+    public static setProperties(layer: LayerInterface, properties: unknown): void { 
+        return layer.setProperties(properties);
+    }
+
+    /**
+     * Sets layer property
+     * @category Layer
+     * @param layer - property layer
+     * @param name - property name
+     * @param value - property value
+     */
+    public static setProperty(layer: LayerInterface, name: string, value: unknown): void { 
+        return layer.setProperty(name, value);
+    }
+
+    /**
      * Returns an array of layers where feature intersects layer's feature(s)
+     * @category Feature
      * @param feature - feature
      * @return an array of intersected layers
      */
