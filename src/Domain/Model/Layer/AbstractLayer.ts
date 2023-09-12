@@ -96,6 +96,15 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Sets layer property
+     * @param name - property name
+     * @param property - property value
+     */
+    public setProperty(name: string, value: unknown): void {
+        this.properties[name] = value;
+    }
+
+    /**
      * Returns layer's event handlers
      * @return layer's event handlers
      */

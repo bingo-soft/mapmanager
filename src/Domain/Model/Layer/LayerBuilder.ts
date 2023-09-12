@@ -94,6 +94,16 @@ export default class LayerBuilder {
     }
 
     /**
+     * Sets layer property
+     * @param name - property name
+     * @param property - property value
+     */
+    public setProperty(name: string, value: unknown): LayerBuilder {
+        this.layer.setProperty(name, value);
+        return this;
+    }
+
+    /**
      * Sets layer's loader
      * @param loader - loader function
      * @return layer builder instance
@@ -176,7 +186,7 @@ export default class LayerBuilder {
      * @return layer builder instance
      */
     public setStyle(opts?: unknown): LayerBuilder {
-        this.layer.setStyle((new StyleBuilder(opts, this.layer.getType())).build());
+        this.layer.setStyle((new StyleBuilder(opts, this.layer)).build());
         return this;
     }
 

@@ -96,6 +96,13 @@ export default interface LayerInterface
      * @return layer properties
      */
     setProperties(source: unknown): void;
+
+    /**
+     * Sets layer property
+     * @param name - property name
+     * @param property - property value
+     */
+    setProperty(name: string, value: unknown): void;
     
     /**
      * Sets layer loader
