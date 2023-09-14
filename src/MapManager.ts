@@ -525,6 +525,7 @@ export default class MapManager {
                                 headers: opts["request"]["headers"],
                                 data: opts["request"]["data"],
                                 responseType: "arraybuffer",
+                                axios_params: opts["request"]["axios_params"],
                                 request_on_fullfilled: opts["request"]["request_on_fullfilled"],
                                 response_on_fullfilled: opts["request"]["response_on_fullfilled"],
                                 request_on_rejected: opts["request"]["request_on_rejected"],
