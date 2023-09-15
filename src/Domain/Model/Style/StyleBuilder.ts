@@ -16,6 +16,7 @@ import LayerInterface from "../Layer/LayerInterface";
 export default class StyleBuilder {
     private layer: LayerInterface;
     private style: StyleType;
+    private styleTemplated: StyleType;
     private clusterStyle: OlStyle;
     private field: string | string[];
     private isStyleInFeatureAttribute: boolean;
@@ -32,7 +33,8 @@ export default class StyleBuilder {
         "left": 0,
         "right": 1,
         "center": 0.5
-    }
+    };
+    styleTemplate: any[];
 
     /**
      * @param opts - options
@@ -43,17 +45,12 @@ export default class StyleBuilder {
     constructor(opts: unknown, layer?: LayerInterface) {
         if (layer) {
             this.layer = layer;
+            const layerProperties = layer.getProperties();
+            if (layerProperties && Array.isArray(layerProperties["styleTemplate"])) {
+                this.styleTemplate = layerProperties["styleTemplate"];
+            }
         }
-        this.style = {
-            "Point": null,
-            "MultiPoint": null,
-            "LineString": null,
-            "MultiLineString": null,
-            "Polygon": null,
-            "MultiPolygon": null,
-            "GeometryCollection": null,
-            "Text": null
-        };
+        this.style = { "Point": null, "MultiPoint": null, "LineString": null, "MultiLineString": null, "Polygon": null, "MultiPolygon": null, "GeometryCollection": null, "Text": null };
         // TODO: конвертировать короткие стили в длинные, если надо
         // opts = this.convertOptions(opts);
         this.applyOptions(opts);
@@ -62,9 +59,11 @@ export default class StyleBuilder {
     /**
      * Applies options to style
      * @param opts - options
+     * @param geomType - type of geometry to apply style to, applies to all types if omitted
      */
-    private applyOptions(opts: unknown): void {
+    private applyOptions(opts: unknown, isTemplatedStyle: boolean = false): OlStyle | void {
         if (typeof opts !== "undefined") {
+            this.styleTemplated = { "Point": null, "MultiPoint": null, "LineString": null, "MultiLineString": null, "Polygon": null, "MultiPolygon": null, "GeometryCollection": null, "Text": null };
             this.isStyleInFeatureAttribute = false;
             if (Object.prototype.hasOwnProperty.call(opts, "style_in_feature_attribute")) {
                 this.isStyleInFeatureAttribute = opts["style_in_feature_attribute"];
@@ -83,7 +82,7 @@ export default class StyleBuilder {
                 if (hasUniqueStyle && opts["point"]) {
                     opts["point"]["color"] = opts["unique_values"]["start_color"];
                 }
-                this.setPointStyle(opts["point"]);
+                this.setPointStyle(opts["point"], isTemplatedStyle);
                 if (this.layer.getType() == SourceType.Cluster) {
                     this.setClusterStyle(opts["point"]);
                 }
@@ -92,14 +91,14 @@ export default class StyleBuilder {
                 if (hasUniqueStyle && opts["linestring"]) {
                     opts["linestring"]["color"] = opts["unique_values"]["start_color"];
                 }
-                this.setLinestringStyle(opts["linestring"]);
+                this.setLinestringStyle(opts["linestring"], isTemplatedStyle);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "polygon") && Object.keys(opts["polygon"]).length != 0) {
                 if (hasUniqueStyle && opts["polygon"]) {
                     opts["polygon"]["background_color"] = opts["unique_values"]["start_color"];
                 }
-                this.setPolygonStyle(opts["polygon"]);
-                this.setGeometryCollectionStyle(opts["polygon"]);
+                this.setPolygonStyle(opts["polygon"], isTemplatedStyle);
+                this.setGeometryCollectionStyle(opts["polygon"], isTemplatedStyle);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "label") && Object.keys(opts["label"]).length != 0) {
                 this.setTextStyle(opts["label"]);
@@ -119,7 +118,7 @@ export default class StyleBuilder {
      * @param opts - options
      * @return style builder instance
      */
-    private setPointStyle(opts: unknown): StyleBuilder {
+    private setPointStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
         let style: OlStyle = null;
         if (opts["marker_type"] == "simple_point") {
             style = new OlStyle({
@@ -147,8 +146,9 @@ export default class StyleBuilder {
         } else {
             return;
         }
-        this.style["Point"] = style;
-        this.style["MultiPoint"] = style;
+        const res = isTemplatedStyle ? this.styleTemplated : this.style;
+        res["Point"] = style;
+        res["MultiPoint"] = style;
         return this;
     }
 
@@ -157,7 +157,7 @@ export default class StyleBuilder {
      * @param opts - options
      * @return style builder instance
      */
-    private setLinestringStyle(opts: unknown): StyleBuilder {
+    private setLinestringStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
         let color = opts["color"] ? opts["color"] : "#fff";
         if (opts["opacity"]) {
             color = ColorUtil.applyOpacity(color, opts["opacity"]);
@@ -173,8 +173,9 @@ export default class StyleBuilder {
                 miterLimit: opts["miter_limit"]
             }),
         });
-        this.style["LineString"] = style;
-        this.style["MultiLineString"] = style;
+        const res = isTemplatedStyle ? this.styleTemplated : this.style;
+        res["LineString"] = style;
+        res["MultiLineString"] = style;
         return this;
     }
 
@@ -183,7 +184,7 @@ export default class StyleBuilder {
      * @param opts - options
      * @return style builder instance
      */
-    private setPolygonStyle(opts: unknown): StyleBuilder {
+    private setPolygonStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
         let fill: OlFill | OlFillPattern = null;
         const fillStyle = (opts["fill_style"] ? opts["fill_style"] : "empty").toLowerCase();
         let backgroundColor = opts["background_color"] ? opts["background_color"] : "#fff";
@@ -220,8 +221,9 @@ export default class StyleBuilder {
             }),
             fill: fill
         });
-        this.style["Polygon"] = style;
-        this.style["MultiPolygon"] = style;
+        const res = isTemplatedStyle ? this.styleTemplated : this.style;
+        res["Polygon"] = style;
+        res["MultiPolygon"] = style;
         return this;
     }
 
@@ -263,7 +265,7 @@ export default class StyleBuilder {
      * @param opts - options
      * @return style builder instance
      */
-     private setGeometryCollectionStyle(opts: unknown): StyleBuilder {
+     private setGeometryCollectionStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
         const opacity = opts["background_color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : null;
         const style = new OlStyle({
             image: new OlCircleStyle({
@@ -284,7 +286,8 @@ export default class StyleBuilder {
                 color: opts["opacity"] ? opacity : opts["background_color"],
             }),
         });
-        this.style["GeometryCollection"] = style;
+        const res = isTemplatedStyle ? this.styleTemplated : this.style;
+        res["GeometryCollection"] = style;
         return this;
     }
 
@@ -326,7 +329,7 @@ export default class StyleBuilder {
      */
     public build(useExternalStyleBuilder = false, useLabelTextOption = false): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
-            let style: OlStyle;
+            let style = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style;
             // clustered features
             const clusteredFeatures = feature.get('features');
             if (clusteredFeatures) {
@@ -341,6 +344,7 @@ export default class StyleBuilder {
                     }
                 }
             }
+            const geomType = feature.getGeometry().getType();
             const featureProps = feature.getProperties();
             /* const ft = feature.getGeometry().getType();  */
             /* if (ft == "Point" || ft == "MultiPoint") {
@@ -368,6 +372,18 @@ export default class StyleBuilder {
             }
             feature.setProperties(featureProps); */
 
+            // template based styles
+            if (this.styleTemplate) {
+                const context = feature.getProperties();
+                for (let i = 0; i < this.styleTemplate.length; i++) {
+                    const condition = eval(this.styleTemplate[i].condition);
+                    if (condition) {
+                        this.applyOptions(this.styleTemplate[i].style, true);
+                        return this.styleTemplated[geomType] ? this.styleTemplated[geomType] : this.style[geomType];
+                    }
+                }
+            }
+            
             // feature based styles
             if (this.isStyleInFeatureAttribute && featureProps) {
                 const featureStyle = typeof featureProps[this.styleAttr] === 'string'
@@ -400,17 +416,14 @@ export default class StyleBuilder {
                 const featureStyle = this.externalStyleBuilder(featureProps);
                 this.applyOptions(featureStyle);
             }
-            const geomType = feature.getGeometry().getType();
             if (this.style[geomType]) {
                 style = this.style[geomType];
-            } else {
-                (<void | OlStyle | OlStyle[]> style) = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style
             }
             // painting on unique attribute value
-            this.paintOnUniqueAttributeValue(feature, style);
+            this.paintOnUniqueAttributeValue(feature, <OlStyle> style);
             // apply text 
-            this.applyText(feature, style, geomType, resolution, useLabelTextOption);
-            return style;
+            this.applyText(feature, <OlStyle> style, geomType, resolution, useLabelTextOption);
+            return <OlStyle> style;
         }
     }
 
