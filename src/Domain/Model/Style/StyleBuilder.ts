@@ -373,13 +373,17 @@ export default class StyleBuilder {
             feature.setProperties(featureProps); */
 
             // template based styles
-            if (this.styleTemplate) {
-                const context = feature.getProperties();
-                for (let i = 0; i < this.styleTemplate.length; i++) {
-                    const condition = eval(this.styleTemplate[i].condition);
-                    if (condition) {
-                        this.applyOptions(this.styleTemplate[i].style, true);
-                        return this.styleTemplated[geomType] ? this.styleTemplated[geomType] : this.style[geomType];
+            const layerProperties = this.layer ? this.layer.getProperties() : null;
+            if (layerProperties && Array.isArray(layerProperties["styleTemplate"])) {
+                this.styleTemplate = layerProperties["styleTemplate"];
+                if (this.styleTemplate) {
+                    const context = feature.getProperties();
+                    for (let i = 0; i < this.styleTemplate.length; i++) {
+                        const condition = eval(this.styleTemplate[i].condition);
+                        if (condition) {
+                            this.applyOptions(this.styleTemplate[i].style, true);
+                            return this.styleTemplated[geomType] ? this.styleTemplated[geomType] : this.style[geomType];
+                        }
                     }
                 }
             }
