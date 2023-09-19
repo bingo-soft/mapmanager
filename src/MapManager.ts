@@ -95,6 +95,19 @@ export default class MapManager {
     }
 
     /**
+     * Refreshes layers on map
+     * @category Map
+     * @param map - map instance
+     * @param layers - array of layers to refresh, if omitted or empty array, all map layers will be refreshed 
+     */
+    public static refresh(map: Map, layers?: LayerInterface[]): void {
+        if (!layers) {
+            layers = [];
+        }
+        map.refresh(layers);
+    }
+
+    /**
      * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
      * @category Map
      * @param map - map instance

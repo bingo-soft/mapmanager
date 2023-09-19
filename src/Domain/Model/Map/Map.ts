@@ -286,6 +286,20 @@ export default class Map {
     }
 
     /**
+     * Refreshes layers on map
+     * @category Map
+     * @param layers - array of layers to refresh
+     */
+    public refresh(layers: LayerInterface[]): void {
+        if (layers.length == 0) {
+            layers = Array.from(this.layers);
+        }
+        layers.forEach((layer: LayerInterface): void => {
+            layer.getLayer().getSource().changed();
+        });
+    }
+
+    /**
      * Sets center of the map. Notice: in case of degree-based CRS x is longitude, y is latitude.
      * @param opts - options
      */
