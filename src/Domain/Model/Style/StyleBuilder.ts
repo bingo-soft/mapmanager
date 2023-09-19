@@ -59,7 +59,7 @@ export default class StyleBuilder {
     /**
      * Applies options to style
      * @param opts - options
-     * @param geomType - type of geometry to apply style to, applies to all types if omitted
+     * @param isTemplatedStyle - a boolean indicating that options are applied to templated style, defaults to false
      */
     private applyOptions(opts: unknown, isTemplatedStyle: boolean = false): OlStyle | void {
         if (typeof opts !== "undefined") {
@@ -83,7 +83,7 @@ export default class StyleBuilder {
                     opts["point"]["color"] = opts["unique_values"]["start_color"];
                 }
                 this.setPointStyle(opts["point"], isTemplatedStyle);
-                if (this.layer.getType() == SourceType.Cluster) {
+                if (this.layer && this.layer.getType() == SourceType.Cluster) {
                     this.setClusterStyle(opts["point"]);
                 }
             }
@@ -395,8 +395,6 @@ export default class StyleBuilder {
 
                 if (featureStyle && Object.keys(featureStyle).length != 0) {
                     const featureType = feature.getGeometry().getType(); 
-
-
                     /* // TEMP
                     if (featureType == "LineString" || featureType == "MultiLineString") {
                         console.log(featureProps["handle"]);
