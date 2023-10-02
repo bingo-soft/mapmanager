@@ -1,5 +1,6 @@
 import { Vector as OlVectorSource } from "ol/source";
 import * as OlProj from "ol/proj";
+import { GeoJSON as OlGeoJSON }  from "ol/format";
 import { register as OlProjRegister } from 'ol/proj/proj4';
 import OlProjection from "ol/proj/Projection";
 import * as OlExtent from "ol/extent";
@@ -454,7 +455,7 @@ export default class MapManager {
             }
             builder.setOptions(opts);
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
-                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection): Promise<string> => {
+                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection, success, failure): Promise<string> => {
                         const layer = builder.getLayer();
                         const layerSrs = "EPSG:" + layer.getSRSId().toString();
                         const mapSrs = projection.getCode();
@@ -499,20 +500,21 @@ export default class MapManager {
                             };
                         }
 
-
-                        /* let ret = null;
-                        const worker = new Worker("Domain/Model/Source/Worker/VectorLoadWorker.ts");
-                        worker.onmessage = (e) => {
-                            console.log("From worker", e);
-                            ret = e.data;
-                            return ret;
+                        /* const worker = new Worker("Domain/Model/Source/Worker/VectorLoadWorker.ts");
+                        /worker.onmessage = (e) => {
+                            (<OlVectorSource> builder.getSource()).addFeatures(new OlGeoJSON().readFeatures(e.data, {
+                                dataProjection: layerSrs,
+                                featureProjection: mapSrs
+                            }));
                         }
                         worker.postMessage(payload); */
                         
-
-
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                        return await query.execute(payload);
+                        const data = await query.execute(payload);
+                        (<OlVectorSource> builder.getSource()).addFeatures(new OlGeoJSON().readFeatures(data, {
+                            dataProjection: layerSrs,
+                            featureProjection: mapSrs
+                        }));
                     });
             }
             if (type == SourceType.VectorTile) {

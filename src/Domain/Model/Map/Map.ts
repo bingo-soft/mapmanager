@@ -1237,7 +1237,7 @@ export default class Map {
         this.featurePopupOverlay.setPosition(null);
 
         let onTop = true;
-        this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => { console.log(onTop);
+        this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
             if (!onTop) {
                 return;
             }
