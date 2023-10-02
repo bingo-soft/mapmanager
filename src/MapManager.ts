@@ -9,7 +9,7 @@ import OlVectorTile from "ol/VectorTile";
 import { TileCoord as OlTilecoord } from 'ol/tilecoord';
 import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
-import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
+import { ImageTile, MapBrowserEvent as OlMapBrowserEvent, Tile } from "ol";
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
@@ -498,6 +498,19 @@ export default class MapManager {
                                 "srs_handling_type": opts["srs_handling"]["srs_handling_type"]
                             };
                         }
+
+
+                        /* let ret = null;
+                        const worker = new Worker("Domain/Model/Source/Worker/VectorLoadWorker.ts");
+                        worker.onmessage = (e) => {
+                            console.log("From worker", e);
+                            ret = e.data;
+                            return ret;
+                        }
+                        worker.postMessage(payload); */
+                        
+
+
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         return await query.execute(payload);
                     });
@@ -576,6 +589,21 @@ export default class MapManager {
             if (type == SourceType.TileWMS || type == SourceType.TileArcGISRest || type == SourceType.ImageArcGISRest || type == SourceType.XYZ) { 
                 builder.setParams(opts["request"]["params"]);
                 builder.setUrl(opts["request"]["base_url"]);
+                if (type == SourceType.TileWMS) { 
+                    builder.setTileLoadFunction(async (tile: ImageTile, url: string) => {
+                        const payload = {
+                            method: opts["request"]["method"],
+                            base_url: opts["request"]["base_url"],
+                            headers: opts["request"]["headers"],
+                            responseType: "arraybuffer"
+                        };
+                        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                        await query.execute(payload)
+                        .then(function(data) {
+                            (<HTMLImageElement> tile.getImage()).src = url;
+                        });
+                    });
+                }
             }
             if (Object.prototype.hasOwnProperty.call(opts, "feature_popup_template")) {
                 builder.setFeaturePopupTemplate(opts["feature_popup_template"]);

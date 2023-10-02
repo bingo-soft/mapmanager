@@ -3,6 +3,7 @@ import { Source as OlSource } from "ol/source";
 import { LoadFunction, UrlFunction } from "ol/Tile";
 import OlFeature from "ol/Feature";
 import OlGeoJSON from "ol/format/GeoJSON";
+import { FeatureLoader } from "ol/featureloader";
 import LayerInterface from "./LayerInterface";
 import SourceType from "../Source/SourceType";
 import SourceInterface from "../Source/SourceInterface";
@@ -14,9 +15,6 @@ import Feature from "../Feature/Feature";
 import EventType from "../EventHandlerCollection/EventType";
 import EventBus from "../EventHandlerCollection/EventBus";
 import Map from "../Map/Map";
-import LoaderFunction from "./LoaderFunctionType";
-import FeatureClickFunction from "./FeatureClickFunctionType";
-
 
 /** AbstractLayer */
 export default abstract class AbstractLayer implements LayerInterface
@@ -152,7 +150,7 @@ export default abstract class AbstractLayer implements LayerInterface
      * Sets layer's loader
      * @param loader - loader function
      */
-    public setLoader(loader: LoaderFunction): void {
+    public setLoader(loader: FeatureLoader): void {
         throw new MethodNotImplemented();
     }
 
