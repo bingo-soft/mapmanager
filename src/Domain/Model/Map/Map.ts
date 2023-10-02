@@ -832,25 +832,27 @@ export default class Map {
                 const result = parser.parseFromString(text, "application/xml");
                 if (result) {
                     const layers = result.querySelector("Capability Layer");
-                    const layer = Array.from(layers.querySelectorAll("Layer")).find(el => el.textContent.includes(layerName));
-                    if (layer) {
-                        const latLonBbox = layer.querySelector("LatLonBoundingBox");
-                        if (latLonBbox) {
-                            const extent = [
-                                parseFloat(latLonBbox.getAttribute("minx")),
-                                parseFloat(latLonBbox.getAttribute("miny")),
-                                parseFloat(latLonBbox.getAttribute("maxx")),
-                                parseFloat(latLonBbox.getAttribute("maxy"))
-                            ];
-                            let extent_3857: OlExtent.Extent = OlProj.transformExtent(extent, "EPSG:4326", "EPSG:" + this.getSRSId());
-                            extent_3857 = OlExtent.buffer(extent_3857, 10);
-                            const olView = this.getMap().getView();
-                            olView.fit(extent_3857);
-                            if (typeof zoom !== "undefined") {
-                                olView.setZoom(zoom);
+                    if (layers) {
+                        const layer = Array.from(layers.querySelectorAll("Layer")).find(el => el.textContent.includes(layerName));
+                        if (layer) {
+                            const latLonBbox = layer.querySelector("LatLonBoundingBox");
+                            if (latLonBbox) {
+                                const extent = [
+                                    parseFloat(latLonBbox.getAttribute("minx")),
+                                    parseFloat(latLonBbox.getAttribute("miny")),
+                                    parseFloat(latLonBbox.getAttribute("maxx")),
+                                    parseFloat(latLonBbox.getAttribute("maxy"))
+                                ];
+                                let extent_3857: OlExtent.Extent = OlProj.transformExtent(extent, "EPSG:4326", "EPSG:" + this.getSRSId());
+                                extent_3857 = OlExtent.buffer(extent_3857, 10);
+                                const olView = this.getMap().getView();
+                                olView.fit(extent_3857);
+                                if (typeof zoom !== "undefined") {
+                                    olView.setZoom(zoom);
+                                }
                             }
                         }
-                    }
+                    }    
                 }
             });
         }
@@ -1233,7 +1235,12 @@ export default class Map {
     private showFeaturePopup(pixel: Pixel): void {
         const featurePopupElement = this.featurePopupOverlay.getElement();
         this.featurePopupOverlay.setPosition(null);
-        this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => {
+
+        let onTop = true;
+        this.map.forEachFeatureAtPixel(pixel, (olFeature: OlFeature, olLayer: OlLayer): void => { console.log(onTop);
+            if (!onTop) {
+                return;
+            }
             const clusteredFeatures = olFeature.get('features');
             if (clusteredFeatures) {
                 // if we have clusters and the feature is not in cluster
@@ -1259,6 +1266,7 @@ export default class Map {
                     }
                 }
             }
+            onTop = false;
         });
     }
 

@@ -5,12 +5,12 @@ import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
 import OlProjection from "ol/proj/Projection";
 import { Extent as OlExtent } from "ol/extent";
+import { FeatureLoader } from "ol/featureloader";
 import SourceChangedEvent from "../../Source/SourceChangedEvent";
 import FeatureCollection from "../../Feature/FeatureCollection";
 import AbstractLayer from "../AbstractLayer";
 import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
-import LoaderFunction from "../LoaderFunctionType";
 import { FeaturePopupCssStyle } from "../../Style/FeaturePopupCssStyle";
 import { OlBaseVectorLayer, OlVectorLayer } from "../../Type/Type";
 
@@ -53,7 +53,7 @@ export default class VectorLayer extends AbstractLayer{
      * Sets layer's loader
      * @param loader - loader function
      */
-    public setLoader(loader: LoaderFunction): void {
+    public setLoader(loader: FeatureLoader): void {
         let source = this.layer.getSource();
         if (source instanceof OlClusterSource) {
             source = source.getSource();

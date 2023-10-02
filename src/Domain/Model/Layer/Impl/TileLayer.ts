@@ -4,6 +4,7 @@ import OlTileWMSSource from "ol/source/TileWMS";
 import OlTileArcGISRestSource from "ol/source/TileArcGISRest";
 import AbstractLayer from "../AbstractLayer";
 import SourceType from "../../Source/SourceType";
+import { LoadFunction } from "ol/Tile";
 
 /** TileLayer */
 export default class TileLayer extends AbstractLayer {
@@ -40,6 +41,14 @@ export default class TileLayer extends AbstractLayer {
      */
     public setUrl(url: string): void {
         (<OlTileImage> this.layer.getSource()).setUrl(url);
+    }
+
+    /**
+     * Sets layer's tile loader
+     * @param loader - loader function
+     */
+    public setTileLoadFunction(loader: LoadFunction): void {
+        (<OlTileWMSSource> this.layer.getSource()).setTileLoadFunction(loader);
     }
 
     /**

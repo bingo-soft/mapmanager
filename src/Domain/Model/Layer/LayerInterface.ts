@@ -1,6 +1,7 @@
 import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
 import OlFeature from "ol/Feature";
+import { FeatureLoader } from "ol/featureloader";
 import { LoadFunction, UrlFunction } from "ol/Tile";
 import OlGeoJSON from "ol/format/GeoJSON";
 import SourceType from "../Source/SourceType";
@@ -12,8 +13,6 @@ import Feature from "../Feature/Feature";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
 import Map from "../Map/Map";
-import LoaderFunction from "./LoaderFunctionType";
-import FeatureClickFunction from "./FeatureClickFunctionType";
 
 
 /** LayerInterface */
@@ -108,7 +107,7 @@ export default interface LayerInterface
      * Sets layer loader
      * @param loader - loader function
      */
-    setLoader(loader: LoaderFunction): void;
+    setLoader(loader: FeatureLoader): void;
 
     /**
      * Returns layer's options

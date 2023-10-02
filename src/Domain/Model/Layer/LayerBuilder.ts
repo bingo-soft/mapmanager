@@ -1,4 +1,5 @@
 import OlBaseEvent from "ol/events/Event";
+import { FeatureLoader } from "ol/featureloader";
 import { LoadFunction, UrlFunction } from "ol/Tile";
 import { Source as OlSource } from "ol/source";
 import LayerInterface from "./LayerInterface";
@@ -12,7 +13,6 @@ import ClusterSource from "../Source/Impl/ClusterSource";
 import StyleBuilder from "../Style/StyleBuilder";
 import EventBus from "../EventHandlerCollection/EventBus";
 import EventType from "../EventHandlerCollection/EventType";
-import LoaderFunction from "./LoaderFunctionType";
 import VectorTileSource from "../Source/Impl/VectorTileSource";
 
 /** LayerBuilder */
@@ -108,7 +108,7 @@ export default class LayerBuilder {
      * @param loader - loader function
      * @return layer builder instance
      */
-    public setLoader(loader: LoaderFunction): LayerBuilder {
+    public setLoader(loader: FeatureLoader): LayerBuilder {
         this.layer.setLoader(loader);
         return this;
     }

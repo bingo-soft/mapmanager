@@ -1,5 +1,7 @@
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlVectorLayer from "ol/layer/Vector";
+import { Point as OlPoint, LineString as OlLineString} from "ol/geom";
+import OlStrokePattern from "ol-ext/style/StrokePattern";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
@@ -10,7 +12,9 @@ import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import SourceType from "../Source/SourceType";
 import FeatureStyleBuilder from "./FeatureStyleBuilder";
 import CustomFillPattern from "./CustomFillPattern";
+import CustomStrokePattern from "./CustomStrokePattern";
 import LayerInterface from "../Layer/LayerInterface";
+
 
 /** StyleBuilder */
 export default class StyleBuilder {
@@ -158,21 +162,40 @@ export default class StyleBuilder {
      * @return style builder instance
      */
     private setLinestringStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
+        /* let style = null;
+        const pattern = (opts["pattern"] ? opts["pattern"] : "empty").toLowerCase();
+        let backgroundColor = opts["background_color"] ? opts["background_color"] : "#fff";
+        if (opts["opacity"]) {
+            backgroundColor = ColorUtil.applyOpacity(backgroundColor, opts["opacity"]);
+        } */
+
         let color = opts["color"] ? opts["color"] : "#fff";
         if (opts["opacity"]) {
             color = ColorUtil.applyOpacity(color, opts["opacity"]);
         }
-        const style = new OlStyle({
-            stroke: new OlStroke({
-                color: color, 
-                width: opts["stroke_width"],
-                lineCap: opts["line_cap"],
-                lineJoin: opts["line_join"],
-                lineDash: opts["line_dash"],
-                lineDashOffset: opts["line_dash_offset"],
-                miterLimit: opts["miter_limit"]
-            }),
-        });
+        /* if (pattern == "empty") { */
+            const style = new OlStyle({
+                stroke: new OlStroke({
+                    color: color, 
+                    width: opts["stroke_width"],
+                    lineCap: opts["line_cap"],
+                    lineJoin: opts["line_join"],
+                    lineDash: opts["line_dash"],
+                    lineDashOffset: opts["line_dash_offset"],
+                    miterLimit: opts["miter_limit"]
+                }),
+            });
+        /* } else {
+            style = new OlStyle({
+                stroke: new CustomStrokePattern({
+                    pattern: pattern,
+                    size: opts["stroke_width"] || 1,
+                    color: opts["color"] || "rgb(255, 255, 255)",
+                    opacity: 100,
+                    fill: new OlFill({color: backgroundColor}),
+                })
+            });
+        } */
         const res = isTemplatedStyle ? this.styleTemplated : this.style;
         res["LineString"] = style;
         res["MultiLineString"] = style;
@@ -198,7 +221,8 @@ export default class StyleBuilder {
                 pattern: fillStyle,
                 size: opts["pattern_stroke_width"] || 1,
                 color: opts["pattern_color"] || "rgb(255, 255, 255)",
-                fill: new OlFill({color: backgroundColor})/* ,
+                fill: new OlFill({color: backgroundColor}),
+                angle: Math.PI / 2 /* ,
                 imageFile: opts["pattern_image_file"] || null */
             });
         } else {
@@ -329,6 +353,81 @@ export default class StyleBuilder {
      */
     public build(useExternalStyleBuilder = false, useLabelTextOption = false): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
+
+
+
+            /* const geometry = feature.getGeometry();
+            if (geometry.getType() == "LineString") {
+                const styles = [
+                    // linestring
+                    // new OlStyle({
+                    //    stroke: new OlStroke({
+                    //        color: '#ffffff',
+                    //        width: 30,
+                    //    }),
+                    //})
+                ];
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 30;
+                canvas.height = 1;
+                const c = canvas.getContext('2d');
+                c.lineWidth = 1;
+                c.strokeStyle = "#000";
+
+                c.beginPath();
+                c.moveTo(0, 0);
+                c.lineTo(20, 0);
+                c.stroke();
+
+                const pattern = c.createPattern(canvas, "repeat");
+        
+                
+                (<OlLineString> geometry).forEachSegment(function (start, end) {
+                    const dx = end[0] - start[0];
+                    const dy = end[1] - start[1];
+                    const rotation = Math.atan2(dy, dx); // * 180 / Math.PI;
+                    styles.push(
+                        new OlStyle({
+                            geometry: new OlLineString([start, end]),
+                            // stroke: new CustomStrokePattern({
+                            //    pattern: "abc",
+                            //    size: 50,
+                            //    color: "#000000",
+                            //   opacity: 100,
+                            //    //fill: new OlFill({color: backgroundColor})
+                            //    angle: -rotation
+                            // })
+                            stroke: new OlStroke({
+                                color: pattern,
+                                width: 1,
+                            })
+                        })
+                    );
+                    // styles.push(
+                    //    new OlStyle({
+                    //        geometry: new OlLineString([start, end]), //new OlPoint(end),
+                    //        stroke: new OlStrokePattern({
+                    //            pattern: "hatch",
+                    //            width: 8,
+                    //            size: 10,
+                    //            color: "#00FF00",
+                    //            fill: new OlFill({color: "#FF0000"}),
+                    //            spacing: 15,
+                    //            angle: -rotation + 45
+                    //        })
+                    //    })
+                    //);
+                });
+                               
+                return styles;
+            } */
+
+
+
+
+
+
             let style = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style;
             // clustered features
             const clusteredFeatures = feature.get('features');
