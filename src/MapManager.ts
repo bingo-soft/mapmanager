@@ -455,7 +455,7 @@ export default class MapManager {
             }
             builder.setOptions(opts);
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
-                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection, success, failure): Promise<string> => {
+                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection, success, failure): Promise<void> => {
                         const layer = builder.getLayer();
                         const layerSrs = "EPSG:" + layer.getSRSId().toString();
                         const mapSrs = projection.getCode();
