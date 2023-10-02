@@ -593,17 +593,19 @@ export default class MapManager {
                 builder.setUrl(opts["request"]["base_url"]);
                 if (type == SourceType.TileWMS) { 
                     builder.setTileLoadFunction(async (tile: ImageTile, url: string) => {
-                        const payload = {
+                        /* const payload = {
                             method: opts["request"]["method"],
-                            base_url: opts["request"]["base_url"],
+                            base_url: url,
                             headers: opts["request"]["headers"],
-                            responseType: "arraybuffer"
+                            responseType: "blob"
                         };
                         const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                         await query.execute(payload)
                         .then(function(data) {
-                            (<HTMLImageElement> tile.getImage()).src = url;
-                        });
+                            (<HTMLImageElement> tile.getImage()).src = URL.createObjectURL(data);
+                        }); */
+
+                        (<HTMLImageElement> tile.getImage()).src = url;
                     });
                 }
             }
