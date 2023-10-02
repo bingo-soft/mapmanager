@@ -58,13 +58,7 @@ export default class VectorLayer extends AbstractLayer{
         if (source instanceof OlClusterSource) {
             source = source.getSource();
         } 
-        (<OlVectorSource> source).setLoader(async (extent: OlExtent, resolution: number, projection: OlProjection) => {
-            const data = await loader(extent, resolution, projection); 
-            (<OlVectorSource> source).addFeatures(new OlGeoJSON().readFeatures(data, {
-                dataProjection: "EPSG:" + this.srsId.toString(),
-                featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
-            }));
-        });
+        (<OlVectorSource> source).setLoader(loader);
     }
 
     /**
