@@ -55,7 +55,7 @@ export default class LayerBuilder {
                 this.layer.setSource(new ClusterSource(distance));
                 break;
             case SourceType.TileWMS:
-                this.layer.setSource(new TileWMSSource());
+                this.layer.setSource(new TileWMSSource(opts));
                 break;
             case SourceType.XYZ:
                 this.layer.setSource(new XYZSource());

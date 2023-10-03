@@ -6,10 +6,23 @@ import SourceType from "../SourceType";
 /** XYZSource */
 export default class TileWMSSource extends BaseSource {
     
-    constructor() {
+    constructor(opts: unknown) {
         super();
+        const url = new URL(opts["request"]["base_url"], window.location.origin);
+        let params = {};
+        let projection = '';
+        if (url.searchParams) {
+            params = {
+                "SERVICE": "WMS",
+                "VERSION": url.searchParams.get("version"),
+                "REQUEST": "GetMap",
+                "LAYERS": url.searchParams.get("layers")
+            }
+            projection = url.searchParams.get("srs") || url.searchParams.get("crs");
+        }
         this.source = new OlTileWMSSource({
-            params: {},
+            params: params,
+            projection: projection,
             crossOrigin: "anonymous"
         });
     }
