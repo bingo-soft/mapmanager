@@ -28,11 +28,11 @@ export default class DrawInteraction extends BaseInteraction {
     private olMap: OlMap;
     private layer: LayerInterface;
     private overlay: OlOverlay;
-    //private drawEventHandlers: EventHandlerCollection;
+    private drawingFeature: OlFeature;
 
     /**
      * @param layer - layer to draw on
-     * @param geometryType - type of geometry to draw
+     * @param geometryType - type of geometry to draw. One of 'Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', or 'Circle'.
      * @param callback - callback function to call after geometry is drawn
      */
     constructor(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction) {
@@ -63,40 +63,40 @@ export default class DrawInteraction extends BaseInteraction {
             }
         });
         let geomChangelistener: OlEventsKey;
-        let tooltipCoord: number[];
-        let tooltip: HTMLElement;
-        let result: string;
+        let radiusContainerCoord: number[];
         const drawEventHandlers = new EventHandlerCollection(this.interaction);
         drawEventHandlers.add(EventType.DrawStart, "DrawStartEventHandler", (e: OlBaseEvent): void => {
-            tooltipCoord = (<any> e).coordinate;
-            const feature = (<OlDrawEvent> e).feature;
-            //const resolutionFactor = this.getResolutionFactor();
-            geomChangelistener = feature.getGeometry().on("change", (evt: OlBaseEvent): void => {
-                const geom: OlFeature = evt.target;
-                if (geom instanceof OlCircle) {
-                    //const radius = (geom.getRadius() / OlProj.METERS_PER_UNIT.m) * resolutionFactor;
+            radiusContainerCoord = (<any> e).coordinate;
+            this.drawingFeature = (<OlDrawEvent> e).feature;
+            const geometry = this.drawingFeature.getGeometry();
+            if (geometry.getType() === "Circle") {
+                geomChangelistener = geometry.on("change", (evt: OlBaseEvent): void => {
+                    const geom: OlCircle = evt.target;
+                    radiusContainerCoord = geom.getCenter();
                     const radius = OlSphere.getLength(fromCircle(geom)) / (2 * Math.PI);
-                    result = `R = ${radius.toFixed(2)} м.`;
-                    tooltipCoord = geom.getCenter();
-                    //tooltipCoord = geom.getLastCoordinate();
-                    tooltip.innerHTML = result;
-                }
-                this.overlay.setPosition(tooltipCoord);
-            });
-            tooltip = document.createElement("div");
-            tooltip.className = "tooltip tooltip-static";
-            this.overlay = new OlOverlay({
-                element: tooltip,
-                offset: tooltipCoord,
-                position: [0, -7],
-                positioning: "bottom-center"
-            });
-            this.olMap.addOverlay(this.overlay);
-        })
-        drawEventHandlers.add(EventType.DrawEnd, "DrawEndEventHandler", (e: OlBaseEvent): void => {
-            this.olMap.removeOverlay(this.overlay);
-            OlObservable.unByKey(geomChangelistener);
+                    (<HTMLInputElement> radiusContainer.children[1]).value = radius.toFixed(2);
+                    this.overlay.setPosition(radiusContainerCoord);
+                });
+                const radiusContainer = this.createRadiusInput();
+                this.overlay = new OlOverlay({
+                    element: radiusContainer,
+                    offset: radiusContainerCoord,
+                    position: [0, -7],
+                    positioning: "bottom-center"
+                });
+                this.olMap.addOverlay(this.overlay);
+            }
         });
+        drawEventHandlers.add(EventType.DrawEnd, "DrawEndEventHandler", (e: OlBaseEvent): void => {
+            if ((<OlDrawEvent> e).feature.getGeometry().getType() === "Circle") {
+                this.olMap.removeOverlay(this.overlay);
+                OlObservable.unByKey(geomChangelistener);
+            }
+        });
+    }
+
+    public getDrawingFeature(): OlFeature {
+        return this.drawingFeature;
     }
 
     /**
@@ -115,15 +115,54 @@ export default class DrawInteraction extends BaseInteraction {
     }
 
     /**
+     * Creates and returns HTML container with radius input
+     * @return HTML container with radius input
+     */
+    private createRadiusInput(): HTMLElement {
+        const container = document.createElement("div");
+        container.style.border = "1px solid #ccc";
+        container.style.backgroundColor = "#fff";
+        container.style.padding = "5px";
+        const span1 = document.createElement("span");
+        span1.innerHTML = "R = ";
+        container.appendChild(span1);
+        const input = document.createElement("input");
+        input.style.border = "1px solid #ccc";
+        input.type = "text";
+        input.style.width = "100px";
+        input.addEventListener("keyup", (e: KeyboardEvent): void => {
+            if (e.key === "Enter") {
+                let radius = parseFloat(input.value);
+                if (isNaN(radius)) {
+                    return;
+                }
+                const center = (<OlCircle> this.drawingFeature.getGeometry()).getCenter();
+                const circle = new OlCircle(center, radius);
+                const resolutionFactor = this.getResolutionFactor();
+                radius = (circle.getRadius() / OlProj.METERS_PER_UNIT.m) * resolutionFactor;
+                circle.setRadius(radius);
+                const featureToAdd = new OlFeature(circle);
+                this.layer.addFeatures([featureToAdd]);
+                this.abortDrawing();
+            }
+        });
+        container.appendChild(input);
+        const span2 = document.createElement("span");
+        span2.innerHTML = " м.";
+        container.appendChild(span2);
+        return container;
+    }
+
+    /**
      * Returns resolution factor for map
      * @return resolution factor
      */
-    /* private getResolutionFactor(): number {
+    private getResolutionFactor(): number {
         const view = this.olMap.getView();
         const resolutionAtEquator = view.getResolution();
         const center = view.getCenter();
         const pointResolution = OlProj.getPointResolution(view.getProjection(), resolutionAtEquator, center);
         return resolutionAtEquator / pointResolution;
-    } */
+    }
 
 }

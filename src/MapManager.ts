@@ -229,7 +229,7 @@ export default class MapManager {
      * @param coordinate - coordinate in map SRS
      * @param imagePath - path to marker image
      */
-    public showMarker(map: Map, coordinate: number[], imagePath?: string): void {
+    public static showMarker(map: Map, coordinate: number[], imagePath?: string): void {
         map.showMarker(coordinate, imagePath);
     }
    
@@ -257,7 +257,13 @@ export default class MapManager {
      * @category Interaction
      * @param map - map instance
      * @param layer - layer instance
-     * @param opts - options
+     * @param opts
+     * ```Options
+     * Options:
+     * Name                         Type           Description
+     * "geometry_type"              string         Type of geometry to draw. One of 'Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', or 'Circle'.
+     * "draw_callback"              function       Callback function on draw end
+     * ```
      */
     public static setDrawInteraction(map: Map, layer: LayerInterface, opts: unknown): void {
         if (layer.getType() != SourceType.Vector) {
