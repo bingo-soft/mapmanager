@@ -159,7 +159,7 @@ export default class SelectInteraction extends BaseInteraction {
                         geomChangelistener = (evt: OlBaseEvent): void => {
                             const geom: OlCircle = <OlCircle> evt.target;
                             const radius = OlSphere.getLength(fromCircle(geom)) / (2 * Math.PI);
-                            result = "R = " + radius.toString();
+                            result = `R = ${radius.toFixed(2)} м.`;
                             tooltipCoord = geom.getCenter();
                             tooltip.innerHTML = result;
                             overlay.setPosition(tooltipCoord);

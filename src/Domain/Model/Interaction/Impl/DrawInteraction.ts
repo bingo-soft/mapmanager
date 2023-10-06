@@ -1,8 +1,16 @@
+import OlMap from "ol/Map";
 import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
-//import OlVectorLayer from "ol/layer/Vector";
+import * as OlProj from "ol/proj";
+import { fromCircle } from 'ol/geom/Polygon';
+import OlFeature from "ol/Feature";
 import OlCollection from 'ol/Collection';
 import OlBaseEvent from "ol/events/Event";
+import * as OlSphere from "ol/sphere";
 import { Type as OlGeometryType } from "ol/geom/Geometry";
+import { EventsKey as OlEventsKey } from "ol/events";
+import { Circle as OlCircle } from "ol/geom";
+import * as OlObservable from "ol/Observable";
+import OlOverlay from "ol/Overlay";
 import BaseInteraction from "./BaseInteraction";
 import LayerInterface from "../../Layer/LayerInterface";
 import Feature from "../../Feature/Feature";
@@ -17,7 +25,10 @@ import { OlVectorLayer } from "../../Type/Type";
 /** DrawInteraction */
 export default class DrawInteraction extends BaseInteraction {
 
+    private olMap: OlMap;
     private layer: LayerInterface;
+    private overlay: OlOverlay;
+    //private drawEventHandlers: EventHandlerCollection;
 
     /**
      * @param layer - layer to draw on
@@ -26,6 +37,7 @@ export default class DrawInteraction extends BaseInteraction {
      */
     constructor(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction) {
         super();
+        this.olMap = layer.getMap().getMap()
         this.layer = layer;
         const olLayer = <OlVectorLayer> layer.getLayer();
         const olSource = olLayer.getSource();
@@ -43,12 +55,47 @@ export default class DrawInteraction extends BaseInteraction {
             const feature = new Feature((<OlDrawEvent> e).feature, layer);
             this.layer.setDirtyFeatures(new FeatureCollection([feature]));
             //this.layer.setIdleFeatures(new FeatureCollection([feature]), true);
-            if (typeof callback === "function") {                            
+            if (typeof callback === "function") {
                 callback(feature);
             }
             if (eventBus) {
                 eventBus.dispatch(new SourceChangedEvent()); 
             }
+        });
+        let geomChangelistener: OlEventsKey;
+        let tooltipCoord: number[];
+        let tooltip: HTMLElement;
+        let result: string;
+        const drawEventHandlers = new EventHandlerCollection(this.interaction);
+        drawEventHandlers.add(EventType.DrawStart, "DrawStartEventHandler", (e: OlBaseEvent): void => {
+            tooltipCoord = (<any> e).coordinate;
+            const feature = (<OlDrawEvent> e).feature;
+            //const resolutionFactor = this.getResolutionFactor();
+            geomChangelistener = feature.getGeometry().on("change", (evt: OlBaseEvent): void => {
+                const geom: OlFeature = evt.target;
+                if (geom instanceof OlCircle) {
+                    //const radius = (geom.getRadius() / OlProj.METERS_PER_UNIT.m) * resolutionFactor;
+                    const radius = OlSphere.getLength(fromCircle(geom)) / (2 * Math.PI);
+                    result = `R = ${radius.toFixed(2)} м.`;
+                    tooltipCoord = geom.getCenter();
+                    //tooltipCoord = geom.getLastCoordinate();
+                    tooltip.innerHTML = result;
+                }
+                this.overlay.setPosition(tooltipCoord);
+            });
+            tooltip = document.createElement("div");
+            tooltip.className = "tooltip tooltip-static";
+            this.overlay = new OlOverlay({
+                element: tooltip,
+                offset: tooltipCoord,
+                position: [0, -7],
+                positioning: "bottom-center"
+            });
+            this.olMap.addOverlay(this.overlay);
+        })
+        drawEventHandlers.add(EventType.DrawEnd, "DrawEndEventHandler", (e: OlBaseEvent): void => {
+            this.olMap.removeOverlay(this.overlay);
+            OlObservable.unByKey(geomChangelistener);
         });
     }
 
@@ -56,6 +103,7 @@ export default class DrawInteraction extends BaseInteraction {
      * Stops drawing without adding the feature currently being drawn to the target layer
      */
     public abortDrawing(): void {
+        this.olMap.removeOverlay(this.overlay);
         (<OlDraw> this.interaction).abortDrawing();
     }
 
@@ -65,5 +113,17 @@ export default class DrawInteraction extends BaseInteraction {
     public removeLastPoint(): void {
         (<OlDraw> this.interaction).removeLastPoint();
     }
+
+    /**
+     * Returns resolution factor for map
+     * @return resolution factor
+     */
+    /* private getResolutionFactor(): number {
+        const view = this.olMap.getView();
+        const resolutionAtEquator = view.getResolution();
+        const center = view.getCenter();
+        const pointResolution = OlProj.getPointResolution(view.getProjection(), resolutionAtEquator, center);
+        return resolutionAtEquator / pointResolution;
+    } */
 
 }
