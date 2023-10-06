@@ -432,7 +432,7 @@ export default class MapManager {
                 break;
             case SourceType.TileWMS:
                 builder = new LayerBuilder(new TileLayer(opts));
-                builder.setSource(SourceType.TileWMS); 
+                builder.setSource(SourceType.TileWMS, opts); 
                 break;
             case SourceType.XYZ:
                 builder = new LayerBuilder(new TileLayer(opts));
@@ -588,26 +588,29 @@ export default class MapManager {
                     builder.setVertexHighlightStyle(opts["style"]["highlight"]);
                 }
             }
-            if (type == SourceType.TileWMS || type == SourceType.TileArcGISRest || type == SourceType.ImageArcGISRest || type == SourceType.XYZ) { 
+            if (type == SourceType.TileWMS) {
+                const url = new URL(opts["request"]["base_url"]);
+                builder.setUrl(`${url.protocol}//${url.hostname}${url.pathname}`);
+                builder.setTileLoadFunction(async (tile: ImageTile, url: string) => {
+                    /* const payload = {
+                        method: opts["request"]["method"],
+                        base_url: url,
+                        headers: opts["request"]["headers"],
+                        responseType: "blob"
+                    };
+                    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                    await query.execute(payload)
+                    .then(function(data) {
+                        (<HTMLImageElement> tile.getImage()).src = URL.createObjectURL(data);
+                    }); */
+                    
+                    (<HTMLImageElement> tile.getImage()).src = url;
+                });
+            }
+            if (type == SourceType.TileArcGISRest || type == SourceType.ImageArcGISRest || type == SourceType.XYZ) { 
                 builder.setParams(opts["request"]["params"]);
                 builder.setUrl(opts["request"]["base_url"]);
-                if (type == SourceType.TileWMS) { 
-                    builder.setTileLoadFunction(async (tile: ImageTile, url: string) => {
-                        /* const payload = {
-                            method: opts["request"]["method"],
-                            base_url: url,
-                            headers: opts["request"]["headers"],
-                            responseType: "blob"
-                        };
-                        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                        await query.execute(payload)
-                        .then(function(data) {
-                            (<HTMLImageElement> tile.getImage()).src = URL.createObjectURL(data);
-                        }); */
-
-                        (<HTMLImageElement> tile.getImage()).src = url;
-                    });
-                }
+                
             }
             if (Object.prototype.hasOwnProperty.call(opts, "feature_popup_template")) {
                 builder.setFeaturePopupTemplate(opts["feature_popup_template"]);

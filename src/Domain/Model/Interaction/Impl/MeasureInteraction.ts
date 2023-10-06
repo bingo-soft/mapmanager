@@ -3,6 +3,7 @@ import OlFeature from "ol/Feature";
 import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";
 import { EventsKey as OlEventsKey } from "ol/events";
 import OlDraw, { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
+import { Type as OlGeometryType } from "ol/geom/Geometry";
 import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import * as OlSphere from "ol/sphere";
 import OlBaseEvent from "ol/events/Event";
@@ -15,7 +16,6 @@ import Map from "../../Map/Map";
 import { MeasureCallbackFunction } from "../InteractionCallbackType";
 import TemporaryLayerType from "../../Map/TemporaryLayerType";
 import InteractionType from "../InteractionType";
-import { Type as OlGeometryType } from "ol/geom/Geometry";
 
 /** MeasureInteraction */
 export default class MeasureInteraction extends BaseInteraction {
@@ -55,7 +55,7 @@ export default class MeasureInteraction extends BaseInteraction {
         let geomChangelistener: OlEventsKey;
         let result: string;
         let tooltipCoord: number[];
-        let tooltip: HTMLElement
+        let tooltip: HTMLElement;
         this.eventHandlers = new EventHandlerCollection(draw);
         this.eventHandlers.add(EventType.DrawStart, "MeasureStartEventHandler", (e: OlBaseEvent): void => {
             tooltipCoord = (<any> e).coordinate;
