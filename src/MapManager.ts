@@ -223,6 +223,15 @@ export default class MapManager {
             map.getEventHandlers().add(EventType.Click, "VTFeatureClickEventHandler", listener); 
         }
     }
+
+    /**
+     * Shows marker
+     * @param coordinate - coordinate in map SRS
+     * @param imagePath - path to marker image
+     */
+    public showMarker(map: Map, coordinate: number[], imagePath?: string): void {
+        map.showMarker(coordinate, imagePath);
+    }
    
     /**
      * Returns current map interaction type

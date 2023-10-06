@@ -1218,10 +1218,15 @@ export default class Map {
 
     /**
      * Shows marker
-     * @param coordinate - coordinate
+     * @param coordinate - coordinate in map SRS
+     * @param imagePath - path to marker image
      */
-    private showMarker(coordinate: OlCoordinate.Coordinate): void {
-        const style = new StyleBuilder(SearchMarkerStyle).build();
+    public showMarker(coordinate: OlCoordinate.Coordinate, imagePath?: string): void {
+        let markerStyle = SearchMarkerStyle;
+        if (imagePath) {
+            markerStyle["image_path"] = imagePath;
+        }
+        const style = new StyleBuilder(markerStyle).build();
         const marker = new OlFeature(new OlPoint(coordinate));
         marker.setStyle(style);
         const layer = this.createTemporaryLayer(TemporaryLayerType.CenterMarker);
