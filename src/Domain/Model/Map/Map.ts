@@ -235,10 +235,12 @@ export default class Map {
         this.documentEventHandlers.add(EventType.KeyDown, "KeyDownEventHandler", (e: KeyboardEvent): void => {
             if (this.interaction.getType() == InteractionType.Draw) {
                 if (e.key == "Escape") {
-                    (<DrawInteraction> this.interaction).abortDrawing();
+                    (<DrawInteraction> this.interaction).abortDrawing(); 
                 }
                 if (e.key == "Delete" || e.key == "Backspace") {
-                    (<DrawInteraction> this.interaction).removeLastPoint();
+                    if ((<DrawInteraction> this.interaction).getDrawingFeature().getGeometry().getType() !== "Circle") {
+                        (<DrawInteraction> this.interaction).removeLastPoint();
+                    }
                 }
             }
         });
@@ -494,7 +496,7 @@ export default class Map {
     /**
      * Sets map draw interaction
      * @param layer - layer to draw on
-     * @param geometryType - type of geometry to draw
+     * @param geometryType - type of geometry to draw. One of 'Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection', or 'Circle'.
      * @param callback - callback function to call after geometry is drawn
      */
     public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
