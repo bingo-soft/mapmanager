@@ -1230,7 +1230,7 @@ export default class Map {
             markerStyle["point"]["image_path"] = imagePath;
         }
         if (imageAnchor) {
-            markerStyle["point"]["anchor"] = imagePath;
+            markerStyle["point"]["anchor"] = imageAnchor;
         }
         const style = new StyleBuilder(markerStyle).build();
         const marker = new OlFeature(new OlPoint(coordinate));
