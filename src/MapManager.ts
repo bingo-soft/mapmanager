@@ -228,9 +228,10 @@ export default class MapManager {
      * Shows marker
      * @param coordinate - coordinate in map SRS
      * @param imagePath - path to marker image
+     * @param imageAnchor - image anchor position, an array of 2 values - x ("left", "center", "right") and y ("top", "bottom") position
      */
-    public static showMarker(map: Map, coordinate: number[], imagePath?: string): void {
-        map.showMarker(coordinate, imagePath);
+    public static showMarker(map: Map, coordinate: number[], imagePath?: string, imageAnchor?: string[]): void {
+        map.showMarker(coordinate, imagePath, imageAnchor);
     }
    
     /**

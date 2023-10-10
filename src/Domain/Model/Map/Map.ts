@@ -1222,11 +1222,15 @@ export default class Map {
      * Shows marker
      * @param coordinate - coordinate in map SRS
      * @param imagePath - path to marker image
+     * @param imageAnchor - image anchor position, an array of 2 values - x ("left", "center", "right") and y ("top", "bottom") position
      */
-    public showMarker(coordinate: OlCoordinate.Coordinate, imagePath?: string): void {
+    public showMarker(coordinate: OlCoordinate.Coordinate, imagePath?: string, imageAnchor?: string[]): void {
         let markerStyle = SearchMarkerStyle;
         if (imagePath) {
-            markerStyle["image_path"] = imagePath;
+            markerStyle["point"]["image_path"] = imagePath;
+        }
+        if (imageAnchor) {
+            markerStyle["point"]["anchor"] = imagePath;
         }
         const style = new StyleBuilder(markerStyle).build();
         const marker = new OlFeature(new OlPoint(coordinate));
