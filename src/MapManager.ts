@@ -470,7 +470,7 @@ export default class MapManager {
             }
             builder.setOptions(opts);
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
-                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection, success, failure): Promise<void> => {
+                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection/* , success, failure */): Promise<void> => {
                         const layer = builder.getLayer();
                         const layerSrs = "EPSG:" + layer.getSRSId().toString();
                         const mapSrs = projection.getCode();
@@ -554,11 +554,11 @@ export default class MapManager {
                                 features: data ? data.features : [],
                             }, StringUtil.replacer);
                             const format = layer.getFormat();
-                            const features = format.readFeatures(geojson, {
+                            const features = (<OlGeoJSON> format).readFeatures(geojson, {
                                 extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
                                 featureProjection: "EPSG:" + layer.getMap().getSRSId().toString()
                             });
-                            tile.setFeatures(features);
+                            tile.setFeatures(<OlFeature[]> features);
                         });
                     }
                 } else {
