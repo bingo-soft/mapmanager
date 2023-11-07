@@ -3,8 +3,6 @@ import { Vector as VectorLayerOl } from "ol/layer";
 import { Vector as OlVectorSource, Cluster as OlClusterSource } from "ol/source";
 import OlGeoJSON from "ol/format/GeoJSON";
 import OlFeature from "ol/Feature";
-import OlProjection from "ol/proj/Projection";
-import { Extent as OlExtent } from "ol/extent";
 import { FeatureLoader } from "ol/featureloader";
 import SourceChangedEvent from "../../Source/SourceChangedEvent";
 import FeatureCollection from "../../Feature/FeatureCollection";
@@ -173,7 +171,7 @@ export default class VectorLayer extends AbstractLayer{
      * @return collection of removed features
      */
     public getRemovedFeatures(): FeatureCollection {
-        let removedFeatures = new FeatureCollection([]);
+        const removedFeatures = new FeatureCollection([]);
         for (let i = 0; i < this.removedFeatures.getLength(); i += 1) {
             const removedFeature = this.removedFeatures.getAt(i);
             //if not idle

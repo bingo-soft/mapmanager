@@ -5,7 +5,6 @@ import { Coordinate as  OlCoordinate} from "ol/coordinate";
 import OlFeature from "ol/Feature";
 import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
     Polygon as OlPolygon, MultiPolygon as OlMultiPolygon, GeometryCollection as OlGeometryCollection} from "ol/geom"
-import OlVectorSource from "ol/source/Vector";
 import { WKT as OlWKT, GeoJSON as OlGeoJSON }  from "ol/format";
 import * as OlProj from 'ol/proj';
 import {Style as OlStyle} from "ol/style";
@@ -185,7 +184,7 @@ export default class Feature {
         if (!items.length) {
             return null;
         }
-        let coordinates: OlCoordinate | OlCoordinate[] | OlCoordinate[][] = [];
+        const coordinates: OlCoordinate | OlCoordinate[] | OlCoordinate[][] = [];
         if (items[0].name == "Point") {
             const coordinate = <VertexCoordinate> items[0].children[0];
             return new OlPoint(<OlCoordinate> this.transformCoordinate([coordinate.x , coordinate.y], sourceSrsId, targetSrsId));
@@ -483,7 +482,7 @@ export default class Feature {
      */
     private getGeoJSONFromText(text: string, sourceSrsId: number): string {
         const pointsDecOrDMS: number[][] = Geometry.textPointsToArray(text);
-        let points = [];
+        const points = [];
         let x = 0;
         let y = 0;
         for (let i = 0; i < pointsDecOrDMS.length; i++) {

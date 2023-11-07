@@ -1,4 +1,4 @@
-import MVT from "ol/format/MVT";
+//import MVT from "ol/format/MVT";
 import OlTileQueue, { getTilePriority as tilePriorityFunction } from "ol/TileQueue";
 import OlVectorTileLayer from "ol/layer/VectorTile";
 import OlVectorTileSource from "ol/source/VectorTile";

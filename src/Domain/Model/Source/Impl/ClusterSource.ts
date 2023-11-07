@@ -1,7 +1,7 @@
 import { Cluster as OlClusterSource, Vector as OlVectorSource } from "ol/source";
 import OlFeature from "ol/Feature";
 import { getCenter, Extent as OlExtent } from "ol/extent";
-import {Geometry as OlGeometry, Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
+import {Point as OlPoint, MultiPoint as OlMultiPoint, LineString as OlLineString, MultiLineString as OlMultiLineString, 
     Polygon as OlPolygon, MultiPolygon as OlMultiPolygon/* , GeometryCollection as OlGeometryCollection */} from "ol/geom"
 
 import BaseSource from "../BaseSource";

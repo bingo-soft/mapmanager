@@ -1,4 +1,3 @@
-import OlBaseEvent from "ol/events/Event";
 import {Interaction as OlInteraction} from 'ol/interaction';
 import Feature from "../Feature/Feature";
 import FeatureCollection from "../Feature/FeatureCollection";

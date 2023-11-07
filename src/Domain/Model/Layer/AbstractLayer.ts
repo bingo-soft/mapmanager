@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
 import { LoadFunction, UrlFunction } from "ol/Tile";

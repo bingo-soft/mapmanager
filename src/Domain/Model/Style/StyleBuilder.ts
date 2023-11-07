@@ -1,7 +1,7 @@
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlVectorLayer from "ol/layer/Vector";
-import { Point as OlPoint, LineString as OlLineString} from "ol/geom";
-import OlStrokePattern from "ol-ext/style/StrokePattern";
+//import { Point as OlPoint, LineString as OlLineString} from "ol/geom";
+//import OlStrokePattern from "ol-ext/style/StrokePattern";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
@@ -12,7 +12,7 @@ import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import SourceType from "../Source/SourceType";
 import FeatureStyleBuilder from "./FeatureStyleBuilder";
 import CustomFillPattern from "./CustomFillPattern";
-import CustomStrokePattern from "./CustomStrokePattern";
+//import CustomStrokePattern from "./CustomStrokePattern";
 import LayerInterface from "../Layer/LayerInterface";
 
 
@@ -65,7 +65,7 @@ export default class StyleBuilder {
      * @param opts - options
      * @param isTemplatedStyle - a boolean indicating that options are applied to templated style, defaults to false
      */
-    private applyOptions(opts: unknown, isTemplatedStyle: boolean = false): OlStyle | void {
+    private applyOptions(opts: unknown, isTemplatedStyle = false): OlStyle | void {
         if (typeof opts !== "undefined") {
             this.styleTemplated = { "Point": null, "MultiPoint": null, "LineString": null, "MultiLineString": null, "Polygon": null, "MultiPolygon": null, "GeometryCollection": null, "Text": null };
             this.isStyleInFeatureAttribute = false;
@@ -473,6 +473,7 @@ export default class StyleBuilder {
             if (layerProperties && Array.isArray(layerProperties["styleTemplate"])) {
                 this.styleTemplate = layerProperties["styleTemplate"];
                 if (this.styleTemplate) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const context = feature.getProperties();
                     for (let i = 0; i < this.styleTemplate.length; i++) {
                         const condition = eval(this.styleTemplate[i].condition);

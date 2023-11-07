@@ -51,16 +51,17 @@ export default class VectorTileLayer extends AbstractLayer{
             if (Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
                 this.layer.setMaxZoom(opts["max_zoom"]);
             }
+            opts["format"] = opts["format"] || VectorTileSourceFormat.MVT;
         }
         /* if (opts["json"]) {
             this.setTileIndex(opts["json"], this.srsId);
         } */
-        opts["format"] = opts["format"] || VectorTileSourceFormat.MVT;
         if (layer) {
             this.layer = layer;
         } else {
             if (opts["format"] == VectorTileSourceFormat.MVT && opts["use_worker"]) { 
-                const worker = opts["format"] === "mvt" ? new Worker("../Worker/VectorTileRenderWorker.ts") : new Worker("../Worker/VectorTileJSONRenderWorker.ts");
+                //const worker = opts["format"] === "mvt" ? new Worker("../Worker/VectorTileRenderWorker.ts") : new Worker("../Worker/VectorTileJSONRenderWorker.ts");
+                const worker = new Worker("../Worker/VectorTileRenderWorker.ts");
                 this.layer = new OlLayer({
                     render: (frameState: OlFrameState) => {
                         if (!this.container) {
@@ -87,6 +88,7 @@ export default class VectorTileLayer extends AbstractLayer{
                                 action: "render",
                                 layerSrsId: this.srsId,
                                 request: opts["request"],
+                                format: opts["format"],
                                 style: opts["style"],
                                 mapSRS: "EPSG:" + this.getMap().getSRSId().toString(),
                                 frameState: JSON.parse(stringify(frameState)),
@@ -97,6 +99,8 @@ export default class VectorTileLayer extends AbstractLayer{
                         return this.container;
                     }
                 });
+                console.log("VectorTileLayer constructor", this.layer);
+
                 worker.addEventListener("message", (message) => {
                     if (message.data.action === 'loadImage') {
                         // Image loader for ol-mapbox-style

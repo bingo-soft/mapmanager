@@ -89,6 +89,7 @@ export default class SelectInteraction extends BaseInteraction {
             case SelectionType.Rectangle:
                 this.interaction = new OlDragBox();
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 this.eventHandlers.add(EventType.SelectByBox, "SelectByBoxEventHandler", (e: OlBaseEvent): void => {
                     const extent = (<OlDragBox> this.interaction).getGeometry().getExtent();
                     this.features.clear();
@@ -141,64 +142,65 @@ export default class SelectInteraction extends BaseInteraction {
                     }
                 });
                 break;
-                case SelectionType.Circle:
-                    this.interaction = new OlDraw({
-                        features: new OlCollection(),
-                        type: "Circle",
-                    });
-                    this.eventHandlers = new EventHandlerCollection(this.interaction);
+            case SelectionType.Circle: {
+                this.interaction = new OlDraw({
+                    features: new OlCollection(),
+                    type: "Circle",
+                });
+                this.eventHandlers = new EventHandlerCollection(this.interaction);
 
-                    let drawingFeature: OlFeature;
-                    let geomChangelistener: (evt: OlBaseEvent) => void;
-                    let result: string;
-                    let tooltipCoord: number[];
+                let drawingFeature: OlFeature;
+                let geomChangelistener: (evt: OlBaseEvent) => void;
+                let result: string;
+                let tooltipCoord: number[];
 
-                    this.eventHandlers.add(EventType.DrawStart, "SelectByCircleStartEventHandler", (e: OlBaseEvent): void => {
-                        tooltipCoord = (<any> e).coordinate;
-                        drawingFeature = (<OlDrawEvent> e).feature;
-                        geomChangelistener = (evt: OlBaseEvent): void => {
-                            const geom: OlCircle = <OlCircle> evt.target;
-                            const radius = OlSphere.getLength(fromCircle(geom)) / (2 * Math.PI);
-                            result = `R = ${radius.toFixed(2)} м.`;
-                            tooltipCoord = geom.getCenter();
-                            tooltip.innerHTML = result;
-                            overlay.setPosition(tooltipCoord);
-                        };
-                        drawingFeature.getGeometry().on("change", geomChangelistener);
-                        const tooltip: HTMLElement = document.createElement("div");
-                        tooltip.className = "tooltip tooltip-static";
-                        const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, 0]);
-                    });
-                    
-                    this.eventHandlers.add(EventType.DrawEnd, "SelectByCircleEndEventHandler", (e: OlBaseEvent): void => {
-                        drawingFeature.getGeometry().un("change", geomChangelistener);
-                        map.clearMeasureOverlays();
+                this.eventHandlers.add(EventType.DrawStart, "SelectByCircleStartEventHandler", (e: OlBaseEvent): void => {
+                    tooltipCoord = (<any> e).coordinate;
+                    drawingFeature = (<OlDrawEvent> e).feature;
+                    geomChangelistener = (evt: OlBaseEvent): void => {
+                        const geom: OlCircle = <OlCircle> evt.target;
+                        const radius = OlSphere.getLength(fromCircle(geom)) / (2 * Math.PI);
+                        result = `R = ${radius.toFixed(2)} м.`;
+                        tooltipCoord = geom.getCenter();
+                        tooltip.innerHTML = result;
+                        overlay.setPosition(tooltipCoord);
+                    };
+                    drawingFeature.getGeometry().on("change", geomChangelistener);
+                    const tooltip: HTMLElement = document.createElement("div");
+                    tooltip.className = "tooltip tooltip-static";
+                    const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, 0]);
+                });
+                
+                this.eventHandlers.add(EventType.DrawEnd, "SelectByCircleEndEventHandler", (e: OlBaseEvent): void => {
+                    drawingFeature.getGeometry().un("change", geomChangelistener);
+                    map.clearMeasureOverlays();
 
-                        const circleFeature = new OlFeature(fromCircle((<any> e).feature.getGeometry()));
-                        const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(circleFeature).geometry;
-                        const extent = circleFeature.getGeometry().getExtent();
-                        this.features.clear();
-                        olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
-                            if (olLayer instanceof VectorLayer) {
-                                if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
-                                    (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
-                                        const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
-                                        const featureGeometryTurf = featureTurf.geometry;
-                                        if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
-                                            this.addToSelection(map, olLayer, olFeature);
-                                        }
-                                    });
-                                }
+                    const circleFeature = new OlFeature(fromCircle((<any> e).feature.getGeometry()));
+                    const extentGeometryTurf = new OlGeoJSON().writeFeatureObject(circleFeature).geometry;
+                    const extent = circleFeature.getGeometry().getExtent();
+                    this.features.clear();
+                    olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
+                        if (olLayer instanceof VectorLayer) {
+                            if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                                (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
+                                    const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
+                                    const featureGeometryTurf = featureTurf.geometry;
+                                    if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
+                                        this.addToSelection(map, olLayer, olFeature);
+                                    }
+                                });
                             }
-                        });
-                        fc = new FeatureCollection(Array.from(this.features));
-                        map.setSelectedFeatures(fc);
-                        map.setSelectedLayers(this.layers);
-                        if (typeof callback === "function") {
-                            callback(fc, this.interaction);
                         }
                     });
-                    break;
+                    fc = new FeatureCollection(Array.from(this.features));
+                    map.setSelectedFeatures(fc);
+                    map.setSelectedLayers(this.layers);
+                    if (typeof callback === "function") {
+                        callback(fc, this.interaction);
+                    }
+                });
+                break;
+            }
             default:
                 break;
         }

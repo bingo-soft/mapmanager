@@ -1,7 +1,7 @@
-import MVT from "ol/format/MVT";
-import TileQueue, { getTilePriority as tilePriorityFunction } from "ol/TileQueue";
-import VectorTileLayer from "ol/layer/VectorTile";
-import VectorTileSource from "ol/source/VectorTile";
+import OlMVT from "ol/format/MVT";
+import OlTileQueue, { getTilePriority as tilePriorityFunction } from "ol/TileQueue";
+import OlVectorTileLayer from "ol/layer/VectorTile";
+import OlVectorTileSource from "ol/source/VectorTile";
 import stringify from "json-stringify-safe";
 import { get } from "ol/proj";
 import { inView } from "ol/layer/Layer";
@@ -12,6 +12,7 @@ import { OSM as OlOSM } from "ol/source";
 import StyleBuilder from "../../Style/StyleBuilder";
 import VectorLayerFeaturesLoadQuery from "../../../../Application/Query/VectorLayerFeaturesLoadQuery";
 import VectorLayerRepository from "../../../../Infrastructure/Repository/VectorLayerRepository";
+import VectorTileLayer from "../Impl/VectorTileLayer";
 
 (<unknown> self.Image) = EventTarget;
 
@@ -26,7 +27,7 @@ let layer = null;
 const layers = [];
 
 // Minimal map-like functionality for rendering
-const tileQueue = new TileQueue(
+const tileQueue = new OlTileQueue(
     (tile, tileSourceKey, tileCenter, tileResolution) =>
         tilePriorityFunction(
             frameState,
@@ -49,9 +50,8 @@ onmessage = (event) => {
 
     if (!pixelRatio) {
         pixelRatio = frameState.pixelRatio;
-        const style = new StyleBuilder(event.data.style).build();
-        const source = new VectorTileSource({
-            format: new MVT(),
+        const source = new OlVectorTileSource({
+            format: new OlMVT(),
             url: event.data.request.base_url
         });
         source.setTileLoadFunction((tile: OlVectorTile, url: string) => {
@@ -85,10 +85,10 @@ onmessage = (event) => {
                 });
             });
         });
-        layer = new VectorTileLayer({
+        layer = new OlVectorTileLayer({
             declutter: true,
             source: source, 
-            style: style,
+            //style: style,
             zIndex: 10
         });
         layer.getRenderer().useContainer = function (target, transform) {
@@ -103,39 +103,46 @@ onmessage = (event) => {
             };
             rendererTransform = transform;
         };
+        /* console.log("VectorTileRenderWorker", layer);
+        const l = new VectorTileLayer(layer, {
+            format: event.data.format,
+            use_worker: false
+        });
+        const style = new StyleBuilder(event.data.style, l).build();
+        layer.setStyle(style); */
         layers.push(layer);
 
-        /* layer = new OlTileLayer({
+        layer = new OlTileLayer({
             source: new OlOSM({
-              //transition: 0,
-              tileLoadFunction: function (tile, src) {
+                //transition: 0,
+                tileLoadFunction: function (tile, src) {
                 postMessage({
-                  action: 'loadImage',
-                  src: src,
+                    action: 'loadImage',
+                    src: src,
                 });
                 addEventListener('message', (event) => {
-                  if (event.data.src == src) {
-                    (<any> tile).setImage(event.data.image);
-                  }
+                    if (event.data.src == src) {
+                        (<any> tile).setImage(event.data.image);
+                    }
                 });
-              }
+                }
             }),
             zIndex: 1
           });
-          layer.getRenderer().useContainer = function (target, transform) {
+        layer.getRenderer().useContainer = function (target, transform) {
             this.containerReused = this.getLayer() !== layers[0];
             this.canvas = canvas;
             this.context = context;
             this.container = {
-              firstElementChild: canvas,
-              style: {
+                firstElementChild: canvas,
+                style: {
                 opacity: layer.getOpacity(),
-              },
+                },
             };
             rendererTransform = transform;
-          };
+        };
 
-          layers.push(layer); */
+        layers.push(layer);
 
 
 

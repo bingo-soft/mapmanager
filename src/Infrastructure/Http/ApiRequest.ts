@@ -1,4 +1,4 @@
-import { RequestOnFullFilledFunction, ResponseOnFullFilledFunction, OnRejectedFunction } from './RequestResponseFunctionType';
+//import { RequestOnFullFilledFunction, ResponseOnFullFilledFunction, OnRejectedFunction } from './RequestResponseFunctionType';
 import { HttpMethod } from './HttpMethod'
 
 export type ApiRequest = {
