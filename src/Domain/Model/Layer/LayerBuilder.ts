@@ -145,10 +145,11 @@ export default class LayerBuilder {
 
     /**
      * Sets layer's tile index
-     * @param json - json
+     * @param json - GeoJSON to create an index from
+     * @param srsId - SRS Id of GeoJSON data
      */
-    public setTileIndex(json: unknown): LayerBuilder {
-        this.layer.setTileIndex(json);
+    public setTileIndex(json: unknown, srsId: number): LayerBuilder {
+        this.layer.setTileIndex(json, srsId);
         return this;
     }
 

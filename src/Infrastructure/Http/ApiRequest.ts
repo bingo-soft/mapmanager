@@ -8,8 +8,8 @@ export type ApiRequest = {
     headers?: unknown;
     data?: unknown;
     axios_params?: unknown;
-    request_on_fullfilled?: RequestOnFullFilledFunction;
+    /* request_on_fullfilled?: RequestOnFullFilledFunction;
     request_on_rejected?: OnRejectedFunction;
     response_on_fullfilled?: ResponseOnFullFilledFunction;
-    response_on_rejected?: OnRejectedFunction;    
+    response_on_rejected?: OnRejectedFunction;     */
 }

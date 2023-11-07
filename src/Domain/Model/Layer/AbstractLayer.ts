@@ -2,7 +2,7 @@ import OlLayer from "ol/layer/Layer";
 import { Source as OlSource } from "ol/source";
 import { LoadFunction, UrlFunction } from "ol/Tile";
 import OlFeature from "ol/Feature";
-import OlGeoJSON from "ol/format/GeoJSON";
+import { GeoJSON as OlGeoJSON, MVT as OlMVT } from "ol/format";
 import { FeatureLoader } from "ol/featureloader";
 import LayerInterface from "./LayerInterface";
 import SourceType from "../Source/SourceType";
@@ -42,7 +42,7 @@ export default abstract class AbstractLayer implements LayerInterface
      */
     setMap(map: Map): void {
         this.map = map;
-    };
+    }
 
     /**
      * Returns Openlayers layer instance
@@ -68,12 +68,15 @@ export default abstract class AbstractLayer implements LayerInterface
         this.type = type;
     }
 
+    /**
+     * Sets layer's event bus
+     * @param type - layer's source type
+     */
     public setEventBus(eventBus: EventBus | null): void {
         this.eventBus = eventBus;
     }
 
-    public getEventBus(): EventBus | null
-    {
+    public getEventBus(): EventBus | null {
         return this.eventBus;
     }
 
@@ -187,9 +190,10 @@ export default abstract class AbstractLayer implements LayerInterface
 
     /**
      * Sets layer's tile index
-     * @param json - json to create an index from
+     * @param json - GeoJSON to create an index from
+     * @param srsId - SRS Id of GeoJSON data
      */
-    public setTileIndex(json: unknown): void {
+    public setTileIndex(json: unknown, srsId: number): void {
         throw new MethodNotImplemented();
     }
 
@@ -205,7 +209,7 @@ export default abstract class AbstractLayer implements LayerInterface
      * Returns layer's tile format
      * @return layer's tile format
      */
-    public getFormat(): OlGeoJSON {
+    public getFormat(): OlGeoJSON | OlMVT {
         throw new MethodNotImplemented();
     }
 
@@ -218,10 +222,10 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Returns layer's URL
-     * @return layer's URL
+     * Returns layer's source URL
+     * @return layer's source URL
      */
-    getUrl(): string {
+    public getUrl(): string {
         throw new MethodNotImplemented();
     }
 
@@ -230,6 +234,14 @@ export default abstract class AbstractLayer implements LayerInterface
      * @param url - source url
      */
     public setUrl(url: string): void {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Returns layer's source URLs
+     * @return layer's source URLs
+     */
+    public getUrls(): string[] {
         throw new MethodNotImplemented();
     }
 
