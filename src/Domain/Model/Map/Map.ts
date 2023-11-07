@@ -1,5 +1,5 @@
 import * as turf from "@turf/turf"
-import booleanIntersects from "@turf/boolean-intersects" 
+import booleanIntersects from "@turf/boolean-intersects"
 import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
@@ -65,7 +65,7 @@ import "../../../styles.css";
 
 
 /** Map */
-export default class Map { 
+export default class Map {
     private map: OlMap;
     private zoom: number;
     private srsId: number;
@@ -93,11 +93,11 @@ export default class Map {
     private static readonly ZOOM = 14;
 
     /**
-     * @param targetDOMId - id of target DOM element 
-     * @param opts - options 
+     * @param targetDOMId - id of target DOM element
+     * @param opts - options
      */
-    constructor(targetDOMId: string, opts?: unknown) { 
-        let baseLayer = null, 
+    constructor(targetDOMId: string, opts?: unknown) {
+        let baseLayer = null,
             srsId = Map.SRS_ID,
             centerX = Map.CENTER_X,
             centerY = Map.CENTER_Y,
@@ -239,7 +239,7 @@ export default class Map {
         this.documentEventHandlers.add(EventType.KeyDown, "KeyDownEventHandler", (e: KeyboardEvent): void => {
             if (this.interaction.getType() == InteractionType.Draw) {
                 if (e.key == "Escape") {
-                    (<DrawInteraction> this.interaction).abortDrawing(); 
+                    (<DrawInteraction> this.interaction).abortDrawing();
                 }
                 if (e.key == "Delete" || e.key == "Backspace") {
                     if ((<DrawInteraction> this.interaction).getDrawingFeature().getGeometry().getType() !== "Circle") {
@@ -263,7 +263,7 @@ export default class Map {
      * Returns Event Bus
      * @return Event Bus
      */
-    public getEventBus(): EventBus | null 
+    public getEventBus(): EventBus | null
     {
         return this.eventBus;
     }
@@ -312,7 +312,7 @@ export default class Map {
     public setCenter(opts?: unknown): void {
         let centerX = Map.CENTER_X,
             centerY = Map.CENTER_Y,
-            centerSRSId = Map.SRS_ID, 
+            centerSRSId = Map.SRS_ID,
             showMarker = false;
         if (typeof opts !== "undefined") {
             if (Object.prototype.hasOwnProperty.call(opts, "x")) {
@@ -390,7 +390,7 @@ export default class Map {
     /**
      * Sets cursor of the map.
      * @param cursor - cursor type
-     */ 
+     */
     public setCursor(cursor: string): void {
         this.map.getViewport().style.cursor = cursor;
         this.cursor = cursor;
@@ -456,7 +456,7 @@ export default class Map {
         if (type != InteractionType.Select) {
             return;
         }
-        // clear an ordinary select interaction's features 
+        // clear an ordinary select interaction's features
         const olSelect = <OlSelect> this.interaction.getInteraction();
         if (olSelect && olSelect instanceof OlSelect) {
             olSelect.getFeatures().clear();
@@ -488,12 +488,12 @@ export default class Map {
     public getInteractionType(): InteractionType {
         return this.interaction.getType();
     }
-    
+
     /**
      * Sets map normal interaction
      */
     public setNormalInteraction(): void {
-        this.clearInteractions(); 
+        this.clearInteractions();
         this.interaction = new NormalInteraction();
     }
 
@@ -506,7 +506,7 @@ export default class Map {
     public setDrawInteraction(layer: LayerInterface, geometryType: string, callback?: DrawCallbackFunction): void {
         this.clearInteractions([InteractionType.Draw]);
         this.interaction = new DrawInteraction(layer, geometryType, callback);
-        this.addInteraction(this.interaction);        
+        this.addInteraction(this.interaction);
     }
 
     /**
@@ -514,11 +514,11 @@ export default class Map {
      * @param type - zoom type
      */
     public setZoomInteraction(type: ZoomType): void {
-        this.clearInteractions([InteractionType.Zoom]); 
+        this.clearInteractions([InteractionType.Zoom]);
         this.interaction = new ZoomInteraction(type, this);
-        this.addInteraction(this.interaction);        
+        this.addInteraction(this.interaction);
     }
-    
+
     /**
      * Sets map selection interaction
      * @param type - selection type
@@ -554,7 +554,7 @@ export default class Map {
     public setModifyInteraction(source: LayerInterface, callback?: ModifyCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
         this.interaction = new ModifyInteraction(source, callback);
-        this.addInteraction(this.interaction);  
+        this.addInteraction(this.interaction);
     }
 
     /**
@@ -565,7 +565,7 @@ export default class Map {
     public setTransformInteraction(source: LayerInterface, callback?: TransformCallbackFunction): void {
         this.clearInteractions([InteractionType.Modify, InteractionType.Transform]);
         this.interaction = new TransformInteraction(source, callback);
-        this.addInteraction(this.interaction);  
+        this.addInteraction(this.interaction);
     }
 
     /**
@@ -577,7 +577,7 @@ export default class Map {
     public setMeasureInteraction(type: MeasureType, popupSettings: unknown, callback?: MeasureCallbackFunction): void {
         this.clearInteractions([InteractionType.Measure]);
         this.interaction = new MeasureInteraction(type, popupSettings, this, callback);
-        this.addInteraction(this.interaction);  
+        this.addInteraction(this.interaction);
     }
 
     /**
@@ -588,7 +588,7 @@ export default class Map {
      */
     public setMapCoordinatesInteraction(type: EventType, callback: MapCoordinatesCallbackFunction, srsId?: number): void {
         this.interaction = new MapCoordinatesInteraction(this, type, callback, srsId);
-        this.addInteraction(this.interaction);        
+        this.addInteraction(this.interaction);
     }
 
     /**
@@ -608,7 +608,7 @@ export default class Map {
         const point4 = olMap.getCoordinateFromPixel([coordinates[0], coordinates[1] + LABEL_HEIGHT]);
         const feature = new OlFeature({
             geometry: new OlPolygon([[
-                point1, point2, point3, point4, point1 
+                point1, point2, point3, point4, point1
             ]])
         });
         feature.set("label", opts["label"]["text"]);
@@ -632,7 +632,7 @@ export default class Map {
     /**
      * Clears interactions
      * @param types - types of interaction to clear, all if not set
-     */ 
+     */
     public clearInteractions(types?: InteractionType[]): void {
         this.interactions.forEach((interaction: InteractionInterface): void => {
             if ((typeof types !== "undefined" && types.includes(interaction.getType())) || typeof types === "undefined") {
@@ -733,7 +733,7 @@ export default class Map {
     }
 
     /**
-     * Checks if layer exists on the map 
+     * Checks if layer exists on the map
      * @param layer - layer instance
      * @return whether layer exists on the map
      */
@@ -744,14 +744,14 @@ export default class Map {
         return (layers && layers.length != 0);
     } */
 
-    /** 
+    /**
      * Adds features to map
      * @param layer - layer to add to
      * @param features - features to add
      */
     public addFeatures(layer: LayerInterface, features: FeatureCollection): void {
         if (features) {
-            const source = <OlVectorSource> layer.getSource();            
+            const source = <OlVectorSource> layer.getSource();
             features.forEach((feature: Feature): void => {
                 source.addFeature(feature.getFeature());
                 feature.setLayer(layer);
@@ -761,15 +761,15 @@ export default class Map {
         }
     }
 
-    /** 
+    /**
      * Removes features from map
      * @param features - features to remove
      */
     public removeFeatures(features: FeatureCollection): void {
-        if (features) {   
-            let layer;         
+        if (features) {
+            let layer;
             features.forEach((feature: Feature): void => {
-                layer = feature.getLayer(); 
+                layer = feature.getLayer();
                 layer.setRemovedFeatures(feature);
                 const source = <OlVectorSource> (layer.getLayer().getSource());
                 source.removeFeature(feature.getFeature());
@@ -779,7 +779,7 @@ export default class Map {
         }
     }
 
-    /** 
+    /**
      * Fits map to given extent
      * @param extent - extent to fit to
      */
@@ -806,7 +806,7 @@ export default class Map {
             view.setZoom(zoom);
         }
         if (typeof showCenterMarker !== "undefined" && showCenterMarker) {
-            this.showMarker(OlExtent.getCenter(extent));        
+            this.showMarker(OlExtent.getCenter(extent));
         }
     }
 
@@ -858,7 +858,7 @@ export default class Map {
                                 }
                             }
                         }
-                    }    
+                    }
                 }
             });
         }
@@ -876,7 +876,7 @@ export default class Map {
     /**
      * Creates a temporary layer and adds it to map
      * @memberof Map
-     * @return temporary layer instance 
+     * @return temporary layer instance
      */
     public createTemporaryLayer(type: TemporaryLayerType): LayerInterface {
         let layer = null;
@@ -923,7 +923,7 @@ export default class Map {
      * Creates a measure overlay and adds it to map
      * @param element - DOM element to create overlay upon
      * @param position - the overlay position in map projection
-     * @param offset - offset in pixels used when positioning the overlay 
+     * @param offset - offset in pixels used when positioning the overlay
      * @return measure overlay
      */
     public createMeasureOverlay(element: HTMLElement, position: number[], offset: number[]): OlOverlay {
@@ -957,7 +957,7 @@ export default class Map {
      * @param label - label for vertex
      * @return highlight feature
      */
-    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number, 
+    public highlightVertex(coordinate: OlCoordinate.Coordinate, srsId: number,
         style: unknown = null, id?: number, label?: string): Feature {
         if (!this.vertexHighlightLayer) {
             this.vertexHighlightLayer = new VectorLayerOl({
@@ -1022,7 +1022,7 @@ export default class Map {
                     (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                         const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
                         const featureGeometryTurf = featureTurf.geometry;
-                        if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf)) 
+                        if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))
                             && extentFeature != olFeature) {
                             selectedLayers.add(olLayer);
                             selectedFeatures.push(olFeature); // just to highlight the selection
@@ -1034,7 +1034,7 @@ export default class Map {
         const fc = new FeatureCollection(selectedFeatures.getArray());
         this.setSelectedFeatures(fc);
         this.setSelectedLayers(selectedLayers);
-    }    
+    }
 
     /**
      * Returns map's event handlers
@@ -1043,7 +1043,7 @@ export default class Map {
     public getEventHandlers(): EventHandlerCollection {
         return this.eventHandlers;
     }
-    
+
     /**
      * Sets map's event handler
      * @param eventType - event type
@@ -1121,7 +1121,7 @@ export default class Map {
             const zoom = this.map.getView().getZoom()
             view.setZoom(zoom + 1);
             view.setZoom(zoom);
-            this.map.once("rendercomplete", () => {
+            //this.map.once("rendercomplete", () => {
                 // get map canvas through iterating its layers
                 const mapCanvas = document.createElement('canvas');
                 const size = this.map.getSize();
@@ -1155,7 +1155,7 @@ export default class Map {
                 );
                 mapContext.globalAlpha = 1;
                 mapContext.setTransform(1, 0, 0, 1, 0, 0);
-                
+
                 let printContainer = document.getElementById("print-container");
                 if (printContainer) {
                     printContainer.remove();
@@ -1164,13 +1164,13 @@ export default class Map {
                 printContainer.id = "print-container";
                 printContainer.style.display = "none";
                 document.body.appendChild(printContainer);
-                
+
                 const iframe = document.createElement("iframe");
                 printContainer.appendChild(iframe);
 
                 const img = document.createElement("img");
                 img.setAttribute("crossorigin", "anonymous");
-                
+
                 let mimeType = "";
                 if (exportType == ExportType.Printer || exportType == ExportType.PNG) {
                     mimeType = "image/png";
@@ -1181,7 +1181,7 @@ export default class Map {
                 }
                 img.src = mapCanvas.toDataURL(mimeType);
 
-                img.onload = (): void => { 
+                img.onload = (): void => {
                     if (exportType == ExportType.Printer) {
                         iframe.contentWindow.print();
                         iframe.contentWindow.document.body.appendChild(img);
@@ -1201,9 +1201,9 @@ export default class Map {
                                 resolve(ret);
                             } else {
                                 const reader = new FileReader();
-                                reader.readAsDataURL(blob); 
+                                reader.readAsDataURL(blob);
                                 reader.onloadend = function() {
-                                    ret.file = reader.result;          
+                                    ret.file = reader.result;
                                     resolve(ret);
                                 }
                             }
@@ -1214,11 +1214,11 @@ export default class Map {
                                 link.download = exportType == ExportType.PNG ? "map.png" : "map.jpg";
                                 link.click();
                             }
-                        }, mimeType);  
+                        }, mimeType);
                     }
                 }
                 iframe.contentWindow.document.body.appendChild(img);
-            });
+            //});
         });
     }
 
@@ -1273,7 +1273,7 @@ export default class Map {
                     const properties = olFeature.getProperties();
                     featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupTemplate, properties);
                     const featurePopupCss = layer.getFeaturePopupCss();
-                    if (featurePopupCss) { 
+                    if (featurePopupCss) {
                         featurePopupElement.setAttribute("style", featurePopupCss);
                     }
                     if (featurePopupElement.innerHTML) {
