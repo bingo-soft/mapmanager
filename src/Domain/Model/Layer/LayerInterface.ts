@@ -3,7 +3,7 @@ import { Source as OlSource } from "ol/source";
 import OlFeature from "ol/Feature";
 import { FeatureLoader } from "ol/featureloader";
 import { LoadFunction, UrlFunction } from "ol/Tile";
-import OlGeoJSON from "ol/format/GeoJSON";
+import { GeoJSON as OlGeoJSON, MVT as OlMVT } from "ol/format";
 import SourceType from "../Source/SourceType";
 import SourceInterface from "../Source/SourceInterface";
 import EventHandlerCollection from "../EventHandlerCollection/EventHandlerCollection";
@@ -134,11 +134,12 @@ export default interface LayerInterface
      */
     setTileLoadFunction(loader: LoadFunction): void;
 
-     /**
+    /**
      * Sets layer's tile index
-     * @param json - json to create an index from
+     * @param json - GeoJSON to create an index from
+     * @param srsId - SRS Id of GeoJSON data
      */
-     setTileIndex(json: unknown);
+     setTileIndex(json: unknown, srsId: number);
 
     /**
      * Returns layer's tile index
@@ -150,7 +151,7 @@ export default interface LayerInterface
      * Returns layer's tile format
      * @return layer's tile format
      */
-    getFormat(): OlGeoJSON;
+    getFormat(): OlGeoJSON | OlMVT;
 
     /**
      * Sets layer's tile format
@@ -159,16 +160,22 @@ export default interface LayerInterface
     setFormat(format: string): void;
 
     /**
-     * Returns layer's URL
-     * @return layer's URL
+     * Returns layer's source URL
+     * @return layer's source URL
      */
     getUrl(): string;
-    
+
     /**
      * Sets layer source url
      * @param url - source url
      */
     setUrl(url: string): void;
+
+     /**
+     * Returns layer's source URLs
+     * @return layer's source URLs
+     */
+    getUrls(): string[];
 
     /**
      * Sets layer source params

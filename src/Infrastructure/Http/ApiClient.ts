@@ -12,7 +12,7 @@ export class ApiClient {
      */
     public static request(request: ApiRequest): Promise<any> {
         const payload = {
-            method: request["method"] || null,
+            method: request["method"] || "GET",
             params: request["params"] || null,
             baseURL: request["base_url"] || null,
             headers: request["headers"] || null,
@@ -24,8 +24,8 @@ export class ApiClient {
                 payload[k] = request.axios_params[k] || null;
             }
         }
-        axios.interceptors.request.use(request["request_on_fullfilled"], request["request_on_rejected"]);
-        axios.interceptors.response.use(request["response_on_fullfilled"], request["response_on_rejected"]);
+        /* axios.interceptors.request.use(request["request_on_fullfilled"], request["request_on_rejected"]);
+        axios.interceptors.response.use(request["response_on_fullfilled"], request["response_on_rejected"]); */
         return new Promise((resolve, reject) => {
           axios
             .request(payload)

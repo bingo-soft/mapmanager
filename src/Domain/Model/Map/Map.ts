@@ -23,6 +23,7 @@ import OlOverlay from "ol/Overlay";
 import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import { Select as OlSelect } from "ol/interaction";
 import { Pixel } from "ol/pixel";
+import { createXYZ } from 'ol/tilegrid';
 import OlScale from "ol-ext/control/Scale";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
@@ -128,11 +129,13 @@ export default class Map {
         let source: OlTileSource = null;
         if (baseLayer == BaseLayer.OSM) {
             if (Object.prototype.hasOwnProperty.call(opts, "base_layer_use_proxy") && opts["base_layer_use_proxy"]) {
-                source = new OlOSM({
+                /* source = new OlOSM({
                     url: "/osm/{z}/{x}/{y}.png"
-                });
+                }); */
             } else {
-                source = new OlOSM();
+                source = new OlOSM({
+                    //transition: 0
+                });
             }
         } /* else if (...) {
             TODO
@@ -194,7 +197,8 @@ export default class Map {
                 projection: "EPSG:" + this.srsId.toString(),
                 center: center,
                 zoom: zoom,
-                multiWorld: true
+                multiWorld: true,
+                resolutions: createXYZ({tileSize: 512}).getResolutions()
             })
         });
         //_MAP_INSTANCE_ = this.map;
@@ -1225,7 +1229,7 @@ export default class Map {
      * @param imageAnchor - image anchor position, an array of 2 values - x ("left", "center", "right") and y ("top", "bottom") position
      */
     public showMarker(coordinate: OlCoordinate.Coordinate, imagePath?: string, imageAnchor?: string[]): void {
-        let markerStyle = SearchMarkerStyle;
+        const markerStyle = SearchMarkerStyle;
         if (imagePath) {
             markerStyle["point"]["image_path"] = imagePath;
         }

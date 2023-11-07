@@ -352,10 +352,7 @@ export default class StyleBuilder {
      * @return style function
      */
     public build(useExternalStyleBuilder = false, useLabelTextOption = false): StyleFunction {
-        return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => {
-
-
-
+        return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => { 
             /* const geometry = feature.getGeometry();
             if (geometry.getType() == "LineString") {
                 const styles = [
@@ -499,7 +496,11 @@ export default class StyleBuilder {
                         console.log(featureProps["handle"]);
                         featureStyle["label"] = JSON.parse('{"fnt":"12px Arial","p":"l","c":"#ff0000","f":"#ff0000","w":1,"l":"'+ featureProps["handle"] +'"}');
                     } */
-
+                    
+                    const zoom = this.layer.getMap().getMap().getView().getZoom();
+                    if (featureType == "Point" && zoom < 19) {
+                        return null;
+                    }
                     if (featureStyle["label"]) {
                         featureStyle["label"]["resolution"] = resolution;
                     }

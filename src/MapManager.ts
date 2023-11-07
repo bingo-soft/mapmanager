@@ -46,7 +46,6 @@ import VectorTileSourceFormat from "./Domain/Model/Source/VectorTileSourceFormat
 import FeatureClickFunction from "./Domain/Model/Layer/FeatureClickFunctionType";
 import { ZoomCallbackFunction } from "./Domain/Model/Interaction/InteractionCallbackType";
 
-
 /** A common class which simplifies usage of OpenLayers in GIS projects */
 export default class MapManager { 
 
@@ -184,7 +183,7 @@ export default class MapManager {
      * @param isBlob - parameter indicating whether the file should be returned as a Blob instead of Base64, defaults to true
      * @return in case of PNG or GeoTIFF a promise with the file information 
      */
-    public static async export(map: Map, exportType: ExportType = ExportType.Printer, isDownload: boolean = true, isBlob: boolean = true): Promise<unknown> {
+    public static async export(map: Map, exportType: ExportType = ExportType.Printer, isDownload = true, isBlob = true): Promise<unknown> {
         return await map.export(exportType, isDownload, isBlob);
     }
 
@@ -496,11 +495,11 @@ export default class MapManager {
                             base_url: opts["request"]["base_url"],
                             headers: opts["request"]["headers"],
                             data: opts["request"]["data"],
-                            axios_params: opts["request"]["axios_params"],
+                            axios_params: opts["request"]["axios_params"]/* ,
                             request_on_fullfilled: opts["request"]["request_on_fullfilled"],
                             response_on_fullfilled: opts["request"]["response_on_fullfilled"],
                             request_on_rejected: opts["request"]["request_on_rejected"],
-                            response_on_rejected: opts["request"]["response_on_rejected"]
+                            response_on_rejected: opts["request"]["response_on_rejected"] */
                         };
                         if (payload["data"]) {
                             payload["data"]["cql_filter"] = cqlFilter;
@@ -534,68 +533,73 @@ export default class MapManager {
                     });
             }
             if (type == SourceType.VectorTile) {
-                builder.setUrl(opts["request"]["base_url"]);
-                const format = opts["format"] ? opts["format"] : VectorTileSourceFormat.GeoJSON;
+                const format = opts["format"] ? opts["format"] : VectorTileSourceFormat.MVT;
                 builder.setFormat(format);
                 if (format == VectorTileSourceFormat.GeoJSON) {
-                    builder.setTileUrlFunction((tileCoord: OlTilecoord) => {
-                        return JSON.stringify(tileCoord);
-                    });
-                    builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
-                        const tileCoord = JSON.parse(url);
-                        const tileIndex: any = builder.getLayer().getTileIndex();
-                        const data = tileIndex.getTile(
-                            tileCoord[0],
-                            tileCoord[1],
-                            tileCoord[2]
-                        );
-                        const geojson = JSON.stringify({
-                            type: 'FeatureCollection',
-                            features: data ? data.features : [],
-                        }, StringUtil.replacer);
-                        const format: any = builder.getLayer().getFormat();
-                        const features = format.readFeatures(geojson, {
-                            extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
-                            featureProjection: "EPSG:3857", /// hardcode!!!
+                    if (!opts["use_worker"]) {
+                        builder.setTileUrlFunction((tileCoord: OlTilecoord) => {
+                            return JSON.stringify(tileCoord);
                         });
-                        tile.setFeatures(features);
-                    });
+                        builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
+                            const layer = builder.getLayer();
+                            const tileCoord = JSON.parse(url);
+                            const tileIndex: any = layer.getTileIndex();
+                            const data = tileIndex.getTile(
+                                tileCoord[0],
+                                tileCoord[1],
+                                tileCoord[2]
+                            );
+                            const geojson = JSON.stringify({
+                                type: 'FeatureCollection',
+                                features: data ? data.features : [],
+                            }, StringUtil.replacer);
+                            const format = layer.getFormat();
+                            const features = format.readFeatures(geojson, {
+                                extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
+                                featureProjection: "EPSG:" + layer.getMap().getSRSId().toString()
+                            });
+                            tile.setFeatures(features);
+                        });
+                    }
                 } else {
-                    builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
-                        tile.setLoader(async function(extent, resolution, projection) {
-                            const payload = {
-                                base_url: url,
-                                method: opts["request"]["method"],
-                                headers: opts["request"]["headers"],
-                                data: opts["request"]["data"],
-                                responseType: "arraybuffer",
-                                axios_params: opts["request"]["axios_params"],
-                                request_on_fullfilled: opts["request"]["request_on_fullfilled"],
-                                response_on_fullfilled: opts["request"]["response_on_fullfilled"],
-                                request_on_rejected: opts["request"]["request_on_rejected"],
-                                response_on_rejected: opts["request"]["response_on_rejected"]
-                            }
-                            if (opts["request"]["method"].toLowerCase() == "post") {
-                                if (opts["request"]["data"]) {
-                                    const data = new FormData();
-                                    Object.keys(opts["request"]["data"]).forEach((key: string): void => {
-                                        data.append(key, JSON.stringify(opts["request"]["data"][key]));
-                                    });
-                                    payload["data"] = data;
+                    builder.setUrl(opts["request"]["base_url"]);
+                    if (!opts["use_worker"]) {
+                        builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
+                            tile.setLoader(async function(extent, resolution, projection) {
+                                const payload = {
+                                    base_url: url,
+                                    method: opts["request"]["method"],
+                                    headers: opts["request"]["headers"],
+                                    data: opts["request"]["data"],
+                                    responseType: "arraybuffer",
+                                    axios_params: opts["request"]["axios_params"],
+                                    //request_on_fullfilled: opts["request"]["request_on_fullfilled"],
+                                    //response_on_fullfilled: opts["request"]["response_on_fullfilled"],
+                                    //request_on_rejected: opts["request"]["request_on_rejected"],
+                                    //response_on_rejected: opts["request"]["response_on_rejected"]
                                 }
-                            }
-                            const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                            await query.execute(payload)
-                            .then(function(data) {
-                                const format = tile.getFormat();
-                                const features = format.readFeatures(data, {
-                                    extent: extent,
-                                    featureProjection: projection
+                                if (opts["request"]["method"].toLowerCase() == "post") {
+                                    if (opts["request"]["data"]) {
+                                        const data = new FormData();
+                                        Object.keys(opts["request"]["data"]).forEach((key: string): void => {
+                                            data.append(key, JSON.stringify(opts["request"]["data"][key]));
+                                        });
+                                        payload["data"] = data;
+                                    }
+                                }
+                                const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                                await query.execute(payload)
+                                .then(function(data) {
+                                    const format = tile.getFormat();
+                                    const features = format.readFeatures(data, {
+                                        extent: extent,
+                                        featureProjection: projection
+                                    });
+                                    tile.setFeatures(<OlFeature[]> features);
                                 });
-                                tile.setFeatures(<OlFeature[]> features);
                             });
                         });
-                    });
+                    }
                 }
             }
             if ((type == SourceType.Vector || type == SourceType.VectorTile || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "style")) {
@@ -675,7 +679,7 @@ export default class MapManager {
      */
     public static createVectorTileLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
         const layer = MapManager.createLayer(SourceType.VectorTile, opts);
-        layer.setTileIndex(JSON.parse(geoJSON));
+        layer.setTileIndex(JSON.parse(geoJSON), layer.getSRSId());
         return layer;
     }
 
@@ -687,7 +691,7 @@ export default class MapManager {
      */
     public static setVectorTileLayerGeoJSON(layer: LayerInterface, geoJSON: string): void {
         if (layer instanceof VectorTileLayer) {
-            layer.setTileIndex(JSON.parse(geoJSON));
+            layer.setTileIndex(JSON.parse(geoJSON), layer.getSRSId());
         } else {
             throw new MethodNotImplemented();
         }
@@ -1460,7 +1464,7 @@ export default class MapManager {
      * @param swapCoordinates - whether to swap coordinates, defaults to false
      * @return array of points
      */
-     public static textPointsToArray(text: string, swapCoordinates: boolean = false): number[][] {
+     public static textPointsToArray(text: string, swapCoordinates = false): number[][] {
         return Geometry.textPointsToArray(text, swapCoordinates);
     }
 
@@ -1470,7 +1474,7 @@ export default class MapManager {
      * @param swapCoordinates - whether to swap coordinates, defaults to false
      * @return points given in text
      */
-    public static arrayToTextPoints(points: number[][], swapCoordinates: boolean = false): string {
+    public static arrayToTextPoints(points: number[][], swapCoordinates = false): string {
         return Geometry.arrayToTextPoints(points, swapCoordinates);
     }
 

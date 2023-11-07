@@ -11,7 +11,7 @@ export default class VectorTileSource extends BaseSource {
     
     constructor(format: string) {
         super();
-        format = format ? format : VectorTileSourceFormat.GeoJSON;
+        format = format ? format : VectorTileSourceFormat.MVT;
         this.source = new OlVectorTileSource({
             format: format == VectorTileSourceFormat.GeoJSON ? new OlGeoJSON({ dataProjection: new OlProjection({ code: 'TILE_PIXELS', units: 'tile-pixels', extent: [0, 0, 4096, 4096] }) }) : new OlMVT()
         });
