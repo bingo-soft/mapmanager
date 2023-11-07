@@ -4,14 +4,15 @@ import "ol/ol.css";
 import OlMap from "ol/Map";
 import OlView from "ol/View";
 import * as OlExtent from "ol/extent";
-import { OverviewMap as OlOverviewMapControl, Zoom as OlZoomControl, Control as OlControl, ScaleLine as OlScaleLine} from "ol/control";
+import { Zoom as OlZoomControl, Control as OlControl, ScaleLine as OlScaleLine} from "ol/control";
 import OlBaseLayer from "ol/layer/Base";
 import VectorLayerOl from "ol/layer/Vector";
 import OlVectorSource from "ol/source/Vector";
 import OlTileSource from "ol/source/Tile";
+import OlTileLayer from "ol/layer/Tile";
 import { Polygon as OlPolygon } from "ol/geom";
 import { OSM as OlOSM } from "ol/source";
-import { Layer as OlLayer, Tile as OlTileLayer } from "ol/layer";
+import { Layer as OlLayer } from "ol/layer";
 import { GeoJSON as OlGeoJSON }  from "ol/format";
 import OlFeature from "ol/Feature";
 import { Point as OlPoint } from "ol/geom"
@@ -24,7 +25,6 @@ import { MapBrowserEvent as OlMapBrowserEvent } from "ol";
 import { Select as OlSelect } from "ol/interaction";
 import { Pixel } from "ol/pixel";
 import { createXYZ } from 'ol/tilegrid';
-import OlScale from "ol-ext/control/Scale";
 import LayerInterface from "../Layer/LayerInterface"
 import BaseLayer from "./BaseLayer";
 import InteractionType from "../Interaction/InteractionType";
@@ -352,6 +352,7 @@ export default class Map {
      * @param callback - callback function to set
      */
     public setZoomCallback(callback: ZoomCallbackFunction): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this.eventHandlers.add(EventType.MoveEnd, "MapZoomEventHandler", (e: OlBaseEvent): void => {
             if (typeof callback !== "function") {
                 return;
@@ -1138,6 +1139,7 @@ export default class Map {
                             const transform = canvas.style.transform;
                             if (transform) {
                                 // Get the transform parameters from the style's transform matrix
+                                // eslint-disable-next-line no-useless-escape
                                 matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
                             } else {
                                 matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];

@@ -21,7 +21,7 @@ export default class ObjectParser {
      * @param value - value to parse
      * @return parsed value
      */
-    public static parseAttributeValue(value: unknown, objectKeyToReturn: string = "id"): string {
+    public static parseAttributeValue(value: unknown, objectKeyToReturn = "id"): string {
         if (value && typeof value == "object") {
             objectKeyToReturn = objectKeyToReturn.toLowerCase();
             if (value[objectKeyToReturn]) {

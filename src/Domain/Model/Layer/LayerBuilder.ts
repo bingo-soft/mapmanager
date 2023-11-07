@@ -50,10 +50,11 @@ export default class LayerBuilder {
             case SourceType.VectorTile:
                 this.layer.setSource(new VectorTileSource(opts["format"]));
                 break;
-            case SourceType.Cluster:
+            case SourceType.Cluster: {
                 const distance = opts["style"] && opts["style"]["point"] ? opts["style"]["point"]["cluster_distance"] : null;
                 this.layer.setSource(new ClusterSource(distance));
                 break;
+            }
             case SourceType.TileWMS:
                 this.layer.setSource(new TileWMSSource(opts));
                 break;

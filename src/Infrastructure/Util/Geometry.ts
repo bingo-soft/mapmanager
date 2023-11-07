@@ -23,7 +23,7 @@ export default class Geometry {
      * @param swapCoordinates - whether to swap coordinates, defaults to false
      * @return array of points
      */
-    public static textPointsToArray(text: string, swapCoordinates: boolean = false): number[][] {
+    public static textPointsToArray(text: string, swapCoordinates = false): number[][] {
         text = text.replace(/^\s+|\s+$/g, '');
         const pointsTmp = text.split("\n");
         const points = [];
@@ -38,6 +38,7 @@ export default class Geometry {
                 xy = xy.filter(word => word != " " && word != "");
                 const xyNumeric = []
                 xy.forEach((item) => {
+                    // eslint-disable-next-line no-useless-escape
                     item = item.replace(/[\°'"]/g, '');
                     xyNumeric.push(parseFloat(item.replace(/^\s+|\s+$/g, '')));
                 });
@@ -57,7 +58,7 @@ export default class Geometry {
      * @param swapCoordinates - whether to swap coordinates, defaults to false
      * @return points given in text
      */
-    public static arrayToTextPoints(points: number[][], swapCoordinates: boolean = false): string {
+    public static arrayToTextPoints(points: number[][], swapCoordinates = false): string {
         let ret = '';
         points.forEach((point: number[], index: number, arr: number[][]) => {
             if (point.length) {

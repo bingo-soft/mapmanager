@@ -9,7 +9,7 @@ export default class StringUtil {
      */
     public static adjustText(text: string, resolution: number, maxResolution: number): string {
         return resolution > maxResolution ? "" : StringUtil.divideString(text, 16, "\n");
-    };
+    }
 
     /**
      * Divides text into substrings

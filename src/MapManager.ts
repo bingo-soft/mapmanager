@@ -10,7 +10,7 @@ import OlVectorTile from "ol/VectorTile";
 import { TileCoord as OlTilecoord } from 'ol/tilecoord';
 import OlFeature from "ol/Feature";
 import OlBaseEvent from "ol/events/Event";
-import { ImageTile, MapBrowserEvent as OlMapBrowserEvent, Tile } from "ol";
+import { ImageTile, MapBrowserEvent as OlMapBrowserEvent/* , Tile */ } from "ol";
 import "../assets/style.css"
 import Map from "./Domain/Model/Map/Map"
 import LayerInterface from "./Domain/Model/Layer/LayerInterface"
@@ -470,7 +470,7 @@ export default class MapManager {
             }
             builder.setOptions(opts);
             if ((type == SourceType.Vector || type == SourceType.Cluster) && Object.prototype.hasOwnProperty.call(opts, "request")) {
-                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection, success, failure): Promise<void> => {
+                    builder.setLoader(async (extent: OlExtent.Extent, resolution: number, projection: OlProjection/* , success, failure */): Promise<void> => {
                         const layer = builder.getLayer();
                         const layerSrs = "EPSG:" + layer.getSRSId().toString();
                         const mapSrs = projection.getCode();
@@ -554,7 +554,7 @@ export default class MapManager {
                                 features: data ? data.features : [],
                             }, StringUtil.replacer);
                             const format = layer.getFormat();
-                            const features = format.readFeatures(geojson, {
+                            const features = (<OlGeoJSON> format).readFeatures(geojson, {
                                 extent: (<OlVectorTileSource> builder.getSource()).getTileGrid().getTileCoordExtent(tileCoord),
                                 featureProjection: "EPSG:" + layer.getMap().getSRSId().toString()
                             });
@@ -566,6 +566,7 @@ export default class MapManager {
                     if (!opts["use_worker"]) {
                         builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
                             tile.setLoader(async function(extent, resolution, projection) {
+                                //let t1, t2;
                                 const payload = {
                                     base_url: url,
                                     method: opts["request"]["method"],
@@ -588,6 +589,7 @@ export default class MapManager {
                                     }
                                 }
                                 const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                                //t1 = performance.now();
                                 await query.execute(payload)
                                 .then(function(data) {
                                     const format = tile.getFormat();
@@ -596,7 +598,40 @@ export default class MapManager {
                                         featureProjection: projection
                                     });
                                     tile.setFeatures(<OlFeature[]> features);
+                                    /* t2 = performance.now();
+                                    console.log(t2-t1) */
                                 });
+
+                                /* const payload = {
+                                    base_url: url,
+                                    method: opts["request"]["method"],
+                                    headers: opts["request"]["headers"],
+                                    data: opts["request"]["data"],
+                                    responseType: "arraybuffer",
+                                    axios_params: opts["request"]["axios_params"]
+                                }
+                                if (opts["request"]["method"].toLowerCase() == "post") {
+                                    if (opts["request"]["data"]) {
+                                        const data = new FormData();
+                                        Object.keys(opts["request"]["data"]).forEach((key: string): void => {
+                                            data.append(key, JSON.stringify(opts["request"]["data"][key]));
+                                        });
+                                        payload["data"] = data;
+                                    }
+                                }
+                                const worker = new Worker("Domain/Model/Source/Worker/VectorTileLoadWorker.ts");
+                                worker.onmessage = (e) => {
+                                    const format = tile.getFormat();
+                                    const features = format.readFeatures(e.data, {
+                                        extent: extent,
+                                        featureProjection: projection
+                                    });
+                                    tile.setFeatures(<OlFeature[]> features);
+                                    t2 = performance.now();
+                                    console.log(t2-t1)
+                                }
+                                t1 = performance.now();
+                                worker.postMessage(payload); */
                             });
                         });
                     }

@@ -1,5 +1,5 @@
 import OlFillPattern from "ol-ext/style/FillPattern";
-import { Fill as OlFill, Icon as OlIcon } from "ol/style";
+import { Fill as OlFill } from "ol/style";
 import CustomFillPattern from "../../Domain/Model/Style/CustomFillPattern";
 
 /** Pattern */

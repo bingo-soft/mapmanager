@@ -84,9 +84,11 @@ export default class MeasureInteraction extends BaseInteraction {
             tooltip.className = "tooltip tooltip-static";
             const overlay = map.createMeasureOverlay(tooltip, tooltipCoord, [0, -7]);
         });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this.eventHandlers.add(EventType.DrawAbort, "MeasureAbortEventHandler", (e: OlBaseEvent): void => {
             tooltip.remove()
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this.eventHandlers.add(EventType.DrawEnd, "MeasureEndEventHandler", (e: OlBaseEvent): void => {
             OlObservable.unByKey(geomChangelistener);
            /*  const tooltip: HTMLElement = document.createElement("div");
