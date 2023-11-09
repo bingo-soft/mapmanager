@@ -644,22 +644,22 @@ export default class MapManager {
                 }
             }
             if (type == SourceType.TileWMS) {
-                const url = new URL(opts["request"]["base_url"]);
+                const url = new URL(opts["request"]["base_url"], window.location.href);
                 builder.setUrl(`${url.protocol}//${url.hostname}${url.pathname}`);
                 builder.setTileLoadFunction(async (tile: ImageTile, url: string) => {
-                    /* const payload = {
+                     const payload = {
                         method: opts["request"]["method"],
                         base_url: url,
-                        headers: opts["request"]["headers"],
+                        headers: opts["request"]["headers"] || {},
                         responseType: "blob"
                     };
                     const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
                     await query.execute(payload)
                     .then(function(data) {
                         (<HTMLImageElement> tile.getImage()).src = URL.createObjectURL(data);
-                    }); */
-                    
-                    (<HTMLImageElement> tile.getImage()).src = url;
+                    });
+
+                    //(<HTMLImageElement> tile.getImage()).src = url;
                 });
             }
             if (type == SourceType.TileArcGISRest || type == SourceType.ImageArcGISRest || type == SourceType.XYZ) { 
