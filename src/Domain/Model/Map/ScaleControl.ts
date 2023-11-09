@@ -84,13 +84,14 @@ export default class ScaleControl extends ol_control_Control {
 
     /** Display the scale
      */
-    protected getScale(): void {
+    protected getScale(): number {
         const map = this.getMap();
         if (map) {
             const d = ol_sphere_getMapScale(map, this.get('ppi'));
             this._input.value = this.formatScale(d);
             return d;
         }
+        return 0;
     }
 
     /** Format the scale 1:d

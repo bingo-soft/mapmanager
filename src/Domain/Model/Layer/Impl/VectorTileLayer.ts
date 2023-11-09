@@ -39,23 +39,10 @@ export default class VectorTileLayer extends AbstractLayer{
      */
     constructor(layer?: OlLayer, opts?: unknown) {
         super();
-        this.srsId = VectorTileLayer.DEFAULT_SRS_ID;
-        if (typeof opts !== "undefined") {
-            if (Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
-                const srsH: unknown = opts["srs_handling"];
-                this.srsId = (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
-            }
-            if (Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
-                this.layer.setMinZoom(opts["min_zoom"]-1);
-            }
-            if (Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
-                this.layer.setMaxZoom(opts["max_zoom"]);
-            }
-            opts["format"] = opts["format"] || VectorTileSourceFormat.MVT;
-        }
         /* if (opts["json"]) {
             this.setTileIndex(opts["json"], this.srsId);
         } */
+        opts["format"] = opts["format"] || VectorTileSourceFormat.MVT;
         if (layer) {
             this.layer = layer;
         } else {
@@ -99,8 +86,6 @@ export default class VectorTileLayer extends AbstractLayer{
                         return this.container;
                     }
                 });
-                console.log("VectorTileLayer constructor", this.layer);
-
                 worker.addEventListener("message", (message) => {
                     if (message.data.action === 'loadImage') {
                         // Image loader for ol-mapbox-style
@@ -141,6 +126,19 @@ export default class VectorTileLayer extends AbstractLayer{
                 this.layer = new OlVectorTileLayer({
                     //declutter: true
                 });
+            }
+        }
+        this.srsId = VectorTileLayer.DEFAULT_SRS_ID;
+        if (typeof opts !== "undefined") {
+            if (Object.prototype.hasOwnProperty.call(opts, "srs_handling")) {
+                const srsH: unknown = opts["srs_handling"];
+                this.srsId = (srsH["srs_handling_type"] == "forced_declared" ? srsH["declared_coordinate_system_id"] : srsH["native_coordinate_system_id"]);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "min_zoom") && typeof opts["min_zoom"] == "number") {
+                this.layer.setMinZoom(opts["min_zoom"]-1);
+            }
+            if (Object.prototype.hasOwnProperty.call(opts, "max_zoom") && typeof opts["max_zoom"] == "number") {
+                this.layer.setMaxZoom(opts["max_zoom"]);
             }
         }
     }

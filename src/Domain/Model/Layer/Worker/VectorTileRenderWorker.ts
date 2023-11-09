@@ -42,7 +42,7 @@ const tileQueue = new OlTileQueue(
 const maxTotalLoading = 8;
 const maxNewLoads = 2;
 
-onmessage = (event) => {
+onmessage = (event) => { 
     if (event.data.action !== "render") {
         return;
     }
@@ -55,7 +55,7 @@ onmessage = (event) => {
             url: event.data.request.base_url
         });
         source.setTileLoadFunction((tile: OlVectorTile, url: string) => {
-            tile.setLoader(async function(extent, resolution, projection) {
+            tile.setLoader(async function(extent, resolution, projection) { 
                 const payload = {
                     base_url: url,
                     method: event.data.request.method,
@@ -103,6 +103,8 @@ onmessage = (event) => {
             };
             rendererTransform = transform;
         };
+        layers.push(layer);
+
         /* console.log("VectorTileRenderWorker", layer);
         const l = new VectorTileLayer(layer, {
             format: event.data.format,
@@ -110,9 +112,33 @@ onmessage = (event) => {
         });
         const style = new StyleBuilder(event.data.style, l).build();
         layer.setStyle(style); */
-        layers.push(layer);
 
-        layer = new OlTileLayer({
+        /* layer = new OlVectorTileLayer({
+            declutter: true,
+            source: source, 
+            //style: style,
+            zIndex: 10
+        });
+        layer.getRenderer().useContainer = function (target, transform) {
+            this.containerReused = this.getLayer() !== layer;
+            this.canvas = canvas;
+            this.context = context;
+            this.container = {
+                firstElementChild: canvas,
+                style: {
+                    opacity: layer.getOpacity(),
+                },
+            };
+            rendererTransform = transform;
+        };
+        layers.push(layer); */
+
+
+        
+
+
+
+        /* layer = new OlTileLayer({
             source: new OlOSM({
                 //transition: 0,
                 tileLoadFunction: function (tile, src) {
@@ -142,7 +168,7 @@ onmessage = (event) => {
             rendererTransform = transform;
         };
 
-        layers.push(layer);
+        layers.push(layer); */
 
 
 
