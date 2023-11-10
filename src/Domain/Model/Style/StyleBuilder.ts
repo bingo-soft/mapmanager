@@ -1,3 +1,4 @@
+import { Feature, View as OlView } from "ol";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlVectorLayer from "ol/layer/Vector";
 //import { Point as OlPoint, LineString as OlLineString} from "ol/geom";
@@ -15,7 +16,6 @@ import CustomFillPattern from "./CustomFillPattern";
 //import CustomStrokePattern from "./CustomStrokePattern";
 import LayerInterface from "../Layer/LayerInterface";
 
-
 /** StyleBuilder */
 export default class StyleBuilder {
     private layer: LayerInterface;
@@ -30,6 +30,8 @@ export default class StyleBuilder {
     private colorUtil: ColorUtil;
     private showLabelMaxResolution: number;
     private pointIconFunction: (url: string) => string;
+    private view: OlView;
+    private featureDisplayRules: unknown;
     private static readonly SHOW_LABEL_MAX_RESOLUTION = 10;
     private static readonly ANCHOR_POSITION = {
         "top": 0,
@@ -57,6 +59,8 @@ export default class StyleBuilder {
         this.style = { "Point": null, "MultiPoint": null, "LineString": null, "MultiLineString": null, "Polygon": null, "MultiPolygon": null, "GeometryCollection": null, "Text": null };
         // TODO: конвертировать короткие стили в длинные, если надо
         // opts = this.convertOptions(opts);
+        this.featureDisplayRules = opts["feature_display_rules"] || {};
+        this.featureDisplayRules["labels_min_zoom"] = this.featureDisplayRules["labels_min_zoom"] || 1;
         this.applyOptions(opts);
     }
 
@@ -486,7 +490,7 @@ export default class StyleBuilder {
             }
             
             // feature based styles
-            if (this.isStyleInFeatureAttribute && featureProps) {
+            if (this.isStyleInFeatureAttribute && this.layer && featureProps) {
                 const featureStyle = typeof featureProps[this.styleAttr] === 'string'
                   ? JSON.parse(featureProps[this.styleAttr]) : featureProps[this.styleAttr];
 
@@ -497,10 +501,13 @@ export default class StyleBuilder {
                         console.log(featureProps["handle"]);
                         featureStyle["label"] = JSON.parse('{"fnt":"12px Arial","p":"l","c":"#ff0000","f":"#ff0000","w":1,"l":"'+ featureProps["handle"] +'"}');
                     } */
+                    //console.log(feature instanceof RenderFeature)
                     
-                    const zoom = this.layer.getMap().getMap().getView().getZoom();
-                    if (featureType == "Point" && zoom < 19) {
-                        return null;
+                    if (!this.view) {
+                        this.view = this.layer.getMap().getMap().getView();
+                    }
+                    if (featureType == "Point" && this.view && this.view.getZoom() < this.featureDisplayRules["labels_min_zoom"]) { 
+                        return null; 
                     }
                     if (featureStyle["label"]) {
                         featureStyle["label"]["resolution"] = resolution;
