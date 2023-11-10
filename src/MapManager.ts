@@ -645,7 +645,7 @@ export default class MapManager {
             }
             if (type == SourceType.TileWMS) {
                 const url = new URL(opts["request"]["base_url"], window.location.href);
-                builder.setUrl(`${url.protocol}//${url.hostname}${url.pathname}`);
+                builder.setUrl(url.href);
                 builder.setTileLoadFunction(async (tile: ImageTile, url: string) => {
                      const payload = {
                         method: opts["request"]["method"],
