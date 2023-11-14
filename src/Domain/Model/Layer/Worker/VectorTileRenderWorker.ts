@@ -16,6 +16,20 @@ import VectorTileLayer from "../Impl/VectorTileLayer";
 
 (<unknown> self.Image) = EventTarget;
 
+
+const parseFn = function (str) {
+    return JSON.parse(str, function(key, value) {
+        if (typeof value != 'string') {
+            return value;
+        }
+        if (value.substring(0, 8) == 'function') {
+            console.log(value);
+        }
+        return value.substring(0, 8) == 'function' ? eval('(' + value + ')') : value;
+    });
+}
+
+
 let frameState, rendererTransform, pixelRatio;
 const canvas = new OffscreenCanvas(1, 1);
 // OffscreenCanvas does not have a style, so we mock it
@@ -50,6 +64,44 @@ onmessage = (event) => {
 
     if (!pixelRatio) {
         pixelRatio = frameState.pixelRatio;
+
+//console.log(parseFn(event.data.obj))
+//console.log(event.data.obj)
+
+        // OSM 
+        layer = new OlTileLayer({
+            source: new OlOSM({
+                //transition: 0,
+                tileLoadFunction: function (tile, src) {
+                postMessage({
+                    action: 'loadImage',
+                    src: src,
+                });
+                addEventListener('message', (event) => {
+                    if (event.data.src == src) {
+                        (<any> tile).setImage(event.data.image);
+                    }
+                });
+                }
+            }),
+            zIndex: 1
+        });
+        layer.getRenderer().useContainer = function (target, transform) {
+            this.containerReused = this.getLayer() !== layers[0];
+            this.canvas = canvas;
+            this.context = context;
+            this.container = {
+                firstElementChild: canvas,
+                style: {
+                opacity: layer.getOpacity(),
+                },
+            };
+            rendererTransform = transform;
+        };
+        layers.push(layer);
+
+
+        // VT Layer
         const source = new OlVectorTileSource({
             format: new OlMVT(),
             url: event.data.request.base_url
@@ -92,7 +144,8 @@ onmessage = (event) => {
             zIndex: 10
         });
         layer.getRenderer().useContainer = function (target, transform) {
-            this.containerReused = this.getLayer() !== layer;
+            this.containerReused = this.getLayer() !== layers[0] // layer;
+            //this.containerReused = this.getLayer() !== layer;
             this.canvas = canvas;
             this.context = context;
             this.container = {
@@ -105,70 +158,11 @@ onmessage = (event) => {
         };
         layers.push(layer);
 
-        /* console.log("VectorTileRenderWorker", layer);
-        const l = new VectorTileLayer(layer, {
-            format: event.data.format,
-            use_worker: false
-        });
-        const style = new StyleBuilder(event.data.style, l).build();
-        layer.setStyle(style); */
-
-        /* layer = new OlVectorTileLayer({
-            declutter: true,
-            source: source, 
-            //style: style,
-            zIndex: 10
-        });
-        layer.getRenderer().useContainer = function (target, transform) {
-            this.containerReused = this.getLayer() !== layer;
-            this.canvas = canvas;
-            this.context = context;
-            this.container = {
-                firstElementChild: canvas,
-                style: {
-                    opacity: layer.getOpacity(),
-                },
-            };
-            rendererTransform = transform;
-        };
-        layers.push(layer); */
-
+           
 
         
 
-
-
-        /* layer = new OlTileLayer({
-            source: new OlOSM({
-                //transition: 0,
-                tileLoadFunction: function (tile, src) {
-                postMessage({
-                    action: 'loadImage',
-                    src: src,
-                });
-                addEventListener('message', (event) => {
-                    if (event.data.src == src) {
-                        (<any> tile).setImage(event.data.image);
-                    }
-                });
-                }
-            }),
-            zIndex: 1
-          });
-        layer.getRenderer().useContainer = function (target, transform) {
-            this.containerReused = this.getLayer() !== layers[0];
-            this.canvas = canvas;
-            this.context = context;
-            this.container = {
-                firstElementChild: canvas,
-                style: {
-                opacity: layer.getOpacity(),
-                },
-            };
-            rendererTransform = transform;
-        };
-
-        layers.push(layer); */
+        
 
 
 

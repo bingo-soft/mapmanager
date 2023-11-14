@@ -15,6 +15,15 @@ import { FeaturePopupCssStyle } from "../../Style/FeaturePopupCssStyle";
 import { OlBaseVectorLayer } from "../../Type/Type";
 import VectorTileSourceFormat from '../../Source/VectorTileSourceFormat';
 
+
+
+/* const stringifyFn = function (obj) {
+    return stringify(obj, function(key, value) {
+        return typeof value === 'function'  ? value.toString() : value;
+    });
+} */
+
+
 /** VectorTileLayer */
 export default class VectorTileLayer extends AbstractLayer{
     private featurePopupTemplate = "";
@@ -77,6 +86,7 @@ export default class VectorTileLayer extends AbstractLayer{
                                 request: opts["request"],
                                 format: opts["format"],
                                 style: opts["style"],
+                                //obj: stringifyFn(this.layer),
                                 mapSRS: "EPSG:" + this.getMap().getSRSId().toString(),
                                 frameState: JSON.parse(stringify(frameState)),
                             });
@@ -158,7 +168,9 @@ export default class VectorTileLayer extends AbstractLayer{
                 })
             });
         } else if (format == VectorTileSourceFormat.MVT) {
-            this.format = new OlMVT();
+            this.format = new OlMVT({
+                /* featureClass: OlFeature */
+            });
         }
     }
 

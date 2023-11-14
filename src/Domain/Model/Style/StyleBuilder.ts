@@ -1,6 +1,7 @@
 import { Feature, View as OlView } from "ol";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlVectorLayer from "ol/layer/Vector";
+import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";
 //import { Point as OlPoint, LineString as OlLineString} from "ol/geom";
 //import OlStrokePattern from "ol-ext/style/StrokePattern";
 import OlFillPattern from "ol-ext/style/FillPattern";
@@ -15,6 +16,7 @@ import FeatureStyleBuilder from "./FeatureStyleBuilder";
 import CustomFillPattern from "./CustomFillPattern";
 //import CustomStrokePattern from "./CustomStrokePattern";
 import LayerInterface from "../Layer/LayerInterface";
+
 
 /** StyleBuilder */
 export default class StyleBuilder {
@@ -60,7 +62,6 @@ export default class StyleBuilder {
         // TODO: конвертировать короткие стили в длинные, если надо
         // opts = this.convertOptions(opts);
         this.featureDisplayRules = opts["feature_display_rules"] || {};
-        this.featureDisplayRules["labels_min_zoom"] = this.featureDisplayRules["labels_min_zoom"] || 1;
         this.applyOptions(opts);
     }
 
@@ -506,9 +507,15 @@ export default class StyleBuilder {
                     if (!this.view) {
                         this.view = this.layer.getMap().getMap().getView();
                     }
-                    if (featureType == "Point" && this.view && this.view.getZoom() < this.featureDisplayRules["labels_min_zoom"]) { 
-                        return null; 
+                    //console.log((feature.getGeometry() as LineString).getFlatCoordinates())
+                    if (this.view) {
+                        const zoom = this.view.getZoom();
+                        const showFeature = this.showFeatureOnZoom(feature, zoom);
+                        if (!showFeature){
+                            return undefined;
+                        }
                     }
+
                     if (featureStyle["label"]) {
                         featureStyle["label"]["resolution"] = resolution;
                     }
@@ -603,6 +610,35 @@ export default class StyleBuilder {
                 }
             }
         }
+    }
+
+    /**
+     * Returns a boolean flag indicating whether to show a feature on the map for the given zoom
+     * @param feature - feature
+     * @param zoom - zoom
+     * @return flag
+     */
+    private showFeatureOnZoom(feature: OlFeature, zoom: number): boolean {
+        const geometry = feature.getGeometry();
+        const geometryType = geometry.getType();
+        if ((geometryType == "Point" || geometryType == "MultiPoint")) {
+            const rule = this.featureDisplayRules["point_min_zoom"];
+            return rule ? zoom >= rule : true;
+        } else {
+            const rules = this.featureDisplayRules["line_polygon_min_zoom"];
+            if (!rules) {
+                return true;
+            }
+            const verticesCountRule = rules[Math.round(zoom)];
+            if (!verticesCountRule) {
+                return true;
+            }
+            const verticesCount = (<OlLineString | OlPolygon> geometry).getFlatCoordinates().length;
+            if (verticesCount > verticesCountRule) {
+                return false; 
+            }
+        }
+        return true;
     }
 
    
