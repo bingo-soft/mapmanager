@@ -426,9 +426,17 @@ export default class StyleBuilder {
             } */
 
 
-
-
-
+            // hide features on given zoom levels
+            if (!this.view) {
+                this.view = this.layer.getMap().getMap().getView();
+            }
+            if (this.view) {
+                const zoom = this.view.getZoom();
+                const showFeature = this.showFeatureOnZoom(feature, zoom);
+                if (!showFeature){
+                    return undefined;
+                }
+            }
 
             let style = new OlVectorLayer().getStyleFunction()(null, 0); // get default OL style;
             // clustered features
@@ -503,19 +511,6 @@ export default class StyleBuilder {
                         featureStyle["label"] = JSON.parse('{"fnt":"12px Arial","p":"l","c":"#ff0000","f":"#ff0000","w":1,"l":"'+ featureProps["handle"] +'"}');
                     } */
                     //console.log(feature instanceof RenderFeature)
-                    
-                    if (!this.view) {
-                        this.view = this.layer.getMap().getMap().getView();
-                    }
-                    //console.log((feature.getGeometry() as LineString).getFlatCoordinates())
-                    if (this.view) {
-                        const zoom = this.view.getZoom();
-                        const showFeature = this.showFeatureOnZoom(feature, zoom);
-                        if (!showFeature){
-                            return undefined;
-                        }
-                    }
-
                     if (featureStyle["label"]) {
                         featureStyle["label"]["resolution"] = resolution;
                     }
