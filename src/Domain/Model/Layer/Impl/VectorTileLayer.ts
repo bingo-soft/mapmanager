@@ -55,7 +55,7 @@ export default class VectorTileLayer extends AbstractLayer{
         if (layer) {
             this.layer = layer;
         } else {
-            if (opts["format"] == VectorTileSourceFormat.MVT && opts["use_worker"]) { 
+            if (opts["format"] == VectorTileSourceFormat.MVT && opts["use_render_worker"]) { 
                 //const worker = opts["format"] === "mvt" ? new Worker("../Worker/VectorTileRenderWorker.ts") : new Worker("../Worker/VectorTileJSONRenderWorker.ts");
                 const worker = new Worker("../Worker/VectorTileRenderWorker.ts");
                 this.layer = new OlLayer({

@@ -10,8 +10,8 @@ import OlFeature from "ol/Feature";
 import  { Tile as OlTileLayer } from "ol/layer";
 import { OSM as OlOSM } from "ol/source";
 import StyleBuilder from "../../Style/StyleBuilder";
-import VectorLayerFeaturesLoadQuery from "../../../../Application/Query/VectorLayerFeaturesLoadQuery";
-import VectorLayerRepository from "../../../../Infrastructure/Repository/VectorLayerRepository";
+import LayerLoadQuery from "../../../../Application/Query/LayerLoadQuery";
+import LayerRepository from "../../../../Infrastructure/Repository/LayerRepository";
 import VectorTileLayer from "../Impl/VectorTileLayer";
 
 (<unknown> self.Image) = EventTarget;
@@ -125,7 +125,7 @@ onmessage = (event) => {
                         payload["data"] = data;
                     }
                 }
-                const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                const query = new LayerLoadQuery(new LayerRepository());
                 await query.execute(payload)
                 .then(function(data) {
                     const format = tile.getFormat();

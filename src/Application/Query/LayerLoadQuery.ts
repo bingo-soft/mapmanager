@@ -1,13 +1,13 @@
-import VectorLayerRepositoryInterface from "../../Domain/Repository/VectorLayerRepositoryInterface";
+import LayerRepositoryInterface from "../../Domain/Repository/LayerRepositoryInterface";
 
-/** VectorLayerFeaturesLoadQuery */
-export default class VectorLayerFeaturesLoadQuery {
-    private repository: VectorLayerRepositoryInterface;
+/** LayerLoadQuery */
+export default class LayerLoadQuery {
+    private repository: LayerRepositoryInterface;
 
     /**
      * @param repository - repository
      */
-    constructor(repository: VectorLayerRepositoryInterface) {
+    constructor(repository: LayerRepositoryInterface) {
         this.repository = repository;
     }
 
