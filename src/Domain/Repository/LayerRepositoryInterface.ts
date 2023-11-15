@@ -1,5 +1,5 @@
-/** VectorLayerRepositoryInterface */
-export default interface VectorLayerRepositoryInterface
+/** LayerRepositoryInterface */
+export default interface LayerRepositoryInterface
 {
     /**
      * Returns data via API request

@@ -1,12 +1,8 @@
-/* import * as OlProj from "ol/proj";
-import { ApiRequest } from "../../../../Infrastructure/Http/ApiRequest"; */
-import VectorLayerFeaturesLoadQuery from "../../../../Application/Query/VectorLayerFeaturesLoadQuery"
-import VectorLayerRepository from "../../../..//Infrastructure/Repository/VectorLayerRepository"
-
+import LayerLoadQuery from "../../../../Application/Query/LayerLoadQuery"
+import LayerRepository from "../../../../Infrastructure/Repository/LayerRepository"
 
 onmessage = async (e) => {
-    console.log("From app", e);
-    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+    const query = new LayerLoadQuery(new LayerRepository());
     postMessage(
         await query.execute(e.data)
     );

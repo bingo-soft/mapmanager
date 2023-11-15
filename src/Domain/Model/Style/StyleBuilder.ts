@@ -1,4 +1,4 @@
-import { Feature, View as OlView } from "ol";
+import { View as OlView } from "ol";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlVectorLayer from "ol/layer/Vector";
 import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";

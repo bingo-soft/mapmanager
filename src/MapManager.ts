@@ -20,8 +20,8 @@ import ImageLayer from "./Domain/Model/Layer/Impl/ImageLayer"
 import VectorTileLayer from "./Domain/Model/Layer/Impl/VectorTileLayer";
 import LayerBuilder from "./Domain/Model/Layer/LayerBuilder"
 import SourceType from "./Domain/Model/Source/SourceType"
-import VectorLayerFeaturesLoadQuery from "./Application/Query/VectorLayerFeaturesLoadQuery"
-import VectorLayerRepository from "./Infrastructure/Repository/VectorLayerRepository"
+import LayerLoadQuery from "./Application/Query/LayerLoadQuery"
+import LayerRepository from "./Infrastructure/Repository/LayerRepository"
 import FeatureCollection from "./Domain/Model/Feature/FeatureCollection"
 import Geometry from "./Infrastructure/Util/Geometry"
 import InteractionType from "./Domain/Model/Interaction/InteractionType"
@@ -404,29 +404,40 @@ export default class MapManager {
      * @param opts
      * ```Options
      * Options:
-     * Name                         Type           Description
-     * "request"                    object         HTTP Request options
-     * - "method"                   string         HTTP Method of the request
-     * - "base_url"                 string         Request URL
-     * - "headers"                  string         Request headers
-     * - "geometry_name"            string         Geometry field name for WFS request BBox CQL Filter
-     * - "axios_params"             string         Additional params to send along with the axios request
+     * Name                                Type           Description
+     * "properties"                        object         Layer properties
+     * "srs_handling"                      object         Layer projection properties
+     * - "native_coordinate_system_id"     number         Native SRS code
+     * - "declared_coordinate_system_id"   number         Declared SRS code
+     * - "srs_handling_type"               string         Reprojection option, one of "keep_native", "reproject", "forced_declared"
+     * "request"                           object         HTTP Request options
+     * - "method"                          string         HTTP Method of the request
+     * - "base_url"                        string         Request URL
+     * - "headers"                         string         Request headers
+     * - "data"                            object         Request payload
+     * - "geometry_name"                   string         Geometry field name for WFS request BBox CQL Filter
+     * - "axios_params"                    string         Additional params to send along with the axios request
      * 
-     * "min_zoom"                   number         Minimum zoom to display the layer on map
-     * "max_zoom"                   number         Maximum zoom to display the layer on map
-     * "feature_popup_template"     string         Template of the popup window over features, feature attribute names go in double curly braces
-     * "feature_popup_css"          string         CSS of the popup window over features
-     * "style"                      object         Featuire styling options
-     * - "point"                    object         Options for point style
-     * - "linestring"               object         Options for linestring style
-     * - "polygon"                  object         Options for polygon style
-     * - "label"                    object         Options for label style
-     * - "unique_values":           object         Unique feature attribute value painting options
-     * - - "field"                  string         Feature attribute to get unique values from
-     * - - "start_color"            string         HTML color to start painting from 
-     * - - "increment_color"        number         Value to increment the color by
-     * "load_callback"              function       Function to call after the layer has been loaded, the layer goes as a parameter
-     * "source_change_callback"     function       Function to call on layer's source modification
+     * "min_zoom"                          number         Minimum zoom to display the layer on map
+     * "max_zoom"                          number         Maximum zoom to display the layer on map
+     * "format"                            string         Format, applicable only for vector tile layers. One of "mvt" or "geojson"
+     * "use_render_worker"                 boolean        Not implemented yet
+     * "use_load_worker"                   boolean        Whether to use workers for async data load. Applicable only for vector tile layers so far
+     * "feature_popup_template"            string         Template of the popup window over features, feature attribute names go in double curly braces
+     * "feature_popup_css"                 string         CSS of the popup window over features
+     * "style"                             object         Featuire styling options
+     * - "point"                           object         Options for point style
+     * - "linestring"                      object         Options for linestring style
+     * - "polygon"                         object         Options for polygon style
+     * - "label"                           object         Options for label style
+     * - "style_in_feature_attribute"      boolean        Whether to obtain feature style from its attribute
+     * - "style_attribute"                 string         Feature attribute containing style
+     * - "unique_values":                  object         Unique feature attribute value painting options
+     * - - "field"                         string         Feature attribute to get unique values from
+     * - - "start_color"                   string         HTML color to start painting from 
+     * - - "increment_color"               number         Value to increment the color by
+     * "load_callback"                     function       Function to call after the layer has been loaded, the layer goes as a parameter
+     * "source_change_callback"            function       Function to call on layer's source modification
      * ```
      * @return created layer instance
      */
@@ -524,7 +535,7 @@ export default class MapManager {
                         }
                         worker.postMessage(payload); */
                         
-                        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                        const query = new LayerLoadQuery(new LayerRepository());
                         const data = await query.execute(payload);
                         (<OlVectorSource> builder.getSource()).addFeatures(new OlGeoJSON().readFeatures(data, {
                             dataProjection: layerSrs,
@@ -536,7 +547,7 @@ export default class MapManager {
                 const format = opts["format"] ? opts["format"] : VectorTileSourceFormat.MVT;
                 builder.setFormat(format);
                 if (format == VectorTileSourceFormat.GeoJSON) {
-                    if (!opts["use_worker"]) {
+                    if (!opts["use_render_worker"]) {
                         builder.setTileUrlFunction((tileCoord: OlTilecoord) => {
                             return JSON.stringify(tileCoord);
                         });
@@ -563,10 +574,10 @@ export default class MapManager {
                     }
                 } else {
                     builder.setUrl(opts["request"]["base_url"]);
-                    if (!opts["use_worker"]) {
+                    if (!opts["use_render_worker"]) {
                         builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
                             tile.setLoader(async function(extent, resolution, projection) {
-                                //let t1, t2;
+                                let t1, t2, total = 0;
                                 const payload = {
                                     base_url: url,
                                     method: opts["request"]["method"],
@@ -581,57 +592,44 @@ export default class MapManager {
                                 }
                                 if (opts["request"]["method"].toLowerCase() == "post") {
                                     if (opts["request"]["data"]) {
-                                        const data = new FormData();
+                                        const data = {};
                                         Object.keys(opts["request"]["data"]).forEach((key: string): void => {
-                                            data.append(key, JSON.stringify(opts["request"]["data"][key]));
+                                            data[key] = JSON.stringify(opts["request"]["data"][key]);
                                         });
                                         payload["data"] = data;
                                     }
                                 }
-                                const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
-                                //t1 = performance.now();
-                                await query.execute(payload)
-                                .then(function(data) {
-                                    const format = tile.getFormat();
-                                    const features = format.readFeatures(data, {
-                                        extent: extent,
-                                        featureProjection: projection
-                                    });
-                                    tile.setFeatures(<OlFeature[]> features);
-                                    /* t2 = performance.now();
-                                    console.log(t2-t1) */
-                                });
-
-                                /* const payload = {
-                                    base_url: url,
-                                    method: opts["request"]["method"],
-                                    headers: opts["request"]["headers"],
-                                    data: opts["request"]["data"],
-                                    responseType: "arraybuffer",
-                                    axios_params: opts["request"]["axios_params"]
-                                }
-                                if (opts["request"]["method"].toLowerCase() == "post") {
-                                    if (opts["request"]["data"]) {
-                                        const data = new FormData();
-                                        Object.keys(opts["request"]["data"]).forEach((key: string): void => {
-                                            data.append(key, JSON.stringify(opts["request"]["data"][key]));
+                                if (opts["use_load_worker"]) {
+                                    const worker = new Worker("Domain/Model/Source/Worker/VectorTileLoadWorker.ts");
+                                    worker.onmessage = (e) => {
+                                        const format = tile.getFormat();
+                                        const features = format.readFeatures(e.data, {
+                                            extent: extent,
+                                            featureProjection: projection
                                         });
-                                        payload["data"] = data;
+                                        tile.setFeatures(<OlFeature[]> features);
+                                        t2 = performance.now();
+                                        total += t2-t1;
+                                        console.log("worker", total)
                                     }
-                                }
-                                const worker = new Worker("Domain/Model/Source/Worker/VectorTileLoadWorker.ts");
-                                worker.onmessage = (e) => {
-                                    const format = tile.getFormat();
-                                    const features = format.readFeatures(e.data, {
-                                        extent: extent,
-                                        featureProjection: projection
+                                    t1 = performance.now();
+                                    worker.postMessage(payload);
+                                } else {
+                                    const query = new LayerLoadQuery(new LayerRepository());
+                                    t1 = performance.now();
+                                    await query.execute(payload)
+                                    .then(function(data) {
+                                        const format = tile.getFormat();
+                                        const features = format.readFeatures(data, {
+                                            extent: extent,
+                                            featureProjection: projection
+                                        });
+                                        tile.setFeatures(<OlFeature[]> features);
+                                        t2 = performance.now();
+                                        total += t2-t1;
+                                        console.log("no worker", total)
                                     });
-                                    tile.setFeatures(<OlFeature[]> features);
-                                    t2 = performance.now();
-                                    console.log(t2-t1)
                                 }
-                                t1 = performance.now();
-                                worker.postMessage(payload); */
                             });
                         });
                     }
@@ -653,7 +651,7 @@ export default class MapManager {
                         headers: opts["request"]["headers"] || {},
                         responseType: "blob"
                     };
-                    const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                    const query = new LayerLoadQuery(new LayerRepository());
                     await query.execute(payload)
                     .then(function(data) {
                         (<HTMLImageElement> tile.getImage()).src = URL.createObjectURL(data);
@@ -774,7 +772,7 @@ export default class MapManager {
                 hideNotification: true
             }        
         };
-        const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+        const query = new LayerLoadQuery(new LayerRepository());
         const response = await query.execute(payload);
         return Promise.resolve(isStandartWFS ? response["features"].length : response["count"]);
     }
@@ -948,7 +946,7 @@ export default class MapManager {
                         hideNotification: true
                     }        
                 };
-                const query = new VectorLayerFeaturesLoadQuery(new VectorLayerRepository());
+                const query = new LayerLoadQuery(new LayerRepository());
                 const response = await query.execute(payload);
                 if (response["extent"] && response["extent"].length == 4) {
                     let extent = OlProj.transformExtent(<OlExtent.Extent> response["extent"], "EPSG:" + layer.getSRSId(), "EPSG:" + map.getSRSId());
