@@ -577,7 +577,7 @@ export default class MapManager {
                     if (!opts["use_render_worker"]) {
                         builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
                             tile.setLoader(async function(extent, resolution, projection) {
-                                let t1, t2, total = 0;
+                                let t1, t2;
                                 const payload = {
                                     base_url: url,
                                     method: opts["request"]["method"],
@@ -608,15 +608,14 @@ export default class MapManager {
                                             featureProjection: projection
                                         });
                                         tile.setFeatures(<OlFeature[]> features);
-                                        t2 = performance.now();
-                                        total += t2-t1;
-                                        console.log("worker", total)
+                                        // t2 = performance.now();
+                                        // console.log("worker", t2-t1)
                                     }
-                                    t1 = performance.now();
+                                    // t1 = performance.now();
                                     worker.postMessage(payload);
                                 } else {
                                     const query = new LayerLoadQuery(new LayerRepository());
-                                    t1 = performance.now();
+                                    // t1 = performance.now();
                                     await query.execute(payload)
                                     .then(function(data) {
                                         const format = tile.getFormat();
@@ -625,9 +624,8 @@ export default class MapManager {
                                             featureProjection: projection
                                         });
                                         tile.setFeatures(<OlFeature[]> features);
-                                        t2 = performance.now();
-                                        total += t2-t1;
-                                        console.log("no worker", total)
+                                        // t2 = performance.now();
+                                        // console.log("no worker", t2-t1)
                                     });
                                 }
                             });
