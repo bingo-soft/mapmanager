@@ -349,7 +349,7 @@ export default class FeatureStyleBuilder {
      * @return style
      */
     public build(): OlStyle {
-         return this.style;
+        return this.style;
     }
    
 }
