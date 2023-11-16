@@ -358,76 +358,8 @@ export default class StyleBuilder {
      */
     public build(useExternalStyleBuilder = false, useLabelTextOption = false): StyleFunction {
         return (feature: OlFeature, resolution: number): OlStyle | OlStyle[] => { 
-            /* const geometry = feature.getGeometry();
-            if (geometry.getType() == "LineString") {
-                const styles = [
-                    // linestring
-                    // new OlStyle({
-                    //    stroke: new OlStroke({
-                    //        color: '#ffffff',
-                    //        width: 30,
-                    //    }),
-                    //})
-                ];
-
-                const canvas = document.createElement('canvas');
-                canvas.width = 30;
-                canvas.height = 1;
-                const c = canvas.getContext('2d');
-                c.lineWidth = 1;
-                c.strokeStyle = "#000";
-
-                c.beginPath();
-                c.moveTo(0, 0);
-                c.lineTo(20, 0);
-                c.stroke();
-
-                const pattern = c.createPattern(canvas, "repeat");
-        
-                
-                (<OlLineString> geometry).forEachSegment(function (start, end) {
-                    const dx = end[0] - start[0];
-                    const dy = end[1] - start[1];
-                    const rotation = Math.atan2(dy, dx); // * 180 / Math.PI;
-                    styles.push(
-                        new OlStyle({
-                            geometry: new OlLineString([start, end]),
-                            // stroke: new CustomStrokePattern({
-                            //    pattern: "abc",
-                            //    size: 50,
-                            //    color: "#000000",
-                            //   opacity: 100,
-                            //    //fill: new OlFill({color: backgroundColor})
-                            //    angle: -rotation
-                            // })
-                            stroke: new OlStroke({
-                                color: pattern,
-                                width: 1,
-                            })
-                        })
-                    );
-                    // styles.push(
-                    //    new OlStyle({
-                    //        geometry: new OlLineString([start, end]), //new OlPoint(end),
-                    //        stroke: new OlStrokePattern({
-                    //            pattern: "hatch",
-                    //            width: 8,
-                    //            size: 10,
-                    //            color: "#00FF00",
-                    //            fill: new OlFill({color: "#FF0000"}),
-                    //            spacing: 15,
-                    //            angle: -rotation + 45
-                    //        })
-                    //    })
-                    //);
-                });
-                               
-                return styles;
-            } */
-
-
             // hide features on given zoom levels
-            if (!this.view) {
+            if (!this.view && this.layer) {
                 this.view = this.layer.getMap().getMap().getView();
             }
             if (this.view) {
