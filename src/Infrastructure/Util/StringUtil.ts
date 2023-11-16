@@ -7,9 +7,9 @@ export default class StringUtil {
      * @param resolution - resolution
      * @return adjusted text
      */
-    public static adjustText(text: string, resolution: number, maxResolution: number): string {
+   /*  public static adjustText(text: string, resolution: number, maxResolution: number): string {
         return resolution > maxResolution ? "" : StringUtil.divideString(text, 16, "\n");
-    }
+    } */
 
     /**
      * Divides text into substrings
@@ -18,7 +18,7 @@ export default class StringUtil {
      * @param spaceReplacer - space replacer
      * @return divided text
      */
-    private static divideString(text: string, width: number, spaceReplacer: string): string {
+    public static divideString(text: string, width: number, spaceReplacer: string): string {
         if (text.length > width) {
             let p = width;
             while (p > 0 && text[p] != " " && text[p] != "-") {

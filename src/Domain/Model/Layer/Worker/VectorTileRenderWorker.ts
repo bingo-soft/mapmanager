@@ -17,17 +17,18 @@ import VectorTileLayer from "../Impl/VectorTileLayer";
 (<unknown> self.Image) = EventTarget;
 
 
-const parseFn = function (str) {
+/* const parseFn = function (str) {
     return JSON.parse(str, function(key, value) {
-        if (typeof value != 'string') {
+        if (typeof value != "string") {
             return value;
         }
-        if (value.substring(0, 8) == 'function') {
-            console.log(value);
+        if (value.substring(0, 8) == "function") {
+            console.log(value)
+            return value.includes("[native code]") ? value : eval("(" + value + ")");
         }
-        return value.substring(0, 8) == 'function' ? eval('(' + value + ')') : value;
+        return value;
     });
-}
+} */
 
 
 let frameState, rendererTransform, pixelRatio;
@@ -56,7 +57,7 @@ const tileQueue = new OlTileQueue(
 const maxTotalLoading = 8;
 const maxNewLoads = 2;
 
-onmessage = (event) => { 
+onmessage = (event) => {
     if (event.data.action !== "render") {
         return;
     }
@@ -65,8 +66,8 @@ onmessage = (event) => {
     if (!pixelRatio) {
         pixelRatio = frameState.pixelRatio;
 
-//console.log(parseFn(event.data.obj))
-//console.log(event.data.obj)
+        //event.data.layer = parseFn(event.data.layer);
+//console.log(event.data.layer)
 
         // OSM 
         layer = new OlTileLayer({
@@ -144,8 +145,7 @@ onmessage = (event) => {
             zIndex: 10
         });
         layer.getRenderer().useContainer = function (target, transform) {
-            this.containerReused = this.getLayer() !== layers[0] // layer;
-            //this.containerReused = this.getLayer() !== layer;
+            this.containerReused = this.getLayer() !== layers[0];
             this.canvas = canvas;
             this.context = context;
             this.container = {
