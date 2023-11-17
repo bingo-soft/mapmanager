@@ -249,9 +249,9 @@ export default abstract class AbstractLayer implements LayerInterface
 
      /**
      * Adds features to layer
-     * @param features - features as an array of OL feature instances or as a GeoJSON string
+     * @param features - features as an array of OL feature instances or as a GeoJSON string or as an object
      */
-    public addFeatures(features: OlFeature[] | string): void{
+    public addFeatures(features: OlFeature[] | string | unknown): void{
         throw new MethodNotImplemented();
     }
 

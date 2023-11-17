@@ -527,20 +527,18 @@ export default class MapManager {
                         }
 
                         /* const worker = new Worker("Domain/Model/Source/Worker/VectorLoadWorker.ts");
-                        /worker.onmessage = (e) => {
-                            (<OlVectorSource> builder.getSource()).addFeatures(new OlGeoJSON().readFeatures(e.data, {
-                                dataProjection: layerSrs,
-                                featureProjection: mapSrs
-                            }));
+                        worker.onmessage = (e) => {
+                           (<VectorLayer> builder.getLayer()).addFeatures(data, mapSrs);
                         }
                         worker.postMessage(payload); */
                         
                         const query = new LayerLoadQuery(new LayerRepository());
-                        const data = await query.execute(payload);
-                        (<OlVectorSource> builder.getSource()).addFeatures(new OlGeoJSON().readFeatures(data, {
+                        const data = await query.execute(payload); 
+                        /* (<OlVectorSource> builder.getSource()).addFeatures(new OlGeoJSON().readFeatures(data, {
                             dataProjection: layerSrs,
                             featureProjection: mapSrs
-                        }));
+                        })); */
+                        (<VectorLayer> builder.getLayer()).addFeatures(data, mapSrs);
                     });
             }
             if (type == SourceType.VectorTile) {
@@ -678,11 +676,12 @@ export default class MapManager {
      * Creates vector layer from GeoJSON features
      * @category Layer
      * @param geoJSON - a string representing features
+     * @param type - layer's source type, one of "vector" or "cluster"
      * @param opts - options
      * @return created layer instance
      */
-    public static createLayerFromGeoJSON(geoJSON: string, opts?: unknown): LayerInterface {
-        const layer = MapManager.createLayer(SourceType.Vector, opts);
+    public static createLayerFromGeoJSON(geoJSON: string, type: SourceType, opts?: unknown): LayerInterface {
+        const layer = MapManager.createLayer(type, opts);
         layer.addFeatures(Geometry.flattenGeometry(geoJSON));
         return layer;
     }
@@ -735,7 +734,8 @@ export default class MapManager {
      * @return feature collection 
      */
     public static getFeatures(layer: LayerInterface): FeatureCollection {
-        if (layer.getType() != SourceType.Vector) {
+        const type = layer.getType();
+        if (type != SourceType.Vector && type != SourceType.Cluster) {
             throw new MethodNotImplemented();
         }
         return (<VectorLayer> layer).getFeatures();

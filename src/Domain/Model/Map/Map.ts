@@ -188,9 +188,9 @@ export default class Map {
         this.map = new OlMap({
             controls: controls,
             layers: [
-               /*  new OlTileLayer({
+                new OlTileLayer({
                     source: source
-                }) */
+                })
             ],
             target: targetDOMId,
             view: new OlView({
