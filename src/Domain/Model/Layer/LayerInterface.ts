@@ -203,9 +203,9 @@ export default interface LayerInterface
 
     /**
      * Adds features to layer
-     * @param features - features as an array of OL feature instances or as a GeoJSON string
+     * @param features - features as an array of OL feature instances or as a GeoJSON string or as an object
      */
-    addFeatures(features: OlFeature[] | string): void;
+    addFeatures(features: OlFeature[] | string | unknown): void;
 
     /**
      * Returns collection of dirty features

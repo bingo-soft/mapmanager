@@ -1,6 +1,6 @@
 {
   "name": "@bingo_soft/mapmanager",
-  "version": "1.118.5",
+  "version": "1.118.6",
   "description": "Map manager for GIS projects",
   "main": "src/MapManager.ts",
   "repository": {

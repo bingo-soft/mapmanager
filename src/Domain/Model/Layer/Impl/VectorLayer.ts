@@ -11,6 +11,7 @@ import StyleFunction from "../../Style/StyleFunctionType";
 import Feature from "../../Feature/Feature";
 import { FeaturePopupCssStyle } from "../../Style/FeaturePopupCssStyle";
 import { OlBaseVectorLayer, OlVectorLayer } from "../../Type/Type";
+import SourceType from "../../Source/SourceType";
 
 
 /** VectorLayer */
@@ -85,22 +86,30 @@ export default class VectorLayer extends AbstractLayer{
 
     /**
      * Adds features to layer
-     * @param features - features as an array of OL feature instances or as a GeoJSON string
+     * @param features - features as an array of OL feature instances or as a GeoJSON string or as an object
+     * @param targetSrs - target SRS 
      */
-    public addFeatures(features: OlFeature[] | string): void {
+    public addFeatures(features: OlFeature[] | string | unknown, targetSrs?: string): void { console.log(targetSrs)
         let addingFeatures: OlFeature[] = [];
-        if (typeof features === "string") {
+        if (Array.isArray(features)) {
+            addingFeatures = <OlFeature[]> features; 
+        } else {
             addingFeatures = new OlGeoJSON().readFeatures(features, {
                 dataProjection: "EPSG:" + this.srsId,
-                featureProjection: "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
+                featureProjection: targetSrs ? targetSrs :  "EPSG:" + VectorLayer.DEFAULT_SRS_ID.toString()
             });
-        } else {
-            addingFeatures = <OlFeature[]> features;            
         }
         if (this.eventBus) {
             this.eventBus.dispatch(new SourceChangedEvent());
         }
-        (<OlVectorLayer> this.layer).getSource().addFeatures(addingFeatures);
+        let source;
+        if (this.getType() == SourceType.Vector) {
+            source = (<OlVectorLayer> this.layer).getSource();
+        } else { // clusters
+            source = (<OlVectorLayer> this.layer).getSource();
+            source = source.getSource();
+        }
+        source.addFeatures(addingFeatures);
         this.setDirtyFeatures(new FeatureCollection(<OlFeature[]> features));
     }
 
