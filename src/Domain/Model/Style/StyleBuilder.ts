@@ -3,7 +3,7 @@ import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStr
 import OlVectorLayer from "ol/layer/Vector";
 import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";
 //import { Point as OlPoint, LineString as OlLineString} from "ol/geom";
-//import OlStrokePattern from "ol-ext/style/StrokePattern";
+import OlStrokePattern from "ol-ext/style/StrokePattern";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import OlFeature from "ol/Feature";
 import { StyleType } from "./StyleType"
@@ -169,19 +169,19 @@ export default class StyleBuilder {
      * @return style builder instance
      */
     private setLinestringStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
-        /* let style = null;
+        let style = null;
         const pattern = (opts["pattern"] ? opts["pattern"] : "empty").toLowerCase();
         let backgroundColor = opts["background_color"] ? opts["background_color"] : "#fff";
         if (opts["opacity"]) {
             backgroundColor = ColorUtil.applyOpacity(backgroundColor, opts["opacity"]);
-        } */
+        }
 
         let color = opts["color"] ? opts["color"] : "#fff";
         if (opts["opacity"]) {
             color = ColorUtil.applyOpacity(color, opts["opacity"]);
         }
-        /* if (pattern == "empty") { */
-            const style = new OlStyle({
+        if (pattern == "empty") {
+            style = new OlStyle({
                 stroke: new OlStroke({
                     color: color, 
                     width: opts["stroke_width"],
@@ -192,8 +192,36 @@ export default class StyleBuilder {
                     miterLimit: opts["miter_limit"]
                 }),
             });
-        /* } else {
-            style = new OlStyle({
+            /* const image = new Image();
+            image.src = "line-1.png";
+            image.onload = () => {
+                const ctx = document.createElement('canvas').getContext("2d");
+                const pattern = ctx.createPattern(image,"repeat");
+                const style = new OlStyle({
+                    stroke:  new OlStroke({
+                        width: 8,
+                        color: pattern
+                    })
+                });
+                const res = isTemplatedStyle ? this.styleTemplated : this.style;
+                res["LineString"] = style;
+                res["MultiLineString"] = style;
+                return this;
+            };
+
+        
+            const style = new OlStyle({
+                stroke: new OlStrokePattern({
+                    pattern: "image",
+                    //pattern: "hatch",
+                    size:  15,
+                    //color: "#000",
+                    //background: "#fff",
+                    image: new OlIcon({ src: "line-1.png" })
+                })
+            }); */
+        } else {
+            /* style = new OlStyle({
                 stroke: new CustomStrokePattern({
                     pattern: pattern,
                     size: opts["stroke_width"] || 1,
@@ -201,8 +229,8 @@ export default class StyleBuilder {
                     opacity: 100,
                     fill: new OlFill({color: backgroundColor}),
                 })
-            });
-        } */
+            }); */
+        }
         const res = isTemplatedStyle ? this.styleTemplated : this.style;
         res["LineString"] = style;
         res["MultiLineString"] = style;

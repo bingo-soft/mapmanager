@@ -344,34 +344,18 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
-     * Returns feature popup template
-     * @return feature popup template
+     * Returns feature popup settings
+     * @return feature popup settings
      */
-    public getFeaturePopupTemplate(): string  {
+    public getFeaturePopupSettings(): unknown  {
         throw new MethodNotImplemented();
     }
     
     /**
-     * Sets feature popup template
-     * @param template - feature popup template
+     * Sets feature popup settings
+     * @param template - feature popup settings
      */
-    public setFeaturePopupTemplate(template: string): void  {
-        throw new MethodNotImplemented();
-    }
-
-    /**
-     * Returns feature popup CSS
-     * @return feature popup CSS
-     */
-     public getFeaturePopupCss(): string  {
-        throw new MethodNotImplemented();
-    }
-    
-    /**
-     * Sets feature popup CSS
-     * @param css - feature popup CSS
-     */
-    public setFeaturePopupCss(css: string): void  {
+    public setFeaturePopupSettings(opts: unknown): void  {
         throw new MethodNotImplemented();
     }
 

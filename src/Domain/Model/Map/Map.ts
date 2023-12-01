@@ -1270,13 +1270,16 @@ export default class Map {
             }
             const layer = this.getLayer(olLayer);
             if (layer) {
-                const featurePopupTemplate = layer.getFeaturePopupTemplate();
-                if (featurePopupTemplate) {
+                const featurePopupSettings = (<any> layer.getFeaturePopupSettings());
+                if (featurePopupSettings) {
+                    const zoom = this.map.getView().getZoom();
+                    if (zoom < featurePopupSettings.min_zoom || zoom > featurePopupSettings.max_zoom) {
+                        return;
+                    }
                     const properties = olFeature.getProperties();
-                    featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupTemplate, properties);
-                    const featurePopupCss = layer.getFeaturePopupCss();
-                    if (featurePopupCss) {
-                        featurePopupElement.setAttribute("style", featurePopupCss);
+                    featurePopupElement.innerHTML = ObjectParser.parseTemplate(featurePopupSettings.template, properties);
+                    if (featurePopupSettings.css) {
+                        featurePopupElement.setAttribute("style", featurePopupSettings.css);
                     }
                     if (featurePopupElement.innerHTML) {
                         this.featurePopupOverlay.setPosition(this.map.getCoordinateFromPixel(pixel));

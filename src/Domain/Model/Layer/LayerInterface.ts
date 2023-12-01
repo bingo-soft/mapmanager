@@ -250,28 +250,16 @@ export default interface LayerInterface
     setRemovedFeatures(features: Feature | FeatureCollection): void;
 
     /**
-     * Returns feature popup template
-     * @return feature popup template
+     * Returns feature popup settings
+     * @return feature popup settings
      */
-    getFeaturePopupTemplate(): string;
+    getFeaturePopupSettings(): unknown;
     
     /**
-     * Sets feature popup template
-     * @param template - feature popup template
+     * Sets feature popup settings
+     * @param template - feature settings
      */
-    setFeaturePopupTemplate(template: string): void;
-
-    /**
-     * Returns feature popup CSS
-     * @return feature popup CSS
-     */
-    getFeaturePopupCss(): string;
-    
-    /**
-     * Sets feature popup CSS
-     * @param css - feature popup CSS
-     */
-    setFeaturePopupCss(css: string): void;
+    setFeaturePopupSettings(opts: unknown): void;
 
     /**
      * Returns vertex highlight style

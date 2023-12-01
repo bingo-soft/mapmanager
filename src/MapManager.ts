@@ -423,8 +423,11 @@ export default class MapManager {
      * "format"                            string         Format, applicable only for vector tile layers. One of "mvt" or "geojson"
      * "use_render_worker"                 boolean        Not implemented yet
      * "use_load_worker"                   boolean        Whether to use workers for async data load. Applicable only for vector tile layers so far
-     * "feature_popup_template"            string         Template of the popup window over features, feature attribute names go in double curly braces
-     * "feature_popup_css"                 string         CSS of the popup window over features
+     * "feature_popup_settings"            object         Popup over features settings
+     * - "template"                        string         Template of the popup window over features, feature attribute names go in double curly braces
+     * - "css"                             string         CSS of the popup window over features
+     * - "min_zoom"                        number         Minimum zoom to display a popup window
+     * - "max_zoom"                        number         Maximum zoom to display a popup window
      * "style"                             object         Featuire styling options
      * - "point"                           object         Options for point style
      * - "linestring"                      object         Options for linestring style
@@ -661,9 +664,8 @@ export default class MapManager {
                 builder.setUrl(opts["request"]["base_url"]);
                 
             }
-            if (Object.prototype.hasOwnProperty.call(opts, "feature_popup_template")) {
-                builder.setFeaturePopupTemplate(opts["feature_popup_template"]);
-                builder.setFeaturePopupCss(opts["feature_popup_css"]);
+            if (Object.prototype.hasOwnProperty.call(opts, "feature_popup_settings")) {
+                builder.setFeaturePopupSettings(opts["feature_popup_settings"]);
             }
             if (Object.prototype.hasOwnProperty.call(opts, "load_callback")) {
                 builder.setLoadCallback(opts["load_callback"]);

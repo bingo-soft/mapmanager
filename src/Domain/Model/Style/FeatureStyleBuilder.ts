@@ -341,7 +341,8 @@ export default class FeatureStyleBuilder {
      * @return array of width and height
      */
     private buildIconSizes(size: number[], resolution: number): number[] {
-        return [size[0] / resolution / 2.5, size[1] / resolution / 2.5];   
+        const ratio = resolution / 2.5;
+        return [size[0] / ratio, size[1] / ratio];   
     }
 
     /**
