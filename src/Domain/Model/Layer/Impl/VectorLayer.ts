@@ -20,8 +20,12 @@ export default class VectorLayer extends AbstractLayer{
     private idleFeatures: FeatureCollection = new FeatureCollection([]);
     private dirtyFeatures: FeatureCollection = new FeatureCollection([]);
     private removedFeatures: FeatureCollection = new FeatureCollection([]);
-    private featurePopupTemplate = "";
-    private featurePopupCss = "";
+    private featurePopupSettings = {
+        template: null,
+        css: null,
+        min_zoom: null,
+        max_zoom: null
+    };
     private vertexHighlightStyle = null;
     
     private static readonly DEFAULT_SRS_ID = 3857;
@@ -89,7 +93,7 @@ export default class VectorLayer extends AbstractLayer{
      * @param features - features as an array of OL feature instances or as a GeoJSON string or as an object
      * @param targetSrs - target SRS 
      */
-    public addFeatures(features: OlFeature[] | string | unknown, targetSrs?: string): void { console.log(targetSrs)
+    public addFeatures(features: OlFeature[] | string | unknown, targetSrs?: string): void {
         let addingFeatures: OlFeature[] = [];
         if (Array.isArray(features)) {
             addingFeatures = <OlFeature[]> features; 
@@ -233,38 +237,21 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
-     * Returns feature popup template
-     * @return feature popup template
+     * Returns feature popup settings
+     * @return feature popup settings
      */
-    public getFeaturePopupTemplate(): string  {
-        return this.featurePopupTemplate;
+    public getFeaturePopupSettings(): unknown  {
+        return this.featurePopupSettings;
     }
     
     /**
-     * Sets feature popup template
-     * @param template - feature popup template
+     * Sets feature popup settings
+     * @param template - feature popup settings
      */
-    public setFeaturePopupTemplate(template: string): void  {
-        this.featurePopupTemplate = template;
-    }
-
-    /**
-     * Returns feature popup CSS
-     * @return feature popup CSS
-     */
-    public getFeaturePopupCss(): string  {
-        return this.featurePopupCss;
-    }
-    
-    /**
-     * Sets feature popup CSS
-     * @param css - feature popup CSS
-     */
-    public setFeaturePopupCss(css: string | null): void  {
-        if (typeof css === "string" && css.trim().length != 0) {
-            this.featurePopupCss = css;
-        } else {
-            this.featurePopupCss = FeaturePopupCssStyle;
+    public setFeaturePopupSettings(opts: unknown): void  {
+        (<any> this.featurePopupSettings) = opts;
+        if (typeof this.featurePopupSettings.css !== "string" || this.featurePopupSettings.css.trim().length == 0) {
+            this.featurePopupSettings.css = FeaturePopupCssStyle;
         }
     }
 

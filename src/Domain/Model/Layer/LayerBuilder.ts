@@ -193,19 +193,11 @@ export default class LayerBuilder {
     }
 
     /**
-     * Sets feature popup template
-     * @param template - feature popup template
+     * Sets feature popup settings
+     * @param template - feature popup settings
      */
-    public setFeaturePopupTemplate(template: string): void  {
-        this.layer.setFeaturePopupTemplate(template);
-    }
-
-    /**
-     * Sets feature popup CSS
-     * @param template - feature popup CSS
-     */
-    public setFeaturePopupCss(css: string): void  {
-        this.layer.setFeaturePopupCss(css);
+    public setFeaturePopupSettings(opts: unknown): void  {
+        this.layer.setFeaturePopupSettings(opts);
     }
 
     /**

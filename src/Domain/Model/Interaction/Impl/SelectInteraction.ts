@@ -25,6 +25,7 @@ import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
 import SourceType from "../../Source/SourceType";
 import { OlVectorLayer } from "../../Type/Type";
+/* import StyleBuilder from "../../Style/StyleBuilder"; */
 
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
@@ -56,7 +57,29 @@ export default class SelectInteraction extends BaseInteraction {
         }
         // selected features are added to the feature overlay of a Select interaction for highlighting only 
         // (in case of SelectionType.Rectangle, SelectionType.Polygon, SelectionType.Cirle)
-        this.select = new OlSelect();
+        this.select = new OlSelect(
+            /* {
+                style: new StyleBuilder({
+                    point: {
+                        marker_type: "simple_point",
+                        color: "#00ff00",
+                        opacity: 100,
+                        size: 5
+                    },
+                    linestring: {
+                        color: "#00ff00",
+                        opacity: 100,
+                        stroke_width: 8,
+                    },
+                    polygon: {
+                        color: "#ff0000",
+                        stroke_width: 1,
+                        opacity: 10, 
+                        background_color: "#00ff00"
+                    }
+                }).build()
+            } */
+        );
         olMap.addInteraction(this.select);
         this.selectedFeatures = this.select.getFeatures();
         this.innerInteractions.push(this.select);
