@@ -12,6 +12,7 @@ import { always as OlEventConditionAlways, shiftKeyOnly as OlEventConditionShift
 import { GeoJSON as OlGeoJSON }  from "ol/format";
 import OlCollection from 'ol/Collection';
 import OlBaseEvent from "ol/events/Event";
+/* import {Fill as OlFill, Stroke as OlStroke, Style as OlStyle} from "ol/style"; */
 import InteractionType from "../InteractionType";
 import BaseInteraction from "./BaseInteraction";
 import SelectionType from "./SelectionType";
@@ -25,7 +26,7 @@ import LayerInterface from "../../Layer/LayerInterface";
 import { SelectCallbackFunction } from "../InteractionCallbackType";
 import SourceType from "../../Source/SourceType";
 import { OlVectorLayer } from "../../Type/Type";
-/* import StyleBuilder from "../../Style/StyleBuilder"; */
+import StyleBuilder from "../../Style/StyleBuilder";
 
 /** SelectInteraction */
 export default class SelectInteraction extends BaseInteraction {
@@ -47,47 +48,40 @@ export default class SelectInteraction extends BaseInteraction {
         const olMap = map.getMap(); 
         this.type = InteractionType.Select;
         let fc: FeatureCollection;
-        const OlLayersToSelectOn: OlLayer[] = [];
-        if (layers) {
-            layers.forEach((layer: LayerInterface): void => {
-                if (layer.getType() == SourceType.Vector) {
-                    OlLayersToSelectOn.push(layer.getLayer());
-                }
-            });
+        const olLayersToSelectOn: OlLayer[] = [];
+
+        if (!layers || layers.length == 0) {
+            layers = map.getLayers();
+        }
+
+        let opts = {};
+        // if we select on a single layer, we apply layer's custom selection style if exists
+        if (layers.length == 1) {
+            const layerSelectionStyle = layers[0].getSelectionStyle();
+            if (layerSelectionStyle) {
+                opts = {
+                    style: new StyleBuilder(layerSelectionStyle).build()
+                };
+            }
         }
         // selected features are added to the feature overlay of a Select interaction for highlighting only 
         // (in case of SelectionType.Rectangle, SelectionType.Polygon, SelectionType.Cirle)
-        this.select = new OlSelect(
-            /* {
-                style: new StyleBuilder({
-                    point: {
-                        marker_type: "simple_point",
-                        color: "#00ff00",
-                        opacity: 100,
-                        size: 5
-                    },
-                    linestring: {
-                        color: "#00ff00",
-                        opacity: 100,
-                        stroke_width: 8,
-                    },
-                    polygon: {
-                        color: "#ff0000",
-                        stroke_width: 1,
-                        opacity: 10, 
-                        background_color: "#00ff00"
-                    }
-                }).build()
-            } */
-        );
+        this.select = new OlSelect(opts);
         olMap.addInteraction(this.select);
         this.selectedFeatures = this.select.getFeatures();
         this.innerInteractions.push(this.select);
+
+        layers.forEach((layer: LayerInterface): void => {
+            if (layer.getType() == SourceType.Vector) {
+                olLayersToSelectOn.push(layer.getLayer());
+            }
+        });
+
         switch(type) {
             case SelectionType.SingleClick:
                 this.interaction = new OlSelect({
                     toggleCondition: multiple ? OlEventConditionAlways : OlEventConditionShiftKeyOnly,
-                    layers: OlLayersToSelectOn.length ? OlLayersToSelectOn : null,
+                    layers: olLayersToSelectOn,
                     multi: pin
                 });
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
@@ -118,9 +112,9 @@ export default class SelectInteraction extends BaseInteraction {
                     this.features.clear();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
                         if (olLayer instanceof VectorLayer) {
-                            if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                            if ((olLayersToSelectOn.includes(olLayer) && olLayersToSelectOn.length) || !olLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) =>  {
-                                    this.addToSelection(map, olLayer, olFeature);
+                                    this.addToHighlightingSelection(map, olLayer, olFeature);
                                 });
                             }
                         }
@@ -136,7 +130,16 @@ export default class SelectInteraction extends BaseInteraction {
             case SelectionType.Polygon:
                 this.interaction = new OlDraw({
                     features: new OlCollection(),
-                    type: "Polygon"
+                    type: "Polygon"/* ,
+                    style: new OlStyle({
+                        stroke: new OlStroke({
+                            color: "#000",
+                            width: 10
+                        }),
+                        fill: new OlFill({
+                            color: "#0000ff"
+                        })
+                    }) */
                 });
                 this.eventHandlers = new EventHandlerCollection(this.interaction);
                 this.eventHandlers.add(EventType.DrawEnd, "SelectByPolygonEventHandler", (e: OlBaseEvent): void => {
@@ -146,12 +149,12 @@ export default class SelectInteraction extends BaseInteraction {
                     this.features.clear();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
                         if (olLayer instanceof VectorLayer) {
-                            if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                            if ((olLayersToSelectOn.includes(olLayer) && olLayersToSelectOn.length) || !olLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                                     const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
                                     const featureGeometryTurf = featureTurf.geometry;
                                     if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
-                                        this.addToSelection(map, olLayer, olFeature);
+                                        this.addToHighlightingSelection(map, olLayer, olFeature);
                                     }
                                 });
                             }
@@ -204,12 +207,12 @@ export default class SelectInteraction extends BaseInteraction {
                     this.features.clear();
                     olMap.getLayers().forEach((olLayer: OlBaseLayer): void => {
                         if (olLayer instanceof VectorLayer) {
-                            if ((OlLayersToSelectOn.includes(olLayer) && OlLayersToSelectOn.length) || !OlLayersToSelectOn.length) {
+                            if ((olLayersToSelectOn.includes(olLayer) && olLayersToSelectOn.length) || !olLayersToSelectOn.length) {
                                 (<OlVectorLayer> olLayer).getSource().forEachFeatureIntersectingExtent(extent, (olFeature: OlFeature) => {
                                     const featureTurf = new OlGeoJSON().writeFeatureObject(olFeature);
                                     const featureGeometryTurf = featureTurf.geometry;
                                     if (booleanIntersects(turf.feature(extentGeometryTurf), turf.feature(featureGeometryTurf))) {
-                                        this.addToSelection(map, olLayer, olFeature);
+                                        this.addToHighlightingSelection(map, olLayer, olFeature);
                                     }
                                 });
                             }
@@ -229,7 +232,14 @@ export default class SelectInteraction extends BaseInteraction {
         }
     }
 
-    addToSelection(map: Map, olLayer: OlLayer, olFeature: OlFeature): void {
+    /**
+     * Adds feature and layer to corresponding containers
+     * @param map - map instance
+     * @param olLayer - OL layer instance
+     * @param olFeature - OL feature instance
+     */
+    private addToHighlightingSelection(map: Map, olLayer: OlLayer, olFeature: OlFeature): void {
+        //this.setSelectionStyle(map);
         const feature = new Feature(olFeature, map.getLayer(olLayer));
         feature.setEventBus(map.getEventBus());
         this.features.add(feature);

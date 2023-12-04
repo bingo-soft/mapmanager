@@ -209,6 +209,14 @@ export default class LayerBuilder {
     }
 
     /**
+     * Sets selection style
+     * @param style - selection style
+     */
+    public setSelectionStyle(style: unknown): void  {
+        this.layer.setSelectionStyle(style);
+    }
+
+    /**
      * Sets layer's load callback
      * @param callback - callback
      * @return layer builder instance

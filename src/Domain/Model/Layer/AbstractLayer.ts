@@ -376,6 +376,22 @@ export default abstract class AbstractLayer implements LayerInterface
     }
 
     /**
+     * Returns selection style
+     * @return selection style
+     */
+    public getSelectionStyle(): unknown  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
+     * Sets selection style
+     * @param style - selection style
+     */
+    public setSelectionStyle(style: unknown): void  {
+        throw new MethodNotImplemented();
+    }
+
+    /**
      * Returns loading tiles count
      * @return loading tiles count
      */

@@ -274,6 +274,18 @@ export default interface LayerInterface
     setVertexHighlightStyle(style: unknown): void;
 
     /**
+     * Returns selection style
+     * @return selection style
+     */
+    getSelectionStyle(): unknown;
+
+    /**
+     * Sets selection style
+     * @param style - selection style
+     */
+    setSelectionStyle(style: unknown): void;
+
+    /**
      * Returns loading tiles count
      * @return loading tiles count
      */

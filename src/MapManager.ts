@@ -433,6 +433,8 @@ export default class MapManager {
      * - "linestring"                      object         Options for linestring style
      * - "polygon"                         object         Options for polygon style
      * - "label"                           object         Options for label style
+     * - "highlight"                       object         Options for feature highlight style
+     * - "select"                          object         Options for feature select style
      * - "style_in_feature_attribute"      boolean        Whether to obtain feature style from its attribute
      * - "style_attribute"                 string         Feature attribute containing style
      * - "unique_values":                  object         Unique feature attribute value painting options
@@ -578,7 +580,6 @@ export default class MapManager {
                     if (!opts["use_render_worker"]) {
                         builder.setTileLoadFunction((tile: OlVectorTile, url: string) => {
                             tile.setLoader(async function(extent, resolution, projection) {
-                                let t1, t2;
                                 const payload = {
                                     base_url: url,
                                     method: opts["request"]["method"],
@@ -609,14 +610,10 @@ export default class MapManager {
                                             featureProjection: projection
                                         });
                                         tile.setFeatures(<OlFeature[]> features);
-                                        // t2 = performance.now();
-                                        // console.log("worker", t2-t1)
                                     }
-                                    // t1 = performance.now();
                                     worker.postMessage(payload);
                                 } else {
                                     const query = new LayerLoadQuery(new LayerRepository());
-                                    // t1 = performance.now();
                                     await query.execute(payload)
                                     .then(function(data) {
                                         const format = tile.getFormat();
@@ -625,8 +622,6 @@ export default class MapManager {
                                             featureProjection: projection
                                         });
                                         tile.setFeatures(<OlFeature[]> features);
-                                        // t2 = performance.now();
-                                        // console.log("no worker", t2-t1)
                                     });
                                 }
                             });
@@ -638,6 +633,9 @@ export default class MapManager {
                 builder.setStyle(opts["style"]);
                 if (Object.prototype.hasOwnProperty.call(opts["style"], "highlight")) {
                     builder.setVertexHighlightStyle(opts["style"]["highlight"]);
+                }
+                if (Object.prototype.hasOwnProperty.call(opts["style"], "select")) {
+                    builder.setSelectionStyle(opts["style"]["select"]);
                 }
             }
             if (type == SourceType.TileWMS) {
@@ -1449,6 +1447,8 @@ export default class MapManager {
                 "color": "#3399CC"
             },
             "label": {
+            },
+            "select": {
             }
         };
     }
