@@ -27,6 +27,7 @@ export default class VectorLayer extends AbstractLayer{
         max_zoom: null
     };
     private vertexHighlightStyle = null;
+    private selectionStyle = null;
     
     private static readonly DEFAULT_SRS_ID = 3857;
     
@@ -225,7 +226,7 @@ export default class VectorLayer extends AbstractLayer{
     }
 
     /**
-     * If feature is not idle, add it to removed list
+     * If feature is not idle, adds it to removed list
      * @param feature - feature to remove
      */
     private setRemovedFeature(feature: Feature): void {
@@ -269,5 +270,21 @@ export default class VectorLayer extends AbstractLayer{
      */
     public setVertexHighlightStyle(style: unknown): void  {
         this.vertexHighlightStyle = style;
+    }
+
+    /**
+     * Returns selection style
+     * @return selection style
+     */
+    public getSelectionStyle(): unknown  {
+        return this.selectionStyle;
+    }
+
+    /**
+     * Sets selection style
+     * @param style - selection style
+     */
+    public setSelectionStyle(style: unknown): void  {
+        this.selectionStyle = style;
     }
   }

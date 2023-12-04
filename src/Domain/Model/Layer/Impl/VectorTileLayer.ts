@@ -35,6 +35,7 @@ export default class VectorTileLayer extends AbstractLayer{
     private tileIndex;
     private format: OlGeoJSON | OlMVT = new OlMVT();
     private vertexHighlightStyle = null;
+    private selectionStyle = null;
 
     private container;
     private transformContainer;
@@ -275,11 +276,35 @@ export default class VectorTileLayer extends AbstractLayer{
     }
 
     /**
+     * Returns vertex highlight style
+     * @return vertex highlight style
+     */
+    public getVertexHighlightStyle(): unknown  {
+        return this.vertexHighlightStyle;
+    }
+
+    /**
      * Sets vertex highlight style
      * @param style - vertex highlight style
      */
     public setVertexHighlightStyle(style: unknown): void  {
         this.vertexHighlightStyle = style;
+    }
+
+    /**
+     * Returns selection style
+     * @return selection style
+     */
+    public getSelectionStyle(): unknown  {
+        return this.selectionStyle;
+    }
+
+    /**
+     * Sets selection style
+     * @param style - selection style
+     */
+    public setSelectionStyle(style: unknown): void  {
+        this.selectionStyle = style;
     }
 
     private updateContainerTransform() {
