@@ -49,8 +49,6 @@ export default class StyleBuilder {
      * @param opts - options
      * @param layer - layer
      */ 
-    /* constructor(opts: unknown, sourceType?: SourceType) {
-        this.sourceType = sourceType; */
     constructor(opts: unknown, layer?: LayerInterface) {
         if (layer) {
             this.layer = layer;
@@ -450,7 +448,7 @@ export default class StyleBuilder {
                     if (featureStyle["point"]) {
                         featureStyle["point"]["resolution"] = resolution;
                     }
-                    return new FeatureStyleBuilder(featureStyle, geomType, this.pointIconFunction).build();
+                    return new FeatureStyleBuilder(this.layer, feature, geomType, featureStyle, this.featureDisplayRules, this.pointIconFunction).build();
                 }
             }
             // common features
