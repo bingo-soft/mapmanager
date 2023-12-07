@@ -417,6 +417,11 @@ export default class MapManager {
      * - "data"                            object         Request payload
      * - "geometry_name"                   string         Geometry field name for WFS request BBox CQL Filter
      * - "axios_params"                    string         Additional params to send along with the axios request
+     * - "request_on_fullfilled"           function       Interceptor to execute on fullfilled request
+     * - "request_on_rejected"             function       Interceptor to execute on rejected request
+     * - "response_on_fullfilled"          function       Interceptor to execute on fullfilled response
+     * - "response_on_rejected"            function       Interceptor to execute on response response
+     * 
      * 
      * "min_zoom"                          number         Minimum zoom to display the layer on map
      * "max_zoom"                          number         Maximum zoom to display the layer on map
@@ -587,10 +592,10 @@ export default class MapManager {
                                     data: opts["request"]["data"],
                                     responseType: "arraybuffer",
                                     axios_params: opts["request"]["axios_params"],
-                                    //request_on_fullfilled: opts["request"]["request_on_fullfilled"],
-                                    //response_on_fullfilled: opts["request"]["response_on_fullfilled"],
-                                    //request_on_rejected: opts["request"]["request_on_rejected"],
-                                    //response_on_rejected: opts["request"]["response_on_rejected"]
+                                    request_on_fullfilled: opts["request"]["request_on_fullfilled"],
+                                    response_on_fullfilled: opts["request"]["response_on_fullfilled"],
+                                    request_on_rejected: opts["request"]["request_on_rejected"],
+                                    response_on_rejected: opts["request"]["response_on_rejected"]
                                 }
                                 if (opts["request"]["method"].toLowerCase() == "post") {
                                     if (opts["request"]["data"]) {

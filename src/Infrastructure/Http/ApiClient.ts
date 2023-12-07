@@ -24,8 +24,8 @@ export class ApiClient {
                 payload[k] = request.axios_params[k] || null;
             }
         }
-        /* axios.interceptors.request.use(request["request_on_fullfilled"], request["request_on_rejected"]);
-        axios.interceptors.response.use(request["response_on_fullfilled"], request["response_on_rejected"]); */
+        axios.interceptors.request.use(request["request_on_fullfilled"], request["request_on_rejected"]);
+        axios.interceptors.response.use(request["response_on_fullfilled"], request["response_on_rejected"]);
         return new Promise((resolve, reject) => {
           axios
             .request(payload)
