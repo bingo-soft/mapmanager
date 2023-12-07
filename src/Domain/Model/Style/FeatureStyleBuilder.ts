@@ -90,11 +90,14 @@ export default class FeatureStyleBuilder {
     private setPointStyle(opts: unknown, pointIconFunction?: (url: string) => string): Promise<void> {
         let style: OlStyle = null;
         if (opts["mt"] == "s") {
+            if (!opts["bc"]) {
+                opts["bc"] = opts["c"];
+            }
             style = new OlStyle({
                 image: new OlCircleStyle({
                     radius: opts["w"] || 2,
                     fill: new OlFill({
-                        color: opts["c"],
+                        color: opts["bc"] && opts["o"] !== undefined ? ColorUtil.applyOpacity(opts["bc"], opts["o"]) : opts["bc"],
                     }),
                     stroke: new OlStroke({
                         color: opts["c"],
