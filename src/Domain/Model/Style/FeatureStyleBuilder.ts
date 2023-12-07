@@ -1,8 +1,11 @@
-//import OlMap from "ol/Map";
+import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";
+import OlFeature from "ol/Feature";
+import { View as OlView } from "ol";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import CustomFillPattern from "./CustomFillPattern";
+import LayerInterface from "../Layer/LayerInterface";
 
 /** FeatureStyleBuilder */
 export default class FeatureStyleBuilder {
@@ -31,12 +34,23 @@ export default class FeatureStyleBuilder {
     }
     private static readonly DEFAULT_FONT_SIZE = 12;
     private static readonly DEFAULT_FONT_NAME = "Courier New";
+    private layer: LayerInterface;
+    private feature: OlFeature;
+    private view: OlView;
+    private featureDisplayRules: unknown;
 
     /**
+     * @param layer - feature's layer instance
+     * @param feature - feature instance 
+     * @param featureType - feature geometry type
      * @param opts - style text representation
-     * @param featureType - type of feature
+     * @param featureDisplayRules - feature display rules
+     * @param pointIconFunction - function to call to get a path to the icon file
      */ 
-    constructor(opts: unknown, featureType: string, pointIconFunction?: (url: string) => string) {
+    constructor(layer: LayerInterface, feature: OlFeature, featureType: string, opts: unknown, featureDisplayRules: unknown, pointIconFunction?: (url: string) => string) {
+        this.layer = layer;
+        this.feature = feature;
+        this.featureDisplayRules = featureDisplayRules;
         this.applyStyle(opts, featureType, pointIconFunction);
     }
 
@@ -44,6 +58,7 @@ export default class FeatureStyleBuilder {
      * Applies options to style
      * @param style - style options
      * @param featureType - type of feature
+     * @param pointIconFunction - function to call to get a path to the icon file
      */
     private applyStyle(style: unknown, featureType: string, pointIconFunction?: (url: string) => string): void {
         if (featureType == "Point") {
@@ -70,15 +85,19 @@ export default class FeatureStyleBuilder {
     /**
      * Sets point style
      * @param opts - options
+     * @param pointIconFunction - function to call to get a path to the icon file
      */
     private setPointStyle(opts: unknown, pointIconFunction?: (url: string) => string): Promise<void> {
         let style: OlStyle = null;
         if (opts["mt"] == "s") {
+            if (!opts["bc"]) {
+                opts["bc"] = opts["c"];
+            }
             style = new OlStyle({
                 image: new OlCircleStyle({
                     radius: opts["w"] || 2,
                     fill: new OlFill({
-                        color: opts["c"],
+                        color: opts["bc"] && opts["o"] !== undefined ? ColorUtil.applyOpacity(opts["bc"], opts["o"]) : opts["bc"],
                     }),
                     stroke: new OlStroke({
                         color: opts["c"],
@@ -345,10 +364,50 @@ export default class FeatureStyleBuilder {
     }
 
     /**
+     * Returns a boolean flag indicating whether to show a feature on the map for the given zoom
+     * @param feature - feature
+     * @param zoom - zoom
+     * @return flag
+     */
+    private showFeatureOnZoom(feature: OlFeature, zoom: number): boolean {
+        const geometry = feature.getGeometry();
+        const geometryType = geometry.getType();
+        if ((geometryType == "Point" || geometryType == "MultiPoint")) {
+            const rule = this.featureDisplayRules["point_min_zoom"];
+            return rule ? zoom >= rule : true;
+        } else {
+            const rules = this.featureDisplayRules["line_polygon_min_zoom"];
+            if (!rules) {
+                return true;
+            }
+            const verticesCountRule = rules[Math.round(zoom)];
+            if (!verticesCountRule) {
+                return true;
+            }
+            const verticesCount = (<OlLineString | OlPolygon> geometry).getFlatCoordinates().length;
+            if (verticesCount > verticesCountRule) {
+                return false; 
+            }
+        }
+        return true;
+    }
+
+    /**
      * Builds style
      * @return style
      */
     public build(): OlStyle {
+        // hide features on given zoom levels
+        if (!this.view && this.layer) {
+            this.view = this.layer.getMap().getMap().getView();
+        }
+        if (this.view) {
+            const zoom = this.view.getZoom();
+            const showFeature = this.showFeatureOnZoom(this.feature, zoom);
+            if (!showFeature){
+                return undefined;
+            }
+        }
         return this.style;
     }
    

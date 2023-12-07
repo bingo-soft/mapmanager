@@ -49,8 +49,6 @@ export default class StyleBuilder {
      * @param opts - options
      * @param layer - layer
      */ 
-    /* constructor(opts: unknown, sourceType?: SourceType) {
-        this.sourceType = sourceType; */
     constructor(opts: unknown, layer?: LayerInterface) {
         if (layer) {
             this.layer = layer;
@@ -132,11 +130,14 @@ export default class StyleBuilder {
     private setPointStyle(opts: unknown, isTemplatedStyle: boolean): StyleBuilder {
         let style: OlStyle = null;
         if (opts["marker_type"] == "simple_point") {
+            if (!opts["background_color"]) {
+                opts["background_color"] = opts["color"];
+            }
             style = new OlStyle({
                 image: new OlCircleStyle({
                     radius: opts["size"] || 2,
                     fill: new OlFill({
-                        color: opts["color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["color"], opts["opacity"]) : opts["color"],
+                        color: opts["background_color"] && opts["opacity"] !== undefined ? ColorUtil.applyOpacity(opts["background_color"], opts["opacity"]) : opts["background_color"],
                     }),
                     stroke: new OlStroke({
                         color: opts["color"],
@@ -450,7 +451,7 @@ export default class StyleBuilder {
                     if (featureStyle["point"]) {
                         featureStyle["point"]["resolution"] = resolution;
                     }
-                    return new FeatureStyleBuilder(featureStyle, geomType, this.pointIconFunction).build();
+                    return new FeatureStyleBuilder(this.layer, feature, geomType, featureStyle, this.featureDisplayRules, this.pointIconFunction).build();
                 }
             }
             // common features
