@@ -391,7 +391,7 @@ export default class FeatureStyleBuilder {
             if (geometryType == "LineString") {
                 rule = this.getRuleForZoom("line_length_zoom", zoom)
                 if (rule) {
-                    const flatCoords = (<OlLineString | OlPolygon> geometry).getFlatCoordinates();
+                    const flatCoords = (<OlLineString> geometry).getFlatCoordinates();
                     let lineLength = 0;
                     for (let i = 0; i < flatCoords.length; i += 2) {
                         const x0 = flatCoords[i];

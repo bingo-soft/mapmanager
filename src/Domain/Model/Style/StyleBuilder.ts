@@ -552,20 +552,55 @@ export default class StyleBuilder {
             const rule = this.featureDisplayRules["point_min_zoom"];
             return rule ? zoom >= rule : true;
         } else {
-            const rules = this.featureDisplayRules["line_polygon_min_zoom"];
-            if (!rules) {
-                return true;
+            // vertices count
+            let rule = this.getRuleForZoom("line_polygon_vertices_zoom", zoom)
+            if (rule) {
+                const flatCoords = (<OlLineString | OlPolygon> geometry).getFlatCoordinates();
+                const verticesCount = flatCoords.length;
+                if (verticesCount > rule) {
+                    return false;
+                }
             }
-            const verticesCountRule = rules[Math.round(zoom)];
-            if (!verticesCountRule) {
-                return true;
-            }
-            const verticesCount = (<OlLineString | OlPolygon> geometry).getFlatCoordinates().length;
-            if (verticesCount > verticesCountRule) {
-                return false; 
+            // lines length
+            if (geometryType == "LineString") {
+                rule = this.getRuleForZoom("line_length_zoom", zoom)
+                if (rule) {
+                    const flatCoords = (<OlLineString> geometry).getFlatCoordinates();
+                    let lineLength = 0;
+                    for (let i = 0; i < flatCoords.length; i += 2) {
+                        const x0 = flatCoords[i];
+                        const y0 = flatCoords[i + 1];
+                        const x1 = flatCoords[i + 2];
+                        const y1 = flatCoords[i + 3];
+                        if (x0 && y0 && x1 && y1) {
+                            lineLength += Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
+                        }
+                    }
+                    if (lineLength > rule) {
+                        return false; 
+                    }
+                }
             }
         }
         return true;
+    }
+
+    /**
+     * Returns a rule for the given zoom
+     * @param section - rule section
+     * @param zoom - zoom
+     * @return rule
+     */
+    private getRuleForZoom(section: string, zoom: number): number {
+        const rules = this.featureDisplayRules[section];
+        if (!rules) {
+            return null;
+        }
+        const rule = rules[Math.round(zoom)];
+        if (!rule) {
+            return null;
+        }
+        return rule;
     }
 
    
