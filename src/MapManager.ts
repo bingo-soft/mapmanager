@@ -926,7 +926,7 @@ export default class MapManager {
         if (layer.getType() == SourceType.TileWMS) {
             map.fitLayer(layer, zoom);
             return;
-        } else if (layer.getType() == SourceType.Vector) {
+        } else if (layer.getType() == SourceType.Vector || layer.getType() == SourceType.Cluster) {
             const loaderOptions = layer.getOptions()["request"];
             // layer was created via createLayerFromGeoJSON() so it has no loaderOptions
             if (!loaderOptions || !loaderOptions["base_url"]) {
