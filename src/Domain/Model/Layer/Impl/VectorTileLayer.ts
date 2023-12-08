@@ -291,22 +291,6 @@ export default class VectorTileLayer extends AbstractLayer{
         this.vertexHighlightStyle = style;
     }
 
-    /**
-     * Returns selection style
-     * @return selection style
-     */
-    public getSelectionStyle(): unknown  {
-        return this.selectionStyle;
-    }
-
-    /**
-     * Sets selection style
-     * @param style - selection style
-     */
-    public setSelectionStyle(style: unknown): void  {
-        this.selectionStyle = style;
-    }
-
     private updateContainerTransform() {
         if (this.workerFrameState) {
             const viewState = this.mainThreadFrameState.viewState;

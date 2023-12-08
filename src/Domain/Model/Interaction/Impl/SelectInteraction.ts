@@ -57,11 +57,14 @@ export default class SelectInteraction extends BaseInteraction {
         let opts = {};
         // if we select on a single layer, we apply layer's custom selection style if exists
         if (layers.length == 1) {
-            const layerSelectionStyle = layers[0].getSelectionStyle();
-            if (layerSelectionStyle) {
-                opts = {
-                    style: new StyleBuilder(layerSelectionStyle).build()
-                };
+            const layerType =  layers[0].getType();
+            if (layerType == SourceType.Vector || layerType == SourceType.Cluster) {
+                const layerSelectionStyle = layers[0].getSelectionStyle();
+                if (layerSelectionStyle) {
+                    opts = {
+                        style: new StyleBuilder(layerSelectionStyle).build()
+                    };
+                }
             }
         }
         // selected features are added to the feature overlay of a Select interaction for highlighting only 

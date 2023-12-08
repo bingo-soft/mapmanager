@@ -639,7 +639,7 @@ export default class MapManager {
                 if (Object.prototype.hasOwnProperty.call(opts["style"], "highlight")) {
                     builder.setVertexHighlightStyle(opts["style"]["highlight"]);
                 }
-                if (Object.prototype.hasOwnProperty.call(opts["style"], "select")) {
+                if (type == SourceType.Vector && Object.prototype.hasOwnProperty.call(opts["style"], "select")) {
                     builder.setSelectionStyle(opts["style"]["select"]);
                 }
             }
