@@ -348,7 +348,9 @@ export default class FeatureStyleBuilder {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
         name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
         size = size / resolution * 2.5;
-        //size = size / resolution / 32;
+        if (size > 19) {
+            size = 19;
+        }
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         return size.toString() + "px " + name;   
     }
