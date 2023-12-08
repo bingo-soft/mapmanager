@@ -516,11 +516,11 @@ export default class MapManager {
                             base_url: opts["request"]["base_url"],
                             headers: opts["request"]["headers"],
                             data: opts["request"]["data"],
-                            axios_params: opts["request"]["axios_params"]/* ,
+                            axios_params: opts["request"]["axios_params"],
                             request_on_fullfilled: opts["request"]["request_on_fullfilled"],
                             response_on_fullfilled: opts["request"]["response_on_fullfilled"],
                             request_on_rejected: opts["request"]["request_on_rejected"],
-                            response_on_rejected: opts["request"]["response_on_rejected"] */
+                            response_on_rejected: opts["request"]["response_on_rejected"]
                         };
                         if (payload["data"]) {
                             payload["data"]["cql_filter"] = cqlFilter;
