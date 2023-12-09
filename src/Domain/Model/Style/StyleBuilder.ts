@@ -61,7 +61,10 @@ export default class StyleBuilder {
         this.defaultOLStyle = <OlStyle> new OlVectorLayer().getStyleFunction()(null, 0);
         // TODO: конвертировать короткие стили в длинные, если надо
         // opts = this.convertOptions(opts);
-        this.featureDisplayRules = opts["feature_display_rules"] || {};
+        if (opts["feature_hide_rules"]) {
+            const fdrStr = JSON.stringify(opts["feature_hide_rules"]).replace(/\s/g, '');
+            this.featureDisplayRules = JSON.parse(fdrStr) || {};
+        }
         this.applyOptions(opts);
     }
 
@@ -557,9 +560,7 @@ export default class StyleBuilder {
             if (rule) {
                 const flatCoords = (<OlLineString | OlPolygon> geometry).getFlatCoordinates();
                 const verticesCount = flatCoords.length;
-                if (verticesCount > rule) {
-                    return false;
-                }
+                return this.applyRule(rule, verticesCount);
             }
             // lines length
             if (geometryType == "LineString") {
@@ -576,9 +577,7 @@ export default class StyleBuilder {
                             lineLength += Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
                         }
                     }
-                    if (lineLength > rule) {
-                        return false; 
-                    }
+                    return this.applyRule(rule, lineLength);
                 }
             }
         }
@@ -591,7 +590,7 @@ export default class StyleBuilder {
      * @param zoom - zoom
      * @return rule
      */
-    private getRuleForZoom(section: string, zoom: number): number {
+    private getRuleForZoom(section: string, zoom: number): string {
         const rules = this.featureDisplayRules[section];
         if (!rules) {
             return null;
@@ -601,6 +600,28 @@ export default class StyleBuilder {
             return null;
         }
         return rule;
+    }
+
+    /**
+     * Applies rule
+     * @param rule - rule
+     * @param param - param
+     * @return whether to show a feature
+     */
+    private applyRule(rule: string, param: number): boolean {
+        const sign = rule.substring(0, 1);
+        const value = parseFloat(rule.substring(1));
+        if (sign == ">") {
+            if (param > value) {
+                return false; 
+            }   
+        }
+        if (sign == "<") {
+            if (param < value) {
+                return false; 
+            }   
+        }
+        return true;
     }
 
    
