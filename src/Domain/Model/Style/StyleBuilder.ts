@@ -61,6 +61,7 @@ export default class StyleBuilder {
         this.defaultOLStyle = <OlStyle> new OlVectorLayer().getStyleFunction()(null, 0);
         // TODO: конвертировать короткие стили в длинные, если надо
         // opts = this.convertOptions(opts);
+        this.featureDisplayRules = {};
         if (opts["feature_hide_rules"]) {
             const fdrStr = JSON.stringify(opts["feature_hide_rules"]).replace(/\s/g, '');
             this.featureDisplayRules = JSON.parse(fdrStr) || {};
