@@ -139,7 +139,7 @@ export default class VectorTileLayer extends AbstractLayer{
                 });
             } else {
                 this.layer = new OlVectorTileLayer({
-                    //declutter: true
+                    declutter: true
                 });
             }
         }
