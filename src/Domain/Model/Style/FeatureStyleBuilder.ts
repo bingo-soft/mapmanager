@@ -232,12 +232,12 @@ export default class FeatureStyleBuilder {
         const placement = opts["p"] && opts["p"].toLowerCase() == "p" ? "point" : "line";
         let font = opts["fnt"]; 
         if (opts["resolution"]) {
-            font = this.buildFontString(opts["fs"], opts["fn"], opts["resolution"]);
+            font = this.buildFontString(opts["fs"], opts["fn"], opts["fstl"], opts["resolution"]);
         }
-        let text = opts["l"];
-        if (Array.isArray(text)) {
+        const text = opts["l"];
+        /* if (Array.isArray(text)) {
             text = this.buildFontArray(text, opts["resolution"]);
-        }
+        } */
         return new OlText({
             stroke: new OlStroke({
                 color: opts["c"],
@@ -322,7 +322,7 @@ export default class FeatureStyleBuilder {
      * @param resolution - map resolution
      * @return built array
      */
-    private buildFontArray(value: any[], resolution: number): string[] {
+    /* private buildFontArray(value: any[], resolution: number): string[] {
         const result = [];
         for (let i = 0; i < value.length; i++) {
             if (i + 2 > value.length) {
@@ -334,25 +334,28 @@ export default class FeatureStyleBuilder {
                 result.push(fontString);
             }
         }
+        console.log(result)
         return result;
-    }
+    } */
 
     /**
      * Builds font string depending on map resolution
      * @param size - font size
      * @param name - font name
+     * @param style - font style
      * @param resolution - map resolution
      * @return font string in CSS format
      */
-    private buildFontString(size: number, name: string, resolution: number): string {
+    private buildFontString(size: number, name: string, style: string, resolution: number): string {
         size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
         name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
         size = size / resolution * 2.5;
-        if (size > 19) {
-            size = 19;
-        }
+        /* if (size > 21) {
+            size = 21;
+        } */
+        style = style || "";
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
-        return size.toString() + "px " + name;   
+        return style + " " + size.toString() + "px " + name;
     }
 
     /**
@@ -362,7 +365,8 @@ export default class FeatureStyleBuilder {
      * @return array of width and height
      */
     private buildIconSizes(size: number[], resolution: number): number[] {
-        return [size[0] / resolution / 2.5, size[1] / resolution / 2.5];
+        const ratio = resolution * 2.5;
+        return [size[0] / ratio, size[1] / ratio];
     }
 
     /**
