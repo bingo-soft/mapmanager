@@ -2,6 +2,7 @@ import { LineString as OlLineString, Polygon as OlPolygon } from "ol/geom";
 import OlFeature from "ol/Feature";
 import { View as OlView } from "ol";
 import {Circle as OlCircleStyle, Icon as OlIcon, Fill as OlFill, Stroke as OlStroke, Text as OlText, Style as OlStyle} from "ol/style";
+import { Circle as OlCircle } from "ol/geom";
 import OlFillPattern from "ol-ext/style/FillPattern";
 import ColorUtil from "../../../Infrastructure/Util/Color/ColorUtil";
 import CustomFillPattern from "./CustomFillPattern";
@@ -232,7 +233,7 @@ export default class FeatureStyleBuilder {
         const placement = opts["p"] && opts["p"].toLowerCase() == "p" ? "point" : "line";
         let font = opts["fnt"]; 
         if (opts["resolution"]) {
-            font = this.buildFontString(opts["fs"], opts["fn"], opts["fstl"], opts["resolution"]);
+            font = this.buildFontString(opts);
         }
         const text = opts["l"];
         /* if (Array.isArray(text)) {
@@ -340,20 +341,21 @@ export default class FeatureStyleBuilder {
 
     /**
      * Builds font string depending on map resolution
-     * @param size - font size
-     * @param name - font name
-     * @param style - font style
-     * @param resolution - map resolution
+     * @param opts - options
      * @return font string in CSS format
      */
-    private buildFontString(size: number, name: string, style: string, resolution: number): string {
-        size = size || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
-        name = name || FeatureStyleBuilder.DEFAULT_FONT_NAME;
-        size = size / resolution * 2.5;
+    private buildFontString(opts: unknown/* size: number, name: string, style: string, resolution: number */): string {
+        if (this.feature.getProperties()["attr_3158_"] == "108193") {
+            opts["fs"] = 4;
+        }
+        let size = opts["fs"] || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
+        const name = opts["fn"] || FeatureStyleBuilder.DEFAULT_FONT_NAME;
+        //size = size / opts["resolution"] * 2.5;
+        size = size / opts["resolution"] * 1.5;
         /* if (size > 21) {
             size = 21;
         } */
-        style = style || "";
+        const style = opts["fstl"] || "";
         size = isNaN(size) ? FeatureStyleBuilder.DEFAULT_FONT_SIZE : size;
         return style + " " + size.toString() + "px " + name;
     }
