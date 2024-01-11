@@ -310,6 +310,7 @@ export default class StyleBuilder {
             font: opts["font"],
             text: opts["field"] ? opts["field"] : opts["text"],
             textAlign: opts["text_align"],
+            justify: opts["justify"],
             textBaseline: opts["text_baseline"],
             maxAngle: opts["max_angle"] ? opts["max_angle"] * Math.PI / 180 : 0,
             offsetX: opts["offset"] && opts["offset"][0] ? opts["offset"][0] : null,
