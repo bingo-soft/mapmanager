@@ -33,6 +33,11 @@ export default class FeatureStyleBuilder {
         "h": "hanging",
         "i": "ideographic"
     }
+    private static readonly TEXT_JUSTIFY = {
+        "l": "left",
+        "r": "right",
+        "c": "center"
+    }
     private static readonly DEFAULT_FONT_SIZE = 12;
     private static readonly DEFAULT_FONT_NAME = "Courier New";
     private layer: LayerInterface;
@@ -106,7 +111,7 @@ export default class FeatureStyleBuilder {
                     }),
                 }),
             });
-        } else if (opts["mt"] == "i") {
+        } else if (opts["mt"] == "i") { 
             let sizes = [16, 16];
             if (opts["w"] && opts["w"][0] && opts["w"][1]) {
                 sizes = this.buildIconSizes(opts["w"], opts["resolution"]);
@@ -251,6 +256,7 @@ export default class FeatureStyleBuilder {
             text: text,
             textAlign: FeatureStyleBuilder.TEXT_ALIGN[opts["ta"]],
             textBaseline: FeatureStyleBuilder.TEXT_BASELINE[opts["tb"]], // "alphabetic",
+            justify: FeatureStyleBuilder.TEXT_JUSTIFY[opts["js"]],
             maxAngle: opts["ma"] ? opts["ma"] * Math.PI / 180 : 0,
             offsetX: opts["off"] && opts["off"][0] ? opts["off"][0] : null,
             offsetY: opts["off"] && opts["off"][1] ? opts["off"][1] : null,
@@ -259,7 +265,7 @@ export default class FeatureStyleBuilder {
             repeat: opts["rp"],
             scale: opts["sc"],
             rotateWithView: rotateWithView,
-            rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0,
+            rotation: opts["r"] ? opts["r"] * Math.PI / 180 : 0
         });
     }
 
@@ -345,13 +351,13 @@ export default class FeatureStyleBuilder {
      * @return font string in CSS format
      */
     private buildFontString(opts: unknown/* size: number, name: string, style: string, resolution: number */): string {
-        if (this.feature.getProperties()["attr_3158_"] == "108193") {
+        /* if (this.feature.getProperties()["attr_3158_"] == "108193") {
             opts["fs"] = 4;
-        }
+        } */
         let size = opts["fs"] || FeatureStyleBuilder.DEFAULT_FONT_SIZE;
         const name = opts["fn"] || FeatureStyleBuilder.DEFAULT_FONT_NAME;
         //size = size / opts["resolution"] * 2.5;
-        size = size / opts["resolution"] * 1.5;
+        size = size / opts["resolution"] * 1.8;
         /* if (size > 21) {
             size = 21;
         } */
